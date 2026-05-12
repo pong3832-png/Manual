@@ -33,6 +33,7 @@
 - Shopping Connect rows must preserve the user-provided `쇼핑커넥트링크` and `광고고지문`; do not replace `naver.me` affiliate links with generic product URLs.
 - `평점` and `리뷰개수` are reference-only prompt inputs; never turn them into quality, satisfaction, medical, or performance guarantees.
 - The `skssj2629` blog persona is a detail-sensitive Cheongdam mother. Keep ad/daily prompts natural, using technical terms only when explained plainly and mixing conversational endings like `~하더라고요`, `~거든요`, and `~잖아요`.
+- `skssj2629` daily and ad body text should keep ordinary visible lines at about 25 Korean characters or less instead of long paragraphs; preserve URLs, hashtags, and Naver editor markers during any line-wrap post-processing, and do not alter product-name text.
 - Do not run Coupang deeplink/API conversion for Shopping Connect data.
 - Keep Shopping Connect state files separate from Coupang used-product history.
 

@@ -20,6 +20,7 @@
   - `skssj2629.py`에 이유식/분유, 수유용품, 유아 스킨/위생, 유아 의류, 장난감/교구, 유아 식기/보관용품 상품군별 작성 가이드를 추가.
   - `skssj2629.py` 네이버 쇼핑커넥트 본문 프롬프트에 상품군별 전문용어 2~4개를 자연스럽게 사용하고, 바로 쉬운 말로 풀어 쓰는 규칙을 추가. 의학/효능 보장 표현은 계속 금지.
   - `skssj2629.py` 일상글/광고글 본문 프롬프트에 말투 리듬 규칙을 추가해 `~합니다`/`~됩니다` 반복을 줄이고, `~하더라고요`, `~거든요`, `~잖아요`, `~편이에요` 같은 청담 엄마 블로그 구어체를 섞도록 조정.
+  - `skssj2629.py` 일상글/광고글 본문 프롬프트와 로컬 후처리에 한 줄 25자 안팎의 짧은 본문 흐름을 추가. URL, 해시태그, 네이버 입력 마커는 원형 유지하고, 상품명 텍스트는 바꾸지 않은 채 짧게 줄바꿈 가능.
   - `skssj2629/skssj2629(스케줄러).py`를 `skssj2629.py` 기준으로 수정. 작업명 prefix를 계정별로 분리하고, 발행 타입을 `일상`/`네이버`로 바꾸며, peer schedule 경로와 실행 대상 경로를 조정.
   - `skssj2629/자동발행실행보조파일/run_scheduled_post.ps1`, `run_refresh_schedule.ps1`를 추가해 스케줄러가 부모 폴더의 `제미나이웹.py`가 아니라 `skssj2629.py`와 `skssj2629(스케줄러).py`를 실행하도록 구성.
   - 사용자 승인 후 `skssj2629(스케줄러).py --target-date auto`를 실행해 `2026-05-12` 기준 `NaverBlogAutoPost_2629_01`~`10` 및 `NaverBlogAutoPost_2629_RefreshDaily`를 등록.
@@ -31,12 +32,14 @@
   - `skssj2629` 스케줄 실행/리프레시 PowerShell 래퍼 2개 파서 검사 통과.
   - `schtasks /Query`로 `NaverBlogAutoPost_2629_01`, `NaverBlogAutoPost_2629_RefreshDaily`가 `Ready` 상태임을 확인.
   - `skssj2629/skssj2629_naver.csv` 확인: `rows=43`, `평점`/`리뷰개수` 컬럼 존재, 각 24개 값 populated.
+  - `skssj2629.py` 짧은 본문 줄바꿈 변경 후 `py_compile` 통과.
+  - `AGENTS.md`, `네이버 자동화 ing/AGENTS.md`, `skssj2629.py` 대상 `git diff --check` 통과. LF/CRLF 경고만 출력됨.
   - `docs/work-log.md` `git diff --check` 통과.
   - 실제 발행/삭제/외부 대량 호출은 실행하지 않음. 스케줄러 등록은 사용자 승인 후 실행.
 - 주의
   - `네이버커넥팅.py`는 현재 루트 `.gitignore`의 `네이버 자동화 ing/네이버 블로그 글쓰기/*` 패턴에 의해 Git status에서 ignored로 표시되므로 `git diff --check` 대상에는 잡히지 않음.
 - 다음 작업
-  - 다음 스케줄 발행 로그에서 `skssj2629/자동발행상태기록파일/logs/` 확인: ChatGPT 세션, 네이버 세션, 인용구 밖 링크/해시태그, CSV used 처리, 말투 자연스러움.
+  - 다음 스케줄 발행 로그에서 `skssj2629/자동발행상태기록파일/logs/` 확인: ChatGPT 세션, 네이버 세션, 인용구 밖 링크/해시태그, CSV used 처리, 말투 자연스러움, 짧은 줄 본문 흐름.
   - 첫 커넥트 수익/클릭이 보이면 상품군, 제목, 평점/리뷰, 링크 위치 기준으로 성과 CSV를 만들지 결정.
 
 ## 2026-05-08

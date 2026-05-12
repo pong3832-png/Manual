@@ -36,6 +36,7 @@ BLOG_PERSONA_CONCEPT = (
     "성분, 면 소재, 마감, 사용 연령, 관리 편의성, 아이 생활 동선까지 세세하게 따지고, "
     "좋아 보이는 이유보다 내 아이와 우리 집 기준에 맞는지를 먼저 보는 사람."
 )
+SHORT_BODY_LINE_LIMIT = 25
 os.makedirs(os.path.dirname(AUTOMATION_LOCK_PATH), exist_ok=True)
 
 
@@ -1513,6 +1514,10 @@ A급 주제는 아래 8가지 조건 중 최소 6개 이상을 만족해야 한�
 - [목록주제]와 [목록끝] 마커는 철자 그대로 유지
 - 본문 마지막에 [해시태그대기]와 해시태그 10개를 반드시 출력한다
 - 문단 사이에는 빈 줄을 충분히 넣는다
+- 일반 본문 문장은 한 줄 25자 이하로 짧게 끊는다
+- 긴 문단으로 쭉 나열하지 말고 의미 단위로 줄바꿈한다
+- 2~4줄이 하나의 흐름이 되게 이어 쓰고, 갑자기 끊긴 메모처럼 쓰지 않는다
+- 목록 항목도 가능한 한 짧게 쓰며, 마커와 해시태그 형식은 그대로 유지한다
 
 [절대 금지]
 - 광고 고지문 출력 금지
@@ -1805,11 +1810,97 @@ def normalize_coupang_cta_text(text):
     return cleaned
 
 
+def wrap_short_body_text(text, limit=SHORT_BODY_LINE_LIMIT):
+    """
+    네이버 모바일에서 읽기 쉽게 일반 본문 줄만 짧게 나눈다.
+    마커, 링크, 해시태그는 입력 로직과 링크 인식을 위해 원형을 유지한다.
+    """
+    if not text:
+        return text
+
+    preserved_prefixes = (
+        "[구분선]",
+        "[사진삽입]",
+        "[목록주제]",
+        "[목록끝]",
+        "[인용구]",
+        "[해시태그대기]",
+    )
+
+    def is_preserved_line(line):
+        stripped = line.strip()
+        if not stripped:
+            return True
+        if stripped.startswith(preserved_prefixes):
+            return True
+        if stripped.startswith("#"):
+            return True
+        if re.search(r"https?://|naver\.me", stripped):
+            return True
+        if set(stripped) <= {"─", "-", " "}:
+            return True
+        return False
+
+    def split_to_limit(line_text, line_limit):
+        line_text = re.sub(r"\s+", " ", line_text).strip()
+        if len(line_text) <= line_limit:
+            return [line_text] if line_text else []
+
+        result = []
+        current = ""
+        for word in line_text.split(" "):
+            if len(word) > line_limit:
+                if current:
+                    result.append(current)
+                    current = ""
+                result.extend(word[i:i + line_limit] for i in range(0, len(word), line_limit))
+                continue
+
+            candidate = word if not current else f"{current} {word}"
+            if len(candidate) <= line_limit:
+                current = candidate
+            else:
+                result.append(current)
+                current = word
+
+        if current:
+            result.append(current)
+        return result
+
+    def wrap_prefixed_line(stripped, prefix):
+        available = max(8, limit - len(prefix))
+        chunks = split_to_limit(stripped[len(prefix):].strip(), available)
+        if not chunks:
+            return prefix.rstrip()
+        lines = [f"{prefix}{chunks[0]}"]
+        lines.extend(f"{' ' * len(prefix)}{chunk}" for chunk in chunks[1:])
+        return "\n".join(lines)
+
+    wrapped_lines = []
+    for raw_line in text.splitlines():
+        stripped = raw_line.strip()
+        if is_preserved_line(stripped):
+            wrapped_lines.append(raw_line)
+        elif stripped.startswith("상품명: "):
+            wrapped_lines.append(wrap_prefixed_line(stripped, "상품명: "))
+        elif stripped.startswith("- "):
+            wrapped_lines.append(wrap_prefixed_line(stripped, "- "))
+        elif stripped.startswith("Q. "):
+            wrapped_lines.append(wrap_prefixed_line(stripped, "Q. "))
+        elif stripped.startswith("A. "):
+            wrapped_lines.append(wrap_prefixed_line(stripped, "A. "))
+        else:
+            wrapped_lines.extend(split_to_limit(stripped, limit))
+
+    return "\n".join(wrapped_lines)
+
+
 def build_coupang_link_block(label, message, product_name, product_link):
+    short_message = wrap_short_body_text(message)
     return (
         f"{'─' * 25}\n\n"
         f"{label}\n"
-        f"{message}\n"
+        f"{short_message}\n"
         f"상품명: {product_name}\n"
         f"{product_link}"
     )
@@ -2362,6 +2453,7 @@ def generate_content(post_type):
             blog_content = bot.send_prompt(prompt, max_wait=300)
             if not blog_content:
                 return None, None, None, "", None
+            blog_content = wrap_short_body_text(blog_content)
 
             print("   >> 제목 생성 중 (ChatGPT)...")
             title_prompt = f"""
@@ -2686,6 +2778,10 @@ A. 답변 내용
 - 인용구 내부 문장은 반드시 20자 이상이어야 하며, 빈 인용구 출력 금지
 - [목록주제]와 [목록끝] 마커는 철자 그대로 유지
 - 문단 사이에는 빈 줄을 충분히 넣어라
+- 일반 본문 문장은 한 줄 25자 이하로 짧게 끊어라
+- 긴 문단으로 쭉 나열하지 말고, 의미 단위로 줄바꿈해서 흐름 있게 작성하라
+- 2~4줄이 하나의 자연스러운 호흡이 되도록 이어 쓰고, 메모처럼 툭툭 끊지 마라
+- 목록 항목도 가능한 한 짧게 쓰며, URL, 마커, 해시태그 형식은 그대로 유지하고 상품명은 임의 변경하지 마라
 
 [절대 금지]
 - 광고 고지문 출력 금지
@@ -2707,6 +2803,7 @@ A. 답변 내용
             raw_content = bot.send_prompt(prompt, max_wait=300)
             if not raw_content:
                 return None, None, None, "", None
+            raw_content = wrap_short_body_text(raw_content)
 
             ad_disclaimer = disclosure_text + "\n\n"
             linked_content = distribute_coupang_links(raw_content, p_name, p_link, cta_text)

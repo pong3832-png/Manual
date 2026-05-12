@@ -17,6 +17,7 @@
 - Added baby/child product group guides in `skssj2629/skssj2629.py` for formula/baby food, feeding goods, skincare/hygiene, baby clothing, toys/teaching aids, and baby food containers.
 - Added Shopping Connect prompt rules in `skssj2629/skssj2629.py` to use 2-4 product-specific technical terms and immediately explain them in plain "청담 엄마" language without making medical or performance guarantees.
 - Updated `skssj2629/skssj2629.py` daily and Shopping Connect body prompts to mix natural blog endings such as `~하더라고요`, `~거든요`, and `~잖아요` instead of repeating only formal `~합니다` / `~됩니다` endings.
+- Updated `skssj2629/skssj2629.py` daily and Shopping Connect body prompts plus local post-processing so ordinary body lines are wrapped around 25 Korean characters while URLs, hashtags, and editor markers are preserved; product-name text is kept but may wrap across short lines.
 - Updated `skssj2629/skssj2629(스케줄러).py` for the `skssj2629` folder: task prefix, peer schedule paths, post types, and target script now point to `skssj2629.py` / Naver Shopping Connect.
 - Added `skssj2629/자동발행실행보조파일/run_scheduled_post.ps1` and `run_refresh_schedule.ps1` so scheduled runs execute the local `skssj2629.py` and `skssj2629(스케줄러).py` paths.
 - Registered the `skssj2629` Windows scheduled tasks for `2026-05-12`: 5 daily posts and 5 Naver Shopping Connect posts, plus `NaverBlogAutoPost_2629_RefreshDaily`.
@@ -33,11 +34,13 @@
 - PowerShell parser checks passed for `skssj2629` scheduled-run and refresh wrapper scripts.
 - `schtasks /Query` confirmed `NaverBlogAutoPost_2629_01` and `NaverBlogAutoPost_2629_RefreshDaily` exist and are `Ready`.
 - `skssj2629/skssj2629_naver.csv` still parses with `rows=43`, `평점=True`, `리뷰개수=True`, and 24 populated rating/review values.
+- `py_compile` passed for `skssj2629/skssj2629.py` after short-line body formatting changes.
+- `git diff --check` passed for `AGENTS.md`, `네이버 자동화 ing/AGENTS.md`, and `skssj2629/skssj2629.py`; only LF/CRLF warnings appeared.
 - No live posting, deletion, or bulk external API calls were run.
 
 ### Next
 
-- Check the next scheduled logs in `skssj2629/자동발행상태기록파일/logs/` for ChatGPT/Naver session health, link/hashtag placement outside quote blocks, CSV `used` marking, and natural Cheongdam-mom tone.
+- Check the next scheduled logs in `skssj2629/자동발행상태기록파일/logs/` for ChatGPT/Naver session health, link/hashtag placement outside quote blocks, CSV `used` marking, natural Cheongdam-mom tone, and short-line body flow.
 - If the first Shopping Connect clicks or sales appear, add a lightweight performance CSV for product group, title pattern, rating/review count, and link-position results.
 
 ## 2026-05-11
