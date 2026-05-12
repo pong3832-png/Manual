@@ -2,7 +2,9 @@
 
 ## Project Overview
 
-이 저장소 루트는 `C:\Users\pong3\WORKING_HAPPY`이며, 여러 프로젝트가 함께 들어 있다. 현재 이 문서의 주 작업 대상은 `토스 자동화` 폴더다.
+이 저장소 루트는 `C:\Users\itwill\자동화 공부`이며, 여러 자동화/개인 프로젝트가 함께 들어 있다. 이 파일은 루트 공통 기준이며, 하위 폴더에 별도 `AGENTS.md`가 있으면 루트 규칙 위에 프로젝트 전용 규칙으로 추가 적용한다.
+
+기존 주요 운영 대상은 `토스 자동화` 폴더다. 단, 작업 시작 전에는 항상 실제 폴더 존재 여부와 현재 사용자 요청 범위를 먼저 확인한다.
 
 `토스 자동화`는 토스 앱에서 수동으로 가져온 토스쇼핑 쉐어링크 상품을 CSV로 관리하고, ChatGPT 웹 프로젝트와 네이버 블로그 웹 에디터를 Selenium으로 조작해 네이버 블로그 상품형 정보글을 발행하는 자동화 프로젝트다.
 
@@ -12,18 +14,27 @@
 
 이 프로젝트는 실제 네이버 발행을 수행할 수 있으므로 실행 명령은 위험 작업으로 취급한다. 코드 분석, 문법 검사, CSV 구조 확인은 안전 작업이다.
 
+## Baseline Policy
+
+- 루트 `AGENTS.md`는 전체 작업공간의 최상위 안전 규칙이다. 새 프로젝트를 가져오거나 하위 `AGENTS.md`를 만들 때도 이 파일의 금지/승인/민감정보 규칙을 약화하지 않는다.
+- 이 파일은 통째로 재작성하지 않는다. 기존 규칙은 보존하고, 필요한 변경은 근거가 분명한 최소 패치로 추가/수정한다.
+- 새로 가져오는 Git 프로젝트는 루트 규칙을 복사하지 않고, 해당 프로젝트 루트의 `AGENTS.md`에 프로젝트 전용 명령, 수정 금지 파일, 테스트/빌드/배포 주의만 보완한다.
+- 새 프로젝트에 이미 `AGENTS.md`가 있으면 원본 의도를 먼저 읽고 보존한다. 로컬 보완이 필요하면 별도 섹션으로 추가하고, 충돌하는 규칙은 사용자 확인 전 임의로 덮어쓰지 않는다.
+- 새 프로젝트 편입 시 먼저 `README`, 의존성 파일, 실행 스크립트, `.gitignore`, 민감 파일 패턴을 확인한다. 설치, 배포, 외부 API 활성화, 실제 자동화 실행은 사용자 승인 후 진행한다.
+- 작업 범위는 사용자가 지정한 프로젝트로 제한한다. 루트 전체 검색은 가능하지만, 수정은 명시된 프로젝트와 관련 문서에만 한정한다.
+
 ## Repository Map
 
 Git 루트:
 
 ```text
-C:\Users\pong3\WORKING_HAPPY
+C:\Users\itwill\자동화 공부
 ```
 
-현재 작업 대상:
+토스 자동화 작업 대상(폴더가 존재하거나 복원된 경우):
 
 ```text
-C:\Users\pong3\WORKING_HAPPY\토스 자동화
+C:\Users\itwill\자동화 공부\토스 자동화
 ```
 
 중요 경로:
@@ -46,7 +57,7 @@ C:\Users\pong3\WORKING_HAPPY\토스 자동화
 | `toss_naver_profile` | Naver Chrome 프로필 | 쿠키/세션 민감 |
 | `토스` | 현재 코드가 쓰지 않는 Chrome 프로필 데이터 성격 폴더 | 메인 아님 |
 
-루트에는 `camp-platform`, `티스토리 자동화 ing`, `네이버 자동화 ing`, `Kmong`, `Manual` 등 다른 프로젝트도 있다. 토스 자동화 작업 중에는 명시 요청 없이는 다른 프로젝트를 수정하지 않는다.
+루트에는 `camp-platform`, `티스토리 자동화 ing`, `네이버 자동화 ing`, `크몽 전용`, `개인프로젝트`, `.사용설명서`, `docs` 등 다른 프로젝트/문서도 있다. 특정 프로젝트 작업 중에는 명시 요청 없이는 다른 프로젝트를 수정하지 않는다.
 
 ## Primary Entry Points
 
@@ -85,7 +96,7 @@ C:\Users\pong3\WORKING_HAPPY\토스 자동화
 안전한 확인 명령:
 
 ```powershell
-cd "C:\Users\pong3\WORKING_HAPPY"
+cd "C:\Users\itwill\자동화 공부"
 python -m py_compile "토스 자동화\src\toss.py"
 ```
 
@@ -126,13 +137,13 @@ Import-Csv -LiteralPath "토스 자동화\data\toss_products.csv" | Select-Objec
 실제 발행 실행 명령. 이 명령은 네이버 블로그 발행까지 진행할 수 있으므로 사용자 명시 승인 필요:
 
 ```powershell
-cd "C:\Users\pong3\WORKING_HAPPY"
+cd "C:\Users\itwill\자동화 공부"
 
 $env:PYTHONIOENCODING="utf-8"
 $env:PYTHONUTF8="1"
-$env:NAVER_PROFILE_PATH="C:\Users\pong3\WORKING_HAPPY\toss_naver_profile"
-$env:CHATGPT_PROFILE_PATH="C:\Users\pong3\WORKING_HAPPY\toss_chatgpt_profile"
-$env:TOSS_PRODUCTS_CSV_PATH="C:\Users\pong3\WORKING_HAPPY\토스 자동화\data\toss_products.csv"
+$env:NAVER_PROFILE_PATH="C:\Users\itwill\자동화 공부\toss_naver_profile"
+$env:CHATGPT_PROFILE_PATH="C:\Users\itwill\자동화 공부\toss_chatgpt_profile"
+$env:TOSS_PRODUCTS_CSV_PATH="C:\Users\itwill\자동화 공부\토스 자동화\data\toss_products.csv"
 
 python "토스 자동화\src\toss.py" --post-type 토스
 ```
@@ -199,10 +210,10 @@ https://chatgpt.com/g/g-p-69f9873757288191bc8ba187283e5b30-toseu-jeonyong/projec
 
 | 경로 | 설명 |
 |---|---|
-| `C:\Users\pong3\WORKING_HAPPY\toss_chatgpt_profile` | ChatGPT 로그인 세션 |
-| `C:\Users\pong3\WORKING_HAPPY\toss_naver_profile` | 네이버 로그인 세션 |
+| `C:\Users\itwill\자동화 공부\toss_chatgpt_profile` | ChatGPT 로그인 세션 |
+| `C:\Users\itwill\자동화 공부\toss_naver_profile` | 네이버 로그인 세션 |
 | `토스 자동화/runtime/chrome/` | 크롬 런타임 구조. 과거 세션/캐시성 파일 포함 가능 |
-| `C:\Users\pong3\WORKING_HAPPY\토스` | 현재 코드가 쓰지 않는 크롬 프로필 데이터 성격 |
+| `C:\Users\itwill\자동화 공부\토스` | 현재 코드가 쓰지 않는 크롬 프로필 데이터 성격 |
 
 생성물:
 
@@ -268,7 +279,7 @@ ChatGPT 웹 규칙:
 - 토스 수익 링크를 일반 링크로 대체.
 - 사용자가 삭제하겠다고 한 게시글 외 임의 네이버 게시글 수정/삭제.
 - `node_modules`, `dist`, `build`, Chrome profile, cache를 임의 정리.
-- 다른 프로젝트(`camp-platform`, `티스토리 자동화 ing`, `네이버 자동화 ing`, `Kmong`)를 토스 작업 중 임의 수정.
+- 다른 프로젝트(`camp-platform`, `티스토리 자동화 ing`, `네이버 자동화 ing`, `크몽 전용`, `개인프로젝트`)를 현재 작업 범위 밖에서 임의 수정.
 
 사용자 승인 필요:
 
@@ -301,13 +312,23 @@ Git 작업 주의:
 다른 자동화 폴더 운영 메모:
 
 - `네이버 자동화 ing/네이버 블로그 글쓰기/skssj2628/skssj2628.py`와 `네이버 자동화 ing/네이버 블로그 글쓰기/제미나이웹.py`는 실제 네이버 공개 발행을 수행한다. 수동 실행, 스케줄러 등록/삭제, 발행 재시도는 사용자 명시 승인 후 진행한다.
-- 위 두 파일에서는 네이버 에디터 인용구 툴바(`button[data-name="quotation"]`)를 자동화에서 사용하지 않는다. 포커스 실패 시 빈 인용구 박스가 남을 수 있으므로 `[인용구]...[/인용구]`는 일반 문단의 따옴표 문장과 색/굵기 처리로 입력한다.
-- `[목록주제]`도 인용구 컴포넌트로 만들지 않는다. 일반 굵은 문단으로 입력한 뒤 목록 모드로 전환한다.
+- `skssj2628.py`는 네이버 에디터 인용구 툴바(`button[data-name="quotation"]`)를 의도적으로 사용해 인용구 2~6만 선택한다. 기본 인용구 `default`를 다시 넣지 말고, 빈 `[인용구]`는 툴바를 열기 전에 건너뛰어야 한다.
+- `제미나이웹.py`의 인용구 로직은 `skssj2628.py`와 다를 수 있다. 인용구 스타일을 맞출 때는 먼저 실제 `insert_quotation()` 구현을 확인하고, 두 파일을 동일하다고 가정하지 않는다.
+- `네이버 자동화 ing/네이버 블로그 글쓰기/skssj2629/skssj2629.py`는 네이버 쇼핑커넥트 `skssj2629` 전용 발행 파일이다. 기본 CSV는 `skssj2629/skssj2629_naver.csv`이고, 수동 발행 실행은 사용자 명시 승인 후 진행한다.
+- `skssj2629.py`의 일상/광고 프롬프트는 "성분·소재·동선까지 따지는 청담 사는 자녀 둔 어머니" 컨셉을 유지한다. 전문용어는 쉬운 말로 풀고, `~하더라고요`, `~거든요`, `~잖아요` 같은 자연스러운 블로그 말투를 섞는다.
+- `skssj2629/skssj2629(스케줄러).py`는 Windows 작업 `NaverBlogAutoPost_2629_*`와 `NaverBlogAutoPost_2629_RefreshDaily`를 관리한다. 등록/삭제/변경은 사용자 명시 승인 후 진행하고, 보조 스크립트는 같은 폴더의 `skssj2629/자동발행실행보조파일/`을 사용한다.
+- 네이버 자동화는 전역 클립보드를 공유한다. 이미지 붙여넣기는 클립보드에 이미지가 올라간 것을 확인한 뒤에만 수행하고, 프롬프트 텍스트가 남은 상태에서 `Ctrl+V`가 실행되지 않게 한다.
 - 네이버 ID/비밀번호, 텔레그램 토큰, 쿠팡 API 키, 티스토리 계정값은 코드에 기본값으로 넣지 않는다. 필요한 값은 `.env` 또는 OS 환경변수에서 읽게 한다.
+- `COUPANG_CSV_PATH`는 계정별 기본 CSV 선택을 덮어쓸 수 있으므로 명시적으로 필요할 때만 설정한다. 특히 `products_db.csv` 같은 오래된 값이 남으면 `제미나이웹.py`가 잘못된 DB를 찾을 수 있다.
+- `skssj2628.py`의 현재 쿠팡 링크 정책은 본문 중간 1회다. 마지막 1회로 옮기거나 링크 횟수를 바꾸려면 사용자와 성과 기준/A-B 테스트 방향을 먼저 합의한다.
 - `네이버 자동화 ing/네이버 블로그 글쓰기/*/자동발행상태기록파일/logs/`는 발행 성공/실패 판단의 1차 근거다. 스케줄러 이슈를 볼 때는 최근 로그와 `automation.lock`, 실행 중 `python/chromedriver` 프로세스를 먼저 확인한다.
 - `네이버 자동화 ing/네이버 블로그 글쓰기/*_db.csv`에는 제휴/상품 링크가 들어갈 수 있다. 정리 작업 시 백업을 먼저 만들고, 링크 원문은 문서나 답변에 노출하지 않는다.
 - `티스토리 자동화 ing/golf/main_golf.py`와 `G스케줄러`는 실제 티스토리 발행/스케줄 등록에 연결된다. 실행, 등록, 삭제는 사용자 명시 승인 후 진행한다.
 - `티스토리 자동화 ing/golf/main_golf.py`의 해외 골프여행 글은 사전 리서치 브리프와 상세도 검증을 거쳐야 한다. 시간표, 이동수단, 예상 금액, 골프장 후보, 식당/관광, 보험/수하물 정보가 빠진 글은 발행 흐름에서 막는 방향을 유지한다.
+- `티스토리 자동화 ing/golf/main_golf.py`에서 이미지 생성 뒤 본문 HTML 생성이 멈추면 먼저 `runtime/logs/scheduled_golf/*.log`, `runtime/logs/chatgpt_web_runs_golf.csv`, 실행 중 `pythonw/chromedriver` 중복 여부를 확인한다. 본문 프롬프트를 줄이더라도 `validate_golf_research_brief()`와 `validate_golf_travel_specificity()`를 우회하지 않는다.
+- 골프 본문 프롬프트에는 원본 리서치 브리프 전체를 다시 넣지 말고, 시간표·지명·이동수단·예상 금액·골프장 후보·식당/관광·보험/수하물 핵심을 압축한 본문용 브리프를 사용한다. 품질 저하를 막기 위해 비용 수치, 시간대, 보험·수하물 체크가 압축본에 남아 있는지 확인한다.
+- `티스토리 자동화 ing/src/tistory_automation/main.py`는 쿠팡/일상 전용이다. 골프, 골프여행, 골프백, 라운딩, 그린피, 캐디 등 골프 주제는 `티스토리 자동화 ing/golf/main_golf.py`와 `G스케줄러`에서만 생성한다. daily 프롬프트에 골프 축을 다시 넣지 않는다.
+- 현재 `티스토리 자동화 ing`의 Windows 작업 스케줄러 `TistoryChatGPTAutoPost_*`, `TistoryChatGPTAutoPost_RefreshDaily`, `Tistory_Golf_24H_Random*`, `TestPythonW`는 사용자 요청으로 비활성화된 상태다. 다시 켜거나 재등록하려면 사용자 명시 승인 후 진행한다.
 
 ## Coding Conventions
 
@@ -374,7 +395,7 @@ Get-Content -Encoding UTF8 -LiteralPath "토스 자동화\data\publish_queue.csv
 
 ## Handoff Notes
 
-다음 세션에서 먼저 읽을 파일:
+토스 자동화 작업을 이어갈 때 다음 세션에서 먼저 읽을 파일:
 
 1. `AGENTS.md`
 2. `docs/work-log.md`
@@ -392,12 +413,12 @@ Get-Content -Encoding UTF8 -LiteralPath "토스 자동화\data\publish_queue.csv
 - 새 운영 규칙, 안전 규칙, 실행 명령, 민감 파일 주의사항이 생기면 `AGENTS.md`도 함께 갱신한다.
 - work log는 장문 회고가 아니라 다음 CLI 세션이 바로 이어갈 수 있는 변경사항, 검증 결과, 다음 작업만 적는다.
 
-현재 git 상태 주의:
+Git 상태 주의:
 
-- Git 루트는 `C:\Users\pong3\WORKING_HAPPY`.
-- 전체 `git status --short`는 확인 시점에 약 799줄이었다.
-- 추적 파일 변경도 약 754줄로 많았고, 대부분 `camp-platform`, `node_modules`, 기타 프로젝트 변경/삭제가 섞여 있었다.
-- `토스 자동화`는 현재 Git에서 untracked 폴더로 보였다.
+- Git 루트는 `C:\Users\itwill\자동화 공부`.
+- 전체 `git status --short`는 과거 확인 시점에 약 799줄이었다. 현재 값은 작업 전 다시 확인한다.
+- 추적 파일 변경도 과거 확인 시점에 약 754줄로 많았고, 대부분 `camp-platform`, `node_modules`, 기타 프로젝트 변경/삭제가 섞여 있었다.
+- `토스 자동화`가 현재 루트에 없거나 untracked로 보일 수 있으므로, 작업 전 `Test-Path`와 `git status --short -- "토스 자동화"`로 확인한다.
 - 어떤 변경도 임의로 revert/reset/delete 하지 말 것.
 
 최근 `토스 자동화` 주요 변경 파일:
@@ -419,7 +440,7 @@ Get-Content -Encoding UTF8 -LiteralPath "토스 자동화\data\publish_queue.csv
 
 ## 확인한 근거 파일
 
-이 문서는 다음 파일과 명령 결과를 근거로 작성했다.
+토스 자동화 관련 내용은 다음 파일과 명령 결과를 근거로 작성했다. 현재 루트에 해당 파일이 있는지는 작업 전 다시 확인한다.
 
 - `git rev-parse --show-toplevel`
 - `rg --files "토스 자동화"`
