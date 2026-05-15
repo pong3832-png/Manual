@@ -1,5 +1,35 @@
 # Work Log
 
+## 2026-05-15
+
+### 네이버 자동화 ing/네이버 블로그 글쓰기/skssj2628
+
+- 변경사항
+  - `skssj2628.py` 일상글을 장마습기, 냉방전기, 여름위생, 자취집관리, 생활정책돈관리 중심의 세부 검색 의도형 주제로 재지정.
+  - 각 주제에 핵심 원리, 정확한 용어, 확인 순서, 실천 포인트, 실수, FAQ, 사실 확인 주의사항을 넣고 본문/제목 프롬프트가 이를 쓰도록 보강.
+- 검증
+  - `python -m py_compile "네이버 자동화 ing\네이버 블로그 글쓰기\skssj2628\skssj2628.py"` 통과.
+  - `git diff --check -- "네이버 자동화 ing\네이버 블로그 글쓰기\skssj2628\skssj2628.py"` 통과. LF/CRLF 경고만 출력됨.
+- 다음 작업
+  - 다음 `skssj2628` 일상 발행 로그/실제 글에서 원인 설명, 정확한 용어 풀이, 확인 순서가 충분한지 확인.
+  - 여전히 얕으면 주제별 본문 후검증 또는 재작성 조건 추가 검토.
+
+### 네이버 자동화 ing/네이버 블로그 글쓰기/skssj2629
+
+- 변경사항
+  - `자동발행실행보조파일/run_refresh_schedule.ps1`: `RefreshDaily` 실행 시 `자동발행상태기록파일/logs/*_RefreshDaily.log`에 시작 시각, 프로젝트 경로, Python 경로, 스케줄러 파일 경로, refresh time, 실행 출력, 종료코드를 남기도록 추가.
+  - Windows PowerShell이 UTF-8 BOM 없는 스크립트의 한글 파일명 리터럴을 잘못 읽을 수 있어 `skssj2629(스케줄러).py`와 상태 폴더를 한글 문자열로 직접 지정하지 않고 ASCII 패턴/기존 상태 파일로 찾도록 변경.
+  - Python 출력 인코딩을 UTF-8로 고정해 이후 refresh 로그에서 한글 출력이 깨질 가능성을 줄임.
+  - 사용자 승인 후 `run_refresh_schedule.ps1 -RefreshTime 00:05`를 실행해 2026-05-15 남은 시간 기준 `NaverBlogAutoPost_2629_01`~`10`과 `NaverBlogAutoPost_2629_RefreshDaily`를 재등록.
+- 검증
+  - `run_refresh_schedule.ps1` PowerShell 파서 검사 통과.
+  - `run_refresh_schedule.ps1` 실행 종료코드 0.
+  - `daily_schedule.json`이 `target_date=2026-05-15`, `generated_at=2026-05-15 09:29:24`로 갱신됨.
+  - `schtasks /Query`로 `_01`~`_10` 다음 실행 시간이 2026-05-15 09:45~23:27, `RefreshDaily` 다음 실행 시간이 2026-05-16 00:05로 등록된 것을 확인.
+- 다음 작업
+  - 2026-05-16 00:05 이후 `*_RefreshDaily.log`와 작업 스케줄러 `Last Result`가 0인지 확인.
+  - 다음 실패 시 새 refresh 로그의 `exit_code`와 Python 출력으로 원인을 확인.
+
 ## 2026-05-12
 
 ### 네이버 자동화 ing/네이버 블로그 글쓰기

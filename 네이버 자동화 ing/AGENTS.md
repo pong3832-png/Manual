@@ -37,6 +37,12 @@
 - Do not run Coupang deeplink/API conversion for Shopping Connect data.
 - Keep Shopping Connect state files separate from Coupang used-product history.
 
+## Daily Content Quality
+
+- `skssj2628/skssj2628.py` daily posts should use narrow search-intent topics, not diary-style broad topics.
+- Preserve the topic fields that drive depth: `core_explanation`, `specific_terms`, `check_sequence`, `practical_points`, `mistakes_to_avoid`, `faq_questions`, and `fact_guardrails`.
+- For policy, weather, electricity-rate, or other changeable factual topics, do not invent numbers or dates. Use the guardrails in the prompt and verify official sources before adding hard facts.
+
 ## Scheduler Notes
 
 - The actual posting schedule is Windows Task Scheduler, not necessarily any in-code `generate_daily_schedule()` helper.
