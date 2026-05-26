@@ -33,15 +33,34 @@
 - Shopping Connect rows must preserve the user-provided `쇼핑커넥트링크` and `광고고지문`; do not replace `naver.me` affiliate links with generic product URLs.
 - `평점` and `리뷰개수` are reference-only prompt inputs; never turn them into quality, satisfaction, medical, or performance guarantees.
 - The `skssj2629` blog persona is a detail-sensitive Cheongdam mother. Keep ad/daily prompts natural, using technical terms only when explained plainly and mixing conversational endings like `~하더라고요`, `~거든요`, and `~잖아요`.
-- `skssj2629` daily and ad body text should keep ordinary visible lines at about 25 Korean characters or less instead of long paragraphs; preserve URLs, hashtags, and Naver editor markers during any line-wrap post-processing, and do not alter product-name text.
+- `skssj2629` daily and ad body text should keep ordinary visible lines around 40 Korean characters instead of overly short chopped lines or long paragraphs; preserve URLs, hashtags, and Naver editor markers during any line-wrap post-processing, and do not alter product-name text.
 - Do not run Coupang deeplink/API conversion for Shopping Connect data.
 - Keep Shopping Connect state files separate from Coupang used-product history.
+
+## Gemini Web Automation
+
+- `네이버 블로그 글쓰기/제미나이웹.py` uses the Gemini Chrome profile at `C:\Users\itwill\ChromeGeminiBot`.
+- To change the Gemini Google account, close any Chrome/ChromeDriver using that profile, back up or rename `ChromeGeminiBot`, then log in with a fresh profile. Do not delete old session folders unless the user explicitly approves.
+- Close any manually opened Gemini Chrome window before running automation, because the same profile can be locked by an existing browser process.
+- Gemini UI no longer exposes the old `사고 모델` option. `제미나이웹.py` should select `Gemini 3.1 Pro` by visible model text.
+- If Gemini model selection fails after a UI update, inspect `_select_thinking_model()` and the visible model menu first; do not guess new selectors.
 
 ## Daily Content Quality
 
 - `skssj2628/skssj2628.py` daily posts should use narrow search-intent topics, not diary-style broad topics.
 - Preserve the topic fields that drive depth: `core_explanation`, `specific_terms`, `check_sequence`, `practical_points`, `mistakes_to_avoid`, `faq_questions`, and `fact_guardrails`.
 - For policy, weather, electricity-rate, or other changeable factual topics, do not invent numbers or dates. Use the guardrails in the prompt and verify official sources before adding hard facts.
+
+## Coupang Crawlers
+
+- Running Coupang crawlers modifies CSV databases and calls an external site, so start crawls only after explicit user approval.
+- If Coupang blocks normal automation, open debugger Chrome first and wait for the user to finish login/authentication before starting the crawler.
+- Port `9333` with profile `C:\Users\itwill\ChromeCoupangDebugStable9333` is a working fallback when `9222` is blocked. Set `COUPANG_DEBUGGER_ADDRESS=127.0.0.1:9333` for that session.
+- `skssj2627_crawler.py` and `skssj2628/skssj2628_crawler.py` must skip products that were already crawled or ever posted by normalized product name, canonical URL, product ID, item ID, and product+item identity keys.
+- `skssj2627_db.csv` uses parent `네이버 블로그 글쓰기/자동발행상태기록파일/coupang_used_products.json`; `skssj2628_db.csv` uses `skssj2628/자동발행상태기록파일/coupang_used_products.json`.
+- Do not clear used-history JSON files during CSV cleanup. If the user asks to remove used rows from a CSV, create a backup first.
+- Current replenishment crawls should not click Coupang `판매량순`; crawl the current category screen before sort. A target count can require multiple pages because existing/used products are filtered out.
+- Review sampled rows before large no-sort crawls because Coupang can return mixed product names even when the CSV category label is fixed.
 
 ## Scheduler Notes
 

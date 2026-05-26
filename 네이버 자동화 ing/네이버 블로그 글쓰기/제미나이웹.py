@@ -9,8 +9,6 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
 # webdriver_manager 제거 → 고정 chromedriver 경로 사용
-from PIL import Image
-from io import BytesIO
 import requests
 import pyperclip
 import time
@@ -27,11 +25,12 @@ from filelock import FileLock
 
 import sys
 import argparse
-import urllib.parse
-from datetime import datetime, timedelta
+from datetime import datetime
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-AUTOMATION_LOCK_PATH = os.path.join(BASE_DIR, "자동발행상태기록파일", "automation.lock")
+PROJECT_ROOT = BASE_DIR
+AUTOMATION_LOCK_PATH = os.path.join(PROJECT_ROOT, "자동발행상태기록파일", "automation.lock")
+os.makedirs(os.path.dirname(AUTOMATION_LOCK_PATH), exist_ok=True)
 
 
 def load_env_file(path):
@@ -132,6 +131,60 @@ def resolve_default_csv_path():
     return candidates[1]
 
 
+def get_installed_chrome_major_version():
+    chrome_paths = [
+        r"C:\Program Files\Google\Chrome\Application\chrome.exe",
+        r"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe",
+    ]
+    for chrome_path in chrome_paths:
+        if not os.path.exists(chrome_path):
+            continue
+        try:
+            safe_path = chrome_path.replace("'", "''")
+            completed = subprocess.run(
+                ["powershell", "-NoProfile", "-Command", f"(Get-Item -LiteralPath '{safe_path}').VersionInfo.ProductVersion"],
+                capture_output=True,
+                text=True,
+                timeout=5,
+            )
+            match = re.search(r"(\d+)\.", completed.stdout or "")
+            if match:
+                return match.group(1)
+        except Exception:
+            continue
+    return None
+
+
+def get_chromedriver_major_version(chromedriver_path):
+    try:
+        completed = subprocess.run(
+            [chromedriver_path, "--version"],
+            capture_output=True,
+            text=True,
+            timeout=5,
+        )
+        match = re.search(r"ChromeDriver\s+(\d+)\.", completed.stdout or "")
+        if match:
+            return match.group(1)
+    except Exception:
+        return None
+    return None
+
+
+def is_chromedriver_compatible(chromedriver_path):
+    chrome_major = get_installed_chrome_major_version()
+    driver_major = get_chromedriver_major_version(chromedriver_path)
+    if not chrome_major or not driver_major:
+        return True
+    if chrome_major != driver_major:
+        print(
+            "   >> [주의] ChromeDriver 버전 불일치로 건너뜁니다: "
+            f"Chrome {chrome_major}, Driver {driver_major}, {chromedriver_path}"
+        )
+        return False
+    return True
+
+
 def create_chrome_driver(options):
     """
     ChromeDriver 경로가 지정돼 있으면 우선 사용하고,
@@ -144,9 +197,11 @@ def create_chrome_driver(options):
             raise FileNotFoundError(
                 f"CHROMEDRIVER_PATH 경로를 찾을 수 없습니다: {chromedriver_path}"
             )
-        return webdriver.Chrome(service=Service(chromedriver_path), options=options)
+        if is_chromedriver_compatible(chromedriver_path):
+            return webdriver.Chrome(service=Service(chromedriver_path), options=options)
 
     candidate_paths = [
+        os.path.join(os.path.expanduser("~"), ".wdm", "drivers", "chromedriver", "win64", "148.0.7778.167", "chromedriver-win32", "chromedriver.exe"),
         os.path.join(os.path.expanduser("~"), ".cache", "selenium", "chromedriver", "win64", "147.0.7727.117", "chromedriver.exe"),
         os.path.join(os.path.expanduser("~"), ".cache", "selenium", "chromedriver", "win64", "147.0.7727.56", "chromedriver.exe"),
         r"C:\py_temp\chromedriver.exe",
@@ -156,7 +211,7 @@ def create_chrome_driver(options):
         os.path.join(os.path.expanduser("~"), "workspace", "chromedriver", "chromedriver-win64", "chromedriver.exe"),
     ]
     for candidate_path in candidate_paths:
-        if os.path.exists(candidate_path):
+        if os.path.exists(candidate_path) and is_chromedriver_compatible(candidate_path):
             print(f"   >> [안내] 로컬 ChromeDriver 사용: {candidate_path}")
             return webdriver.Chrome(service=Service(candidate_path), options=options)
 
@@ -328,10 +383,10 @@ DAILY_SCENE_BANK = [
 ]
 
 PHOTO_STYLE_BANK = [
-    "한국의 현실적인 집안관리 스냅 사진",
-    "따뜻한 생활감이 느껴지는 자연광 실내 사진",
-    "과하게 연출되지 않은 블로그용 생활 정보 사진",
-    "창문, 빨래, 환기, 생활가전이 자연스럽게 보이는 사진",
+    "20대 성인 한국인 여성이 자연스럽게 등장하는 현실적인 집안관리 스냅 사진",
+    "20대 성인 한국인 여성이 편안하게 머무는 따뜻한 자연광 실내 사진",
+    "20대 성인 한국인 여성이 생활 속 문제를 확인하는 블로그용 생활 정보 사진",
+    "20대 성인 한국인 여성과 창문, 빨래, 환기, 생활가전이 자연스럽게 보이는 사진",
 ]
 
 DAILY_CATEGORY_BANK = [
@@ -722,6 +777,73 @@ def infer_coupang_product_group(row):
     return "기타생활용품"
 
 
+def build_coupang_group_writing_guide(group_name, row):
+    text_blob = " ".join(
+        [
+            group_name,
+            get_product_field(row, "상품명"),
+            get_product_field(row, "키워드"),
+            get_product_field(row, "카테고리"),
+            get_product_field(row, "상품군"),
+        ]
+    ).lower()
+
+    if any(keyword in text_blob for keyword in ["식품", "간식", "음료", "쌀", "김치", "커피", "차", "라면", "소스", "고기", "과일"]):
+        return (
+            "- 식품은 맛을 단정하지 말고 보관 방식, 용량, 소비 속도, 유통기한 확인, 가족 수 기준을 중심으로 쓴다.\n"
+            "- 냉장/냉동/상온 보관 여부와 한 번에 소비하기 쉬운 양인지 같은 생활 판단을 구체적으로 다룬다.\n"
+            "- 건강 개선, 체중감량, 치료, 효능 보장처럼 확인되지 않은 표현은 넣지 않는다."
+        )
+
+    if any(keyword in text_blob for keyword in ["선풍기", "써큘레이터", "서큘레이터", "에어컨", "냉풍기", "제습기", "가습기", "공기청정기"]):
+        return (
+            "- 계절가전은 소음, 전기 사용 부담, 필터/물통/청소 관리, 설치 공간, 방 크기를 중심으로 쓴다.\n"
+            "- 성능을 보장하지 말고 사용 환경에 따라 체감이 달라질 수 있음을 분명히 둔다.\n"
+            "- 계절 수요가 있는 제품은 지금 급한 환경과 천천히 비교해도 되는 환경을 나눠 설명한다."
+        )
+
+    if any(keyword in text_blob for keyword in ["모기", "훈증", "살충", "퇴치", "홈매트"]):
+        return (
+            "- 모기/벌레 관련 제품은 사용 공간, 환기, 아이나 반려동물 여부, 사용 시간대, 교체 주기를 중심으로 쓴다.\n"
+            "- 완전 차단, 박멸 같은 과장 표현은 피하고 생활 불편을 줄이는 확인 기준으로 풀어낸다.\n"
+            "- 성분이나 안전성은 단정하지 말고 상세페이지와 사용 설명 확인이 필요하다고 안내한다."
+        )
+
+    if any(keyword in text_blob for keyword in ["청소기", "먼지", "물걸레", "브러시", "흡입"]):
+        return (
+            "- 청소 관련 제품은 바닥 재질, 먼지 종류, 보관 위치, 필터 관리, 소음, 무게를 중심으로 쓴다.\n"
+            "- 청소 성능을 임의로 단정하지 말고 집 구조와 청소 빈도에 따라 확인할 기준을 나눈다.\n"
+            "- 원룸, 가족 거실, 반려동물 있는 집처럼 먼지 상황이 달라지는 환경을 반영한다."
+        )
+
+    if any(keyword in text_blob for keyword in ["건조대", "빨래", "세탁", "건조"]):
+        return (
+            "- 세탁/건조 관련 제품은 설치 공간, 접었을 때 크기, 가족 빨래량, 이동 편의성, 습한 날 사용성을 중심으로 쓴다.\n"
+            "- 튼튼함을 단정하지 말고 하중, 소재, 바닥 공간처럼 상세페이지에서 확인할 항목을 구체화한다.\n"
+            "- 원룸, 베란다, 욕실 앞처럼 실제 배치 장면을 떠올릴 수 있게 문장을 만든다."
+        )
+
+    if any(keyword in text_blob for keyword in ["포트", "주전자", "전기포트", "인덕션", "전자레인지", "오븐"]):
+        return (
+            "- 주방 소형가전은 용량, 세척 편의, 보관 위치, 전원선, 안전 기능 확인을 중심으로 쓴다.\n"
+            "- 끓는 속도나 내구성을 임의로 단정하지 말고 상세 스펙에서 확인할 부분으로 안내한다.\n"
+            "- 1인 가구, 사무실, 가족용처럼 사용량이 다른 상황을 나눠 설명한다."
+        )
+
+    if any(keyword in text_blob for keyword in ["소모품", "휴지", "세제", "필터", "리필", "봉투", "수세미", "물티슈", "샴푸", "세정"]):
+        return (
+            "- 소모품은 개수, 리필 가능 여부, 보관 부피, 교체 주기, 사용 장소별 소비량을 중심으로 쓴다.\n"
+            "- 싸다/오래 간다처럼 단정하지 말고 집의 소비 속도와 보관 공간에 맞는지 따지게 한다.\n"
+            "- 대량 구성은 장점과 함께 보관 부담도 같이 다룬다."
+        )
+
+    return (
+        "- 생활용품은 사용 장소, 보관 공간, 구성, 크기, 관리 편의성, 자주 쓰는 빈도를 중심으로 쓴다.\n"
+        "- 상품군이 애매할수록 일반 칭찬보다 어떤 상황에서 확인할 만한지 구체적인 장면을 먼저 제시한다.\n"
+        "- 가격보다 내 생활 방식과 맞는지 따지는 흐름을 유지한다."
+    )
+
+
 def score_coupang_candidate(row, recent_history):
     group_name = infer_coupang_product_group(row)
     keyword = get_product_field(row, "키워드")
@@ -840,6 +962,13 @@ def build_daily_post_prompt(daily_context):
     mistakes_to_avoid = format_daily_prompt_items(daily_context.get("mistakes_to_avoid", []))
     faq_questions = format_daily_prompt_items(daily_context.get("faq_questions", []))
     related_keywords = ", ".join(daily_context.get("related_keywords", []))
+    daily_neighbor_cta = random.choice([
+        "비슷한 계절 생활문제를 계속 정리해두고 있으니 필요할 때 찾아보기 편하게 이웃 추가해두셔도 좋습니다.",
+        "집안관리 기준을 계절마다 다시 볼 수 있게 정리하고 있으니 관심 있는 분들은 이웃 추가해두면 편합니다.",
+        "습도, 환기, 냉방처럼 반복되는 생활 기준은 계속 다룰 예정이라 이웃으로 남겨두시면 찾기 쉽습니다.",
+        "생활가전보다 먼저 볼 집안 기준을 꾸준히 정리하고 있으니 필요할 때 다시 보실 분들은 이웃 추가해두셔도 괜찮습니다.",
+        "비슷한 고민이 자주 생긴다면 계절별 체크 기준을 이어서 볼 수 있게 이웃으로 저장해두셔도 좋습니다.",
+    ])
 
     return f"""
 너는 네이버 블로그에서 계절 생활문제와 집안관리 정보를 다루는 생활 정보형 블로거다.
@@ -878,7 +1007,7 @@ def build_daily_post_prompt(daily_context):
 [본문 안에서 자연스럽게 답할 질문]
 {faq_questions}
 
-[이 블로그 운영 방향]
+[skssj2627 블로그 방향]
 이 블로그는 계절 생활문제, 집안관리, 실내환경, 생활가전 구매 전 체크를 다루는 정보형 블로그다.
 
 아래 방향과 맞는 글만 작성한다.
@@ -945,7 +1074,7 @@ A급 주제는 아래 8가지 조건 중 최소 6개 이상을 만족해야 한�
 
 8. 조회수와 블로그 주제 신뢰도를 동시에 노릴 수 있다
 - 단순 조회수만 위한 맛집, 데이트, 이슈성 잡담은 제외한다.
-- 이 블로그가 계절 생활문제 블로그로 보이는 데 도움이 되는 주제를 고른다.
+- skssj2627이 계절 생활문제 블로그로 보이는 데 도움이 되는 주제를 고른다.
 
 [A급 주제 우선순위]
 아래 목록은 주제 감각을 맞추기 위한 참고용이다.
@@ -1024,12 +1153,13 @@ A급 주제는 아래 8가지 조건 중 최소 6개 이상을 만족해야 한�
 [본문 품질 기준]
 본문은 아래 조건을 반드시 만족해야 한다.
 
-1. 첫 문단은 생활 장면으로 시작한다
-- 예: 빨래를 널었는데 냄새가 남
-- 예: 방에 들어왔는데 공기가 무겁게 느껴짐
-- 예: 선풍기를 틀었는데 시원하지 않음
-- 예: 에어컨을 켜려다 전기세가 신경 쓰임
-- 예: 창문을 열었는데 환기가 잘 안 되는 느낌
+1. 첫 문단은 검색 의도와 생활 장면을 함께 잡는다
+- 첫 문장에는 확정 핵심 검색어를 자연스럽게 넣고, 독자가 겪는 문제 상황을 바로 요약한다.
+- 두 번째 문장에는 이 글에서 확인할 기준 2~3가지를 짧게 예고한다.
+- 세 번째 문장부터 생활 장면으로 자연스럽게 이어간다.
+- 예: 장마철 빨래 냄새가 반복된다면 세탁보다 먼저 건조 환경과 환기 흐름을 확인해야 합니다.
+- 예: 방이 꿉꿉할 때는 제습기부터 보기보다 습기가 모이는 위치, 창문 구조, 빨래 간격을 나눠보는 편이 낫습니다.
+- 예: 에어컨 전기세가 걱정된다면 사용 시간보다 냉기가 새는 구조와 선풍기 위치부터 확인하는 게 순서입니다.
 - 단, 오늘은 ~에 대해 알아보겠습니다로 시작하지 마라.
 
 2. 3문단 안에 정보글로 전환한다
@@ -1111,10 +1241,12 @@ A급 주제는 아래 8가지 조건 중 최소 6개 이상을 만족해야 한�
 [본문 구조]
 아래 순서로 작성한다.
 
-1. 생활 장면으로 시작
-- 날짜, 계절, 날씨, 실제 장면 중 2개 이상을 자연스럽게 반영한다.
-- 선택한 핵심 키워드를 첫 3문단 안에 자연스럽게 1회 포함한다.
-- 시작은 짧고 구체적으로 쓴다.
+1. 검색어와 문제 상황으로 시작
+- 첫 문장에는 선택한 핵심 키워드를 자연스럽게 1회 포함한다.
+- 첫 문장은 독자가 검색한 이유가 바로 보이도록 문제 상황을 요약한다.
+- 두 번째 문장은 이 글에서 확인할 기준 2~3가지를 짧게 말한다.
+- 세 번째 문장부터 날짜, 계절, 날씨, 실제 장면 중 2개 이상을 자연스럽게 반영한다.
+- 시작은 짧고 구체적으로 쓰되, 검색어만 억지로 반복하지 않는다.
 
 2. 문제가 생기는 이유
 - 원인을 2~4개로 나눠 설명한다.
@@ -1149,6 +1281,9 @@ A급 주제는 아래 8가지 조건 중 최소 6개 이상을 만족해야 한�
 - 오늘의 생활 장면으로 살짝 돌아오며 정리한다.
 - 광고성 문장 없이 끝낸다.
 - 제품 구매를 직접 유도하지 않는다.
+- 아래 이웃 추가 문장을 마지막 정리 안에서 1회만 자연스럽게 넣는다.
+- 이웃 추가 문장을 여러 번 반복하거나 명령형으로 바꾸지 않는다.
+- 이웃 추가 문장: {daily_neighbor_cta}
 - 다음에 관련 제품이나 관리 방법을 볼 때 어떤 기준부터 보면 좋은지만 말한다.
 
 [인용구 규칙]
@@ -1156,9 +1291,9 @@ A급 주제는 아래 8가지 조건 중 최소 6개 이상을 만족해야 한�
 [인용구]문장내용[/인용구]
 
 인용구는 광고처럼 쓰지 말고, 글의 핵심 판단 기준을 담아라.
-인용구 안에는 반드시 25자 이상 70자 이하의 자연스러운 한국어 완성 문장을 넣어라.
-[인용구][/인용구], [인용구] [/인용구], [인용구]문장내용[/인용구]처럼 비어 있거나 자리표시자만 있는 인용구는 절대 출력하지 마라.
-인용구는 선택한 핵심 키워드나 본문에서 다루는 생활 문제와 직접 연결되어야 하며, 의미 없는 감성 문장으로 채우지 마라.
+인용구 안의 문장내용은 반드시 20자 이상 60자 이하의 완성된 한국어 문장이어야 한다.
+절대 [인용구][/인용구], [인용구] [/인용구], [인용구]문장내용[/인용구]처럼 비어 있거나 예시 문구가 그대로 남은 형태를 출력하지 마라.
+인용구에 넣을 문장이 확실하지 않으면 인용구 마커 자체를 만들지 말고, 빈 인용구는 절대 만들지 마라.
 예:
 [인용구]생활 문제는 제품보다 먼저 우리 집 환경을 보는 게 순서였습니다[/인용구]
 [인용구]불편함이 반복된다면 원인부터 나눠보는 게 훨씬 빠릅니다[/인용구]
@@ -1186,25 +1321,27 @@ A급 주제는 아래 8가지 조건 중 최소 6개 이상을 만족해야 한�
 - 설명 금지
 - 본문 주제와 직접 관련된 태그만 사용
 - 계절 생활문제, 집안관리, 습도, 냉방, 환기, 빨래냄새, 공기질, 원룸생활, 생활가전, 구매전체크 중 문맥에 맞는 태그를 고른다.
-- 위 후보는 참고용일 뿐이며, 본문 핵심 키워드와 맞지 않는 태그는 절대 넣지 않는다.
-- 첫 번째 태그는 본문에서 선택한 핵심 키워드를 해시태그 형태로 자연스럽게 바꾼 것이다.
-- 태그만 봐도 본문 주제가 짐작되어야 하며, 다른 상품군이나 다른 계절 이슈로 보이면 다시 작성한다.
 - 너무 긴 태그 금지
 - 광고 느낌 강한 태그 금지
 - 쿠팡, 로켓배송, 구매링크 같은 태그는 일상글에는 쓰지 마라.
 
 [출력 규칙]
 - 제목 없이 본문만 출력
-- 1900자 이상
+- 2600자 이상 3200자 이하를 목표로 작성
+- 글자수를 늘리기 위해 같은 기준이나 표현을 반복하지 말고, 원인, 확인 기준, 상황별 차이, 실수 방지를 구체화한다
 - 자연스러운 한국어만 사용
 - 영어 문장, 영어 제목 후보, 작업 메모 출력 금지
 - 마크다운 서식 금지
 - [구분선]은 정확히 2~3회
 - [인용구]문장[/인용구] 형식 1~2회
-- 인용구 안쪽 문장은 절대 비우지 말고, 본문 핵심 판단 기준과 직접 관련된 완성 문장으로 채운다
+- 인용구 내부 문장은 반드시 20자 이상이어야 하며, 빈 인용구 출력 금지
 - [목록주제]와 [목록끝] 마커는 철자 그대로 유지
 - 본문 마지막에 [해시태그대기]와 해시태그 10개를 반드시 출력한다
 - 문단 사이에는 빈 줄을 충분히 넣는다
+- 일반 본문 문장은 한 줄 40자 안팎으로 쓰고, 길어도 45자를 넘기지 않는다
+- 한 문장을 길게 한 문단으로 늘어쓰지 말고, 의미 단위마다 엔터를 눌러 아래 줄로 내려쓴다
+- 긴 문단으로 쭉 나열하지 말고 2~4줄이 하나의 자연스러운 흐름이 되게 작성한다
+- 목록 항목도 너무 짧게 쪼개지 말고 40자 안팎의 자연스러운 호흡으로 쓰며, 마커와 해시태그 형식은 그대로 유지한다
 
 [절대 금지]
 - 광고 고지문 출력 금지
@@ -1224,6 +1361,7 @@ def build_daily_image_prompt(daily_context):
         f"{daily_context['photo_style']}, {daily_context['season']} 분위기, "
         f"{daily_context['weather_key']} 느낌, {daily_context['image_scene']}, "
         f"{daily_context['search_phrase']}와 관련된 집안관리 정보형 블로그 사진, "
+        "20대 성인 한국인 여성이 반드시 등장하고 자연스러운 표정과 생활감이 보이는 장면, "
         "제품 로고나 글자가 보이지 않는 자연스러운 실내 생활 장면"
     )
 
@@ -1335,30 +1473,6 @@ def call_coupang_api(method, path_with_query, payload=None):
         raise RuntimeError(f"쿠팡 API 오류: {data.get('rMessage') or data}")
     return data
 
-
-def search_coupang_products(keyword, limit=10):
-    keyword = (keyword or "").strip()
-    if not keyword:
-        return [], ""
-
-    limit = max(1, min(int(os.getenv("COUPANG_SEARCH_LIMIT", str(limit)) or limit), 10))
-    query_params = [
-        ("keyword", keyword),
-        ("limit", str(limit)),
-        ("imageSize", os.getenv("COUPANG_IMAGE_SIZE", "512x512").strip() or "512x512"),
-        ("srpLinkOnly", "false"),
-    ]
-    sub_id = os.getenv("COUPANG_SUB_ID", "").strip()
-    if sub_id:
-        query_params.insert(2, ("subId", sub_id))
-
-    query = urllib.parse.urlencode(query_params)
-    path_with_query = f"{COUPANG_API_BASE_PATH}/products/search?{query}"
-    result = call_coupang_api("GET", path_with_query)
-    data = result.get("data") or {}
-    return data.get("productData") or [], data.get("landingUrl") or ""
-
-
 def generate_coupang_deeplink(original_url):
     original_url = (original_url or "").strip()
     if not original_url:
@@ -1381,63 +1495,6 @@ def generate_coupang_deeplink(original_url):
     except Exception as e:
         print(f"   >> [안내] 쿠팡 딥링크 변환 실패: {e}")
     return original_url
-
-
-def score_api_product(product):
-    rank = int(product.get("rank") or 999)
-    score = max(0, 1000 - rank)
-    if product.get("isRocket"):
-        score += 30
-    if product.get("isFreeShipping"):
-        score += 15
-    if product.get("productUrl"):
-        score += 20
-    if product.get("productPrice"):
-        score += 5
-    return score
-
-
-def pick_best_api_product(products, used_products):
-    candidates = []
-    used_names = {entry.get("product_name") for entry in used_products.values() if entry.get("product_name")}
-
-    for product in products:
-        product_url = str(product.get("productUrl") or "").strip()
-        product_name = str(product.get("productName") or "").strip()
-        product_key = product_url or f"{product_name}::{product.get('productId') or ''}"
-        
-        if product_name and product_name in used_names:
-            continue
-            
-        if product_key and product_key in used_products:
-            continue
-            
-        if not product_url or not product_name:
-            continue
-        candidates.append(product)
-        
-    if not candidates:
-        return None
-    return max(candidates, key=score_api_product)
-
-
-def merge_coupang_api_product(seed_row, api_product, landing_url=""):
-    row = dict(seed_row)
-    if not api_product:
-        return row
-
-    product_name = str(api_product.get("productName") or "").strip()
-    product_url = str(api_product.get("productUrl") or landing_url or "").strip()
-    if product_name:
-        row["상품명"] = product_name
-    if product_url:
-        row["쿠팡링크"] = product_url
-    row["상품가격"] = str(api_product.get("productPrice") or "").strip()
-    row["상품이미지"] = str(api_product.get("productImage") or "").strip()
-    row["상품ID"] = str(api_product.get("productId") or "").strip()
-    row["로켓배송"] = "Y" if api_product.get("isRocket") else ""
-    row["무료배송"] = "Y" if api_product.get("isFreeShipping") else ""
-    return row
 
 
 def select_unused_coupang_product(csv_path):
@@ -1531,6 +1588,23 @@ def get_product_field(row, *keys, default=""):
     return default
 
 
+def normalize_coupang_cta_text(text):
+    cleaned = re.sub(r"\s+", " ", str(text or "")).strip()
+    replacements = {
+        "아래 링크": "상세정보 확인 링크",
+        "하단 링크": "상세정보 확인 링크",
+        "마지막 링크": "상세정보 확인 링크",
+        "위 링크": "상세정보 확인 링크",
+        "아래에서": "상세페이지에서",
+        "하단에서": "상세페이지에서",
+        "마지막에": "확인 단계에서",
+        "마지막에는": "확인 단계에서는",
+    }
+    for old, new in replacements.items():
+        cleaned = cleaned.replace(old, new)
+    return cleaned
+
+
 def build_coupang_link_block(label, message, product_name, product_link):
     return (
         f"{'─' * 25}\n\n"
@@ -1552,9 +1626,9 @@ def distribute_coupang_links(raw_content, product_name, product_link, cta_text):
     if not paragraphs:
         return raw_content
 
-    custom_cta = (cta_text or "").strip()
+    custom_cta = normalize_coupang_cta_text(cta_text)
     mid_message = custom_cta or "본문을 읽다가 제품 조건이 궁금해졌다면 상세 정보와 현재 조건을 직접 확인해보면 좋다"
-    bottom_message = "가격, 옵션, 후기, 배송 조건은 변동될 수 있으니 마지막에는 상세페이지에서 한 번 더 확인하는 편이 좋다"
+    bottom_message = "가격, 옵션, 후기, 배송 조건은 변동될 수 있으니 상세페이지에서 한 번 더 확인하는 편이 좋다"
 
     mid_block = build_coupang_link_block(
         "관련 정보 확인",
@@ -1598,21 +1672,6 @@ def extract_hashtag_line(text, min_count=5):
     return " ".join(unique_tags[:15])
 
 
-def clean_editor_marker_text(text):
-    if not text:
-        return ""
-    cleaned = re.sub(r"[\u200b\u200c\u200d\ufeff\xa0]", "", str(text)).strip()
-    cleaned = re.sub(r"\s+", " ", cleaned)
-    placeholders = {"문장", "문장내용", "핵심문장", "내용", "인용구", "quote", "text"}
-    if cleaned.lower() in placeholders:
-        return ""
-    return cleaned
-
-
-def is_valid_quote_text(text):
-    return len(clean_editor_marker_text(text)) >= 12
-
-
 # =============================================================
 # 2. GeminiWebBot - 웹사이트에서 텍스트+이미지 모두 생성
 # =============================================================
@@ -1650,7 +1709,7 @@ class GeminiWebBot:
         # 임시 채팅 버튼 클릭 (채팅 목록에 쌓이지 않도록)
         self._click_temp_chat()
         
-        # 사고 모델 선택
+        # Gemini 3.1 Pro 모델 선택
         self._select_thinking_model()
         
         self.response_count = 0  # 현재 대화에서 응답 수 추적
@@ -1732,7 +1791,7 @@ class GeminiWebBot:
             return False
     
     def _select_thinking_model(self):
-        """사고 모델 선택 (모드 선택 드롭다운 → 사고 모델 클릭)"""
+        """Gemini 3.1 Pro 선택 (모드 선택 드롭다운 → 3.1 Pro 클릭)"""
         try:
             # 1) 모드 선택 버튼 클릭
             mode_btn_selectors = [
@@ -1756,32 +1815,29 @@ class GeminiWebBot:
             mode_btn.click()
             time.sleep(2)
             
-            # 2) 사고 모델 옵션 클릭
-            thinking_selectors = [
-                'button[data-test-id="bard-mode-option-사고모델"]',
-                'button[data-mode-id="e051ce1aa80aa576"]',
+            # 2) Gemini 3.1 Pro 옵션 클릭
+            model_option_xpaths = [
+                '//*[self::button or @role="menuitem" or @role="option"][contains(normalize-space(.), "3.1") and contains(normalize-space(.), "Pro")]',
+                '//*[self::button or @role="menuitem" or @role="option"][contains(normalize-space(.), "3.1") and contains(normalize-space(.), "프로")]',
+                '//*[contains(@class, "bard-mode-list-button")][contains(normalize-space(.), "3.1") and contains(normalize-space(.), "Pro")]',
+                '//*[contains(@class, "bard-mode-list-button")][contains(normalize-space(.), "3.1") and contains(normalize-space(.), "프로")]',
             ]
-            for sel in thinking_selectors:
+            for xpath in model_option_xpaths:
                 try:
-                    option = self.driver.find_element(By.CSS_SELECTOR, sel)
-                    if option.is_displayed():
-                        option.click()
-                        time.sleep(2)
-                        print("   >> 🧠 사고 모델 선택 완료!")
-                        return True
+                    options = self.driver.find_elements(By.XPATH, xpath)
+                    for option in options:
+                        if option.is_displayed():
+                            self.driver.execute_script("arguments[0].scrollIntoView({block:'center'});", option)
+                            time.sleep(0.3)
+                            try:
+                                option.click()
+                            except:
+                                self.driver.execute_script("arguments[0].click();", option)
+                            time.sleep(2)
+                            print("   >> 🧠 Gemini 3.1 Pro 선택 완료!")
+                            return True
                 except:
                     continue
-            
-            # XPath 폴백: 텍스트로 찾기
-            try:
-                option = self.driver.find_element(By.XPATH, 
-                    '//button[contains(@class, "bard-mode-list-button")]//span[contains(text(), "사고")]/..')
-                option.click()
-                time.sleep(2)
-                print("   >> 🧠 사고 모델 선택 완료!")
-                return True
-            except:
-                pass
             
             # 드롭다운 닫기 (선택 실패 시)
             try:
@@ -1790,7 +1846,7 @@ class GeminiWebBot:
             except:
                 pass
             
-            print("   >> [주의] 사고 모델을 찾지 못했습니다. 기본 모델로 진행합니다.")
+            print("   >> [주의] Gemini 3.1 Pro 모델을 찾지 못했습니다. 현재 선택된 모델로 진행합니다.")
             return False
         except:
             return False
@@ -2264,45 +2320,8 @@ def generate_content(post_type):
             img_description = build_daily_image_prompt(daily_context)
             p_name = ""
             post_type = "__daily_done__"
-        if post_type == '일상':
-            prompt = """
-        당신은 네이버 블로그에서 계절 생활문제와 집안관리 정보를 다루는 생활 정보형 블로거입니다.
-        장마철 빨래 냄새, 집 습도, 환기, 냉방비, 에어컨 관리, 선풍기와 서큘레이터, 집안 냄새처럼 검색자가 실제로 궁금해할 생활 문제를 하나 골라 구체적인 정보형 본문을 작성해주세요.
-        시작은 실제 사람이 겪은 생활 장면처럼 자연스럽게 열되, 본문 대부분은 원인, 확인 기준, 상황별 체크포인트, 놓치기 쉬운 실수로 채워주세요.
-        맛집, 카페, 데이트, 여행, 감정 일기, 단순 산책 주제로 가지 마세요.
-        인사말부터 마무리까지 블로그 본문 내용만 출력해야 하며, 글자 수가 1600자 이상이 되도록 구체적으로 적어주세요.
-        결과는 반드시 자연스러운 한국어로만 작성하고, 영어 문장이나 영어 제목 후보, 작업 메모 같은 문구는 절대 쓰지 마세요.
-        절대 마크다운 서식('**' 기호 등)을 사용하지 마세요. 번호를 매길 일이 있다면 평범하게 '1. 내용', '2. 내용' 처럼 적어주세요.
-        
-        [서식 마커 규칙 - 반드시 지켜줘]
-        - 글의 주요 흐름이 바뀌는 곳(예: 인사→본문, 본문→마무리) 2~3곳에 새 줄로 [구분선] 이라고만 적어줘.
-        - 글 중간에 감성적이거나 인상적인 문장 1~2개를 [인용구]문장내용[/인용구] 형식으로 감싸줘.
-        - 인용구 안에는 반드시 25자 이상 70자 이하의 자연스러운 한국어 완성 문장을 넣어줘.
-        - [인용구][/인용구], [인용구] [/인용구], [인용구]문장내용[/인용구]처럼 비어 있거나 자리표시자만 있는 인용구는 절대 쓰지 마.
-        - 인용구는 글의 핵심 감정이나 판단 기준이 담긴 문장이어야 하며, 빈 서식만 만들지 마.
-        - 위 마커들은 에디터 서식으로 자동 변환되므로 반드시 정확히 적어줘.
-            """
-            
-            # 1단계: 본문 생성 (사고 모델 → 최대 300초 대기)
-            print("   >> 📝 블로그 본문 생성 중 (사고 모델, 최대 5분 대기)...")
-            blog_content = bot.send_prompt(prompt, max_wait=300)
-            if not blog_content:
-                return None, None, None, "", None
-            
-            # 2단계: 제목 생성 (사고 모델 → 최대 180초 대기)
-            print("   >> 📌 제목 생성 중 (사고 모델)...")
-            title_prompt = f"다음 블로그 본문에 어울리는 네이버 검색 유입형 생활문제 제목을 1줄만 작성해줘. 제목은 문제 상황과 확인 기준이 보여야 하고, 오늘의 일상이나 소소한 기록 같은 일기형 제목은 금지야. 결과는 반드시 한국어 제목 1줄만 써주고 영어, 특수문자, 따옴표, 해시태그는 빼줘:\n\n{blog_content[:700]}"
-            blog_title = bot.send_prompt(title_prompt, max_wait=180)
-            if blog_title:
-                blog_title = blog_title.replace('"', '').strip().split('\n')[0]
-                if re.search(r"[A-Za-z]{3,}", blog_title):
-                    blog_title = ""
-            else:
-                blog_title = "생활문제 해결 체크포인트"
-            
-            img_description = "한국의 현실적인 집안관리 생활 사진, 창문, 빨래, 환기, 계절 생활문제가 보이는 자연광 실내 장면"
-            
-        elif post_type == '쿠팡':
+
+        if post_type == '쿠팡':
             product_state = select_unused_coupang_product(csv_file_path)
             target = product_state["selected_row"]
             coupang_angle = get_next_coupang_angle(datetime.now())
@@ -2311,9 +2330,10 @@ def generate_content(post_type):
             p_name = target['상품명']
             p_keyword = target['키워드']
             p_link = target['쿠팡링크']
+            product_group = product_state.get("selected_group") or infer_coupang_product_group(target)
             
             problem_scenario = get_product_field(target, "문제상황", default=f"{p_keyword}이 필요한데 어떤 제품을 골라야 할지 애매한 상황")
-            target_reader = get_product_field(target, "대상독자", default="구매 전에 실제 후기와 현실적인 추천 포인트를 같이 보고 싶은 사람")
+            target_reader = get_product_field(target, "대상독자", default="구매 전에 자기 환경에 맞는 확인 기준을 먼저 보고 싶은 사람")
             usage_place = get_product_field(target, "사용장소", default="집이나 개인 작업 공간")
             season_tag = get_product_field(target, "시즌태그", "계절태그", default="사계절")
             pain_point = get_product_field(target, "불편포인트", default="광고성 정보는 많은데 내 상황에 맞는 판단이 어려운 점")
@@ -2324,7 +2344,14 @@ def generate_content(post_type):
             post_angle = get_product_field(target, "글관점", default=angle_direction)
             title_seed = get_product_field(target, "제목시드", default=coupang_angle.get("title_seed", f"{p_keyword} 고를 때 구매 전 보기 쉬운 체크포인트"))
             thumbnail_prompt = get_product_field(target, "썸네일프롬프트", default=coupang_angle.get("thumbnail_prompt", f"{p_keyword}를 {usage_place}에서 실제로 사용하는 한국형 라이프스타일 장면"))
-            cta_text = get_product_field(target, "CTA문구", default=coupang_angle.get("cta_text", "제품 상세정보와 현재 가격은 아래 링크에서 바로 확인 가능"))
+            cta_text = normalize_coupang_cta_text(
+                get_product_field(
+                    target,
+                    "CTA문구",
+                    default=coupang_angle.get("cta_text", "제품 상세정보와 현재 조건은 상세페이지에서 확인하는 흐름"),
+                )
+            )
+            group_writing_guide = build_coupang_group_writing_guide(product_group, target)
             disclosure_text = get_product_field(
                 target,
                 "광고고지문",
@@ -2334,19 +2361,21 @@ def generate_content(post_type):
             # 1단계: 본문 생성 (사고 모델 → 최대 300초 대기)
             print("   >> 📝 블로그 본문 생성 중 (사고 모델, 최대 5분 대기)...")
             prompt = f"""
-너는 네이버 블로그에서 계절 생활가전과 고관여 생활제품을 다루는 구매 가이드 전문 블로거다.
+너는 네이버 블로그에서 계절 생활문제와 집안관리 고민을 먼저 진단하는 생활 정보형 블로거다.
 이 글은 네이버 블로그 에디터에 그대로 들어갈 본문이므로 HTML, 마크다운, 코드블록을 절대 쓰지 않는다.
 
 이 글의 목적은 단순 상품 홍보가 아니다.
-검색자가 구매 전에 실제로 고민하는 부분을 먼저 풀어주고, 자기 상황에 맞게 판단할 수 있도록 도와준 뒤, 자연스럽게 상세정보 확인으로 이어지게 만드는 것이다.
+검색자가 상품을 사기 전에 겪는 생활 문제의 원인을 먼저 나누고, 자기 집이나 사용 환경에 맞는 확인 순서를 잡아준 뒤, 필요한 경우 상세정보 확인으로 이어지게 만드는 것이다.
+상품은 글의 출발점이 아니라 문제 해결을 검토할 때 참고하는 후보로만 다룬다.
 
 광고 고지문은 코드에서 disclosure_text로 본문 최상단에 자동으로 붙는다.
 따라서 본문 안에서 쿠팡 파트너스 광고 고지문을 다시 출력하지 마라.
 상품 링크도 본문 안에 직접 출력하지 마라. 링크는 코드가 따로 삽입한다.
 
-[오늘 작성할 상품 정보]
+[오늘 진단할 생활문제와 연결 상품]
 - 상품명: {p_name}
 - 메인 키워드: {p_keyword}
+- 상품군: {product_group}
 - 대상 독자: {target_reader}
 - 사용 상황: {problem_scenario}
 - 사용 장소: {usage_place}
@@ -2361,11 +2390,22 @@ def generate_content(post_type):
 - 제목 방향 참고: {title_seed}
 - CTA 방향: {cta_text}
 
-[이 블로그 운영 방향]
-이 블로그는 계절 생활가전과 집안관리 제품을 구매하기 전에 필요한 기준을 정리해주는 블로그다.
+[상품군별 밀도 기준]
+{group_writing_guide}
+
+[skssj2627 블로그 방향]
+이 블로그는 계절 생활문제와 집안관리 고민을 먼저 풀고, 필요한 경우 생활가전과 관련 제품을 확인할 기준을 정리해주는 블로그다.
 중심 주제는 제습기, 선풍기, 서큘레이터, 이동식 에어컨, 창문형 에어컨, 공기청정기, 청소기, 가습기, 모기퇴치용품, 계절 생활가전, 집안 습도, 냉방, 환기, 공기질, 청소, 빨래건조, 원룸 생활, 사무실 환경이다.
 현재 상품이 위 범위와 완전히 일치하지 않더라도 억지로 가전제품인 척하지 마라.
 대신 사용 장소, 계절성, 생활 불편, 구매 전 체크포인트 중심으로 자연스럽게 연결하라.
+
+[문제 진단형 작성 원칙]
+- 글의 주어는 상품이 아니라 독자가 겪는 불편, 공간, 계절, 사용 조건이어야 한다.
+- 본문 앞부분에서는 상품 장점보다 문제가 왜 생기는지와 무엇부터 확인해야 하는지를 먼저 설명한다.
+- '{p_name}'은 해결 후보를 확인하는 예시로만 언급하고, 글 전체를 상품 소개문처럼 만들지 않는다.
+- 독자가 글을 읽고 "내 상황에서는 무엇을 먼저 보면 되는지" 알 수 있어야 한다.
+- 좋은 흐름 예시: 방이 꿉꿉한 이유 진단 -> 환기/습기 위치/공간 크기 확인 -> 제습기 같은 제품을 볼 때 용량과 관리 조건 확인.
+- 나쁜 흐름 예시: 상품명 소개 -> 장점 나열 -> 추천 대상 -> 바로 구매 유도.
 
 [가장 중요한 작성 원칙]
 - AI가 정리한 설명문처럼 쓰지 마라.
@@ -2374,17 +2414,10 @@ def generate_content(post_type):
 - 내돈내산, 직접 써봤다, 제가 샀다, 며칠 써보니, 집에서 계속 써보니, 협찬 아님 같은 표현은 절대 쓰지 마라.
 - "후기들을 보면", "상세페이지 기준으로 보면", "구매 전 확인할 부분은", "사용 환경에 따라" 같은 표현을 자연스럽게 활용하라.
 - 확인되지 않은 가격, 할인율, 판매량, 순위, 최저가, 재고, 배송 보장, 전기요금 수치, 소음 수치, 면적 수치, 성능 수치는 절대 지어내지 마라.
-- 상품을 무조건 좋다고 하지 말고, 맞는 사람과 맞지 않는 사람을 분명히 나눠라.
+- 상품을 무조건 좋다고 하지 말고, 먼저 확인해야 할 환경과 신중히 볼 환경을 분명히 나눠라.
 - 과장된 구매 유도보다 구매 전 판단 기준을 우선한다.
 - {post_angle} 관점을 자연스럽게 반영하라.
 - 오늘 글 변주인 {angle_name} 흐름을 반영하되, 실제 구매나 직접 사용을 한 것처럼 꾸미지는 마라.
-
-[인용구 품질 규칙]
-- 인용구는 반드시 2회만 사용한다.
-- 모든 인용구는 [인용구]문장[/인용구] 형식을 지키되, 안쪽 문장은 25자 이상 70자 이하의 자연스러운 한국어 완성 문장이어야 한다.
-- [인용구][/인용구], [인용구] [/인용구], [인용구]문장내용[/인용구], [인용구]핵심문장[/인용구]처럼 비어 있거나 자리표시자만 있는 인용구는 절대 출력하지 마라.
-- 인용구 2개는 각각 '{p_keyword}', '{usage_place}', '{problem_scenario}', '{caution_note}' 중 최소 1가지와 직접 연결되는 판단 문장으로 작성하라.
-- 상품과 무관한 감성 문장, 일기식 문장, 광고 문구를 인용구로 쓰지 마라.
 
 [사람이 쓴 듯한 문장감]
 - 문장은 너무 반듯하게만 쓰지 말고, 중간중간 생활감 있는 흐름을 넣어라.
@@ -2407,63 +2440,66 @@ def generate_content(post_type):
 
 [본문 구조 - 아래 순서를 반드시 지켜라]
 
-1. 도입부: 현실적인 생활 고민으로 시작
+1. 도입부: 현실적인 생활 문제로 시작
 - 첫 문단에서 {problem_scenario} 상황을 자연스럽게 풀어라.
 - '{p_keyword}'를 1회 포함하라.
-- 상품을 바로 추천하지 말고, 왜 선택 기준이 필요한지 먼저 말하라.
+- 상품을 바로 추천하지 말고, 왜 원인 확인이 먼저인지 말하라.
 - 광고 느낌으로 시작하지 말고, 독자가 공감할 만한 생활 장면으로 시작하라.
 
-2. 구매 전에 헷갈리는 이유
+2. 문제가 반복되는 이유
 - 독자가 {pain_point} 때문에 헷갈릴 수 있다는 흐름으로 작성하라.
-- 가격만 보고 고르면 놓치기 쉬운 부분을 설명하라.
-- 계절, 공간, 사용 시간, 보관, 관리, 소음, 크기 중 관련 있는 요소를 자연스럽게 넣어라.
+- 계절, 공간, 사용 시간, 보관, 관리, 소음, 크기 중 관련 있는 요소를 2~4개로 나눠 설명하라.
+- 이 단계에서는 제품을 사야 한다고 말하지 말고, 먼저 집에서 확인할 원인을 정리하라.
 - 이 구간 끝에 아래 마커를 정확히 1회 넣어라.
 
 [사진삽입]
 
 [구분선]
 
-3. 이 상품을 볼 때 먼저 확인할 기준
-- '{p_name}'을 자연스럽게 언급하라.
-- 강조 포인트 3개를 그대로 복붙하지 말고, 실제 구매 판단 기준으로 풀어라.
+3. 제품을 보기 전에 먼저 확인할 기준
+- '{p_name}'을 자연스럽게 언급하되, 문제 해결 후보를 살필 때의 예시처럼 다루어라.
+- 강조 포인트 3개를 그대로 복붙하지 말고, 불편 원인을 확인한 뒤 볼 기준으로 풀어라.
 - 아래 목록 마커를 정확히 사용하라.
 
-[목록주제]구매 전에 먼저 볼 기준
+[목록주제]제품을 보기 전 먼저 볼 기준
 - 기준 1개를 구체적으로 작성
 - 기준 1개를 구체적으로 작성
 - 기준 1개를 구체적으로 작성
 [목록끝]
 
-4. 장점과 주의점
-- 장점은 생활 속 상황과 연결해서 작성하라.
+4. 도움이 될 수 있는 조건과 주의점
+- 장점은 생활 속 문제가 어떤 조건에서 줄어들 수 있는지와 연결해서 작성하라.
 - {selling_point_1}, {selling_point_2}, {selling_point_3}을 자연스럽게 반영하라.
 - 주의점은 반드시 포함하라.
 - {caution_note}를 자연스럽게 반영하라.
 - 단점은 과하게 부정하지 말고 "이런 경우에는 한 번 더 확인이 필요하다"는 방식으로 써라.
 - 감정이 살아있는 문장을 아래 형식으로 1개 넣어라.
+- 인용구 안에는 반드시 20자 이상 60자 이하의 완성된 한국어 문장을 넣어라.
+- 빈 인용구, 공백만 있는 인용구, 예시 문구가 그대로 남은 인용구는 절대 출력하지 마라.
 
-[인용구]{p_keyword}는 가격보다 내 사용 환경과 맞는지 확인하는 게 먼저였습니다[/인용구]
+[인용구]제품보다 먼저 봐야 할 건 우리 집에서 문제가 생기는 이유였습니다[/인용구]
 
 [구분선]
 
-5. 추천 대상과 신중히 볼 대상
-- 추천 대상 3가지를 구체적으로 작성하라.
-- 신중히 볼 대상 2가지를 작성하라.
+5. 먼저 확인할 환경과 신중히 볼 환경
+- 먼저 확인해볼 환경 3가지를 구체적으로 작성하라.
+- 한 번 더 따져볼 환경 2가지를 작성하라.
 - 이 구간은 신뢰도를 높이는 핵심 구간이다.
+- 추천합니다, 비추천합니다 같은 판정형 표현보다 이 경우는 먼저 확인하세요에 가까운 문장으로 작성하라.
 
-[목록주제]이런 분들에게 잘 맞을 수 있습니다
-- 구체적인 대상 1
-- 구체적인 대상 2
-- 구체적인 대상 3
+[목록주제]이런 환경이라면 먼저 확인하세요
+- 먼저 확인할 환경 1
+- 먼저 확인할 환경 2
+- 먼저 확인할 환경 3
 [목록끝]
 
-[목록주제]이런 경우에는 한 번 더 확인하세요
-- 신중히 볼 대상 1
-- 신중히 볼 대상 2
+[목록주제]이런 환경이라면 한 번 더 확인하세요
+- 한 번 더 따져볼 환경 1
+- 한 번 더 따져볼 환경 2
 [목록끝]
 
-6. 비교 관점
-- 같은 상품군을 고를 때 비교해야 할 기준을 설명하라.
+6. 같은 문제를 해결할 때 비교할 관점
+- 같은 생활 문제를 해결할 때 비교해야 할 기준을 설명하라.
 - 특정 경쟁 상품을 근거 없이 깎아내리지 마라.
 - '{p_keyword}'를 찾는 사람이 실제로 비교할 만한 기준을 말하라.
 - 계절가전이면 용량, 소음, 크기, 전기요금, 설치 조건, 물통 용량, 이동성, 관리 편의성을 우선 고려하라.
@@ -2471,26 +2507,29 @@ def generate_content(post_type):
 
 [구분선]
 
-7. 상황별 선택 가이드
+7. 상황별 진단 후 선택 기준
 - 무조건 이 상품을 사라고 하지 마라.
 - 상황별로 선택 기준을 나눠라.
 - 예: 원룸이라면, 가족용이라면, 사무실용이라면, 장마철용이라면, 더위 대비용이라면
 - '{p_name}'을 마지막에 1회 자연스럽게 언급하라.
 
-8. 상세정보 확인 유도
+8. 상세정보 확인 단계
 - 구매 강요가 아니라 확인 유도형으로 작성하라.
 - {cta_text} 방향을 자연스럽게 반영하라.
+- 링크는 코드가 별도 정보 확인 구간으로 자동 삽입한다.
+- 따라서 아래 링크, 하단 링크, 마지막 링크, 위 링크처럼 위치를 가리키는 표현은 쓰지 마라.
+- 본문 안에 URL이나 상품 링크 문장을 직접 만들지 마라.
 - 반드시 아래 의미를 포함하라.
   - 현재 가격과 구성은 변동될 수 있음
   - 로켓배송 여부도 상품과 시점에 따라 달라질 수 있음
   - 구매 전 상세정보, 옵션, 후기, 배송 조건을 확인하는 것이 좋음
   - 내 사용 환경에 맞는지 확인 후 선택하는 것이 안전함
 
-[인용구]상세정보를 볼 때는 구성과 주의점을 같이 확인해야 선택이 덜 흔들립니다[/인용구]
+[인용구]원인을 나눠보고 나면 상세정보에서 확인할 부분도 훨씬 또렷해집니다[/인용구]
 
 9. FAQ
 - 마지막에 실제 검색자가 궁금해할 만한 질문 4개와 실용적인 답변을 작성하라.
-- 질문은 "{p_keyword} 추천 기준은", "{p_keyword} 소음 어느 정도인지", "로켓배송 되나요" 같은 검색 의도 반영형으로 작성하라.
+- 질문은 "{p_keyword} 보기 전에 무엇부터 확인해야 하나요", "우리 집에 맞는 기준은 무엇인가요", "배송 조건은 어디서 확인하나요" 같은 문제 진단형 검색 의도를 반영하라.
 - 답변은 짧지만 실용적으로 작성하라.
 - FAQ에도 '{p_keyword}'를 1~2회 자연스럽게 포함하라.
 - FAQ 형식은 아래를 따라라.
@@ -2508,19 +2547,26 @@ A. 답변 내용
 - [사진삽입]은 정확히 1회
 - [구분선]은 정확히 3회
 - [인용구]문장[/인용구] 형식 정확히 2회
-- 인용구 안쪽 문장은 절대 비우지 말고, 상품 선택 기준과 직접 관련된 완성 문장으로 채울 것
+- 인용구 내부 문장은 반드시 20자 이상이어야 하며, 빈 인용구 출력 금지
 - [목록주제]와 [목록끝] 마커는 철자 그대로 유지
 - 문단 사이에는 빈 줄을 충분히 넣어라
+- 일반 본문 문장은 한 줄 40자 안팎으로 쓰고, 길어도 45자를 넘기지 마라
+- 한 문장을 길게 한 문단으로 늘어쓰지 말고, 의미 단위마다 엔터를 눌러 아래 줄로 내려써라
+- 긴 문단으로 쭉 나열하지 말고 2~4줄이 하나의 자연스러운 흐름이 되게 작성하라
+- 목록 항목도 너무 짧게 쪼개지 말고 40자 안팎의 자연스러운 호흡으로 쓰며, URL과 마커 형식은 그대로 유지하라
 
 [절대 금지]
 - 광고 고지문 출력 금지
 - 상품 링크 출력 금지
+- 아래 링크, 하단 링크, 마지막 링크, 위 링크 같은 위치 지시 표현 금지
+- [인용구][/인용구], [인용구] [/인용구], [인용구]문장[/인용구]처럼 내용 없는 인용구 출력 금지
 - 가격, 할인율, 배송일, 리뷰 수, 평점, 순위 임의 생성 금지
 - 내돈내산 표현 금지
 - 직접 사용한 것처럼 단정 금지
 - 근거 없는 비교 우위 금지
 - 키워드 반복만으로 분량 채우기 금지
 - 같은 문장 구조 반복 금지
+- 추천합니다, 비추천합니다, 강력 추천합니다 같은 판정형 문장 금지
 - "인생템", "역대급", "무조건", "최저가", "완전 강추", "진짜 대박" 같은 과장 표현 금지
 - "설명드리겠습니다", "알아보겠습니다", "본 글에서는" 같은 AI식 문장 금지
 - 쿠팡 공식 추천, 판매 1위, 100% 만족, 완벽한 제품 금지
@@ -2530,8 +2576,6 @@ A. 답변 내용
             if not raw_content:
                 return None, None, None, "", None
             
-            ad_disclaimer = "🚨 본 포스팅은 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다.\n\n"
-            bottom_link = f"\n\n{'─' * 25}\n\n🛒 {p_name}\n✅ 제품 상세정보 및 구매 링크 바로가기:\n{p_link}\n"
             ad_disclaimer = disclosure_text + "\n\n"
             linked_content = distribute_coupang_links(raw_content, p_name, p_link, cta_text)
             blog_content = ad_disclaimer + linked_content
@@ -2539,44 +2583,49 @@ A. 답변 내용
             # 2단계: 해시태그 생성 (사고 모델 → 최대 180초 대기)
             print("   >> #️⃣ 해시태그 생성 중 (사고 모델)...")
             hashtag_prompt = f"""
-'{p_name}' 상품으로 네이버 블로그에 붙일 해시태그를 10~12개 만들어줘.
+너는 네이버 블로그 쿠팡파트너스 글의 해시태그를 만드는 실전형 검색 유입 편집자다.
+아래 상품과 직접 관련 있는 태그만 10~12개 만들어라.
 
-조건
+[상품 정보]
+- 상품명: {p_name}
 - 메인 키워드: {p_keyword}
-- 상품명에서 뽑을 핵심 명사: {p_name}
 - 대상 독자: {target_reader}
 - 사용 상황: {problem_scenario}
 - 사용 장소: {usage_place}
 - 시즌/시기: {season_tag}
-- 상품 방향: 계절 생활가전, 집안관리, 생활가전, 구매 전 체크
+- 상품군/성격 참고: 계절 생활가전, 집안관리, 생활가전, 구매 전 체크
+- 핵심 장점: {selling_point_1}, {selling_point_2}, {selling_point_3}
+- 구매 전 주의점: {caution_note}
+
+[태그 작성 원칙]
+- 첫 번째 태그는 반드시 메인 키워드 '{p_keyword}'를 공백 없이 자연스럽게 바꾼 태그로 작성
+- 두 번째 태그는 상품군 또는 품목명이 바로 보이는 태그로 작성
+- 나머지는 상품명, 품목, 사용장소, 사용상황, 구매 전 비교 기준에서만 뽑기
+- 상품과 직접 관련 없는 범용 태그 금지
+- 실제 검색자가 네이버에서 상품을 찾을 때 쓸 법한 구매 의도형 태그 위주로 작성
+- 너무 넓은 광고성 태그보다 구체적인 롱테일 태그를 우선
+- 상품명 전체를 그대로 길게 붙이지 말고, 브랜드/품목/용량/개수/핵심 속성 중 검색에 도움이 되는 부분만 사용
+- 상품과 맞지 않으면 원룸용, 가정용, 사무실용, 생활가전추천 같은 태그를 넣지 말 것
+- 계절가전이면 크기, 소음, 전기요금, 설치, 관리, 사용공간, 계절수요 같은 기준을 우선
+- 생활가전이면 사용공간, 보관성, 세척, 관리, 내구성, 옵션, 배송 조건을 우선
+- 소모품이면 구성, 개수, 보관, 교체주기, 사용장소 같은 기준을 우선
+
+[절대 금지 태그]
+- #일상 #소통 #맞팔 #데일리 #오늘 #감성 #리뷰 #후기 #추천템 #핫딜 #최저가 #인생템
+- 상품과 무관한 #원룸용 #가정용 #사무실용 #생활가전추천 #계절가전 #가격비교 #구성비교 남발 금지
+- 쿠팡, 쿠팡파트너스, 광고, 협찬, 로켓배송만 단독으로 강조하는 태그 금지
+
+[출력 규칙]
 - '#태그' 형식만 사용
+- 정확히 10~12개
 - 한 줄에 공백으로 구분
 - 설명 금지
 - 영어 태그 금지
-- 광고 느낌이 강한 태그는 피할 것
-- 상품명 전체를 너무 긴 태그로 만들지 말 것
-- 구매 의도형 태그를 반드시 포함할 것
-- 첫 번째 태그는 반드시 메인 키워드 '{p_keyword}'를 해시태그 형태로 자연스럽게 바꾼 것
-- 최소 7개 태그는 상품명, 메인 키워드, 사용 상황, 사용 장소와 직접 관련되어야 함
-- 범용 태그는 최대 3개까지만 허용: 구매전체크, 구성비교, 가격비교, 상세정보확인, 생활가전추천 중 문맥에 맞는 것만 사용
-- 상품 정보에 없는 카테고리 태그를 상상해서 넣지 말 것
-- 제습기, 에어컨, 선풍기, 가습기, 공기청정기, 청소기, 모기퇴치, 생활가전, 계절가전 태그는 상품명/메인 키워드/사용 상황과 직접 맞을 때만 사용
-- 쿠팡, 쿠팡추천, 쿠팡파트너스, 광고, 협찬, 최저가 태그 금지
+- 같은 의미의 태그 반복 금지
+- 상품과 직접 관련 없는 태그 금지
 
-태그 방향 (아래 순서로 고루 포함할 것)
-- 메인 키워드 태그
-- 상품명에서 핵심 명사만 뽑은 태그
-- 실제 상품군 태그
-- 사용상황 태그
-- 사용장소 태그
-- 구매전체크 태그
-- 상품과 맞을 때만 쓰는 비교 기준 태그: 소음, 크기, 전기요금, 관리편의성, 구성비교, 가격비교
-- 상세정보확인 태그
-
-출력 전 자체 점검
-- 이 상품을 모르는 사람이 태그만 봐도 어떤 상품인지 짐작할 수 있어야 함
-- 상품과 직접 관련 없는 유행어, 다른 카테고리, 계절가전 고정 태그를 넣었다면 다시 작성
-- 출력은 해시태그 10~12개 한 줄만
+출력 예시 형식
+#메인키워드 #품목명 #구매전체크 #크기확인 #소음체크 #관리편의성 #사용공간 #비교기준 #상세정보확인 #구매전확인
 """
             hashtags = ""
             for hashtag_attempt in range(2):
@@ -2586,13 +2635,15 @@ A. 답변 내용
                     break
                 print("   >> [주의] 해시태그 응답이 완성되지 않아 다시 요청합니다.")
                 hashtag_prompt = f"""
-아래 상품과 키워드로 네이버 블로그 해시태그만 다시 만들어줘.
+아래 상품과 직접 관련 있는 네이버 블로그 해시태그만 다시 만들어줘.
 
 상품명: {p_name}
 메인 키워드: {p_keyword}
 사용 상황: {problem_scenario}
 사용 장소: {usage_place}
 시즌/시기: {season_tag}
+핵심 장점: {selling_point_1}, {selling_point_2}, {selling_point_3}
+구매 전 주의점: {caution_note}
 
 조건
 - 반드시 '#태그' 형식 10~12개
@@ -2600,12 +2651,13 @@ A. 답변 내용
 - 설명, 문장, 생각 과정 출력 금지
 - 해시태그 외 다른 텍스트 출력 금지
 - 영어 태그 금지
-- 첫 번째 태그는 메인 키워드 '{p_keyword}' 기반 태그
-- 최소 7개 태그는 상품명, 메인 키워드, 사용 상황, 사용 장소와 직접 관련
-- 범용 태그는 최대 3개만 허용
-- 상품 정보와 맞지 않는 계절가전, 생활가전, 제습기, 에어컨, 선풍기, 가습기, 공기청정기 태그 금지
-- 상세정보확인 태그 반드시 포함
-- 쿠팡, 광고, 협찬, 최저가 태그 금지
+- 첫 태그는 메인 키워드 기반으로 작성
+- 두 번째 태그는 상품군 또는 품목명 기반으로 작성
+- 상품명, 품목, 사용장소, 사용상황, 구매 전 비교 기준에서만 태그를 뽑기
+- 상품과 무관한 범용 태그 금지
+- #일상 #소통 #맞팔 #데일리 #후기 #핫딜 #최저가 #인생템 금지
+- 상품과 맞지 않는 #원룸용 #가정용 #사무실용 #생활가전추천 #계절가전 #가격비교 #구성비교 남발 금지
+- 상세정보확인 또는 구매전확인 태그 중 1개 포함
 """
             if hashtags:
                 blog_content = blog_content + "\n\n[해시태그대기]\n" + hashtags
@@ -2652,15 +2704,25 @@ A. 답변 내용
 - 제목 스타일: {title_style}
 - 제목 방향 참고: {title_seed}
 
+[황금 키워드 추출 방식]
+- 상품명은 키워드 분석용 원재료일 뿐, 상품명은 제목에 쓰지 않는다.
+- 먼저 상품명에서 브랜드명, 모델명, 영문/숫자 코드, 용량, 수량, 색상, 구성 옵션을 빼고 독자가 실제로 검색할 일반 품목명만 남긴다.
+- 메인 키워드, 대상 독자, 사용 상황, 사용 장소, 본문 일부를 함께 보고 검색 수요는 넓지만 공급이 너무 많은 단독 단어는 피한다.
+- 너무 넓은 단어만 쓰면 공급이 많아 불리하다. 예: 선풍기, 에어컨, 커피, 세제처럼 품목명 1단어만 쓰지 마라.
+- 너무 좁은 상품명, 브랜드명, 모델명, 용량 조합은 검색 수요가 작으니 제목에 넣지 마라.
+- 내부적으로 후보를 3~5개 만든 뒤, 품목명 + 상황/고민 + 선택 기준이 함께 보이는 황금 키워드를 제목 앞쪽에 배치한다.
+- 실제 검색량이나 문서 수 수치는 확인하지 못하므로 검색량 많음, 공급 적음 같은 설명은 출력하지 않는다.
+
 [본문 일부]
 {blog_content[:900]}
 
 [제목 원칙]
-- 상품명 전체를 그대로 복사하지 마라.
-- '{p_keyword}'는 가능하면 자연스럽게 포함하라.
+- 상품명은 제목에 쓰지 않는다.
+- '{p_keyword}'도 상품명에 가까우면 그대로 넣지 말고 일반 검색 키워드로 바꿔라.
+- 최종 제목 앞쪽에는 분석해서 뽑은 황금 키워드를 자연스럽게 넣어라.
 - 구매 전 확인할 조건이 제목에서 보여야 한다.
-- 계절 생활가전 느낌이 나야 한다.
-- 원룸, 가정용, 사무실용, 장마철, 여름 대비, 겨울 대비, 소음, 크기, 전기요금, 관리, 설치 조건 중 문맥에 맞는 표현을 활용하라.
+- 상품군에 맞는 생활 문제와 사용 환경이 보여야 한다.
+- 원룸, 가정용, 사무실용, 장마철, 여름 대비, 겨울 대비, 소음, 크기, 전기요금, 관리, 설치 조건, 보관, 용량, 교체주기, 비교 기준 중 문맥에 맞는 표현을 활용하라.
 - 광고성 제목보다 정보형 제목으로 작성하라.
 - 실제 사용한 것처럼 오해될 제목은 피하라.
 - "직접 써보니", "내돈내산", "결국 정착", "인생템", "역대급", "무조건", "최저가"는 쓰지 마라.
@@ -2671,12 +2733,12 @@ A. 답변 내용
 {chr(10).join("- " + item for item in title_forbidden_patterns)}
 
 [가능한 제목 방향 예시]
-- {p_keyword} 구매 전 확인할 용량소음관리 기준
-- {p_keyword} 찾는다면 {usage_place} 기준으로 먼저 볼 점
-- {season_tag}에 보기 좋은 {p_keyword} 선택 체크포인트
-- {p_name} 구매 전 비교할 현실 조건
-- {p_keyword} 고민될 때 먼저 확인할 사용 환경 기준
-- 원룸에서 {p_keyword} 고를 때 놓치기 쉬운 기준
+- 품목명 고를 때 먼저 볼 크기소음관리 기준
+- 사용 장소에 맞는 품목명 선택 전 확인할 점
+- 계절 고민 있을 때 품목명 비교 체크포인트
+- 생활용품 구매 전 비교할 보관용량관리 기준
+- 품목명 고민될 때 먼저 확인할 사용 환경 기준
+- 원룸에서 품목명 고를 때 놓치기 쉬운 기준
 - 계절가전 구매 전 보는 크기소음전기요금 기준
 
 [출력 조건]
@@ -2702,10 +2764,12 @@ A. 답변 내용
             elif not blog_title:
                 blog_title = f"{p_keyword} 구매 전 확인할 현실 기준"
 
-            img_description = img_prompt = f"""
+            img_description = f"""
 {thumbnail_prompt}
 
 Korean blog thumbnail feeling.
+20대 성인 한국인 여성이 {p_name}을 실제로 사용하거나 살펴보며 만족감이 느껴지는 자연스러운 미소를 짓는 장면.
+Make the person and product both clearly visible.
 Realistic daily-life scene.
 Natural lighting.
 No text in image.
@@ -2909,51 +2973,13 @@ class NaverBlogBot:
         
             # 제목 입력
             print(f"   >> 제목 입력 중: {blog_title[:30]}...")
-            title_field = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "div.se-documentTitle")))
-            driver.execute_script("arguments[0].scrollIntoView({block:'center', inline:'center'});", title_field)
-            time.sleep(0.7)
+            title_field = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, "div.se-documentTitle")))
+            title_field.click()
+            time.sleep(1)
 
-            focused = False
-            last_error = None
-            for attempt in range(1, 4):
-                try:
-                    driver.execute_script("""
-                        const root = arguments[0];
-                        const editable = root.querySelector('[contenteditable="true"], textarea, input') || root;
-                        editable.scrollIntoView({block:'center', inline:'center'});
-                        editable.focus();
-                    """, title_field)
-                    time.sleep(0.2)
-                    title_field.click()
-                    focused = True
-                    break
-                except Exception as exc:
-                    last_error = exc
-                    print(f"   >> 제목 영역 일반 클릭 재시도 {attempt}/3: {type(exc).__name__}")
-                try:
-                    ActionChains(driver).move_to_element(title_field).pause(0.2).click().perform()
-                    focused = True
-                    break
-                except Exception as exc:
-                    last_error = exc
-                try:
-                    driver.execute_script("""
-                        const root = arguments[0];
-                        const editable = root.querySelector('[contenteditable="true"], textarea, input') || root;
-                        editable.click();
-                        editable.focus();
-                    """, title_field)
-                    focused = True
-                    break
-                except Exception as exc:
-                    last_error = exc
-                time.sleep(0.8)
-
-            if not focused:
-                raise RuntimeError(f"제목 영역 포커스 실패: {last_error}")
-
-            pyperclip.copy(blog_title)
-            ActionChains(driver).key_down(Keys.CONTROL).send_keys('v').key_up(Keys.CONTROL).perform()
+            for char in blog_title:
+                actions.send_keys(char).perform()
+                time.sleep(random.uniform(0.01, 0.05))
             time.sleep(1)
         
             # 본문으로 이동
@@ -3030,36 +3056,60 @@ class NaverBlogBot:
                 print("   >> [주의] AI 활용 설정 버튼을 찾지 못했습니다.")
                 return False
 
+            def set_image_clipboard(image_path):
+                """이미지가 클립보드에 올라간 경우에만 True를 반환한다."""
+                safe_img_path = image_path.replace('\\', '/')
+                ps_script = f'''
+                Add-Type -AssemblyName System.Windows.Forms
+                Add-Type -AssemblyName System.Drawing
+                [System.Windows.Forms.Clipboard]::Clear()
+                $img = [System.Drawing.Image]::FromFile("{safe_img_path}")
+                try {{
+                    [System.Windows.Forms.Clipboard]::SetImage($img)
+                    if (-not [System.Windows.Forms.Clipboard]::ContainsImage()) {{
+                        throw "Clipboard image was not set"
+                    }}
+                }} finally {{
+                    $img.Dispose()
+                }}
+                '''
+                result = subprocess.run(
+                    ["powershell", "-NoProfile", "-STA", "-Command", ps_script],
+                    capture_output=True,
+                    text=True,
+                )
+                if result.returncode != 0:
+                    error_text = (result.stderr or result.stdout or "").strip()
+                    print(f"   >> [주의] 이미지 클립보드 설정 실패: {error_text[:200]}")
+                    return False
+                return True
+
             # 사진 업로드 (일상글만 본문 앞에 배치, 쿠팡글은 [사진삽입] 위치에서 삽입)
             if post_type != '쿠팡' and img_path and os.path.exists(img_path):
                 print("   >> 사진 클립보드 업로드 시도...")
-                safe_img_path = img_path.replace('\\', '/')
-                ps_script = f'''
-                Add-Type -AssemblyName System.Windows.Forms
-                $img = [System.Drawing.Image]::FromFile("{safe_img_path}")
-                [System.Windows.Forms.Clipboard]::SetImage($img)
-                '''
-                subprocess.run(["powershell", "-NoProfile", "-Command", ps_script], capture_output=True)
-                time.sleep(2)
-            
-                actions.key_down(Keys.CONTROL).send_keys('v').key_up(Keys.CONTROL).perform()
-                print("   >> 🎨 사진 업로드 대기 중 (15초)...")
-                time.sleep(15)
-            
-                # 업로드된 사진 클릭
-                try:
-                    uploaded_imgs = driver.find_elements(By.CSS_SELECTOR, 'img.se-image-resource')
-                    if uploaded_imgs:
-                        uploaded_imgs[-1].click()
-                        print("   >> 📸 업로드된 사진 클릭 완료!")
-                        time.sleep(1)
-                except Exception as e:
-                    print(f"   >> [주의] 사진 클릭 실패: {e}")
-            
-                # AI 활용 설정 버튼 클릭
-                click_ai_utilization_after_image()
-            
-                actions.send_keys(Keys.ENTER).perform()
+                if set_image_clipboard(img_path):
+                    time.sleep(2)
+
+                    actions.key_down(Keys.CONTROL).send_keys('v').key_up(Keys.CONTROL).perform()
+                    print("   >> 🎨 사진 업로드 대기 중 (15초)...")
+                    time.sleep(15)
+
+                    # 업로드된 사진 클릭
+                    try:
+                        uploaded_imgs = driver.find_elements(By.CSS_SELECTOR, 'img.se-image-resource')
+                        if uploaded_imgs:
+                            uploaded_imgs[-1].click()
+                            print("   >> 📸 업로드된 사진 클릭 완료!")
+                            time.sleep(1)
+                    except Exception as e:
+                        print(f"   >> [주의] 사진 클릭 실패: {e}")
+
+                    # AI 활용 설정 버튼 클릭
+                    click_ai_utilization_after_image()
+
+                    actions.send_keys(Keys.ENTER).perform()
+                else:
+                    print("   >> [주의] 사진 클립보드 업로드 실패. 프롬프트 텍스트 붙여넣기 방지를 위해 사진 삽입을 건너뜁니다.")
                 time.sleep(1)
         
             # ── [안정성 최강 버전] 오토메이션 서식 헬퍼 ──
@@ -3133,6 +3183,20 @@ class NaverBlogBot:
                     return True
                 except: return False
         
+            def insert_quotation(style=None):
+                quote_styles = ['quotation_line', 'quotation_bubble', 'quotation_underline', 'quotation_postit', 'quotation_corner']
+                if style is None: style = random.choice(quote_styles)
+                try:
+                    driver.find_element(By.CSS_SELECTOR, 'button[data-name="quotation"][data-type="icon-select"]').click()
+                    time.sleep(0.5)
+                    driver.find_element(By.CSS_SELECTOR, f'button[data-value="{style}"]').click()
+                    time.sleep(0.5)
+                    # 인용구 진입으로 인해 서식 초기화되므로 트래킹 업데이트
+                    for k in ["font_size", "font_color", "bg_color", "bold", "underline"]:
+                        editor_state[k] = None
+                    return True
+                except: return False
+
             def set_bold(activate=None):
                 target_state = not bool(editor_state["bold"]) if activate is None else activate
                 if editor_state["bold"] is not None and editor_state["bold"] == target_state: return
@@ -3192,8 +3256,33 @@ class NaverBlogBot:
                         set_bold(True)
                         type_line(p_name)
                         set_bold(False)
-                        # 복구
+                    # 복구
                         set_font_size("16")
+
+            def clean_marker_text(text, *markers):
+                cleaned = re.sub(r"[\u200b\u200c\u200d\ufeff\xa0]", "", str(text or ""))
+                for marker in markers:
+                    cleaned = cleaned.replace(marker, "")
+                cleaned = re.sub(r"\s+", " ", cleaned).strip().strip('"').strip("'").strip("“”‘’").strip()
+                placeholder_values = {
+                    "문장",
+                    "문장내용",
+                    "내용",
+                    "핵심문장",
+                    "인용구",
+                    "quote",
+                    "text",
+                    "제품보다 먼저 봐야 할 건 우리 집에서 문제가 생기는 이유였습니다",
+                    "원인을 나눠보고 나면 상세정보에서 확인할 부분도 훨씬 또렷해집니다",
+                }
+                if cleaned.lower() in placeholder_values:
+                    return ""
+                return cleaned
+
+            def is_valid_quote_text(text):
+                cleaned = clean_marker_text(text)
+                compact = re.sub(r"\s+", "", cleaned)
+                return len(compact) >= 12
 
             # ── 본문 타이핑 및 파싱 루프 ──
             print("   >> 지침서 반영 본문 타이핑 (상품강조, 목록구조 엄격 적용)...")
@@ -3216,28 +3305,24 @@ class NaverBlogBot:
                 if '[사진삽입]' in line_s and post_type == '쿠팡':
                     if img_path and os.path.exists(img_path):
                         print("   >> 📸 본문 중간(문제 심화 뒤)에 사진 삽입 중...")
-                        safe_img_path = img_path.replace('\\', '/')
-                        ps_script = f'''
-                        Add-Type -AssemblyName System.Windows.Forms
-                        $img = [System.Drawing.Image]::FromFile("{safe_img_path}")
-                        [System.Windows.Forms.Clipboard]::SetImage($img)
-                        '''
-                        subprocess.run(["powershell", "-NoProfile", "-Command", ps_script], capture_output=True)
-                        time.sleep(2)
-                        actions.key_down(Keys.CONTROL).send_keys('v').key_up(Keys.CONTROL).perform()
-                        print("   >> 🎨 사진 업로드 대기 중 (15초)...")
-                        time.sleep(15)
-                        try:
-                            uploaded_imgs = driver.find_elements(By.CSS_SELECTOR, 'img.se-image-resource')
-                            if uploaded_imgs:
-                                uploaded_imgs[-1].click()
-                                print("   >> 📸 업로드된 사진 클릭 완료!")
-                                time.sleep(1)
-                        except Exception as e:
-                            print(f"   >> [주의] 사진 클릭 실패: {e}")
-                        click_ai_utilization_after_image()
-                        actions.send_keys(Keys.ENTER).perform()
-                        time.sleep(1)
+                        if set_image_clipboard(img_path):
+                            time.sleep(2)
+                            actions.key_down(Keys.CONTROL).send_keys('v').key_up(Keys.CONTROL).perform()
+                            print("   >> 🎨 사진 업로드 대기 중 (15초)...")
+                            time.sleep(15)
+                            try:
+                                uploaded_imgs = driver.find_elements(By.CSS_SELECTOR, 'img.se-image-resource')
+                                if uploaded_imgs:
+                                    uploaded_imgs[-1].click()
+                                    print("   >> 📸 업로드된 사진 클릭 완료!")
+                                    time.sleep(1)
+                            except Exception as e:
+                                print(f"   >> [주의] 사진 클릭 실패: {e}")
+                            click_ai_utilization_after_image()
+                            actions.send_keys(Keys.ENTER).perform()
+                            time.sleep(1)
+                        else:
+                            print("   >> [주의] 사진 클립보드 업로드 실패. 프롬프트 텍스트 붙여넣기 방지를 위해 사진 삽입을 건너뜁니다.")
                     else:
                         print("   >> [주의] [사진삽입] 위치가 있었지만 업로드할 이미지 파일이 없습니다.")
                     continue
@@ -3270,20 +3355,23 @@ class NaverBlogBot:
 
                 # 📌 구조 ①: 목록 주제 + 기호목록
                 if is_list_topic:
-                    topic_text = clean_editor_marker_text(
-                        line_s.replace('[목록주제]', '').replace('[/목록주제]', '')
-                    )
+                    topic_text = clean_marker_text(line_s, '[목록주제]', '[/목록주제]')
                     if not topic_text:
-                        print("   >> [주의] 빈 목록주제 마커 감지 → 서식 삽입 건너뜀")
+                        print("   >> [주의] 비어 있는 목록 주제는 건너뜁니다.")
                         continue
                     actions.send_keys(Keys.ENTER).perform() # 엔터
                     time.sleep(0.2) # 한 줄 띄움 (스마트 에디터 기본 간격)
-                    # 네이버 인용구 컴포넌트는 포커스 실패 시 빈 박스가 남을 수 있어 자동화에서는 쓰지 않습니다.
-                    reset_formatting()
+                    quote_inserted = insert_quotation("quotation_underline") # 인용구(라인/따옴표)
                     set_font_size("16")
                     set_bold(True)
                     type_formatted_line(topic_text)
                     set_bold(False)
+                    # 인용구 탈출 (방향키 ↓ ↓ + 엔터 1회)
+                    if quote_inserted:
+                        actions.send_keys(Keys.ARROW_DOWN).perform()
+                        time.sleep(0.2)
+                        actions.send_keys(Keys.ARROW_DOWN).perform()
+                        time.sleep(0.2)
                     actions.send_keys(Keys.ENTER).perform()
                     time.sleep(0.2)
                     force_sync_state()
@@ -3311,19 +3399,22 @@ class NaverBlogBot:
 
                 # 📌 구조 ②: 일반 인용구 탈출 (지침서 지정순서)
                 if is_quote:
-                    quote_text = clean_editor_marker_text(
-                        line_s.replace('[인용구]', '').replace('[/인용구]', '')
-                    )
+                    quote_text = clean_marker_text(line_s, '[인용구]', '[/인용구]')
                     if not is_valid_quote_text(quote_text):
-                        print("   >> [주의] 빈 인용구 마커 감지 → 인용구 서식 삽입 건너뜀")
+                        print("   >> [주의] 비어 있거나 너무 짧은 인용구는 건너뜁니다.")
                         continue
-                    # 빈 인용구 방지: 네이버 인용구 컴포넌트 대신 일반 문단에 따옴표 문장으로 안전 입력
-                    reset_formatting()
+                    quote_inserted = insert_quotation()
                     set_font_color("#0095e9")
                     set_bold(True)
-                    type_formatted_line(f"“{quote_text}”")
+                    type_formatted_line(quote_text)
                     set_bold(False)
                     set_font_color("#000000")
+                    # 인용구 탈출 (방향키 ↓ ↓ + 엔터 1회)
+                    if quote_inserted:
+                        actions.send_keys(Keys.ARROW_DOWN).perform()
+                        time.sleep(0.2)
+                        actions.send_keys(Keys.ARROW_DOWN).perform()
+                        time.sleep(0.2)
                     actions.send_keys(Keys.ENTER).perform()
                     time.sleep(0.2)
                     force_sync_state()
@@ -3462,6 +3553,7 @@ def publish_one_post(post_type):
     # 클립보드 충돌 방지: 다른 자동화 스크립트 완료까지 대기 (최대 30분)
     _lock = FileLock(AUTOMATION_LOCK_PATH, timeout=1800)
     print(f"[Lock] 다른 자동화 작업 확인 중...")
+    print(f"[Lock] 전역 락 파일: {AUTOMATION_LOCK_PATH}")
     _lock.acquire()
     print(f"[Lock] 락 획득 완료 — '{post_type}' 작업을 시작합니다.")
     try:
@@ -3532,8 +3624,16 @@ def generate_daily_schedule():
     daily_stats["쿠팡"] = 0
     daily_stats["에러"] = 0
     
-    # 00:30 ~ 23:30 사이에서 랜덤 10개 시각 생성 (최소 30분 간격)
-    random_minutes = sorted(random.sample(range(30, 1410, 15), 10))  # 15분 단위 중 10개 선택
+    # 00:30 ~ 23:30 사이에서 1분 단위 후보를 쓰되, 자체 작업끼리는 최소 15분 간격 유지
+    candidate_minutes = list(range(30, 1410, 1))
+    random_minutes = []
+    for _ in range(2000):
+        temp = sorted(random.sample(candidate_minutes, 10))
+        if all(temp[i + 1] - temp[i] >= 15 for i in range(9)):
+            random_minutes = temp
+            break
+    if not random_minutes:
+        random_minutes = sorted(random.sample(candidate_minutes, 10))
     
     # 글 종류 배정: 일상 5 + 쿠팡 5 → 섞기
     post_types = ['일상'] * 5 + ['쿠팡'] * 5
