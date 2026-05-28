@@ -1,0 +1,18 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "tistory-automation"
+version = "0.1.0"
+description = "Tistory publishing automation tools"
+requires-python = ">=3.12"
+dependencies = [
+  "selenium>=4.20.0",
+]
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]

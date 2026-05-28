@@ -298,6 +298,7 @@ Git 작업 주의:
 - `AGENTS.md`, `docs/`, `토스 자동화/`는 현재 untracked로 보일 수 있다.
 - `토스 자동화/`를 통째로 `git add` 하지 않는다. 세션, 로그, 캐시, CSV 수익 링크 등 민감/런타임 파일이 섞일 수 있다.
 - Git에 올릴 때는 먼저 `.gitignore`를 확인/보강하고, 코드와 문서만 선별해서 `git add` 한다.
+- `티스토리 자동화 ing`를 다른 PC로 동기화할 때는 소스(`src`), 프롬프트 설정(`config/prompts`), 실행 스크립트(`scripts`), 문서(`AGENTS.md`, `README.md`, `docs`), 테스트(`tests`)만 포함한다. `data`, `runtime`, 세션, 로그, CSV, `.env`, 스킨에 실제 치환된 광고 코드 파일은 포함하지 않는다.
 - 권장 선별 대상은 `AGENTS.md`, `docs/work-log.md`, `토스 자동화/src/toss.py`, `토스 자동화/PROJECT_CONTEXT.md`, 필요한 `토스 자동화/prompts/*.md`, 필요한 설정 예시/문서 파일이다.
 - Chrome 프로필, `.env`, 로그, 캐시, `__pycache__`, 실제 쿠키/세션, 불필요한 런타임 산출물은 Git에 올리지 않는다.
 - Git 커밋 또는 GitHub push는 사용자에게 먼저 확인한다.
@@ -331,6 +332,7 @@ Git 작업 주의:
 - 골프 본문 프롬프트에는 원본 리서치 브리프 전체를 다시 넣지 말고, 시간표·지명·이동수단·예상 금액·골프장 후보·식당/관광·보험/수하물 핵심을 압축한 본문용 브리프를 사용한다. 품질 저하를 막기 위해 비용 수치, 시간대, 보험·수하물 체크가 압축본에 남아 있는지 확인한다.
 - `티스토리 자동화 ing/src/tistory_automation/main.py`는 쿠팡/일상 전용이다. 골프, 골프여행, 골프백, 라운딩, 그린피, 캐디 등 골프 주제는 `티스토리 자동화 ing/golf/main_golf.py`와 `G스케줄러`에서만 생성한다. daily 프롬프트에 골프 축을 다시 넣지 않는다.
 - `티스토리 자동화 ing/src/tistory_automation/main.py`와 `golf/main_golf.py`는 일상/쿠팡/골프/health 모두 이미지 확보 후 첫 본문 프롬프트 전송 전에 10초 대기하고, 본문 프롬프트 전송 후 ChatGPT 스트리밍 중지 문구가 사라지면 3초 더 기다린 뒤 새로고침 1회로 안정화한다. 본문 프롬프트를 보내기 전에 새로고침하거나 같은 프롬프트를 자동 재전송하지 않는다.
+- `티스토리 자동화 ing/src/tistory_automation/main.py` 예약 로그에서 STEP 3 제목/해시태그 추출이 `응답 0자`로 멈추면 티스토리 임시저장 문제가 아니라 ChatGPT 응답 DOM 텍스트 추출 문제일 수 있다. 먼저 `_wait_for_text()`와 최신 non-empty 응답 후보 추출 로직, `runtime/logs/scheduled/*.log`를 확인한다.
 - 티스토리 기존 글과 향후 글 전체에 공통 광고를 넣을 때는 자동화 본문 HTML보다 티스토리 스킨 편집을 우선한다. `camp-platform/public/HTML편집.txt`는 스킨 편집용 보관본이며, 로컬 `public` 폴더에 두는 것만으로 실제 티스토리에 적용되지 않는다.
 - 티스토리 본문 중간 AdSense 삽입은 `#article-view` 로드 후 JS가 `.tistory-mid-adsense`를 추가하는 방식이다. 공개 글 확인은 `페이지 소스 보기`보다 DevTools Elements에서 `.tistory-mid-adsense` 또는 해당 `data-ad-slot`을 검색한다.
 - AdSense `ca-pub-*` 값은 공개 소스에 노출될 수 있는 게시자 ID지만 문서/답변/로그에는 원문 전체를 남기지 않는다. 필요하면 `.env` 값으로 치환하거나 마스킹해서 다룬다.

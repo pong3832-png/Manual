@@ -55,6 +55,35 @@ quantum_stocks_cache/.pytest_cache/
 네이버 자동화 ing/네이버 블로그 글쓰기/자동발행상태기록파일/
 !티스토리 자동화 ing/
 티스토리 자동화 ing/*
+!티스토리 자동화 ing/AGENTS.md
+!티스토리 자동화 ing/README.md
+!티스토리 자동화 ing/requirements.txt
+!티스토리 자동화 ing/pyproject.toml
+!티스토리 자동화 ing/category_crawler.py
+!티스토리 자동화 ing/config/
+티스토리 자동화 ing/config/*
+!티스토리 자동화 ing/config/prompts/
+!티스토리 자동화 ing/config/prompts/*.json
+!티스토리 자동화 ing/config/prompts/*.md
+!티스토리 자동화 ing/docs/
+티스토리 자동화 ing/docs/*
+!티스토리 자동화 ing/docs/*.md
+!티스토리 자동화 ing/docs/legacy/
+!티스토리 자동화 ing/docs/legacy/*.md
+!티스토리 자동화 ing/scripts/
+티스토리 자동화 ing/scripts/*
+!티스토리 자동화 ing/scripts/*.ps1
+!티스토리 자동화 ing/scripts/*.bat
+!티스토리 자동화 ing/scripts/scheduled/
+티스토리 자동화 ing/scripts/scheduled/*
+!티스토리 자동화 ing/scripts/scheduled/run_scheduled_post.ps1
+!티스토리 자동화 ing/scripts/scheduled/run_refresh_schedule.ps1
+!티스토리 자동화 ing/src/
+!티스토리 자동화 ing/src/**
+티스토리 자동화 ing/src/**/__pycache__/
+티스토리 자동화 ing/src/tistory_automation/main copy.py
+!티스토리 자동화 ing/tests/
+!티스토리 자동화 ing/tests/*.py
 !티스토리 자동화 ing/golf/
 티스토리 자동화 ing/golf/*
 !티스토리 자동화 ing/golf/main_golf.py

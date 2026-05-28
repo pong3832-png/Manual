@@ -8,14 +8,20 @@
   - `camp-platform/public/HTML편집.txt`: 티스토리 스킨 편집용 HTML에 AdSense 기본 로더와 본문 중간 자동 삽입 스크립트 추가.
   - 본문 중간 광고는 `#article-view` 로드 후 JS가 `.tistory-mid-adsense` 래퍼로 삽입하며, 슬롯은 `3825649038` 사용. 기존 `[##_revenue_article_upper_##]`, `[##_revenue_article_lower_##]`는 유지.
   - AdSense client 값은 `.env`의 기존 `VITE_ADSENSE_CLIENT`에서 파일에 치환했고, 원문 값은 문서/답변에 남기지 않음.
+  - `src/tistory_automation/main.py`: 16:38 daily draft 실패 원인 확인. ChatGPT 제목/해시태그 응답 DOM의 마지막 요소가 빈 컨테이너일 때 실제 응답 텍스트를 못 읽어 `응답 0자`로 타임아웃되던 문제를 수정.
+  - 다른 PC 이어받기용으로 `.gitignore`의 `티스토리 자동화 ing` allowlist를 보강해 소스, 프롬프트 설정, 실행 스크립트, 문서, 테스트만 Git에 포함 가능하게 함. `data`, `runtime`, 세션, CSV, 로그는 계속 제외.
 - 검증
   - `HTML편집.txt`에서 `ca-pub-` 존재, `__TISTORY_ADSENSE_CLIENT__` 미검출 확인.
   - `HTML편집.txt`에서 `3825649038`, `insertMidArticleAd`, `data-ad-slot`, `adsbygoogle.push` 존재 확인.
+  - `.venv\Scripts\python.exe -m unittest tests.test_chatgpt_response_wait` 통과.
+  - `.venv\Scripts\python.exe -m py_compile .\src\tistory_automation\main.py` 통과.
+  - 커밋 후보에서 `data`, `runtime`, `.env`, 세션/로그/CSV 제외 확인.
   - 실제 티스토리 스킨 저장/공개 글 확인은 아직 수행하지 않음.
 - 다음 작업
   - `HTML편집.txt` 전체를 티스토리 관리자 `꾸미기 > 스킨 편집 > html 편집`에 반영.
   - 공개 글 확인은 `페이지 소스 보기`가 아니라 DevTools Elements에서 `.tistory-mid-adsense` 또는 `3825649038` 검색으로 확인.
   - 하단 슬롯과 구분이 필요하면 AdSense에서 본문 중간 전용 디스플레이 광고 단위를 새로 만든 뒤 `ADS_SLOT`만 교체.
+  - 다음 `TistoryChatGPTAutoPost_*` daily/coupang draft 로그에서 STEP 3 제목/해시태그 추출 후 티스토리 임시저장까지 이어지는지 확인.
 
 ## 2026-05-27
 
