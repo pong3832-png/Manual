@@ -317,7 +317,7 @@ Git 작업 주의:
 - `제미나이웹.py`의 인용구 로직은 `skssj2628.py`와 다를 수 있다. 인용구 스타일을 맞출 때는 먼저 실제 `insert_quotation()` 구현을 확인하고, 두 파일을 동일하다고 가정하지 않는다.
 - `네이버 자동화 ing/네이버 블로그 글쓰기/skssj2629/skssj2629.py`는 네이버 쇼핑커넥트 `skssj2629` 전용 발행 파일이다. 기본 CSV는 `skssj2629/skssj2629_naver.csv`이고, 수동 발행 실행은 사용자 명시 승인 후 진행한다.
 - `skssj2629.py`의 일상/광고 프롬프트는 "성분·소재·동선까지 따지는 청담 사는 자녀 둔 어머니" 컨셉을 유지한다. 전문용어는 쉬운 말로 풀고, `~하더라고요`, `~거든요`, `~잖아요` 같은 자연스러운 블로그 말투를 섞는다.
-- `skssj2629.py`의 일상/광고 본문은 긴 문단으로 나열하지 않고 일반 본문 줄을 25자 이하로 짧게 끊는 모바일형 흐름을 유지한다. URL, 해시태그, 네이버 입력 마커는 줄바꿈 보정에서 원형을 보존하고, 상품명 텍스트는 임의 변경하지 않는다.
+- `skssj2629.py`의 일상/광고 본문은 너무 짧게 끊지 않고 일반 본문 줄을 40자 안팎으로 나누는 모바일형 흐름을 유지한다. URL, 해시태그, 네이버 입력 마커는 줄바꿈 보정에서 원형을 보존하고, 상품명 텍스트는 임의 변경하지 않는다.
 - `skssj2629/skssj2629(스케줄러).py`는 Windows 작업 `NaverBlogAutoPost_2629_*`와 `NaverBlogAutoPost_2629_RefreshDaily`를 관리한다. 등록/삭제/변경은 사용자 명시 승인 후 진행하고, 보조 스크립트는 같은 폴더의 `skssj2629/자동발행실행보조파일/`을 사용한다.
 - 네이버 자동화는 전역 클립보드를 공유한다. 이미지 붙여넣기는 클립보드에 이미지가 올라간 것을 확인한 뒤에만 수행하고, 프롬프트 텍스트가 남은 상태에서 `Ctrl+V`가 실행되지 않게 한다.
 - 네이버 ID/비밀번호, 텔레그램 토큰, 쿠팡 API 키, 티스토리 계정값은 코드에 기본값으로 넣지 않는다. 필요한 값은 `.env` 또는 OS 환경변수에서 읽게 한다.
@@ -330,6 +330,12 @@ Git 작업 주의:
 - `티스토리 자동화 ing/golf/main_golf.py`에서 이미지 생성 뒤 본문 HTML 생성이 멈추면 먼저 `runtime/logs/scheduled_golf/*.log`, `runtime/logs/chatgpt_web_runs_golf.csv`, 실행 중 `pythonw/chromedriver` 중복 여부를 확인한다. 본문 프롬프트를 줄이더라도 `validate_golf_research_brief()`와 `validate_golf_travel_specificity()`를 우회하지 않는다.
 - 골프 본문 프롬프트에는 원본 리서치 브리프 전체를 다시 넣지 말고, 시간표·지명·이동수단·예상 금액·골프장 후보·식당/관광·보험/수하물 핵심을 압축한 본문용 브리프를 사용한다. 품질 저하를 막기 위해 비용 수치, 시간대, 보험·수하물 체크가 압축본에 남아 있는지 확인한다.
 - `티스토리 자동화 ing/src/tistory_automation/main.py`는 쿠팡/일상 전용이다. 골프, 골프여행, 골프백, 라운딩, 그린피, 캐디 등 골프 주제는 `티스토리 자동화 ing/golf/main_golf.py`와 `G스케줄러`에서만 생성한다. daily 프롬프트에 골프 축을 다시 넣지 않는다.
+- `티스토리 자동화 ing/src/tistory_automation/main.py`와 `golf/main_golf.py`는 일상/쿠팡/골프/health 모두 이미지 확보 후 첫 본문 프롬프트 전송 전에 10초 대기하고, 본문 프롬프트 전송 후 ChatGPT 스트리밍 중지 문구가 사라지면 3초 더 기다린 뒤 새로고침 1회로 안정화한다. 본문 프롬프트를 보내기 전에 새로고침하거나 같은 프롬프트를 자동 재전송하지 않는다.
+- 티스토리 기존 글과 향후 글 전체에 공통 광고를 넣을 때는 자동화 본문 HTML보다 티스토리 스킨 편집을 우선한다. `camp-platform/public/HTML편집.txt`는 스킨 편집용 보관본이며, 로컬 `public` 폴더에 두는 것만으로 실제 티스토리에 적용되지 않는다.
+- 티스토리 본문 중간 AdSense 삽입은 `#article-view` 로드 후 JS가 `.tistory-mid-adsense`를 추가하는 방식이다. 공개 글 확인은 `페이지 소스 보기`보다 DevTools Elements에서 `.tistory-mid-adsense` 또는 해당 `data-ad-slot`을 검색한다.
+- AdSense `ca-pub-*` 값은 공개 소스에 노출될 수 있는 게시자 ID지만 문서/답변/로그에는 원문 전체를 남기지 않는다. 필요하면 `.env` 값으로 치환하거나 마스킹해서 다룬다.
+- `golf/main_golf.py --post-type health`는 건강식품 쿠팡 글이며 `G스케줄러`에서 `--publish`로 등록되면 공개 발행된다. 건강식품 쿠팡글을 멈추려면 `golf_24h_random_15_current.json`와 `Tistory_Golf_24H_Random*` 작업의 `--post-type health --publish` 여부를 확인하고 사용자 승인 후 비활성화/재등록한다.
+- `golf/main_golf.py` 건강식품 쿠팡 본문은 프롬프트가 `style` 생성을 금지하고 `_style_coupang_html_for_tistory()`가 인라인 스타일을 후처리한다. 글자 크기 조정은 프롬프트보다 이 후처리 스타일 값을 먼저 확인한다.
 - 현재 `티스토리 자동화 ing`의 Windows 작업 스케줄러 `TistoryChatGPTAutoPost_*`, `TistoryChatGPTAutoPost_RefreshDaily`, `Tistory_Golf_24H_Random*`, `TestPythonW`는 사용자 요청으로 비활성화된 상태다. 다시 켜거나 재등록하려면 사용자 명시 승인 후 진행한다.
 
 ## Coding Conventions
