@@ -1,0 +1,12 @@
+.env
+.env.*
+!.env.example
+__pycache__/
+*.pyc
+.pytest_cache/
+reports/
+data/prices.csv
+models/registry/
+ledger/
+web/node_modules/
+web/dist/
