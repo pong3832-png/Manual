@@ -198,6 +198,7 @@ TISTORY_PASSWORD_XPATH         = '//*[@id="password--2"]'
 TISTORY_LOGIN_SUBMIT_XPATH     = '//button[@type="submit" and contains(@class, "submit")]'
 TISTORY_NEW_POST_LINK_XPATH    = '//a[contains(@href, "daniever2217.tistory.com/manage/newpost")]'
 TISTORY_NEW_POST_URL           = "https://daniever2217.tistory.com/manage/newpost/?type=post&returnURL=%2Fmanage%2Fposts%2F"
+TISTORY_SAVED_SESSION_RECOVERY_SECONDS = 30
 TISTORY_EDITOR_MODE_BTN_XPATH  = '//*[@id="editor-mode-layer-btn-open"]'
 TISTORY_EDITOR_HTML_XPATH      = '//*[@id="editor-mode-html-text"]'
 TISTORY_EDITOR_BASIC_MENU_XPATH = '//*[@id="editor-mode-kakao-tistory"]'
@@ -4354,24 +4355,33 @@ def prepare_coupang_api_products(
     selected_seed_products: list[dict] = []
     selected_api_products: list[dict] = []
     seen_keys: set[str] = set()
+    minimum_required_api_products = 2
 
     print(f"[Products] CSV 미사용 후보를 API 상품으로 순차 치환합니다: 후보 {len(seed_pool)}개")
     def _try_add_api_product(seed: dict, source_label: str) -> bool:
-        enriched_list = enrich_products_with_coupang_links(
-            [seed],
-            api_enabled=True,
-            access_key=COUPANG_ACCESS_KEY or "",
-            secret_key=COUPANG_SECRET_KEY or "",
-            sub_id=COUPANG_SUB_ID,
-            fallback_to_similar=True,
-            require_api_product=True,
-            excluded_url_keys=used_url_keys | seen_keys,
-            url_key_func=_coupang_product_key,
-        )
+        candidate_name = seed.get("상품명") or seed.get("키워드") or "상품"
+        try:
+            enriched_list = enrich_products_with_coupang_links(
+                [seed],
+                api_enabled=True,
+                access_key=COUPANG_ACCESS_KEY or "",
+                secret_key=COUPANG_SECRET_KEY or "",
+                sub_id=COUPANG_SUB_ID,
+                fallback_to_similar=True,
+                require_api_product=True,
+                excluded_url_keys=used_url_keys | seen_keys,
+                url_key_func=_coupang_product_key,
+            )
+        except Exception as exc:
+            print(
+                f"[Products] API 상품 조회 실패 - 후보 제외: "
+                f"{candidate_name} / {type(exc).__name__}: {exc}"
+            )
+            return False
         enriched = enriched_list[0] if enriched_list else {}
         product_key = _row_coupang_key(enriched)
         if not product_key:
-            print(f"[Products] API/유사 상품을 찾지 못해 제외: {seed.get('상품명') or seed.get('키워드') or '상품'}")
+            print(f"[Products] API/유사 상품을 찾지 못해 제외: {candidate_name}")
             return False
         relevance_score = _api_product_topic_relevance_score(enriched, performance_topic)
         if performance_topic and relevance_score <= 0:
@@ -4402,8 +4412,18 @@ def prepare_coupang_api_products(
         _try_add_api_product(seed, "csv")
         if len(selected_api_products) >= count:
             break
+        if performance_topic and len(selected_api_products) >= minimum_required_api_products:
+            print(
+                f"[Products] API 치환 상품 {len(selected_api_products)}개 확보 - "
+                "추가 API 조회를 줄이고 해당 개수로 진행합니다."
+            )
+            break
 
-    if performance_topic and len(selected_api_products) < count:
+    if (
+        performance_topic
+        and len(selected_api_products) < count
+        and len(selected_api_products) < minimum_required_api_products
+    ):
         supplemental_seeds = _topic_api_supplemental_seed_rows(performance_topic)
         if supplemental_seeds:
             print(
@@ -4413,6 +4433,12 @@ def prepare_coupang_api_products(
         for seed in supplemental_seeds:
             _try_add_api_product(seed, "topic-query")
             if len(selected_api_products) >= count:
+                break
+            if len(selected_api_products) >= minimum_required_api_products:
+                print(
+                    f"[Products] API 치환 상품 {len(selected_api_products)}개 확보 - "
+                    "추가 API 조회를 줄이고 해당 개수로 진행합니다."
+                )
                 break
 
     if len(selected_api_products) < 2:
@@ -5516,7 +5542,7 @@ def generate_daily_article(driver: webdriver.Chrome) -> dict:
     }
 
 
-def login_and_open_tistory_editor(driver: webdriver.Chrome) -> None:
+def login_and_open_tistory_editor(driver: webdriver.Chrome, allow_manual_login: bool = True) -> None:
     def _switch_to_latest_window(previous_handles: list[str]) -> None:
         current_handles = driver.window_handles
         if len(current_handles) > len(previous_handles):
@@ -5538,45 +5564,91 @@ def login_and_open_tistory_editor(driver: webdriver.Chrome) -> None:
         _switch_to_latest_window(previous_handles)
         return True
 
+    def _is_editor_ready() -> bool:
+        try:
+            if driver.find_elements(By.XPATH, TISTORY_TITLE_XPATH):
+                return True
+        except Exception:
+            pass
+        current_url = driver.current_url or ""
+        return "manage/newpost" in current_url and "daniever2217.tistory.com" in current_url
+
+    def _is_login_required() -> bool:
+        current_url = driver.current_url or ""
+        if "accounts.kakao.com" in current_url:
+            return True
+        if "login" in current_url.lower():
+            return True
+        try:
+            return bool(driver.find_elements(By.XPATH, TISTORY_LOGIN_ID_XPATH))
+        except Exception:
+            return False
+
+    def _wait_for_saved_session_auto_recovery() -> bool:
+        timeout = max(0, int(TISTORY_SAVED_SESSION_RECOVERY_SECONDS))
+        if timeout <= 0:
+            return _is_editor_ready()
+
+        print(f"[Tistory] 로그인 화면 감지 - 저장 세션 자동 복귀를 {timeout}초 확인합니다.")
+        deadline = time.time() + timeout
+        while time.time() < deadline:
+            if _is_editor_ready():
+                return True
+            if not _is_login_required():
+                if _click_new_post_link():
+                    return _is_editor_ready()
+                driver.get(TISTORY_NEW_POST_URL)
+                random_sleep(0.8, 1.4)
+                _handle_tistory_editor_alert(driver)
+                _dismiss_tistory_continue_draft_popup_with_escape(driver)
+                if _is_editor_ready():
+                    return True
+            time.sleep(2)
+        return _is_editor_ready()
+
     driver.get(TISTORY_NEW_POST_URL)
     random_sleep(0.8, 1.5)
     _handle_tistory_editor_alert(driver)
     _dismiss_tistory_continue_draft_popup_with_escape(driver)
 
-    current_url = driver.current_url
-    login_required = (
-        "accounts.kakao.com" in current_url
-        or "login" in current_url.lower()
-        or bool(driver.find_elements(By.XPATH, TISTORY_LOGIN_ID_XPATH))
-    )
+    login_required = _is_login_required()
 
     if login_required:
-        driver.get(TISTORY_URL)
-        random_sleep(0.3, 0.8)
-
-        if driver.find_elements(By.XPATH, TISTORY_KAKAO_START_XPATH):
-            WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, TISTORY_KAKAO_START_XPATH)))
-            driver.find_element(By.XPATH, TISTORY_KAKAO_START_XPATH).click()
+        if not allow_manual_login:
+            if _wait_for_saved_session_auto_recovery():
+                print("[Tistory] 저장 세션으로 글쓰기 화면 자동 복귀 확인")
+            else:
+                raise RuntimeError(
+                    "티스토리 저장 세션이 로그인 화면으로 이동했습니다. "
+                    "--tistory-login-only로 티스토리 세션을 다시 저장하세요."
+                )
+        else:
+            driver.get(TISTORY_URL)
             random_sleep(0.3, 0.8)
 
-        if driver.find_elements(By.XPATH, TISTORY_KAKAO_LOGIN_XPATH):
-            WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, TISTORY_KAKAO_LOGIN_XPATH)))
-            driver.find_element(By.XPATH, TISTORY_KAKAO_LOGIN_XPATH).click()
-            random_sleep(0.8, 1.5)
+            if driver.find_elements(By.XPATH, TISTORY_KAKAO_START_XPATH):
+                WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, TISTORY_KAKAO_START_XPATH)))
+                driver.find_element(By.XPATH, TISTORY_KAKAO_START_XPATH).click()
+                random_sleep(0.3, 0.8)
 
-        print("[Tistory] 수동 로그인 대기 중... 로그인 후 글쓰기 화면이 열릴 때까지 최대 5분 대기합니다.")
-        started_at = time.time()
-        while time.time() - started_at < 300:
-            current_url = driver.current_url
-            if "manage/newpost" in current_url:
-                break
-            if driver.find_elements(By.XPATH, TISTORY_TITLE_XPATH):
-                break
-            if _click_new_post_link():
-                break
-            time.sleep(2)
-        else:
-            raise TimeoutError("Tistory 수동 로그인 대기 시간 초과")
+            if driver.find_elements(By.XPATH, TISTORY_KAKAO_LOGIN_XPATH):
+                WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, TISTORY_KAKAO_LOGIN_XPATH)))
+                driver.find_element(By.XPATH, TISTORY_KAKAO_LOGIN_XPATH).click()
+                random_sleep(0.8, 1.5)
+
+            print("[Tistory] 수동 로그인 대기 중... 로그인 후 글쓰기 화면이 열릴 때까지 최대 5분 대기합니다.")
+            started_at = time.time()
+            while time.time() - started_at < 300:
+                current_url = driver.current_url
+                if "manage/newpost" in current_url:
+                    break
+                if driver.find_elements(By.XPATH, TISTORY_TITLE_XPATH):
+                    break
+                if _click_new_post_link():
+                    break
+                time.sleep(2)
+            else:
+                raise TimeoutError("Tistory 수동 로그인 대기 시간 초과")
 
     if not driver.find_elements(By.XPATH, TISTORY_TITLE_XPATH):
         clicked = _click_new_post_link()
@@ -5593,7 +5665,11 @@ def login_and_open_tistory_editor(driver: webdriver.Chrome) -> None:
     )
 
 
-def run_tistory_only_flow(publish: bool = False, post_type: str = "coupang") -> dict:
+def run_tistory_only_flow(
+    publish: bool = False,
+    post_type: str = "coupang",
+    allow_manual_login: bool = True,
+) -> dict:
     if check_captcha_lock():
         sys.exit(0)
     post_type = normalize_post_type(post_type)
@@ -5609,7 +5685,7 @@ def run_tistory_only_flow(publish: bool = False, post_type: str = "coupang") -> 
 
     try:
         print("\n[Tistory] 저장된 결과로 글쓰기 진입 중...")
-        login_and_open_tistory_editor(driver)
+        login_and_open_tistory_editor(driver, allow_manual_login=allow_manual_login)
         write_tistory_html_post(
             driver,
             title           = result["title"],
@@ -5690,7 +5766,7 @@ def run_full_flow(
             print("\n[Tistory] 저장된 티스토리 세션이 없어 현재 브라우저에서 이어서 진행합니다...")
 
         print("\n[Tistory] 로그인 및 에디터 진입 중...")
-        login_and_open_tistory_editor(driver)
+        login_and_open_tistory_editor(driver, allow_manual_login=keep_browser_on_error)
 
         write_tistory_html_post(
             driver,
@@ -5805,9 +5881,17 @@ if __name__ == "__main__":
             save_tistory_session()
         elif cli_args.resume_tistory_publish:
             print("[안전] main.py 공개 발행은 비활성화되어 있어 저장된 결과를 임시저장으로 마무리합니다.")
-            run_tistory_only_flow(publish=False, post_type=post_type)
+            run_tistory_only_flow(
+                publish=False,
+                post_type=post_type,
+                allow_manual_login=not cli_args.scheduled,
+            )
         elif cli_args.resume_tistory:
-            run_tistory_only_flow(publish=False, post_type=post_type)
+            run_tistory_only_flow(
+                publish=False,
+                post_type=post_type,
+                allow_manual_login=not cli_args.scheduled,
+            )
         else:
             if cli_args.publish:
                 print("[안전] main.py 공개 발행은 비활성화되어 있어 임시저장으로 마무리합니다.")

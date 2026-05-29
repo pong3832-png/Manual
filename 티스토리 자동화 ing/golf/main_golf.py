@@ -5,9 +5,9 @@
   - 컨셉: 공개 정보 기반 국내외 명문 골프장 SEO 정보 블로그
 
 실행 방법
-  일반 실행(자동 발행): python main_golf.py --post-type golf
+  일반 실행(공개 발행): python main_golf.py --post-type golf
+  건강식품 쿠팡 글: python main_golf.py --post-type health
   로그인 저장: python main_golf.py --login
-  발행까지 실행: python main_golf.py --post-type golf --publish
   임시저장만 실행: python main_golf.py --post-type golf --draft
   스케줄 공개 발행: python main_golf.py --post-type golf --scheduled --publish
 """
@@ -85,6 +85,7 @@ _PROJECT_ROOT_FOR_IMPORT = _FILE_DIR_FOR_IMPORT.parent
 _SRC_DIR = str(_PROJECT_ROOT_FOR_IMPORT / "src")
 if _SRC_DIR not in _sys.path:
     _sys.path.insert(0, _SRC_DIR)
+from tistory_automation.coupang.api import enrich_products_with_coupang_links
 from selenium import webdriver
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
@@ -119,7 +120,10 @@ CHATGPT_SESSION_DIR  = RUNTIME_DIR / "sessions" / "chatgpt"
 TISTORY_SESSION_DIR  = RUNTIME_DIR / "sessions" / "tistory"
 RUNTIME_SESSION_ROOT = RUNTIME_DIR / ".tmp" / "chrome-runtime-sessions"
 PRODUCT_DB_PATH      = DATA_DIR / "products" / "products_db_category.csv"
+HEALTH_PRODUCT_DB_DEFAULT_PATH = DATA_DIR / "products" / "건강식품_db.csv"
+HEALTH_PRODUCT_DB_FALLBACK_PATH = PACKAGE_DIR / "건강식품_db.csv"
 GENERATED_RESULT_DIR = RUNTIME_DIR / "outputs" / "generated_results_golf"
+TISTORY_ONE_TIME_IMAGE_DIR = Path(os.getenv("TISTORY_ONE_TIME_IMAGE_DIR", str(Path.home() / "백업용")))
 CHROMEDRIVER_PATH    = Path.home() / ".cache" / "selenium" / "chromedriver" / "win64" / "147.0.7727.117" / "chromedriver.exe"
 SCHEDULED_LOG_DIR    = LOG_DIR / "scheduled_golf"
 
@@ -155,7 +159,7 @@ for _stream_name in ("stdout", "stderr"):
 
 CHATGPT_URL         = "https://chatgpt.com/"
 CHATGPT_PROJECT_URL = (
-    "https://chatgpt.com/g/g-p-69eec8ee34ec819191f33a925134d41c-golpeu-peurojegteu"
+    "https://chatgpt.com/g/g-p-6a028cbb296081918d731dad5595cc54-golpeu"
     "/project"
 )
 PROMPT_TEXTAREA_XPATHS = [
@@ -194,6 +198,7 @@ TISTORY_PASSWORD_XPATH         = '//*[@id="password--2"]'
 TISTORY_LOGIN_SUBMIT_XPATH     = '//button[@type="submit" and contains(@class, "submit")]'
 TISTORY_NEW_POST_LINK_XPATH    = '//a[contains(@href, "jxbooklove.tistory.com/manage/newpost")]'
 TISTORY_NEW_POST_URL           = "https://jxbooklove.tistory.com/manage/newpost/?type=post&returnURL=%2Fmanage%2Fposts%2F"
+TISTORY_SAVED_SESSION_RECOVERY_SECONDS = 30
 TISTORY_EDITOR_MODE_BTN_XPATH  = '//*[@id="editor-mode-layer-btn-open"]'
 TISTORY_EDITOR_HTML_XPATH      = '//*[@id="editor-mode-html-text"]'
 TISTORY_EDITOR_BASIC_MENU_XPATH = '//*[@id="editor-mode-kakao-tistory"]'
@@ -221,11 +226,37 @@ TISTORY_BODY_TEXTAREA_XPATHS   = [
     '//textarea',
 ]
 TISTORY_TAG_XPATH              = '//*[@id="tagText"]'
+TISTORY_MAX_GOLF_BODY_IMAGE_UPLOADS = int(os.getenv("TISTORY_MAX_GOLF_BODY_IMAGE_UPLOADS", "4"))
+HEALTH_PRODUCT_SELECTION_SCAN_LIMIT = int(os.getenv("HEALTH_PRODUCT_SELECTION_SCAN_LIMIT", "10000"))
+HEALTH_PRODUCT_ENRICH_BATCH_SIZE = int(os.getenv("HEALTH_PRODUCT_ENRICH_BATCH_SIZE", "12"))
 
 # 카테고리 이름 fallback
 TISTORY_COUPANG_CATEGORY_NAME = "데이터분석하는 청년의 꿀템"
 TISTORY_DAILY_CATEGORY_NAME   = "일상을 누려보자"
 TISTORY_GOLF_CATEGORY_NAME    = "국내 명문 골프장"   # 티스토리 카테고리명과 일치시킬 것
+TISTORY_GOLF_CATEGORY_DEFAULT = TISTORY_GOLF_CATEGORY_NAME
+
+TISTORY_GOLF_CATEGORY_NAMES = {
+    "domestic": "국내 명문 골프장",
+    "wellington": "웰링턴CC",
+    "trinity": "트리니티클럽",
+    "jack_nicklaus": "잭니클라우스GC 코리아",
+    "comparison": "골프장 비교",
+    "overseas": "해외 명문 골프장",
+    "usa": "미국 명문 골프장",
+    "japan": "일본 명문 골프장",
+    "europe": "유럽 명문 골프장",
+}
+
+TISTORY_GOLF_CATEGORY_FALLBACKS = {
+    TISTORY_GOLF_CATEGORY_NAMES["wellington"]: [TISTORY_GOLF_CATEGORY_NAMES["domestic"]],
+    TISTORY_GOLF_CATEGORY_NAMES["trinity"]: [TISTORY_GOLF_CATEGORY_NAMES["domestic"]],
+    TISTORY_GOLF_CATEGORY_NAMES["jack_nicklaus"]: [TISTORY_GOLF_CATEGORY_NAMES["domestic"]],
+    TISTORY_GOLF_CATEGORY_NAMES["comparison"]: [TISTORY_GOLF_CATEGORY_NAMES["domestic"]],
+    TISTORY_GOLF_CATEGORY_NAMES["usa"]: [TISTORY_GOLF_CATEGORY_NAMES["overseas"]],
+    TISTORY_GOLF_CATEGORY_NAMES["japan"]: [TISTORY_GOLF_CATEGORY_NAMES["overseas"]],
+    TISTORY_GOLF_CATEGORY_NAMES["europe"]: [TISTORY_GOLF_CATEGORY_NAMES["overseas"]],
+}
 
 TISTORY_ID       = os.getenv("TISTORY_ID")
 TISTORY_PASSWORD = os.getenv("TISTORY_PASSWORD")
@@ -294,8 +325,8 @@ def enable_scheduled_logging(post_type: str) -> object:
 
 def normalize_post_type(post_type: str | None) -> str:
     value = (post_type or "golf").strip().lower()
-    if value in {"쿠팡", "coupang"}:
-        return "coupang"
+    if value in {"쿠팡", "coupang", "건강", "건강식품", "health", "healthfood", "supplement"}:
+        return "health"
     if value in {"일상", "daily"}:
         return "daily"
     if value in {"골프", "golf"}:
@@ -354,6 +385,98 @@ PROMPT_DAILY_IMAGE = _PROMPT_CONFIG["daily_image"]
 PROMPT_DAILY_BODY = _PROMPT_CONFIG["daily_body"]
 PROMPT_DAILY_META = _PROMPT_CONFIG["daily_meta"]
 
+HEALTH_COUPANG_BODY_PROMPT_TEMPLATE = """
+너는 구글 SEO와 쿠팡 파트너스에 특화된 한국어 티스토리 블로그 에디터다.
+아래 상품 정보만 바탕으로 건강식품/영양제 구매 전 비교 가이드 HTML 본문을 작성한다.
+
+[출력 규칙]
+- HTML 본문만 출력한다. 설명, 메모, 코드블록, 마크다운, JSON은 출력하지 않는다.
+- 첫 글자는 반드시 <p>로 시작한다.
+- 허용 태그: <p>, <h2>, <h3>, <ul>, <li>, <strong>, <a>
+- style 속성, class 속성, <img>, <figure>, <table>, <script>, <style>은 쓰지 않는다. 티스토리 인라인 스타일은 로컬 코드가 자동 적용한다.
+- 본문 내용은 1800~2400자 정도로 작성한다.
+- 생성 이미지 placeholder와 두 번째 이미지는 절대 쓰지 않는다.
+
+[필수 고지]
+첫 줄은 아래 문장만 담은 <p>로 시작한다.
+{disclosure}
+
+[상품 정보]
+- 대표 키워드: {keyword}
+- 연관 키워드: {keywords}
+- 비교 상품 수: {product_count}개
+- 타깃 독자: {target_reader}
+- 사용 시나리오: {usage_scenario}
+- 독자 고민: {pain_point}
+{products_summary}
+
+[건강식품 작성 원칙]
+- 질병 치료, 예방, 완치, 의학적 효능 보장처럼 보이는 표현은 금지한다.
+- 골프 실력 향상, 통증 개선, 체중감량 보장도 금지한다.
+- 성분표, 섭취량, 용량, 가격 확인 기준, 리뷰 수, 배송, 휴대성, 당류/카페인/알레르기 주의 여부를 비교한다.
+- "가장 무난한 기준점 1개 + 상황별 대안 1~2개" 구조로 설명한다.
+- 건강 상태, 복용 중인 약, 임신/수유, 알레르기, 수술 전후, 만성질환이 있으면 상세페이지 표시사항과 전문가 상담이 필요하다고 안내한다.
+
+[구성]
+1. 문제 인식과 구매 전 확인이 필요한 이유
+2. 한눈에 보는 선택 기준
+3. 성분표와 섭취량을 볼 때 주의할 점
+4. 1순위 기준점 후보와 이유
+5. 상황별 대안 후보
+6. 구매 전 체크 포인트
+7. FAQ 3개
+8. 링크 반복 없는 마무리
+
+[링크 규칙]
+- 각 상품 섹션 끝에만 링크를 1개씩 넣는다.
+- 링크 href는 상품 정보의 링크 마커를 그대로 사용한다. 예: <a href="[PRODUCT_LINK_1]">가격, 성분표, 리뷰 수 확인</a>
+- 링크 바로 앞 문장은 "가격, 성분표, 섭취량, 리뷰 수를 최종 확인할 때"처럼 정보 확인형으로 쓴다.
+- 하단에 링크를 다시 모으지 않는다.
+""".strip()
+
+HEALTH_COUPANG_IMAGE_PROMPT_TEMPLATE = """
+Create one realistic blog thumbnail image for a Korean affiliate product review article. No explanation.
+
+[Article context]
+- Main topic: {keyword}
+- Primary advertised product use scene: {health_image_focus}
+- Product group cues: {health_image_cues}
+- Reader: 40s-50s people who compare daily nutrition products before purchase.
+
+[Image]
+- The main subject must be a person naturally using the primary advertised product type described above.
+- Show hands or a partial adult figure using the product in a realistic daily setting, such as kitchen counter, desk, or post-round home routine.
+- The product type must be visually clear: for lemon juice show pouring/squeezing into water; for protein drink show drinking or pouring into a glass; for supplement tablets show taking/preparing capsules with water.
+- Include only secondary comparison cues in the background, such as a checklist notebook or another generic supplement item.
+- The image must look like the product is actually being used, not just a random healthy lifestyle scene.
+- Bright realistic photo style, premium but practical, 16:9 horizontal ratio.
+
+[Forbidden]
+- Brand names, product names, logos, package text, readable letters, watermark
+- Exact package recreation or copying a real retail product appearance
+- Medical treatment imagery, hospital imagery, disease cure mood
+- Ad-like purchase-pushing composition
+- Illustration, cartoon, 3D render
+""".strip()
+
+HEALTH_COUPANG_TITLE_RULES = """
+[건강식품 제목 추가 규칙]
+- 치료, 예방, 효과 보장, 체중감량 보장처럼 의료 효능으로 보이는 단어는 제목에 쓰지 않는다.
+- 대표 키워드를 제목 맨 앞에 그대로 반복하지 않는다. 특히 "중년 단백질", "40대", "50대", "중년", "건강식품", "영양제", "추천"으로 시작하는 제목은 실패다.
+- 제목은 실제 검색자가 입력할 만한 롱테일 검색어처럼 만든다. 비교 후보 상품명에서 보이는 구체 제품군, 성분, 제형, 섭취 상황을 먼저 잡고 구매 전 확인 의도를 붙인다.
+- 상품명이 검색 유입에 도움이 되면 대표 상품명 또는 상품명 일부를 1개만 자연스럽게 포함한다. 단, 상품명 2개 이상을 나열하지 않는다.
+- "중년"은 꼭 필요할 때만 제목 중간이나 뒤쪽에 1회 사용한다. 모든 제목의 핵심을 "중년 단백질"로 고정하지 않는다.
+- 권장 구조는 다음 중 하나를 고른다: "구체 제품군 + 성분표/섭취량 체크", "대표 상품명 + 구매 전 확인", "제품군 + 가격·리뷰 비교", "섭취 상황 + 선택 기준".
+- 제목 끝은 비교, 선택 기준, 구매 전 확인, 성분표 체크, 리뷰 확인 중 하나로 자연스럽게 마무리한다.
+- 복잡한 말장난보다 검색 의도가 분명한 제목을 우선한다. 30~48자 안에서 제품군과 확인 포인트가 바로 보여야 한다.
+""".strip()
+
+HEALTH_COUPANG_HASHTAG_RULES = """
+[건강식품 해시태그 추가 규칙]
+- 건강식품, 영양제, 성분표, 섭취량, 중년건강, 쿠팡비교, 구매전확인 계열 태그를 우선 고려한다.
+- 질병명, 치료, 완치, 효과보장, 다이어트보장 계열 태그는 쓰지 않는다.
+""".strip()
+
 MASTER_PROMPTS = {
     "body": PROMPT_BODY,
     "title": PROMPT_TITLE,
@@ -377,6 +500,11 @@ def fill_prompt(template: str, values: dict) -> str:
 
 def build_coupang_body_prompt(values: dict) -> str:
     global COUPANG_HTML_GUIDE
+    if values.get("content_vertical") == "health_supplement":
+        combined = fill_prompt(HEALTH_COUPANG_BODY_PROMPT_TEMPLATE, values).strip()
+        _assert_prompt_text_clean(combined, "건강식품 쿠팡 본문")
+        return combined
+
     if not COUPANG_HTML_GUIDE:
         COUPANG_HTML_GUIDE = _load_text_file(COUPANG_HTML_GUIDE_PATH, "쿠팡 HTML 지침서")
     body_template = MASTER_PROMPTS["body"]
@@ -387,6 +515,28 @@ def build_coupang_body_prompt(values: dict) -> str:
     combined = "\n\n".join(part for part in prompt_parts if part)
     _assert_prompt_text_clean(combined, "쿠팡 본문")
     return combined
+
+
+def build_health_coupang_image_prompt(values: dict) -> str:
+    prompt = fill_prompt(HEALTH_COUPANG_IMAGE_PROMPT_TEMPLATE, values).strip()
+    _assert_prompt_text_clean(prompt, "건강식품 쿠팡 이미지")
+    return prompt
+
+
+def build_coupang_title_prompt(values: dict) -> str:
+    prompt = fill_prompt(MASTER_PROMPTS["title"], values).strip()
+    if values.get("content_vertical") == "health_supplement":
+        prompt = "\n\n".join([prompt, HEALTH_COUPANG_TITLE_RULES])
+    _assert_prompt_text_clean(prompt, "쿠팡 제목")
+    return prompt
+
+
+def build_coupang_hashtags_prompt(values: dict) -> str:
+    prompt = fill_prompt(MASTER_PROMPTS["hashtags"], values).strip()
+    if values.get("content_vertical") == "health_supplement":
+        prompt = "\n\n".join([prompt, HEALTH_COUPANG_HASHTAG_RULES])
+    _assert_prompt_text_clean(prompt, "쿠팡 해시태그")
+    return prompt
 
 
 # ------------------------------------------------------------------
@@ -415,17 +565,108 @@ def _build_options(user_data_dir: Path, *, headless: bool = False) -> Options:
     return opts
 
 
+def _version_tuple(value: str) -> tuple[int, ...]:
+    numbers = re.findall(r"\d+", value or "")
+    return tuple(int(part) for part in numbers[:4]) if numbers else (0,)
+
+
+def _get_installed_chrome_major() -> str | None:
+    if os.getenv("CHROME_MAJOR_VERSION"):
+        return os.getenv("CHROME_MAJOR_VERSION", "").strip() or None
+
+    app_dirs: list[Path] = []
+    if os.getenv("CHROME_BINARY_PATH"):
+        app_dirs.append(Path(os.getenv("CHROME_BINARY_PATH", "")).expanduser().parent)
+    for env_name in ("PROGRAMFILES", "PROGRAMFILES(X86)", "LOCALAPPDATA"):
+        base_dir = os.getenv(env_name)
+        if base_dir:
+            app_dirs.append(Path(base_dir) / "Google" / "Chrome" / "Application")
+
+    version_names: list[str] = []
+    for app_dir in app_dirs:
+        if not app_dir.exists():
+            continue
+        try:
+            version_names.extend(
+                child.name
+                for child in app_dir.iterdir()
+                if child.is_dir() and re.match(r"^\d+\.", child.name)
+            )
+        except OSError:
+            continue
+
+    if not version_names:
+        return None
+    version_names.sort(key=_version_tuple, reverse=True)
+    return version_names[0].split(".", 1)[0]
+
+
+def _matching_chromedriver_paths(chrome_major: str | None) -> list[Path]:
+    if not chrome_major:
+        return []
+
+    candidates: list[Path] = []
+    roots = [
+        Path.home() / ".wdm" / "drivers" / "chromedriver" / "win64",
+        Path.home() / ".cache" / "selenium" / "chromedriver" / "win64",
+    ]
+    for root in roots:
+        if not root.exists():
+            continue
+        try:
+            version_dirs = sorted(
+                [path for path in root.iterdir() if path.is_dir() and path.name.startswith(f"{chrome_major}.")],
+                key=lambda path: _version_tuple(path.name),
+                reverse=True,
+            )
+        except OSError:
+            continue
+        for version_dir in version_dirs:
+            candidates.extend(
+                [
+                    version_dir / "chromedriver.exe",
+                    version_dir / "chromedriver-win32" / "chromedriver.exe",
+                    version_dir / "chromedriver-win64" / "chromedriver.exe",
+                ]
+            )
+    return candidates
+
+
+def _driver_path_matches_chrome_major(driver_path: Path, chrome_major: str | None) -> bool:
+    if not chrome_major:
+        return True
+    return any(part.startswith(f"{chrome_major}.") for part in driver_path.parts)
+
+
 def _candidate_chromedriver_paths() -> list[Path]:
-    candidates = [CHROMEDRIVER_PATH]
+    env_driver = Path(os.getenv("CHROMEDRIVER_PATH", "")).expanduser() if os.getenv("CHROMEDRIVER_PATH") else None
+    chrome_major = _get_installed_chrome_major()
+    matching_drivers = _matching_chromedriver_paths(chrome_major)
+    candidates: list[Path] = []
+    if env_driver and _driver_path_matches_chrome_major(env_driver, chrome_major):
+        candidates.append(env_driver)
+    candidates.extend(matching_drivers)
+    if env_driver and not _driver_path_matches_chrome_major(env_driver, chrome_major):
+        candidates.append(env_driver)
     candidates.extend(
         [
+            CHROMEDRIVER_PATH,
             Path.home() / ".cache" / "selenium" / "chromedriver" / "win64" / "147.0.7727.117" / "chromedriver.exe",
             Path.home() / ".cache" / "selenium" / "chromedriver" / "win64" / "147.0.7727.56" / "chromedriver.exe",
             Path.home() / ".cache" / "selenium" / "chromedriver" / "win64" / "146.0.7680.165" / "chromedriver.exe",
             Path.home() / ".cache" / "selenium" / "chromedriver" / "win64" / "145.0.7632.117" / "chromedriver.exe",
         ]
     )
-    return [path for path in candidates if path.exists()]
+
+    existing: list[Path] = []
+    seen: set[str] = set()
+    for path in candidates:
+        key = str(path)
+        if key in seen or not path.exists():
+            continue
+        seen.add(key)
+        existing.append(path)
+    return existing
 
 
 def _create_chrome_driver_with_local_binary(opts: Options) -> webdriver.Chrome | None:
@@ -657,6 +898,62 @@ def _paste_via_js(driver: webdriver.Chrome, textarea, prompt_text: str) -> bool:
         return False
 
 
+def _paste_via_clipboard(driver: webdriver.Chrome, textarea, prompt_text: str) -> bool:
+    try:
+        _set_clipboard(prompt_text)
+        time.sleep(0.5)
+        textarea.click()
+        textarea.send_keys(Keys.CONTROL, "v")
+        return True
+    except Exception as exc:
+        print(f"[경고] 클립보드 입력 실패: {exc}")
+        return False
+
+
+def _paste_via_cdp(driver: webdriver.Chrome, textarea, prompt_text: str) -> bool:
+    try:
+        driver.execute_script("arguments[0].scrollIntoView({block:'center'});", textarea)
+        textarea.click()
+        driver.execute_cdp_cmd("Input.insertText", {"text": prompt_text})
+        return True
+    except Exception as exc:
+        print(f"[경고] CDP 입력 실패: {exc}")
+        return False
+
+
+def _clear_prompt_textarea(driver: webdriver.Chrome, textarea) -> None:
+    try:
+        textarea.click()
+        textarea.send_keys(Keys.CONTROL, "a")
+        textarea.send_keys(Keys.DELETE)
+        random_sleep(0.2, 0.4)
+    except Exception:
+        try:
+            driver.execute_script(
+                """
+                const el = arguments[0];
+                el.focus();
+                el.textContent = '';
+                el.dispatchEvent(new InputEvent('input', {bubbles: true}));
+                """,
+                textarea,
+            )
+        except Exception:
+            pass
+
+
+def _prompt_input_has_expected_length(driver: webdriver.Chrome, prompt_text: str) -> tuple[bool, int]:
+    current_text = _get_prompt_textarea_text(driver)
+    expected_len = len(prompt_text)
+    if expected_len >= 12000:
+        required_len = int(expected_len * 0.82)
+    elif expected_len >= 3000:
+        required_len = int(expected_len * 0.75)
+    else:
+        required_len = max(1, int(expected_len * 0.55))
+    return len(current_text) >= required_len, len(current_text)
+
+
 def input_prompt(driver: webdriver.Chrome, prompt_text: str) -> None:
     """
     프롬프트를 ChatGPT 입력창에 입력합니다.
@@ -669,42 +966,41 @@ def input_prompt(driver: webdriver.Chrome, prompt_text: str) -> None:
     textarea.click()
     random_sleep(0.5, 1)
 
-    try:
-        textarea.send_keys(Keys.CONTROL, "a")
-        textarea.send_keys(Keys.DELETE)
-        random_sleep(0.2, 0.4)
-    except Exception:
-        pass
+    _clear_prompt_textarea(driver, textarea)
 
-    # 우선 1차 clip 명령 + Ctrl+V를 시도합니다.
-    _set_clipboard(prompt_text)
-    time.sleep(0.5)  # clip 명령이 클립보드에 반영될 때까지 잠깐 대기
-    textarea.send_keys(Keys.CONTROL, "v")
-    random_sleep(1, 1.5)
+    is_long_prompt = len(prompt_text) >= 12000
+    if is_long_prompt:
+        attempts = [
+            ("Chrome DevTools 직접 입력", _paste_via_cdp),
+            ("클립보드 붙여넣기", _paste_via_clipboard),
+            ("JavaScript 직접 입력", _paste_via_js),
+        ]
+    else:
+        attempts = [
+            ("클립보드 붙여넣기", _paste_via_clipboard),
+            ("Chrome DevTools 직접 입력", _paste_via_cdp),
+            ("JavaScript 직접 입력", _paste_via_js),
+        ]
 
-    # 실제 입력 여부를 확인하고, 비어 있으면 JS 방식으로 다시 시도합니다.
-    current_text = ""
-    try:
-        current_text = (textarea.text or "").strip()
-        if not current_text:
-            current_text = (driver.execute_script("return arguments[0].textContent;", textarea) or "").strip()
-    except Exception:
-        pass
+    last_len = 0
+    for attempt_idx, (label, inserter) in enumerate(attempts, start=1):
+        if attempt_idx > 1:
+            _clear_prompt_textarea(driver, textarea)
+        print(f"[입력] {label} 시도 ({attempt_idx}/{len(attempts)}, {len(prompt_text)}자)")
+        if not inserter(driver, textarea, prompt_text):
+            continue
+        random_sleep(1.0, 1.5)
+        ok, actual_len = _prompt_input_has_expected_length(driver, prompt_text)
+        last_len = actual_len
+        if ok:
+            print(f"[입력] 프롬프트 입력 길이 확인 완료 ({actual_len}/{len(prompt_text)}자)")
+            print(f"[입력] 프롬프트 입력 완료 ({len(prompt_text)}자)")
+            return
+        print(f"[경고] {label} 후 입력 길이 부족: {actual_len}/{len(prompt_text)}자")
 
-    if not current_text:
-        print("[경고] Ctrl+V 입력 실패. JavaScript 방식으로 재시도합니다...")
-        textarea.click()
-        random_sleep(0.3, 0.5)
-        # 기존 내용을 지운 뒤 JS 삽입으로 전환합니다.
-        textarea.send_keys(Keys.CONTROL, "a")
-        textarea.send_keys(Keys.DELETE)
-        random_sleep(0.2, 0.4)
-        success = _paste_via_js(driver, textarea, prompt_text)
-        if not success:
-            raise RuntimeError("프롬프트 입력에 실패했습니다. 입력창 상태를 확인하세요.")
-        random_sleep(0.5, 1)
-
-    print(f"[입력] 프롬프트 입력 완료 ({len(prompt_text)}자)")
+    raise RuntimeError(
+        f"프롬프트 입력에 실패했습니다. 입력창 글자 수가 부족합니다: {last_len}/{len(prompt_text)}자"
+    )
 
 
 def _wait_for_prompt_settle(prompt_text: str) -> None:
@@ -723,30 +1019,76 @@ def _wait_for_prompt_settle(prompt_text: str) -> None:
     time.sleep(wait_seconds)
 
 
+def _get_prompt_textarea_text(driver: webdriver.Chrome) -> str:
+    try:
+        textarea = _find_textarea(driver)
+        text = (textarea.text or "").strip()
+        if not text:
+            text = (driver.execute_script(
+                "return arguments[0].value || arguments[0].innerText || arguments[0].textContent || '';",
+                textarea,
+            ) or "").strip()
+        return text
+    except Exception:
+        return ""
+
+
+def _click_chatgpt_send_button(driver: webdriver.Chrome) -> bool:
+    send_button_xpaths = [
+        '//button[@data-testid="send-button"]',
+        '//button[@data-testid="composer-submit-button"]',
+        '//button[contains(@data-testid, "send")]',
+        '//button[contains(@data-testid, "submit")]',
+        '//button[contains(@aria-label, "Send")]',
+        '//button[contains(@aria-label, "send")]',
+        '//button[contains(@aria-label, "보내기")]',
+        '//button[contains(@aria-label, "전송")]',
+        '//button[contains(@class, "send")]',
+    ]
+    for xpath in send_button_xpaths:
+        try:
+            for button in driver.find_elements(By.XPATH, xpath):
+                if button.is_displayed() and button.is_enabled():
+                    driver.execute_script("arguments[0].click();", button)
+                    random_sleep(0.5, 1.0)
+                    return True
+        except Exception:
+            continue
+    return False
+
+
+def _verify_prompt_submitted(driver: webdriver.Chrome, before_text: str, timeout: float = 8.0) -> None:
+    started_at = time.time()
+    while time.time() - started_at < timeout:
+        current_text = _get_prompt_textarea_text(driver)
+        if not current_text:
+            print("[전송] 프롬프트 전송 확인: 입력창 비워짐")
+            return
+        if before_text and current_text != before_text:
+            print("[전송] 프롬프트 전송 확인: 입력창 내용 변경")
+            return
+        time.sleep(0.5)
+    raise RuntimeError("ChatGPT 프롬프트가 전송되지 않았습니다. 입력창에 프롬프트가 남아 있어 중단합니다.")
+
+
 def submit_prompt(driver: webdriver.Chrome) -> None:
-    """프롬프트를 전송합니다. Enter 키 실패 시 전송 버튼 클릭으로 재시도합니다."""
+    """프롬프트를 전송하고 입력창이 실제로 비워졌는지 확인합니다."""
     textarea = _find_textarea(driver)
+    before_text = _get_prompt_textarea_text(driver)
+
+    if _click_chatgpt_send_button(driver):
+        print("[전송] 전송 버튼 클릭")
+        _verify_prompt_submitted(driver, before_text)
+        return
+
+    print("[전송] 전송 버튼을 찾지 못해 Enter 전송 시도")
     textarea.send_keys(Keys.ENTER)
     random_sleep(0.8, 1.2)
 
-    # Enter 키가 전송 역할을 하지 못할 경우 전송 버튼을 직접 클릭합니다.
-    _SEND_BTN_XPATHS = [
-        '//button[@data-testid="send-button"]',
-        '//button[contains(@aria-label, "Send")]',
-        '//button[contains(@aria-label, "send")]',
-        '//button[contains(@class, "send")]',
-    ]
-    for xpath in _SEND_BTN_XPATHS:
-        try:
-            btns = driver.find_elements(By.XPATH, xpath)
-            for btn in btns:
-                if btn.is_displayed() and btn.is_enabled():
-                    print("[전송] Enter 미작동 감지 → 전송 버튼 직접 클릭")
-                    btn.click()
-                    random_sleep(0.5, 1.0)
-                    return
-        except Exception:
-            continue
+    if _click_chatgpt_send_button(driver):
+        print("[전송] Enter 후 전송 버튼 클릭")
+
+    _verify_prompt_submitted(driver, before_text)
 
 
 def _get_response_elements(driver: webdriver.Chrome) -> list:
@@ -837,6 +1179,38 @@ def _is_chatgpt_busy(driver: webdriver.Chrome) -> bool:
     return False
 
 
+def _get_chatgpt_generation_error(driver: webdriver.Chrome) -> str:
+    """ChatGPT 화면에 표시된 생성 실패/중단 문구를 감지합니다."""
+    try:
+        body_text = driver.execute_script("return document.body ? (document.body.innerText || '') : '';") or ""
+    except Exception:
+        return ""
+    normalized = re.sub(r"\s+", " ", str(body_text)).strip()
+    if not normalized:
+        return ""
+
+    hard_error_phrases = (
+        "Something went wrong while generating the response",
+        "If this issue persists please contact us",
+        "문제가 발생",
+        "응답을 생성하는 중",
+        "다시 시도",
+    )
+    soft_stall_phrases = (
+        "스트리밍이 중지되었습니다",
+        "메시지 완료를 기다리는 중",
+        "Streaming stopped",
+        "waiting for the message to complete",
+    )
+    for phrase in hard_error_phrases:
+        if phrase.lower() in normalized.lower():
+            return phrase
+    for phrase in soft_stall_phrases:
+        if phrase.lower() in normalized.lower():
+            return phrase
+    return ""
+
+
 def _wait_until_chatgpt_ready(driver: webdriver.Chrome, timeout: int = 180, stable_seconds: int = 10) -> None:
     started_at = time.time()
     last_busy_at = time.time()
@@ -863,41 +1237,21 @@ def _wait_for_text(
     last_text = ""
     last_changed_at = time.time()
     response_detected = False
-    resubmit_attempted = False
+    no_response_warned = False
     last_log_at = 0.0                    # 경과 로그 중복 방지
     while time.time() - started_at < effective_timeout:
         elapsed = time.time() - started_at
         els = _get_response_elements(driver)
         busy = _is_chatgpt_busy(driver)
 
-        # --- 초기 응답 미감지 감지 & 자동 재전송 ---
-        if not response_detected and not resubmit_attempted and elapsed > 45:
-            print(f"[경고] {int(elapsed)}초 경과, 새 응답 요소 미감지. 프롬프트 재전송 시도...")
-            resubmit_attempted = True
-            try:
-                textarea = _find_textarea(driver)
-                textarea.click()
-                time.sleep(0.5)
-                textarea.send_keys(Keys.ENTER)
-                time.sleep(1.5)
-                _SEND_BTN_XPATHS = [
-                    '//button[@data-testid="send-button"]',
-                    '//button[contains(@aria-label, "Send")]',
-                    '//button[contains(@aria-label, "send")]',
-                ]
-                for xpath in _SEND_BTN_XPATHS:
-                    try:
-                        btns = driver.find_elements(By.XPATH, xpath)
-                        for btn in btns:
-                            if btn.is_displayed() and btn.is_enabled():
-                                print("[전송] 전송 버튼 직접 클릭으로 재시도")
-                                btn.click()
-                                random_sleep(1, 2)
-                                break
-                    except Exception:
-                        continue
-            except Exception as e:
-                print(f"[경고] 재전송 시도 실패: {e}")
+        # 새 응답 DOM 감지가 늦어도 같은 프롬프트를 다시 보내면 ChatGPT가 본문을 중복 생성한다.
+        # 따라서 여기서는 경고만 남기고, timeout까지 기다린 뒤 실패 처리한다.
+        if not response_detected and not no_response_warned and elapsed > 45:
+            no_response_warned = True
+            print(
+                f"[경고] {int(elapsed)}초 경과, 새 응답 요소 미감지. "
+                "중복 생성을 막기 위해 프롬프트를 재전송하지 않고 계속 대기합니다."
+            )
 
         if len(els) > previous_count:
             if not response_detected:
@@ -938,6 +1292,7 @@ def _wait_for_images(
     baseline_urls = set(existing_urls[:previous_count]) if previous_count else set(existing_urls)
     captured_urls: list[str] = []
     started_at = time.time()
+    first_error_at: float | None = None
     while time.time() - started_at < timeout:
         current_urls = _get_image_urls(driver)
         for url in current_urls:
@@ -946,9 +1301,19 @@ def _wait_for_images(
             captured_urls.append(url)
             _save_live_image_urls(captured_urls)
             print(f"[이미지 감지] {len(captured_urls)}/{needed}: {url}")
-        if len(captured_urls) >= needed and not _is_chatgpt_busy(driver):
-            _wait_until_chatgpt_ready(driver, timeout=min(120, timeout), stable_seconds=6)
+        if len(captured_urls) >= needed:
+            print("[이미지 감지] 필요한 이미지 URL 확보. 메시지 완료 대기를 건너뛰고 다음 단계로 이동합니다.")
             return captured_urls[:needed]
+
+        error_text = _get_chatgpt_generation_error(driver)
+        if error_text and not captured_urls:
+            if "Something went wrong" in error_text or "If this issue persists" in error_text or "문제가 발생" in error_text:
+                raise RuntimeError(f"ChatGPT 이미지 생성 오류 감지: {error_text}")
+            if first_error_at is None:
+                first_error_at = time.time()
+                print(f"[경고] ChatGPT 이미지 생성 지연/중단 문구 감지: {error_text}")
+            elif time.time() - first_error_at >= 25 and not _is_chatgpt_busy(driver):
+                raise RuntimeError(f"ChatGPT 이미지 생성이 중단된 상태로 보입니다: {error_text}")
         time.sleep(1)
     raise TimeoutError("ChatGPT 이미지 생성 대기 시간 초과")
 
@@ -994,20 +1359,19 @@ def clean_generated_html_body(html_body: str) -> str:
 
 def _disable_responsive_golf_html(html_body: str) -> str:
     """
-    골프 본문을 티스토리 스킨 본문 영역 안에 들어오는 PC 기준 고정폭 HTML로 보정합니다.
-    사이드바가 있는 스킨에서는 860px가 본문 영역을 넘어가 겹침이 생길 수 있어
-    680px 고정폭으로 낮추고, position/negative margin/overflow 확장 요소를 제거합니다.
+    골프 본문을 웹 브라우저에서 읽기 좋은 폭으로 보정합니다.
+    본문 폭은 티스토리 스킨의 article-view 폭을 따르게 하고,
+    생성 HTML이 자체 max-width로 한 번 더 좁아지는 것만 막습니다.
     """
     if not html_body:
         return html_body
 
     fixed = html_body
 
-    # 1) 본문/이미지/카드 폭을 스킨 안전 고정폭으로 축소
-    fixed = re.sub(r"max-width\s*:\s*(?:680|720|760|800|860|900|960|1000|1080|1200)px\s*;?", "width:680px;", fixed, flags=re.IGNORECASE)
-    fixed = re.sub(r"width\s*:\s*100%\s*;?", "width:680px;", fixed, flags=re.IGNORECASE)
-    fixed = re.sub(r"width\s*:\s*calc\([^)]*\)\s*;?", "width:680px;", fixed, flags=re.IGNORECASE)
-    fixed = re.sub(r"width\s*:\s*(?:720|760|800|860|900|960|1000|1080|1200)px\s*;?", "width:680px;", fixed, flags=re.IGNORECASE)
+    # 1) 생성 HTML이 스킨 본문 폭보다 좁게 고정되지 않도록 정리
+    fixed = re.sub(r"max-width\s*:\s*(?:640|680|720|760|800|860|880|900|960|1000|1080|1200)px\s*;?", "max-width:100%;", fixed, flags=re.IGNORECASE)
+    fixed = re.sub(r"width\s*:\s*calc\([^)]*\)\s*;?", "width:100%;", fixed, flags=re.IGNORECASE)
+    fixed = re.sub(r"width\s*:\s*(?:640|680|720|760|800|860|880|900|960|1000|1080|1200)px\s*;?", "width:100%; max-width:100%;", fixed, flags=re.IGNORECASE)
 
     # 2) 사이드 스킨과 충돌하기 쉬운 속성 제거/무력화
     fixed = re.sub(r"position\s*:\s*(?:absolute|fixed|sticky)\s*;?", "position:static;", fixed, flags=re.IGNORECASE)
@@ -1018,9 +1382,9 @@ def _disable_responsive_golf_html(html_body: str) -> str:
     fixed = re.sub(r"margin-right\s*:\s*-\d+px\s*;?", "margin-right:0;", fixed, flags=re.IGNORECASE)
 
     # 3) 카드/표가 옆으로 밀려나지 않도록 고정
-    fixed = re.sub(r"flex-wrap\s*:\s*wrap\s*;?", "flex-wrap:nowrap;", fixed, flags=re.IGNORECASE)
+    fixed = re.sub(r"flex-wrap\s*:\s*nowrap\s*;?", "flex-wrap:wrap;", fixed, flags=re.IGNORECASE)
     fixed = re.sub(r"min-width\s*:\s*\d+px\s*;?", "", fixed, flags=re.IGNORECASE)
-    fixed = re.sub(r"overflow\s*:\s*visible\s*;?", "overflow:hidden;", fixed, flags=re.IGNORECASE)
+    fixed = re.sub(r"overflow\s*:\s*visible\s*;?", "overflow-x:auto;", fixed, flags=re.IGNORECASE)
 
     # 4) 혹시 생성된 media query 제거
     fixed = re.sub(r"@media[^{]*\{(?:[^{}]|\{[^{}]*\})*\}", "", fixed, flags=re.IGNORECASE | re.DOTALL)
@@ -1028,7 +1392,7 @@ def _disable_responsive_golf_html(html_body: str) -> str:
     # 5) 최상위 래퍼에 스킨 안전 속성 보강
     fixed = re.sub(
         r'(<div\b[^>]*style="[^"]*)',
-        r'\1clear:both; overflow:hidden; box-sizing:border-box; ',
+        r'\1clear:both; overflow-x:auto; box-sizing:border-box; ',
         fixed,
         count=1,
         flags=re.IGNORECASE,
@@ -1036,8 +1400,8 @@ def _disable_responsive_golf_html(html_body: str) -> str:
 
     return fixed
 
-def send_text_prompt(driver: webdriver.Chrome, prompt_text: str, timeout: int = 240, max_retries: int = 2) -> str:
-    """텍스트 프롬프트를 전송하고 응답을 반환합니다. 타임아웃 시 자동 재시도합니다."""
+def send_text_prompt(driver: webdriver.Chrome, prompt_text: str, timeout: int = 240, max_retries: int = 1) -> str:
+    """텍스트 프롬프트를 전송하고 응답을 반환합니다. 기본값은 중복 생성 방지를 위해 재전송하지 않습니다."""
     last_error = None
     for attempt in range(1, max_retries + 1):
         try:
@@ -1050,16 +1414,174 @@ def send_text_prompt(driver: webdriver.Chrome, prompt_text: str, timeout: int = 
         except TimeoutError as e:
             last_error = e
             if attempt < max_retries:
-                print(f"\n[재시도] 텍스트 응답 타임아웃 (시도 {attempt}/{max_retries}). 페이지 새로고침 후 재시도...")
+                print(f"\n[재시도] 텍스트 응답 타임아웃 (시도 {attempt}/{max_retries}). 현재 화면에서 대기 후 재시도...")
                 try:
-                    # 페이지를 새로고침하여 깨끗한 상태에서 다시 시도합니다.
-                    driver.refresh()
-                    random_sleep(3, 5)
+                    _wait_until_chatgpt_ready(driver, timeout=60, stable_seconds=6)
                 except Exception:
-                    pass
+                    random_sleep(3, 5)
             else:
                 print(f"\n[오류] 텍스트 응답 타임아웃 (최대 {max_retries}회 시도 완료)")
     raise last_error
+
+
+def prepare_chatgpt_for_next_golf_prompt(driver: webdriver.Chrome, label: str) -> None:
+    """이미지 생성 뒤에도 현재 대화의 입력창을 우선 재사용합니다."""
+    print(f"[ChatGPT] {label} 전 현재 대화 입력창을 안정화합니다.")
+    try:
+        _wait_until_chatgpt_ready(driver, timeout=180, stable_seconds=6)
+        textarea = _find_textarea(driver)
+        try:
+            driver.execute_script("arguments[0].scrollIntoView({block:'center'});", textarea)
+            textarea.click()
+        except Exception:
+            pass
+        return
+    except Exception as exc:
+        raise RuntimeError(f"ChatGPT 현재 대화 입력창을 찾지 못해 본문 프롬프트 전송을 중단합니다: {exc}") from exc
+
+
+def open_chatgpt_text_thread_after_image(driver: webdriver.Chrome) -> None:
+    """저장된 이미지는 로컬에서 쓰고, 본문은 같은 탭의 새 프로젝트 대화에서 생성합니다."""
+    print("[ChatGPT] 이미지 저장 완료. 같은 탭에서 본문 생성용 프로젝트 대화로 이동합니다.")
+    try:
+        current_handle = driver.current_window_handle
+        if current_handle in driver.window_handles:
+            driver.switch_to.window(current_handle)
+    except Exception:
+        pass
+    driver.get(CHATGPT_PROJECT_URL)
+    random_sleep(2.0, 4.0)
+    _wait_until_chatgpt_ready(driver, timeout=180, stable_seconds=6)
+    _find_textarea(driver)
+
+
+def send_golf_body_prompt(driver: webdriver.Chrome, prompt_text: str, timeout: int = 600) -> str:
+    """골프 본문 HTML은 이미지 저장 후 준비된 텍스트 대화에서 전송합니다."""
+    prepare_chatgpt_for_next_golf_prompt(driver, "골프 본문 생성")
+    return send_text_prompt_after_image_with_refresh(driver, prompt_text, "골프 본문 생성", timeout=timeout)
+
+
+CHATGPT_INTERRUPTION_NOTICE_SNIPPETS = (
+    "스트리밍이 중지",
+    "메시지 완료를 기다리는",
+    "streaming was interrupted",
+    "waiting for the message to complete",
+)
+
+
+def _chatgpt_page_text(driver: webdriver.Chrome) -> str:
+    try:
+        return driver.execute_script("return document.body ? document.body.innerText : '';") or ""
+    except Exception:
+        return ""
+
+
+def _has_chatgpt_interruption_notice(driver: webdriver.Chrome) -> bool:
+    text = _chatgpt_page_text(driver).lower()
+    return any(snippet.lower() in text for snippet in CHATGPT_INTERRUPTION_NOTICE_SNIPPETS)
+
+
+def _wait_for_interruption_notice_to_clear(
+    driver: webdriver.Chrome,
+    notice_timeout: int = 75,
+    clear_timeout: int = 180,
+) -> bool:
+    started_at = time.time()
+    while time.time() - started_at < notice_timeout:
+        if _has_chatgpt_interruption_notice(driver):
+            print("[ChatGPT] 스트리밍 중지 문구 감지. 문구가 사라질 때까지 기다립니다.")
+            break
+        time.sleep(1)
+    else:
+        print("[ChatGPT] 스트리밍 중지 문구가 감지되지 않았습니다.")
+        return False
+
+    last_seen_at = time.time()
+    started_clear_at = time.time()
+    while time.time() - started_clear_at < clear_timeout:
+        if _has_chatgpt_interruption_notice(driver):
+            last_seen_at = time.time()
+        elif time.time() - last_seen_at >= 2:
+            print("[ChatGPT] 스트리밍 중지 문구가 사라졌습니다.")
+            return True
+        time.sleep(1)
+
+    print("[ChatGPT] 스트리밍 중지 문구가 제한 시간 안에 사라지지 않았습니다.")
+    return False
+
+
+def _wait_current_interruption_notice_to_clear(driver: webdriver.Chrome, clear_timeout: int = 180) -> bool:
+    last_seen_at = time.time()
+    started_at = time.time()
+    while time.time() - started_at < clear_timeout:
+        if _has_chatgpt_interruption_notice(driver):
+            last_seen_at = time.time()
+        elif time.time() - last_seen_at >= 2:
+            print("[ChatGPT] 스트리밍 중지 문구가 사라졌습니다.")
+            return True
+        time.sleep(1)
+    print("[ChatGPT] 스트리밍 중지 문구가 제한 시간 안에 사라지지 않았습니다.")
+    return False
+
+
+def _refresh_after_interruption_notice_if_needed(
+    driver: webdriver.Chrome,
+    previous_count: int,
+    notice_timeout: int = 75,
+    clear_timeout: int = 180,
+    refresh_delay_seconds: int = 3,
+) -> bool:
+    started_at = time.time()
+    response_seen_at: float | None = None
+    while time.time() - started_at < notice_timeout:
+        if _has_chatgpt_interruption_notice(driver):
+            print("[ChatGPT] 스트리밍 중지 문구 감지. 문구가 사라질 때까지 기다립니다.")
+            if _wait_current_interruption_notice_to_clear(driver, clear_timeout=clear_timeout):
+                print(f"[ChatGPT] 중지 문구가 사라진 뒤 {refresh_delay_seconds}초 대기합니다.")
+                time.sleep(refresh_delay_seconds)
+                print("[ChatGPT] 대화창을 한 번 새로고침합니다.")
+                driver.refresh()
+                random_sleep(5, 8)
+                return True
+            return False
+
+        response_text = _latest_non_empty_response_text(_get_response_elements(driver), previous_count=previous_count)
+        if response_text:
+            if response_seen_at is None:
+                response_seen_at = time.time()
+            if len(response_text) >= 500 or time.time() - response_seen_at >= 8:
+                print("[ChatGPT] 정상 응답이 시작되어 새로고침 감시를 종료합니다.")
+                return False
+        time.sleep(1)
+
+    print("[ChatGPT] 스트리밍 중지 문구가 감지되지 않았습니다.")
+    return False
+
+
+def wait_after_image_before_text_prompt(label: str, wait_seconds: int = 10) -> None:
+    print(f"[ChatGPT] 이미지 보관 완료 후 {label} 전 {wait_seconds}초 대기...")
+    time.sleep(wait_seconds)
+
+
+def send_text_prompt_after_image_with_refresh(
+    driver: webdriver.Chrome,
+    prompt_text: str,
+    label: str,
+    timeout: int = 600,
+) -> str:
+    """이미지 직후 첫 본문 프롬프트는 중지 문구가 사라진 뒤 3초 기다리고 1회 새로고침합니다."""
+    _wait_until_chatgpt_ready(driver, timeout=timeout, stable_seconds=8)
+    prev = len(_get_response_elements(driver))
+    input_prompt(driver, prompt_text)
+    _wait_for_prompt_settle(prompt_text)
+    submit_prompt(driver)
+    _refresh_after_interruption_notice_if_needed(driver, previous_count=prev)
+    return clean_generated_text(_wait_for_text(driver, previous_count=prev, timeout=timeout))
+
+
+def send_health_body_prompt_after_image(driver: webdriver.Chrome, prompt_text: str, timeout: int = 600) -> str:
+    """건강식품 쿠팡 본문은 이미지 직후 전송한 뒤 중지 문구가 사라지면 1회 새로고침합니다."""
+    return send_text_prompt_after_image_with_refresh(driver, prompt_text, "건강식품 쿠팡 본문 생성", timeout=timeout)
 
 
 def send_image_prompt(
@@ -1141,8 +1663,8 @@ def download_image_as_base64(driver: webdriver.Chrome, url: str, max_retries: in
 # Tistory 동작 (이미지 파일 처리 및 DOM 동기화 완벽 구현)
 # ------------------------------------------------------------------
 
-def _write_temp_image_from_src(src: str, slot_idx: int) -> Path:
-    """Base64 데이터를 임시 파일로 디코딩하여 저장합니다."""
+def _write_temp_image_from_src(src: str, slot_idx: int) -> Path | None:
+    """Base64 데이터를 티스토리 업로드용 일회성 파일로 디코딩하여 저장합니다."""
     if not src.startswith("data:image/"):
         return None
     header, encoded = src.split(",", 1)
@@ -1150,8 +1672,66 @@ def _write_temp_image_from_src(src: str, slot_idx: int) -> Path:
     mime_match = re.match(r"data:image/([^;]+);base64", header, re.IGNORECASE)
     if mime_match:
         ext = mime_match.group(1).lower().replace("jpeg", "jpg")
-    image_path = GENERATED_RESULT_DIR / f"tistory_temp_{slot_idx}.{ext}"
+    TISTORY_ONE_TIME_IMAGE_DIR.mkdir(parents=True, exist_ok=True)
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S_%f")
+    image_path = TISTORY_ONE_TIME_IMAGE_DIR / f"tistory_once_golf_{timestamp}_{slot_idx}.{ext}"
     image_path.write_bytes(base64.b64decode(encoded))
+    print(f"[Tistory] 업로드용 일회성 이미지 저장 완료: {image_path}")
+    return image_path
+
+
+def _image_extension_from_url_or_type(url: str, content_type: str = "") -> str:
+    content_type = (content_type or "").lower()
+    if "png" in content_type:
+        return "png"
+    if "webp" in content_type:
+        return "webp"
+    if "gif" in content_type:
+        return "gif"
+    if "jpeg" in content_type or "jpg" in content_type:
+        return "jpg"
+
+    path = urllib.parse.urlparse(url).path.lower()
+    for ext in ("jpg", "jpeg", "png", "webp", "gif"):
+        if path.endswith(f".{ext}"):
+            return "jpg" if ext == "jpeg" else ext
+    return "jpg"
+
+
+def _write_temp_image_from_url(url: str, slot_idx: int) -> Path | None:
+    url = html.unescape(str(url or "").strip())
+    if not re.match(r"^https?://", url, flags=re.IGNORECASE):
+        return None
+
+    request = urllib.request.Request(
+        url,
+        headers={
+            "User-Agent": "Mozilla/5.0",
+            "Accept": "image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8",
+            "Referer": "https://www.bing.com/",
+        },
+    )
+    try:
+        with urllib.request.urlopen(request, timeout=25) as response:
+            content_type = response.headers.get("Content-Type", "")
+            if "image" not in content_type.lower():
+                print(f"[경고] 외부 이미지 URL이 image Content-Type이 아닙니다: {url} ({content_type})")
+                return None
+            content = response.read(15 * 1024 * 1024)
+    except Exception as exc:
+        print(f"[경고] 외부 이미지 다운로드 실패: {url} | {exc}")
+        return None
+
+    if not content:
+        print(f"[경고] 외부 이미지 다운로드 결과가 비어 있습니다: {url}")
+        return None
+
+    TISTORY_ONE_TIME_IMAGE_DIR.mkdir(parents=True, exist_ok=True)
+    ext = _image_extension_from_url_or_type(url, content_type)
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S_%f")
+    image_path = TISTORY_ONE_TIME_IMAGE_DIR / f"tistory_once_golf_body_{timestamp}_{slot_idx}.{ext}"
+    image_path.write_bytes(content)
+    print(f"[Tistory] 본문 외부 이미지 저장 완료: {image_path}")
     return image_path
 
 
@@ -1218,6 +1798,528 @@ def _paste_image_into_basic_editor(driver: webdriver.Chrome, token: str, image_p
     random_sleep(4.0, 6.0)  # 티스토리 서버가 이미지를 업로드하고 태그를 렌더링할 시간을 보장합니다.
 
 
+TISTORY_NATIVE_IMAGE_MARKER_PREFIX = "__TISTORY_NATIVE_IMAGE_SLOT_"
+TISTORY_NATIVE_IMAGE_MARKER = "__TISTORY_NATIVE_IMAGE_SLOT_1__"
+
+
+def _native_image_marker(slot_idx: int) -> str:
+    return f"{TISTORY_NATIVE_IMAGE_MARKER_PREFIX}{slot_idx}__"
+
+
+def _marker_paragraph(marker: str = TISTORY_NATIVE_IMAGE_MARKER) -> str:
+    return f'<p style="text-align:center; margin:0 0 28px;">{marker}</p>'
+
+
+def _strip_broken_image_placeholder_tags(html_body: str, token: str) -> str:
+    html_body = re.sub(
+        rf'<figure[^>]*>.*?{re.escape(token)}.*?</figure>',
+        '',
+        html_body,
+        flags=re.DOTALL | re.IGNORECASE,
+    )
+    html_body = re.sub(
+        rf'<img[^>]*{re.escape(token)}[^>]*>',
+        '',
+        html_body,
+        flags=re.DOTALL | re.IGNORECASE,
+    )
+    return html_body.replace(token, "")
+
+
+def _strip_embedded_data_image_tags(html_body: str) -> str:
+    html_body = re.sub(
+        r'<figure[^>]*>.*?<img\b[^>]*\ssrc=(["\'])data:image/[^"\']+\1[^>]*>.*?</figure>',
+        '',
+        html_body,
+        flags=re.DOTALL | re.IGNORECASE,
+    )
+    html_body = re.sub(
+        r'<img\b[^>]*\ssrc=(["\'])data:image/[^"\']+\1[^>]*>',
+        '',
+        html_body,
+        flags=re.DOTALL | re.IGNORECASE,
+    )
+    return re.sub(r'data:image/[^"\'\s<>]+', '', html_body, flags=re.IGNORECASE)
+
+
+def _remove_generated_image_placeholders(html_body: str) -> str:
+    html_body = html_body.replace("[BASE64_IMAGE_1]", "%%IMAGE1_PLACEHOLDER%%")
+    html_body = html_body.replace("[BASE64_IMAGE_2]", "%%IMAGE2_PLACEHOLDER%%")
+    for token in ("%%IMAGE1_PLACEHOLDER%%", "%%IMAGE2_PLACEHOLDER%%"):
+        html_body = _strip_broken_image_placeholder_tags(html_body, token)
+    html_body = re.sub(
+        rf'<p[^>]*>\s*{re.escape(TISTORY_NATIVE_IMAGE_MARKER)}\s*</p>',
+        '',
+        html_body,
+        flags=re.IGNORECASE,
+    ).replace(TISTORY_NATIVE_IMAGE_MARKER, "")
+    return _strip_embedded_data_image_tags(html_body)
+
+
+def _extract_img_attr(img_tag: str, attr_name: str) -> str:
+    pattern = rf'\b{re.escape(attr_name)}\s*=\s*(["\'])(.*?)\1'
+    match = re.search(pattern, img_tag, flags=re.IGNORECASE | re.DOTALL)
+    return html.unescape(match.group(2).strip()) if match else ""
+
+
+def _is_native_upload_candidate_url(url: str) -> bool:
+    url = html.unescape(str(url or "").strip())
+    if not re.match(r"^https?://", url, flags=re.IGNORECASE):
+        return False
+    lowered = url.lower()
+    blocked_hosts = (
+        "kakaocdn.net",
+        "daumcdn.net",
+        "tistory.com",
+        "coupang.com",
+        "ads-partners.coupang.com",
+        "backend-api/estuary/content",
+        "oaiusercontent.com",
+        "oaidalle",
+    )
+    return not any(host in lowered for host in blocked_hosts)
+
+
+def _candidate_urls_from_img_tag(img_tag: str) -> list[str]:
+    candidates = []
+    for attr_name in ("data-url", "data-src", "data-original", "data-lazy-src", "alt", "src"):
+        value = _extract_img_attr(img_tag, attr_name)
+        if _is_native_upload_candidate_url(value) and value not in candidates:
+            candidates.append(value)
+
+    srcset = _extract_img_attr(img_tag, "srcset")
+    if srcset:
+        for part in srcset.split(","):
+            value = part.strip().split(" ", 1)[0]
+            if _is_native_upload_candidate_url(value) and value not in candidates:
+                candidates.append(value)
+    return candidates
+
+
+def _find_external_image_blocks(html_body: str) -> list[dict]:
+    blocks = []
+    used_ranges: list[tuple[int, int]] = []
+    for match in re.finditer(r"<img\b[^>]*>", html_body or "", flags=re.IGNORECASE | re.DOTALL):
+        img_tag = match.group(0)
+        candidates = _candidate_urls_from_img_tag(img_tag)
+        if not candidates:
+            continue
+
+        block_start, block_end = match.start(), match.end()
+        figure_start = html_body.rfind("<figure", 0, match.start())
+        if figure_start >= 0:
+            figure_close = html_body.find("</figure>", match.end())
+            previous_figure_close = html_body.rfind("</figure>", 0, match.start())
+            if figure_close >= 0 and previous_figure_close < figure_start:
+                block_start = figure_start
+                block_end = figure_close + len("</figure>")
+
+        if any(not (block_end <= start or block_start >= end) for start, end in used_ranges):
+            continue
+        used_ranges.append((block_start, block_end))
+        blocks.append(
+            {
+                "start": block_start,
+                "end": block_end,
+                "html": html_body[block_start:block_end],
+                "candidates": candidates,
+            }
+        )
+    return blocks
+
+
+def _latest_chatgpt_response_outer_html(driver: webdriver.Chrome) -> str:
+    for element in reversed(_get_response_elements(driver)):
+        try:
+            outer_html = driver.execute_script("return arguments[0].outerHTML || '';", element)
+        except Exception:
+            continue
+        if isinstance(outer_html, str) and "<img" in outer_html.lower():
+            return outer_html
+    return ""
+
+
+def _existing_external_image_candidate_urls(html_body: str) -> set[str]:
+    urls: set[str] = set()
+    for block in _find_external_image_blocks(html_body):
+        urls.update(block["candidates"])
+    return urls
+
+
+def _append_latest_chatgpt_response_images_to_html_body(
+    driver: webdriver.Chrome,
+    html_body: str,
+    max_images: int = TISTORY_MAX_GOLF_BODY_IMAGE_UPLOADS,
+) -> str:
+    response_html = _latest_chatgpt_response_outer_html(driver)
+    if not response_html:
+        return html_body
+
+    existing_urls = _existing_external_image_candidate_urls(html_body)
+    figures: list[str] = []
+    for match in re.finditer(r"<img\b[^>]*>", response_html, flags=re.IGNORECASE | re.DOTALL):
+        img_tag = match.group(0)
+        candidates = _candidate_urls_from_img_tag(img_tag)
+        if not candidates:
+            continue
+
+        source_url = candidates[0]
+        if source_url in existing_urls:
+            continue
+
+        display_url = (
+            _extract_img_attr(img_tag, "src")
+            or _extract_img_attr(img_tag, "data-src")
+            or source_url
+        )
+        if not _is_native_upload_candidate_url(display_url):
+            display_url = source_url
+
+        figures.append(
+            '<figure style="text-align:center; margin:26px 0;">'
+            f'<img src="{html.escape(display_url, quote=True)}" '
+            f'alt="{html.escape(source_url, quote=True)}" '
+            'style="width:100%; max-width:100%; height:auto; border-radius:10px; display:block; margin:0 auto;" '
+            'loading="lazy" />'
+            '</figure>'
+        )
+        existing_urls.update(candidates)
+        if len(figures) >= max_images:
+            break
+
+    if not figures:
+        return html_body
+
+    print(f"[ChatGPT] 최신 본문 응답에서 관련 이미지 {len(figures)}장을 추가 감지했습니다.")
+    return html_body.rstrip() + "\n\n" + "\n".join(figures)
+
+
+def _write_temp_image_from_candidate_urls(candidates: list[str], slot_idx: int, used_urls: set[str]) -> tuple[Path | None, str]:
+    for url in candidates:
+        normalized_url = html.unescape(url).strip()
+        if normalized_url in used_urls:
+            continue
+        image_path = _write_temp_image_from_url(normalized_url, slot_idx)
+        if image_path:
+            used_urls.add(normalized_url)
+            return image_path, normalized_url
+    return None, ""
+
+
+def _replace_golf_external_images_with_upload_markers(
+    html_body: str,
+    start_slot_idx: int,
+    max_images: int = TISTORY_MAX_GOLF_BODY_IMAGE_UPLOADS,
+) -> tuple[str, list[dict]]:
+    blocks = _find_external_image_blocks(html_body)
+    if not blocks:
+        return html_body, []
+
+    rebuilt = []
+    uploads: list[dict] = []
+    used_urls: set[str] = set()
+    last_pos = 0
+    for block in blocks:
+        rebuilt.append(html_body[last_pos:block["start"]])
+        last_pos = block["end"]
+
+        if len(uploads) >= max_images:
+            print("[Tistory] 본문 외부 이미지 최대 업로드 수를 넘어 추가 이미지는 제거합니다.")
+            continue
+
+        slot_idx = start_slot_idx + len(uploads)
+        image_path, source_url = _write_temp_image_from_candidate_urls(block["candidates"], slot_idx, used_urls)
+        if not image_path:
+            print("[경고] 본문 외부 이미지 저장 실패. hotlink 방지를 위해 해당 이미지 태그를 제거합니다.")
+            continue
+
+        marker = _native_image_marker(slot_idx)
+        rebuilt.append(_marker_paragraph(marker))
+        uploads.append({"path": image_path, "marker": marker, "source_url": source_url})
+
+    rebuilt.append(html_body[last_pos:])
+    if uploads:
+        print(f"[Tistory] 본문 외부 이미지 {len(uploads)}장을 네이티브 업로드 대상으로 준비했습니다.")
+    return "".join(rebuilt), uploads
+
+
+def _insert_native_image_marker_after_first_coupang_link(
+    html_body: str,
+    marker: str = TISTORY_NATIVE_IMAGE_MARKER,
+) -> str:
+    html_body = _remove_generated_image_placeholders(html_body)
+    marker_html = _marker_paragraph(marker)
+    if marker in html_body:
+        return html_body
+
+    coupang_anchor_pattern = re.compile(
+        r'<a\b(?=[^>]*href=["\']https?://(?:link\.coupang\.com|www\.coupang\.com|coupa\.ng)[^"\']*["\'])[^>]*>.*?</a>',
+        re.IGNORECASE | re.DOTALL,
+    )
+    match = coupang_anchor_pattern.search(html_body)
+    if not match:
+        raise RuntimeError("첫 번째 쿠팡 링크를 찾지 못해 이미지 삽입 위치를 결정할 수 없습니다.")
+
+    print("[Tistory] 첫 번째 쿠팡 링크 아래에 사진 업로드 마커를 삽입했습니다.")
+    return html_body[:match.end()] + "\n" + marker_html + "\n" + html_body[match.end():]
+
+
+def _insert_native_image_marker_for_body(
+    html_body: str,
+    marker: str = TISTORY_NATIVE_IMAGE_MARKER,
+) -> str:
+    html_body = html_body.replace("[BASE64_IMAGE_1]", "%%IMAGE1_PLACEHOLDER%%")
+    html_body = html_body.replace("[BASE64_IMAGE_2]", "%%IMAGE2_PLACEHOLDER%%")
+    marker_html = _marker_paragraph(marker)
+
+    if marker in html_body:
+        html_body = _strip_embedded_data_image_tags(html_body)
+        for token in ("%%IMAGE1_PLACEHOLDER%%", "%%IMAGE2_PLACEHOLDER%%"):
+            html_body = _strip_broken_image_placeholder_tags(html_body, token)
+        return html_body
+
+    replacements = [
+        rf'<figure[^>]*>.*?{re.escape("%%IMAGE1_PLACEHOLDER%%")}.*?</figure>',
+        rf'<img[^>]*{re.escape("%%IMAGE1_PLACEHOLDER%%")}[^>]*>',
+        r'<figure[^>]*>.*?<img\b[^>]*\ssrc=(["\'])data:image/[^"\']+\1[^>]*>.*?</figure>',
+        r'<img\b[^>]*\ssrc=(["\'])data:image/[^"\']+\1[^>]*>',
+    ]
+    replaced = False
+    for pattern in replacements:
+        html_body, count = re.subn(
+            pattern,
+            marker_html,
+            html_body,
+            count=1,
+            flags=re.DOTALL | re.IGNORECASE,
+        )
+        if count:
+            replaced = True
+            break
+
+    html_body = _strip_broken_image_placeholder_tags(html_body, "%%IMAGE2_PLACEHOLDER%%")
+    html_body = _strip_broken_image_placeholder_tags(html_body, "%%IMAGE1_PLACEHOLDER%%")
+    html_body = _strip_embedded_data_image_tags(html_body)
+    if not replaced and marker not in html_body:
+        html_body = marker_html + "\n" + html_body
+
+    print("[Tistory] 사진 업로드 마커를 본문에 배치했습니다.")
+    return html_body
+
+
+def _prepare_html_for_native_tistory_image_upload(html_body: str, post_type: str, has_image: bool) -> str:
+    if not has_image:
+        return _remove_generated_image_placeholders(html_body)
+    if post_type in {"coupang", "health"}:
+        return _insert_native_image_marker_after_first_coupang_link(html_body)
+    return _insert_native_image_marker_for_body(html_body)
+
+
+def _get_tistory_html_body_value(driver: webdriver.Chrome) -> str:
+    try:
+        value = driver.execute_script(
+            """
+            const root = document.querySelector('#html-editor-container');
+            const cmHost =
+              root?.querySelector('.CodeMirror') ||
+              root?.querySelector('.CodeMirror-scroll')?.closest('.CodeMirror') ||
+              document.querySelector('.CodeMirror');
+            if (cmHost && cmHost.CodeMirror) {
+              return cmHost.CodeMirror.getValue() || '';
+            }
+            const textarea = root?.querySelector('textarea') || document.querySelector('#html-editor-container textarea');
+            return textarea ? (textarea.value || '') : '';
+            """
+        )
+        return value if isinstance(value, str) else ""
+    except Exception:
+        return ""
+
+
+def _looks_like_tistory_image_fragment(value: str) -> bool:
+    if not value:
+        return False
+    lowered = value.lower()
+    return (
+        "##image" in lowered
+        or "kage@" in lowered
+        or "kakaocdn.net" in lowered
+        or "imageblock" in lowered
+        or "data-origin-width" in lowered
+    )
+
+
+def _find_tistory_image_file_input(driver: webdriver.Chrome, timeout: int = 8):
+    end_at = time.time() + timeout
+    while time.time() < end_at:
+        try:
+            input_el = driver.find_element(By.XPATH, '//*[@id="attach-image"]')
+            return input_el
+        except Exception:
+            pass
+        inputs = driver.find_elements(By.CSS_SELECTOR, 'input[type="file"]')
+        for input_el in inputs:
+            accept = (input_el.get_attribute("accept") or "").lower()
+            if not accept or "image" in accept or ".jpg" in accept or ".png" in accept or ".jpeg" in accept:
+                return input_el
+        time.sleep(0.3)
+    return None
+
+
+def _open_tistory_image_file_input(driver: webdriver.Chrome):
+    try:
+        WebDriverWait(driver, 8).until(EC.presence_of_element_located((By.XPATH, '//*[@id="attach-layer-btn"]')))
+        driver.find_element(By.XPATH, '//*[@id="attach-layer-btn"]').click()
+        time.sleep(random.randrange(2, 4))
+        input_el = _find_tistory_image_file_input(driver, timeout=5)
+        if input_el:
+            return input_el
+    except Exception as exc:
+        print(f"[경고] 티스토리 사진 버튼 직접 클릭 실패, fallback 시도: {exc}")
+
+    input_el = _find_tistory_image_file_input(driver, timeout=2)
+    if input_el:
+        return input_el
+
+    upload_button_xpaths = [
+        '//*[@id="attach-layer-btn"]',
+        '//*[self::button or self::a or @role="button"][contains(@aria-label, "사진")]',
+        '//*[self::button or self::a or @role="button"][contains(@aria-label, "이미지")]',
+        '//*[self::button or self::a or @role="button"][contains(@title, "사진")]',
+        '//*[self::button or self::a or @role="button"][contains(@title, "이미지")]',
+        '//*[self::button or self::a or @role="button"][contains(normalize-space(), "사진")]',
+        '//*[self::button or self::a or @role="button"][contains(normalize-space(), "이미지")]',
+        '//*[contains(@class, "toolbar")]//*[contains(@aria-label, "사진") or contains(@title, "사진")]',
+        '//*[contains(@class, "toolbar")]//*[contains(@aria-label, "이미지") or contains(@title, "이미지")]',
+    ]
+    for xpath in upload_button_xpaths:
+        try:
+            elements = driver.find_elements(By.XPATH, xpath)
+            for el in elements:
+                if not el.is_displayed():
+                    continue
+                driver.execute_script("arguments[0].scrollIntoView({block:'center'});", el)
+                random_sleep(0.2, 0.4)
+                driver.execute_script("arguments[0].click();", el)
+                input_el = _find_tistory_image_file_input(driver, timeout=5)
+                if input_el:
+                    return input_el
+        except Exception:
+            continue
+    return _find_tistory_image_file_input(driver, timeout=5)
+
+
+def _select_token_in_html_editor(driver: webdriver.Chrome, marker: str) -> bool:
+    try:
+        return bool(driver.execute_script(
+            """
+            const marker = arguments[0];
+            const root = document.querySelector('#html-editor-container');
+            const cmHost =
+              root?.querySelector('.CodeMirror') ||
+              root?.querySelector('.CodeMirror-scroll')?.closest('.CodeMirror') ||
+              document.querySelector('.CodeMirror');
+
+            if (cmHost && cmHost.CodeMirror) {
+              const editor = cmHost.CodeMirror;
+              const value = editor.getValue() || '';
+              const idx = value.indexOf(marker);
+              if (idx < 0) return false;
+              editor.focus();
+              editor.setSelection(editor.posFromIndex(idx), editor.posFromIndex(idx + marker.length));
+              editor.scrollIntoView(editor.posFromIndex(idx), 80);
+              return true;
+            }
+
+            const textarea = root?.querySelector('textarea') || document.querySelector('#html-editor-container textarea');
+            if (!textarea) return false;
+            const value = textarea.value || '';
+            const idx = value.indexOf(marker);
+            if (idx < 0) return false;
+            textarea.focus();
+            textarea.setSelectionRange(idx, idx + marker.length);
+            textarea.dispatchEvent(new Event('input', { bubbles: true }));
+            return true;
+            """,
+            marker,
+        ))
+    except Exception:
+        return False
+
+
+def _upload_one_time_image_at_marker(
+    driver: webdriver.Chrome,
+    image_path: Path,
+    marker: str = TISTORY_NATIVE_IMAGE_MARKER,
+) -> None:
+    print("[Tistory] HTML 모드에서 사진 업로드 위치 선택 중...")
+    _verify_tistory_editor_mode(driver, "html", timeout=10)
+
+    if not _select_token_in_html_editor(driver, marker):
+        raise RuntimeError(f"HTML 본문에서 사진 업로드 마커를 찾지 못했습니다: {marker}")
+    random_sleep(0.3, 0.6)
+
+    before_html = _get_tistory_html_body_value(driver)
+    input_el = _open_tistory_image_file_input(driver)
+    if not input_el:
+        raise RuntimeError("티스토리 사진 업로드 input(#attach-image)을 찾지 못했습니다.")
+
+    driver.execute_script(
+        """
+        arguments[0].removeAttribute('disabled');
+        arguments[0].style.display = 'block';
+        arguments[0].style.visibility = 'visible';
+        arguments[0].style.opacity = 1;
+        arguments[0].style.width = '1px';
+        arguments[0].style.height = '1px';
+        """,
+        input_el,
+    )
+    input_el.send_keys(str(image_path.resolve()))
+    print(f"[Tistory] 사진 파일 업로드 전송 완료: {image_path}")
+
+    started_at = time.time()
+    while time.time() - started_at < 75:
+        current_html = _get_tistory_html_body_value(driver)
+        if current_html != before_html and _looks_like_tistory_image_fragment(current_html):
+            print("[Tistory] HTML 모드 사진 업로드 반영 확인 완료")
+            return
+        time.sleep(1)
+
+    raise TimeoutError("HTML 모드 사진 업로드 반영을 확인하지 못했습니다.")
+
+
+def _remove_native_image_marker_after_upload(
+    driver: webdriver.Chrome,
+    marker: str = TISTORY_NATIVE_IMAGE_MARKER,
+) -> None:
+    print("[Tistory] HTML 모드 사진 마커 잔여 여부 확인 중...")
+    _verify_tistory_editor_mode(driver, "html", timeout=10)
+    current_html = _get_tistory_html_body_value(driver)
+    if marker not in current_html:
+        print("[Tistory] 사진 마커 잔여 없음")
+        return
+
+    current_html = re.sub(
+        rf'<p[^>]*>\s*{re.escape(marker)}\s*</p>',
+        '',
+        current_html,
+        flags=re.IGNORECASE,
+    ).replace(marker, "")
+    _set_tistory_html_body(driver, current_html)
+    print("[Tistory] 사진 마커 잔여 텍스트 제거 완료")
+
+
+def _validate_tistory_html_before_injection(html_body: str) -> None:
+    if "&lt;img" in html_body.lower():
+        raise RuntimeError("티스토리 주입 전 HTML에 이스케이프된 img 태그(&lt;img)가 남아 있습니다.")
+    if "data:image/" in html_body.lower():
+        raise RuntimeError(
+            "티스토리 HTML 모드에서는 data:image base64 직접 주입이 깨질 수 있어 중단합니다. "
+            "티스토리 업로드 이미지 조각 방식으로 치환해야 합니다."
+        )
+
+
 def _type_human(element, text: str) -> None:
     for char in text:
         element.send_keys(char)
@@ -1243,6 +2345,27 @@ def _wait_and_click_xpath_with_js_fallback(driver: webdriver.Chrome, xpath: str,
     driver.execute_script("arguments[0].scrollIntoView({block:'center'});", element)
     random_sleep(0.2, 0.5)
     driver.execute_script("arguments[0].click();", element)
+
+
+def _click_tistory_draft_save(driver: webdriver.Chrome) -> None:
+    """티스토리 에디터 상단의 임시저장 버튼을 클릭합니다."""
+    draft_xpaths = [
+        '//a[@role="button" and contains(concat(" ", normalize-space(@class), " "), " action ") and normalize-space()="임시저장"]',
+        '//a[@role="button" and normalize-space()="임시저장"]',
+        '//*[self::button or self::a][contains(normalize-space(), "임시저장") and not(contains(@aria-label, "개수"))]',
+    ]
+
+    last_error = None
+    for xpath in draft_xpaths:
+        try:
+            _wait_and_click_xpath_with_js_fallback(driver, xpath, timeout=8)
+            random_sleep(1.5, 2.5)
+            print("[Tistory] 임시저장 버튼 클릭 완료")
+            return
+        except Exception as exc:
+            last_error = exc
+
+    raise RuntimeError(f"티스토리 임시저장 버튼을 찾지 못했습니다: {last_error}")
 
 
 def _select_tistory_public_visibility(driver: webdriver.Chrome) -> None:
@@ -1273,34 +2396,334 @@ def _select_tistory_public_visibility(driver: webdriver.Chrome) -> None:
     print("[경고] 공개 상태 선택 버튼을 찾지 못했습니다. 현재 발행 레이어 기본값으로 진행합니다.")
 
 
-def _select_tistory_category(driver: webdriver.Chrome, category_name: str) -> None:
-    print(f"[Tistory] '{category_name}' 카테고리 선택 시도...")
+def _select_tistory_private_visibility(driver: webdriver.Chrome) -> None:
+    """발행 레이어에서 비공개 상태를 명시적으로 선택합니다."""
+    private_xpaths = [
+        '//*[@id="open0"]',
+        '//input[@type="radio" and (@value="0" or @value="private" or @value="closed")]',
+        '//label[@for="open0"]',
+        '//label[contains(normalize-space(), "비공개")]',
+        '//*[self::button or self::a or self::span][normalize-space()="비공개"]',
+    ]
+
+    for xpath in private_xpaths:
+        try:
+            elements = driver.find_elements(By.XPATH, xpath)
+            for element in elements:
+                if not element.is_displayed():
+                    continue
+                driver.execute_script("arguments[0].scrollIntoView({block:'center'});", element)
+                random_sleep(0.2, 0.4)
+                driver.execute_script("arguments[0].click();", element)
+                random_sleep(0.4, 0.8)
+                print("[Tistory] 비공개 상태 선택 완료")
+                return
+        except Exception:
+            continue
+
+    raise RuntimeError("비공개 상태 선택 버튼을 찾지 못했습니다. 공개 발행 위험이 있어 중단합니다.")
+
+
+def _upload_representative_image_in_publish_layer(driver: webdriver.Chrome, image_path: Path) -> None:
+    """발행 레이어의 '대표이미지 추가' 파일 input에 이미지를 지정합니다."""
+    print("[Tistory] 발행창 대표이미지 추가 input 대기 중...")
+    input_xpaths = [
+        '//div[contains(concat(" ", normalize-space(@class), " "), " inner_box ")][.//span[contains(concat(" ", normalize-space(@class), " "), " txt_thumb ") and contains(normalize-space(), "대표이미지 추가")]]//input[@type="file" and contains(concat(" ", normalize-space(@class), " "), " inp_g ") and contains(@accept, "image")]',
+        '//input[@type="file" and contains(concat(" ", normalize-space(@class), " "), " inp_g ") and contains(@accept, "image")]',
+        '//input[@type="file" and contains(@accept, "image") and contains(@class, "inp_g")]',
+        '//input[@type="file" and contains(@accept, "image")]',
+    ]
+
+    def find_input(timeout: float = 5.0):
+        last = None
+        end_at = time.time() + timeout
+        while time.time() < end_at:
+            for xpath in input_xpaths:
+                try:
+                    elements = driver.find_elements(By.XPATH, xpath)
+                    for element in elements:
+                        return element, last
+                except Exception as exc:
+                    last = exc
+            time.sleep(0.3)
+        return None, last
+
+    input_el, last_error = find_input(timeout=5.0)
+
+    add_button_xpaths = [
+        '//div[contains(concat(" ", normalize-space(@class), " "), " inner_box ")][.//input[@type="file" and contains(concat(" ", normalize-space(@class), " "), " inp_g ")]][.//span[contains(concat(" ", normalize-space(@class), " "), " txt_thumb ") and contains(normalize-space(), "대표이미지 추가")]]',
+        '//*[self::button or self::a or self::label or self::div or self::span][contains(normalize-space(), "대표이미지") and contains(normalize-space(), "추가")]',
+        '//*[self::button or self::a or self::label or self::div or self::span][contains(normalize-space(), "대표 이미지") and contains(normalize-space(), "추가")]',
+        '//*[self::button or self::a or self::label][contains(normalize-space(), "이미지") and contains(normalize-space(), "추가")]',
+    ]
+    clicked_add_button = False
+    for xpath in add_button_xpaths:
+        try:
+            candidates = driver.find_elements(By.XPATH, xpath)
+            for candidate in candidates:
+                if not candidate.is_displayed():
+                    continue
+                driver.execute_script("arguments[0].scrollIntoView({block:'center'});", candidate)
+                random_sleep(0.2, 0.4)
+                driver.execute_script("arguments[0].click();", candidate)
+                random_sleep(0.5, 1.0)
+                clicked_add_button = True
+                print("[Tistory] 발행창 대표이미지 추가 영역 클릭 완료")
+                break
+            if clicked_add_button:
+                break
+        except Exception as exc:
+            last_error = exc
+
+    if not input_el:
+        input_el, last_error = find_input(timeout=10.0)
+
+    if not input_el:
+        raise RuntimeError(f"발행창 대표이미지 추가 input(.inp_g)을 찾지 못했습니다: {last_error}")
+
+    driver.execute_script(
+        """
+        arguments[0].removeAttribute('disabled');
+        arguments[0].style.display = 'block';
+        arguments[0].style.visibility = 'visible';
+        arguments[0].style.opacity = 1;
+        arguments[0].style.width = '1px';
+        arguments[0].style.height = '1px';
+        """,
+        input_el,
+    )
+    input_el.send_keys(str(image_path.resolve()))
+    random_sleep(1.0, 2.0)
+    print(f"[Tistory] 발행창 대표이미지 파일 지정 완료: {image_path}")
+
+
+def _click_first_editor_image_for_representative(driver: webdriver.Chrome) -> bool:
     try:
-        category_btn = WebDriverWait(driver, 5).until(
-            EC.presence_of_element_located((By.ID, "category-btn"))
-        )
-        
-        if category_name in category_btn.text:
-            print(f"[Tistory] '{category_name}' 카테고리가 이미 선택되어 있습니다. 스킵합니다.")
+        return bool(driver.execute_script(
+            """
+            const roots = Array.from(document.querySelectorAll(
+              '.contents_style, .editor-body, [contenteditable="true"]'
+            )).filter(el => {
+              const rect = el.getBoundingClientRect();
+              const text = el.id || '';
+              return rect.width > 0 && rect.height > 0 && text !== 'prompt-textarea';
+            });
+            const root = roots[0] || document;
+            const images = Array.from(root.querySelectorAll('img')).filter(img => {
+              const rect = img.getBoundingClientRect();
+              const src = img.getAttribute('src') || '';
+              return rect.width > 10 && rect.height > 10 && !src.startsWith('data:image/');
+            });
+            const image = images[0];
+            if (!image) return false;
+
+            image.scrollIntoView({block: 'center', inline: 'center'});
+            const rect = image.getBoundingClientRect();
+            const x = rect.left + Math.min(rect.width / 2, 40);
+            const y = rect.top + Math.min(rect.height / 2, 40);
+            for (const type of ['pointerdown', 'mousedown', 'mouseup', 'click']) {
+              image.dispatchEvent(new MouseEvent(type, {
+                bubbles: true,
+                cancelable: true,
+                view: window,
+                clientX: x,
+                clientY: y
+              }));
+            }
+            return true;
+            """
+        ))
+    except Exception:
+        return False
+
+
+def _set_tistory_representative_image(driver: webdriver.Chrome) -> None:
+    print("[Tistory] 대표 이미지 설정을 위해 기본모드 전환 중...")
+    _switch_tistory_editor_mode_strict(driver, "basic")
+    random_sleep(1.0, 1.8)
+
+    clicked_image = False
+    for attempt in range(1, 4):
+        if _click_first_editor_image_for_representative(driver):
+            clicked_image = True
+            print(f"[Tistory] 대표 이미지 후보 사진 클릭 완료 (시도 {attempt}/3)")
+            break
+        random_sleep(0.8, 1.2)
+
+    if not clicked_image:
+        raise RuntimeError("기본모드에서 대표 이미지로 설정할 사진을 찾지 못했습니다.")
+
+    represent_button_xpaths = [
+        '//div[contains(concat(" ", normalize-space(@class), " "), " mce-represent-image-btn ") and not(contains(@style, "display: none"))]',
+        '//*[contains(concat(" ", normalize-space(@class), " "), " mce-represent-image-btn ")]',
+    ]
+
+    last_error = None
+    for xpath in represent_button_xpaths:
+        try:
+            end_at = time.time() + 10
+            while time.time() < end_at:
+                buttons = driver.find_elements(By.XPATH, xpath)
+                for button in buttons:
+                    try:
+                        if not button.is_displayed():
+                            continue
+                        driver.execute_script("arguments[0].scrollIntoView({block:'center'});", button)
+                        random_sleep(0.2, 0.4)
+                        driver.execute_script("arguments[0].click();", button)
+                        random_sleep(0.8, 1.3)
+                        print("[Tistory] 대표 이미지 설정 버튼 클릭 완료")
+                        return
+                    except Exception as exc:
+                        last_error = exc
+                time.sleep(0.3)
+        except Exception as exc:
+            last_error = exc
+
+    raise RuntimeError(f"대표 이미지 설정 버튼(.mce-represent-image-btn)을 클릭하지 못했습니다: {last_error}")
+
+
+def _compact_category_source(text: str) -> str:
+    return re.sub(r"\s+", "", str(text or "")).lower()
+
+
+def _topic_field_text(topic: dict | None, *keys: str) -> str:
+    if not isinstance(topic, dict):
+        return ""
+    parts = []
+    for key in keys:
+        value = topic.get(key)
+        if isinstance(value, list):
+            parts.extend(str(item) for item in value)
+        elif value:
+            parts.append(str(value))
+    return " ".join(parts)
+
+
+def _resolve_tistory_golf_category(title: str, html_body: str = "", topic: dict | None = None) -> str:
+    """Map generated golf topic/title to the actual Tistory category tree."""
+    topic_text = _topic_field_text(
+        topic,
+        "club",
+        "topic",
+        "category",
+        "main_keyword",
+        "search_intent",
+        "body_angle",
+        "title_angle",
+        "sub_keywords",
+    )
+    body_text = _strip_html_to_text(html_body)[:3000] if html_body else ""
+    core_source = f"{title} {topic_text}"
+    source = f"{core_source} {body_text}"
+    compact_core = _compact_category_source(core_source)
+    compact = _compact_category_source(source)
+    internal_category = str(topic.get("category", "")).strip() if isinstance(topic, dict) else ""
+
+    club_markers = [
+        ("웰링턴", "wellington"),
+        ("트리니티", "trinity"),
+        ("잭니클라우스", "jack"),
+        ("잭 니클라우스", "jack"),
+        ("jacknicklaus", "jack"),
+    ]
+    matched_clubs = {
+        marker_id
+        for marker, marker_id in club_markers
+        if _compact_category_source(marker) in compact_core
+    }
+    comparison_keywords = ("비교", "vs", "v.s", "순위", "랭킹", "선택기준", "어디가", "국내vs해외")
+    if internal_category == "비교분석" or len(matched_clubs) >= 2 or any(keyword in compact_core for keyword in comparison_keywords):
+        return TISTORY_GOLF_CATEGORY_NAMES["comparison"]
+
+    if "wellington" in matched_clubs:
+        return TISTORY_GOLF_CATEGORY_NAMES["wellington"]
+    if "trinity" in matched_clubs:
+        return TISTORY_GOLF_CATEGORY_NAMES["trinity"]
+    if "jack" in matched_clubs:
+        return TISTORY_GOLF_CATEGORY_NAMES["jack_nicklaus"]
+
+    japan_keywords = ("일본", "규슈", "이바라키", "오키나와", "홋카이도", "도쿄", "오사카", "japan", "kyushu", "ibaraki")
+    usa_keywords = ("미국", "하와이", "캘리포니아", "플로리다", "라스베가스", "페블비치", "오거스타", "파인허스트", "pebblebeach", "augusta", "pinehurst", "bandondunes", "sawgrass")
+    europe_keywords = ("유럽", "스코틀랜드", "영국", "아일랜드", "스페인", "포르투갈", "프랑스", "이탈리아", "세인트앤드루스", "standrews", "oldcourse")
+    overseas_keywords = (
+        "해외",
+        "베트남",
+        "다낭",
+        "태국",
+        "방콕",
+        "파타야",
+        "필리핀",
+        "마닐라",
+        "클락",
+        "세부",
+        "동남아",
+        "말레이시아",
+        "코타키나발루",
+        "괌",
+        "사이판",
+        "여행자보험",
+        "골프백",
+        "수하물",
+    )
+
+    if any(_compact_category_source(keyword) in compact for keyword in japan_keywords):
+        return TISTORY_GOLF_CATEGORY_NAMES["japan"]
+    if any(_compact_category_source(keyword) in compact for keyword in usa_keywords):
+        return TISTORY_GOLF_CATEGORY_NAMES["usa"]
+    if any(_compact_category_source(keyword) in compact for keyword in europe_keywords):
+        return TISTORY_GOLF_CATEGORY_NAMES["europe"]
+    if internal_category in {"해외여행", "보험·수하물", "여행준비"} or any(
+        _compact_category_source(keyword) in compact for keyword in overseas_keywords
+    ):
+        return TISTORY_GOLF_CATEGORY_NAMES["overseas"]
+
+    return TISTORY_GOLF_CATEGORY_DEFAULT
+
+
+def _select_tistory_category(driver: webdriver.Chrome, category_name: str, fallback_names: list[str] | None = None) -> None:
+    category_candidates = [category_name]
+    for fallback_name in fallback_names or []:
+        if fallback_name and fallback_name not in category_candidates:
+            category_candidates.append(fallback_name)
+
+    last_error = None
+    for idx, candidate in enumerate(category_candidates):
+        print(f"[Tistory] '{candidate}' 카테고리 선택 시도...")
+        try:
+            category_btn = WebDriverWait(driver, 5).until(
+                EC.presence_of_element_located((By.ID, "category-btn"))
+            )
+
+            if candidate in category_btn.text:
+                print(f"[Tistory] '{candidate}' 카테고리가 이미 선택되어 있습니다. 스킵합니다.")
+                return
+
+            print("[Tistory] 카테고리 메뉴 여는 중...")
+            driver.execute_script("arguments[0].scrollIntoView({block:'center'});", category_btn)
+            time.sleep(0.2)
+            driver.execute_script("arguments[0].click();", category_btn)
+            random_sleep(0.5, 1.0)
+
+            print(f"[Tistory] '{candidate}' 항목 클릭 중...")
+            item_xpath = f'//*[starts-with(@id, "category-item-") and contains(., "{candidate}")]'
+            item_el = WebDriverWait(driver, 5).until(
+                EC.presence_of_element_located((By.XPATH, item_xpath))
+            )
+            driver.execute_script("arguments[0].click();", item_el)
+            print(f"[Tistory] 카테고리 클릭 완료: {candidate}")
+            random_sleep(0.5, 1.0)
             return
 
-        print(f"[Tistory] 카테고리 메뉴 여는 중...")
-        driver.execute_script("arguments[0].scrollIntoView({block:'center'});", category_btn)
-        time.sleep(0.2)
-        driver.execute_script("arguments[0].click();", category_btn)
-        random_sleep(0.5, 1.0)
+        except Exception as e:
+            last_error = e
+            if idx + 1 < len(category_candidates):
+                print(f"[경고] '{candidate}' 카테고리 선택 실패. fallback으로 재시도합니다: {e}")
+            else:
+                print(f"[경고] 카테고리 선택 실패 (현재 선택값으로 진행): {e}")
 
-        print(f"[Tistory] '{category_name}' 항목 클릭 중...")
-        item_xpath = f'//*[starts-with(@id, "category-item-") and contains(., "{category_name}")]'
-        item_el = WebDriverWait(driver, 5).until(
-            EC.presence_of_element_located((By.XPATH, item_xpath))
-        )
-        driver.execute_script("arguments[0].click();", item_el)
-        print(f"[Tistory] 카테고리 클릭 완료: {category_name}")
-        random_sleep(0.5, 1.0)
-
-    except Exception as e:
-        print(f"[경고] 카테고리 선택 실패 (기본값으로 진행): {e}")
+    if last_error:
+        print(f"[경고] 모든 카테고리 선택 후보가 실패했습니다: {last_error}")
 
 
 def _display_length_for_log(html_body: str) -> int:
@@ -1363,6 +2786,14 @@ def _verify_tistory_editor_mode(driver: webdriver.Chrome, mode: str, timeout: in
     if mode == "html":
         _find_first_present_by_xpaths(driver, TISTORY_BODY_TEXTAREA_XPATHS, timeout=timeout)
         return
+    if mode == "basic":
+        basic_xpaths = [
+            '//*[contains(@class,"contents_style")]',
+            '//*[contains(@class,"editor-body")]',
+            '//*[@contenteditable="true" and not(@id="prompt-textarea")]',
+        ]
+        _find_first_present_by_xpaths(driver, basic_xpaths, timeout=timeout)
+        return
     raise ValueError(f"unsupported editor mode verification: {mode}")
 
 
@@ -1406,10 +2837,16 @@ def _set_tistory_html_body(driver: webdriver.Chrome, html_body: str) -> None:
     if not _set_tistory_html_body_via_codemirror(driver, html_body):
         textarea = _find_tistory_html_textarea(driver)
         time.sleep(random.uniform(0.2, 0.4))
-        textarea.click()
-        time.sleep(random.uniform(0.2, 0.4))
-        _clear_input_like_human(textarea)
-        textarea.send_keys(html_body)
+        driver.execute_script(
+            """
+            arguments[0].focus();
+            arguments[0].value = arguments[1];
+            arguments[0].dispatchEvent(new Event('input', { bubbles: true }));
+            arguments[0].dispatchEvent(new Event('change', { bubbles: true }));
+            """,
+            textarea,
+            html_body,
+        )
 
     # 2. [중요] 티스토리 시스템이 내용 변경을 '사용자 입력'으로 강제 인식하도록 만드는 0.01%의 트릭
     # HTML 에디터를 클릭한 뒤, 스페이스바를 누르고 지워버립니다. 
@@ -1423,6 +2860,24 @@ def _set_tistory_html_body(driver: webdriver.Chrome, html_body: str) -> None:
         time.sleep(0.5)
     except Exception as e:
         print(f"[경고] DOM 동기화 키보드 이벤트 우회 실패: {e}")
+
+
+def _verify_tistory_html_body_injection(driver: webdriver.Chrome, expected_html: str) -> None:
+    current_html = _get_tistory_html_body_value(driver)
+    if "[Pasted Content" in current_html:
+        raise RuntimeError("티스토리 본문에 실제 HTML 대신 [Pasted Content ...] 텍스트가 들어가 중단합니다.")
+
+    expected_len = _display_length_for_log(expected_html)
+    current_len = _display_length_for_log(current_html)
+    if expected_len >= 1000 and current_len < int(expected_len * 0.75):
+        raise RuntimeError(
+            f"티스토리 본문 주입 길이가 비정상적으로 짧습니다. expected={expected_len}, actual={current_len}"
+        )
+
+    if "<table" in expected_html.lower() and "<table" not in current_html.lower():
+        raise RuntimeError("ChatGPT 본문에 있던 표가 티스토리 HTML 본문 주입 후 사라져 중단합니다.")
+
+    print(f"[Tistory] 본문 HTML 주입 검증 완료 ({current_len}자)")
 
 
 def _scroll_tistory_to_page_bottom(driver: webdriver.Chrome) -> None:
@@ -1612,149 +3067,94 @@ def write_tistory_html_post(
     tags,
     post_type: str = "coupang",
     publish: bool = False,
+    visibility: str = "public",
     image1_data_url: str = "",
     image2_data_url: str = "",
+    golf_topic: dict | None = None,
 ) -> None:
     """Tistory HTML editor flow with native Image Paste logic"""
+    visibility = (visibility or "public").strip().lower()
+    if visibility not in {"public", "private"}:
+        raise ValueError(f"지원하지 않는 발행 공개 범위입니다: {visibility}")
 
-    if post_type == "coupang":
+    if post_type in {"coupang", "health"}:
         category_name = TISTORY_COUPANG_CATEGORY_NAME
+        category_fallbacks = []
     elif post_type == "golf":
-        category_name = TISTORY_GOLF_CATEGORY_NAME
+        category_name = _resolve_tistory_golf_category(title, html_body, golf_topic)
+        category_fallbacks = TISTORY_GOLF_CATEGORY_FALLBACKS.get(category_name, [])
     else:
         category_name = TISTORY_DAILY_CATEGORY_NAME
+        category_fallbacks = []
 
     print(f"[Tistory] 카테고리 선택 중... (type={post_type}, name={category_name})")
-    _select_tistory_category(driver, category_name)
+    _select_tistory_category(driver, category_name, category_fallbacks)
     random_sleep(0.6, 1.2)
 
     print("[Tistory] HTML 모드 전환 중...")
     _switch_tistory_editor_mode_strict(driver, "html")
 
-    print(f"[Tistory] 제목 입력 중... ({len(title)}자)")
-    WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, TISTORY_TITLE_XPATH)))
-    driver.find_element(By.XPATH, TISTORY_TITLE_XPATH).click()
-    random_sleep(0.3, 0.8)
-    title_el = driver.find_element(By.XPATH, TISTORY_TITLE_XPATH)
-    _type_human(title_el, title)
-    random_sleep(0.8, 1.5)
+    temp_image_paths: list[Path] = []
+    upload_items: list[dict] = []
+    main_image_path = None
+    if image1_data_url:
+        main_image_path = _write_temp_image_from_src(image1_data_url, 1)
+        if not main_image_path:
+            raise RuntimeError("이미지 data URL을 일회성 업로드 파일로 변환하지 못했습니다.")
+        temp_image_paths.append(main_image_path)
+        upload_items.append({"path": main_image_path, "marker": TISTORY_NATIVE_IMAGE_MARKER, "source_url": "generated"})
+    elif image2_data_url:
+        print("[경고] image1_data_url이 없어 image2_data_url을 사진 업로드에 사용합니다.")
+        main_image_path = _write_temp_image_from_src(image2_data_url, 1)
+        if not main_image_path:
+            raise RuntimeError("이미지 data URL을 일회성 업로드 파일로 변환하지 못했습니다.")
+        temp_image_paths.append(main_image_path)
+        upload_items.append({"path": main_image_path, "marker": TISTORY_NATIVE_IMAGE_MARKER, "source_url": "generated"})
 
-    temp_image_paths = []
     try:
 
-        # ── BODY_SAFE_IMAGE_PATCH: HTML 모드 유지 이미지 처리 ──
-        # 본문 선택/입력 로직은 그대로 두고, 골프 대표 이미지는 코드가 직접 삽입합니다.
-        # 기존 placeholder 방식은 다른 글 타입 및 레거시 HTML 호환용으로 유지합니다.
-        # 기본 모드로 전환하지 않습니다.
         if "clean_generated_html_body" in globals():
             html_body = clean_generated_html_body(html_body)
         if post_type == "golf":
             html_body = _disable_responsive_golf_html(html_body)
             _log_golf_image_state("Tistory 처리 전", html_body, image1_data_url)
-            html_body = _ensure_golf_main_image_html(
-                html_body,
-                image1_data_url,
-                title,
-                context="Tistory",
-            )
-            if "%%IMAGE2_PLACEHOLDER%%" in html_body:
-                if image2_data_url:
-                    html_body = html_body.replace("%%IMAGE2_PLACEHOLDER%%", image2_data_url)
-                    print("[Tistory] IMAGE2 data URL 치환 완료")
-                else:
-                    html_body = re.sub(
-                        r'<figure[^>]*>.*?%%IMAGE2_PLACEHOLDER%%.*?</figure>',
-                        '',
-                        html_body,
-                        flags=re.DOTALL | re.IGNORECASE,
-                    )
-                    html_body = html_body.replace("%%IMAGE2_PLACEHOLDER%%", "")
-                    print("[경고] IMAGE2 data URL 없음 → 이미지 태그 제거 후 진행")
+        html_body = _prepare_html_for_native_tistory_image_upload(
+            html_body,
+            post_type=post_type,
+            has_image=bool(main_image_path),
+        )
+        if post_type == "golf":
             _log_golf_image_state("Tistory 최종", html_body, image1_data_url)
             validate_golf_generated_content(html_body, title)
+        if not upload_items:
+            print("[경고] 업로드할 사진이 없어 본문만 입력합니다.")
         else:
-            image_slots = []
+            print(f"[Tistory] HTML 모드 네이티브 사진 업로드 준비 완료: {len(upload_items)}장")
 
-            if image1_data_url:
-                image_slots.append(("%%IMAGE1_PLACEHOLDER%%", image1_data_url))
+        _validate_tistory_html_before_injection(html_body)
 
-            if image2_data_url:
-                image_slots.append(("%%IMAGE2_PLACEHOLDER%%", image2_data_url))
+        print("[Tistory] 최종 HTML 모드 확인 중...")
+        _switch_tistory_editor_mode_strict(driver, "html")
 
-            # ChatGPT 본문에 이미지 placeholder가 없으면 상단에 대표 이미지 태그 자동 삽입
-            # ── IMAGE1 처리 ──────────────────────────────────────────────
-            if image1_data_url and "%%IMAGE1_PLACEHOLDER%%" not in html_body:
-                safe_alt = re.sub(r'[\"<>]', "", title).strip() or "골프장 대표 이미지"
-                html_body = (
-                    '<figure style="text-align:center; margin:24px 0;">'
-                    f'<img src="%%IMAGE1_PLACEHOLDER%%" alt="{safe_alt}" '
-                    'style="width:680px; height:auto; border-radius:14px; display:block; margin:0 auto;" />'
-                    '</figure>\n'
-                    + html_body
-                )
-                print("[Tistory] IMAGE1 placeholder가 없어 상단 이미지 태그를 자동 삽입했습니다.")
-
-            # placeholder 치환 또는 안전 제거
-            if "%%IMAGE1_PLACEHOLDER%%" in html_body:
-                if image1_data_url:
-                    html_body = html_body.replace("%%IMAGE1_PLACEHOLDER%%", image1_data_url)
-                    print("[Tistory] IMAGE1 data URL 치환 완료")
-                else:
-                    # base64 없으면 깨진 이미지 태그째로 제거 (티스토리 오류 방지)
-                    html_body = re.sub(
-                        r'<figure[^>]*>.*?%%IMAGE1_PLACEHOLDER%%.*?</figure>',
-                        '',
-                        html_body,
-                        flags=re.DOTALL | re.IGNORECASE,
-                    )
-                    html_body = re.sub(r'[^"\'=]%%IMAGE1_PLACEHOLDER%%', '', html_body)
-                    print("[경고] IMAGE1 data URL 없음 → 이미지 태그 제거 후 진행")
-
-            if "%%IMAGE2_PLACEHOLDER%%" in html_body:
-                if image2_data_url:
-                    html_body = html_body.replace("%%IMAGE2_PLACEHOLDER%%", image2_data_url)
-                    print("[Tistory] IMAGE2 data URL 치환 완료")
-                else:
-                    html_body = re.sub(
-                        r'<figure[^>]*>.*?%%IMAGE2_PLACEHOLDER%%.*?</figure>',
-                        '',
-                        html_body,
-                        flags=re.DOTALL | re.IGNORECASE,
-                    )
-                    html_body = re.sub(r'[^"\'=]%%IMAGE2_PLACEHOLDER%%', '', html_body)
-                    print("[경고] IMAGE2 data URL 없음 → 이미지 태그 제거 후 진행")
-
-            replaced_count = sum([
-                1 for token in ["%%IMAGE1_PLACEHOLDER%%", "%%IMAGE2_PLACEHOLDER%%"]
-                if token not in html_body and (image1_data_url or image2_data_url)
-            ])
-            if replaced_count > 0:
-                print(f"[Tistory] 총 {replaced_count}개 이미지 data URL 삽입 완료")
-
-            replaced_count = 0
-
-            for token, data_url in image_slots:
-                if token in html_body:
-                    html_body = html_body.replace(token, data_url)
-                    replaced_count += 1
-                    print(f"[Tistory] 이미지 플레이스홀더 치환 완료: {token}")
-                else:
-                    print(f"[경고] HTML에서 이미지 플레이스홀더를 찾지 못함: {token}")
-
-            if replaced_count > 0:
-                print(f"[Tistory] 총 {replaced_count}개 이미지 data URL 삽입 완료")
-
-        if "data:image/" in html_body:
-            print("[Tistory] 최종 HTML에 이미지 data URL 포함 확인")
-        else:
-            print("[경고] 최종 HTML에 이미지 data URL이 없습니다.")
-
+        print(f"[Tistory] 제목 입력 중... ({len(title)}자)")
+        WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, TISTORY_TITLE_XPATH)))
+        driver.find_element(By.XPATH, TISTORY_TITLE_XPATH).click()
+        random_sleep(0.3, 0.8)
+        title_el = driver.find_element(By.XPATH, TISTORY_TITLE_XPATH)
+        _type_human(title_el, title)
+        random_sleep(0.8, 1.5)
 
         print(f"[Tistory] 본문 텍스트 HTML 주입 시작... ({_display_length_for_log(html_body)}자)")
         _focus_tistory_html_body(driver)
         random_sleep(0.3, 0.8)
         _set_tistory_html_body(driver, html_body)
+        _verify_tistory_html_body_injection(driver, html_body)
         random_sleep(0.8, 1.5)
+
+        for idx, item in enumerate(upload_items, start=1):
+            print(f"[Tistory] HTML 모드 사진 업로드 진행 중... ({idx}/{len(upload_items)})")
+            _upload_one_time_image_at_marker(driver, item["path"], item["marker"])
+            _remove_native_image_marker_after_upload(driver, item["marker"])
 
         _scroll_tistory_to_page_bottom(driver)
         _scroll_to_tistory_tags(driver)
@@ -1813,10 +3213,23 @@ def write_tistory_html_post(
             _wait_and_click_xpath_with_js_fallback(driver, '//*[@id="publish-layer-btn"]', timeout=10)
             random_sleep(1.0, 1.5)
 
-            print("[Tistory] 공개 상태 선택 중...")
-            _select_tistory_public_visibility(driver)
+            representative_image_path = main_image_path or (upload_items[0]["path"] if upload_items else None)
+            if representative_image_path:
+                print("[Tistory] 본문 업로드 이미지와 같은 파일을 대표이미지로 지정합니다.")
+                _upload_representative_image_in_publish_layer(driver, representative_image_path)
+            else:
+                print("[경고] 대표이미지로 지정할 사진 파일이 없어 발행창 대표이미지 추가를 건너뜁니다.")
+
+            if visibility == "private":
+                print("[Tistory] 비공개 상태 선택 중...")
+                _select_tistory_private_visibility(driver)
+                visibility_label = "비공개"
+            else:
+                print("[Tistory] 공개 상태 선택 중...")
+                _select_tistory_public_visibility(driver)
+                visibility_label = "공개"
             
-            print("[Tistory] '공개 발행' 버튼 클릭 중...")
+            print(f"[Tistory] '{visibility_label} 발행' 버튼 클릭 중...")
             _wait_and_click_xpath_with_js_fallback(driver, '//*[@id="publish-btn"]', timeout=10)
             
             # 발행 클릭 후 로봇 확인 팝업 대기 (AI/봇 판별)
@@ -1836,7 +3249,10 @@ def write_tistory_html_post(
                     pass
 
             random_sleep(2.0, 3.0)
-            print("[Tistory] 공개 발행 완료")
+            print(f"[Tistory] {visibility_label} 발행 완료")
+        else:
+            print("[Tistory] 임시저장 버튼 클릭 중...")
+            _click_tistory_draft_save(driver)
     finally:
         # 안전한 임시 이미지 파일 삭제
         for path in temp_image_paths:
@@ -1847,14 +3263,26 @@ def write_tistory_html_post(
                 pass
 
 
-def _read_product_rows() -> list[dict]:
+def _health_product_db_path() -> Path:
+    env_path = os.getenv("HEALTH_PRODUCT_DB_PATH")
+    if env_path:
+        return Path(env_path).expanduser()
+    if HEALTH_PRODUCT_DB_DEFAULT_PATH.exists():
+        return HEALTH_PRODUCT_DB_DEFAULT_PATH
+    return HEALTH_PRODUCT_DB_FALLBACK_PATH
+
+
+def _read_product_rows(product_db_path: Path | str | None = None) -> list[dict]:
+    path = Path(product_db_path or PRODUCT_DB_PATH)
+    if not path.exists():
+        raise FileNotFoundError(f"상품 DB CSV가 없습니다: {path}")
     for enc in ("utf-8-sig", "utf-8", "cp949"):
         try:
-            with PRODUCT_DB_PATH.open("r", newline="", encoding=enc) as f:
+            with path.open("r", newline="", encoding=enc) as f:
                 return list(csv.DictReader(f))
         except UnicodeDecodeError:
             continue
-    with PRODUCT_DB_PATH.open("r", newline="", errors="replace") as f:
+    with path.open("r", newline="", errors="replace") as f:
         return list(csv.DictReader(f))
 
 
@@ -1874,19 +3302,25 @@ def _is_already_posted_row(row: dict) -> bool:
     return used == "Y" or bool(post_title)
 
 
-def select_products(count: int = 3) -> list[dict]:
-    all_rows = _read_product_rows()
-    a_grade_rows = [r for r in all_rows if _is_a_grade_row(r)]
-    source_rows = a_grade_rows if a_grade_rows else all_rows
-    rows = [r for r in source_rows if not _is_already_posted_row(r)]
+def select_products(count: int = 3, product_db_path: Path | str | None = None) -> list[dict]:
+    all_rows = _read_product_rows(product_db_path)
+    unused_rows = [r for r in all_rows if not _is_already_posted_row(r)]
+    a_grade_rows = [r for r in unused_rows if _is_a_grade_row(r)]
+    fallback_rows = [r for r in unused_rows if not _is_a_grade_row(r)]
+    rows = a_grade_rows + fallback_rows
     products = rows[:count]
     if len(products) < 2:
         raise ValueError("비교 상품은 최소 2개 이상 필요합니다.")
     return products
 
 
-def mark_products_as_used(products: list[dict], post_title: str = "") -> None:
-    rows = _read_product_rows()
+def mark_products_as_used(
+    products: list[dict],
+    post_title: str = "",
+    product_db_path: Path | str | None = None,
+) -> None:
+    path = Path(product_db_path or PRODUCT_DB_PATH)
+    rows = _read_product_rows(path)
     now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     name_key = "\uC0C1\uD488\uBA85"
     keyword_key = "\uD0A4\uC6CC\uB4DC"
@@ -1907,7 +3341,10 @@ def mark_products_as_used(products: list[dict], post_title: str = "") -> None:
             break
 
     fieldnames = list(rows[0].keys())
-    with PRODUCT_DB_PATH.open("w", newline="", encoding="utf-8-sig") as f:
+    for required_field in ("used", "used_at", "post_title"):
+        if required_field not in fieldnames:
+            fieldnames.append(required_field)
+    with path.open("w", newline="", encoding="utf-8-sig") as f:
         writer = csv.DictWriter(f, fieldnames=fieldnames)
         writer.writeheader()
         writer.writerows(rows)
@@ -1917,6 +3354,24 @@ def _build_products_summary(products: list[dict]) -> str:
     lines = []
     for i, p in enumerate(products, 1):
         name = _clean(p.get("\uC0C1\uD488\uBA85"), f"상품{i}")
+        price = _clean(p.get("상품가격"), _clean(p.get("가격"), "가격 확인 필요"))
+        rating = _clean(p.get("평점"), "")
+        review_count = _clean(p.get("리뷰수"), "")
+        rocket_info = _clean(p.get("로켓정보"), _clean(p.get("로켓배송"), ""))
+        ingredient = _clean(
+            p.get("주요성분")
+            or p.get("성분")
+            or p.get("기능성원료")
+            or p.get("원료"),
+            "성분표 확인 필요",
+        )
+        serving = _clean(
+            p.get("섭취량")
+            or p.get("1일섭취량")
+            or p.get("용량")
+            or p.get("규격"),
+            "섭취량/용량 확인 필요",
+        )
         s = [
             _clean(p.get("\uC7A5\uC8101"), "상품 상세페이지와 리뷰에서 장점을 먼저 확인해 두는 편이 좋습니다."),
             _clean(p.get("\uC7A5\uC8102"), "비슷한 상품과 비교하면서 선택 기준을 세우기 좋습니다."),
@@ -1924,20 +3379,117 @@ def _build_products_summary(products: list[dict]) -> str:
         ]
         caution = _clean(p.get("\uC8FC\uC758\uC810"), "개인 상황에 따라 체감 차이가 있을 수 있습니다.")
         url = _clean(p.get("\uCFE0\uD321\uB9C1\uD06C"), "")
+        facts = [f"가격 {price}", f"성분 {ingredient}", f"섭취/용량 {serving}"]
+        if rating:
+            facts.append(f"평점 {rating}")
+        if review_count:
+            facts.append(f"리뷰수 {review_count}")
+        if rocket_info:
+            facts.append(f"배송 {rocket_info}")
         lines.append(
-            f"{i}. {name} / 핵심 포인트: {s[0]}, {s[1]}, {s[2]}"
+            f"{i}. {name} / 확인 정보: {', '.join(facts)}"
+            f" / 핵심 포인트: {s[0]}, {s[1]}, {s[2]}"
             f" / 주의사항: {caution} / 쿠팡 링크: {url}"
         )
     return "\n".join(lines)
+
+
+def _format_price_for_prompt(value: str) -> str:
+    text = _clean(value, "")
+    digits = re.sub(r"[^0-9]", "", text)
+    if digits:
+        return f"{int(digits):,}원"
+    return text or "가격 확인 필요"
+
+
+def _build_health_products_summary(products: list[dict]) -> str:
+    lines = []
+    for i, p in enumerate(products, 1):
+        name = _clean(p.get("\uC0C1\uD488\uBA85"), f"상품{i}")
+        price = _format_price_for_prompt(_clean(p.get("상품가격"), _clean(p.get("가격"), "")))
+        rating = _clean(p.get("평점"), "평점 확인 필요")
+        review_count = _clean(p.get("리뷰수"), _clean(p.get("리뷰개수"), "리뷰 수 확인 필요"))
+        rocket_info = _clean(p.get("로켓정보"), _clean(p.get("로켓배송"), "배송 확인 필요"))
+        ingredient = _clean(
+            p.get("주요성분")
+            or p.get("성분")
+            or p.get("기능성원료")
+            or p.get("원료"),
+            "성분표 확인 필요",
+        )
+        serving = _clean(
+            p.get("섭취량")
+            or p.get("1일섭취량")
+            or p.get("용량")
+            or p.get("규격"),
+            "섭취량/용량 확인 필요",
+        )
+        caution = _clean(p.get("\uC8FC\uC758\uC810"), "개인 건강 상태와 표시사항을 확인해야 합니다.")
+        lines.append(
+            f"{i}. 상품명: {name}\n"
+            f"   - 가격 확인 기준: {price}\n"
+            f"   - 성분/원료: {ingredient}\n"
+            f"   - 섭취량/용량: {serving}\n"
+            f"   - 리뷰/배송: 평점 {rating}, 리뷰수 {review_count}, 배송 {rocket_info}\n"
+            f"   - 신중히 볼 점: {caution}\n"
+            f"   - 링크 마커: [PRODUCT_LINK_{i}]"
+        )
+    return "\n".join(lines)
+
+
+def _build_health_image_cues(products: list[dict]) -> str:
+    cues: list[str] = []
+    for p in products:
+        text = " ".join(
+            _clean(p.get(key), "")
+            for key in ("\uC0C1\uD488\uBA85", "\uD0A4\uC6CC\uB4DC", "\uCE74\uD14C\uACE0\uB9AC")
+        ).lower()
+        if any(token in text for token in ("레몬", "lemon")):
+            cues.append("generic lemon juice stick packets, fresh lemon slices, clear water glass")
+        elif any(token in text for token in ("프로틴", "단백", "protein", "드링크")):
+            cues.append("generic protein drink glass, shaker cup, neutral carton without text")
+        elif any(token in text for token in ("관절", "콘드로이친", "연골", "joint", "chondroitin")):
+            cues.append("generic supplement bottle, tablets or capsules, serving checklist")
+        elif any(token in text for token in ("비타민", "vitamin", "멀티")):
+            cues.append("generic vitamin bottle, small tablets, daily nutrition checklist")
+        elif any(token in text for token in ("오메가", "omega")):
+            cues.append("generic omega supplement bottle, softgel capsules, water glass")
+        else:
+            cues.append("generic health supplement bottle, water glass, comparison checklist")
+    deduped = list(dict.fromkeys(cues))
+    return "; ".join(deduped[:3])
+
+
+def _health_product_text(product: dict) -> str:
+    return " ".join(
+        _clean(product.get(key), "")
+        for key in ("\uC0C1\uD488\uBA85", "\uD0A4\uC6CC\uB4DC", "\uCE74\uD14C\uACE0\uB9AC")
+    ).lower()
+
+
+def _build_health_image_focus(products: list[dict]) -> str:
+    first = products[0] if products else {}
+    text = _health_product_text(first)
+    if any(token in text for token in ("레몬", "lemon")):
+        return "adult hand tearing or squeezing a small unbranded lemon juice stick into a clear water glass, with lemon slices nearby"
+    if any(token in text for token in ("프로틴", "단백", "protein", "드링크")):
+        return "adult hand pouring or drinking a neutral protein drink in a glass or shaker cup, no visible brand or text"
+    if any(token in text for token in ("관절", "콘드로이친", "연골", "joint", "chondroitin")):
+        return "adult hand preparing generic supplement tablets or capsules with a water glass from an unbranded bottle"
+    if any(token in text for token in ("비타민", "vitamin", "멀티")):
+        return "adult hand preparing generic vitamin tablets with a water glass and a daily checklist"
+    if any(token in text for token in ("오메가", "omega")):
+        return "adult hand preparing generic softgel capsules with a water glass from an unbranded bottle"
+    return "adult hand using the main health product type from the article in a clean daily routine setting, unbranded and text-free"
 
 
 def _build_cta_links(products: list[dict]) -> str:
     """상품 이미지 + 가격이 포함된 카드형 CTA HTML을 생성합니다."""
     cards = []
     cta_texts = [
-        "최저가 확인하고 구매하기",
-        "옵션과 최신가 한눈에 보기",
-        "구매 전 상세정보 확인하기",
+        "가격과 옵션 확인",
+        "상세 정보 확인",
+        "리뷰 수 확인",
     ]
     for i, p in enumerate(products, 1):
         name = _clean(p.get("상품명"), f"상품{i}")
@@ -1954,7 +3506,7 @@ def _build_cta_links(products: list[dict]) -> str:
                 price_formatted = f"{int(price):,}원"
                 price_html = (
                     f'<span style="display:block; font-size:24px; font-weight:900; '
-                    f'color:#e53935; margin:6px 0 2px;">{price_formatted}</span>'
+                    f'color:#333333; margin:6px 0 2px;">{price_formatted}</span>'
                 )
             except ValueError:
                 pass
@@ -1994,7 +3546,7 @@ def _build_cta_links(products: list[dict]) -> str:
             f'line-height:1.4; word-break:keep-all;">{name}{rocket_html}</span>'
             f'{price_html}'
             f'<span style="display:inline-block; margin-top:10px; padding:12px 24px; '
-            f'background:linear-gradient(135deg,#ff5722,#ff9800); color:#fff; '
+            f'background:#3f4a45; color:#fff; '
             f'font-size:16px; font-weight:800; border-radius:10px; text-align:center; '
             f'letter-spacing:0.3px;">{cta_text}</span>'
             f'</span></a>'
@@ -2002,7 +3554,7 @@ def _build_cta_links(products: list[dict]) -> str:
         cards.append(card)
     return "\n".join(cards)
 
-def build_prompt_values(products: list[dict]) -> dict:
+def build_prompt_values(products: list[dict], content_vertical: str = "coupang") -> dict:
     first    = products[0]
     category = _clean(first.get("\uCE74\uD14C\uACE0\uB9AC"), "건강관리")
     keyword  = _clean(first.get("\uD0A4\uC6CC\uB4DC"), _clean(first.get("\uC0C1\uD488\uBA85"), "쿠팡 상품 추천"))
@@ -2011,21 +3563,160 @@ def build_prompt_values(products: list[dict]) -> dict:
         for p in products
         if _clean(p.get("\uD0A4\uC6CC\uB4DC"), _clean(p.get("\uC0C1\uD488\uBA85"), ""))
     )
+    if content_vertical == "health_supplement":
+        category = _clean(first.get("\uCE74\uD14C\uACE0\uB9AC"), "건강식품")
+        keyword = _clean(first.get("\uD0A4\uC6CC\uB4DC"), _clean(first.get("\uC0C1\uD488\uBA85"), "40대 50대 건강식품 비교"))
+        default_target_reader = "라운딩과 일상을 병행하는 40~50대 골퍼와 중년 독자"
+        default_usage_scenario = "라운딩 전후 컨디션 관리와 평소 영양 보충을 위해 건강식품을 비교하는 상황"
+        default_pain_point = "성분, 섭취량, 가격, 리뷰, 주의사항이 달라 무엇을 먼저 봐야 할지 어려운 경우"
+        tone = "차분하고 프리미엄 정보형"
+        products_summary = _build_health_products_summary(products)
+        cta_links = ""
+    else:
+        default_target_reader = "비슷한 상품 중 무엇을 고를지 고민하는 독자"
+        default_usage_scenario = "일상에서 제품을 비교하고 구매하려는 상황"
+        default_pain_point = "비슷한 상품이 많아 선택이 어려운 경우"
+        tone = "깔끔하고 정보형"
+        products_summary = _build_products_summary(products)
+        cta_links = _build_cta_links(products)
     return {
         "keyword":          keyword,
         "keywords":         keywords,
         "product_count":    len(products),
-        "products_summary": _build_products_summary(products),
-        "target_reader":    _clean(first.get("\uD0C0\uAC9F\uB3C5\uC790"), "비슷한 상품 중 무엇을 고를지 고민하는 독자"),
-        "usage_scenario":   _clean(first.get("\uC0AC\uC6A9\uC7A5\uC18C"), _clean(first.get("\uBB38\uC81C\uC0C1\uD669"), "일상에서 제품을 비교하고 구매하려는 상황")),
+        "products_summary": products_summary,
+        "target_reader":    _clean(first.get("\uD0C0\uAC9F\uB3C5\uC790"), default_target_reader),
+        "usage_scenario":   _clean(first.get("\uC0AC\uC6A9\uC7A5\uC18C"), _clean(first.get("\uBB38\uC81C\uC0C1\uD669"), default_usage_scenario)),
         "product_names":    ", ".join(_clean(p.get("\uC0C1\uD488\uBA85"), "상품") for p in products),
         "category":         category,
-        "tone":             "깔끔하고 정보형",
-        "pain_point":       _clean(first.get("\uBB38\uC81C\uC0C1\uD669"), "비슷한 상품이 많아 선택이 어려운 경우"),
-        "cta_links":        _build_cta_links(products),
+        "tone":             tone,
+        "pain_point":       _clean(first.get("\uBB38\uC81C\uC0C1\uD669"), default_pain_point),
+        "cta_links":        cta_links,
+        "health_image_focus": _build_health_image_focus(products) if content_vertical == "health_supplement" else category,
+        "health_image_cues": _build_health_image_cues(products) if content_vertical == "health_supplement" else category,
         "image1_url":       "",
         "image2_url":       "",
+        "content_vertical":  content_vertical,
+        "disclosure":       EXACT_COUPANG_DISCLOSURE,
     }
+
+
+def _coupang_url_key(url: str) -> str:
+    text = (url or "").strip()
+    if not text:
+        return ""
+    parsed = urllib.parse.urlsplit(text)
+    if not parsed.netloc:
+        return text.rstrip("/")
+    query = urllib.parse.parse_qs(parsed.query)
+    stable_query = []
+    for key in ("productId", "itemId", "vendorItemId"):
+        value = query.get(key, [""])[0]
+        if value:
+            stable_query.append(f"{key}={value}")
+    base = f"{parsed.netloc.lower()}{parsed.path.rstrip('/')}"
+    return base + ("?" + "&".join(stable_query) if stable_query else "")
+
+
+def _row_coupang_url_key(row: dict) -> str:
+    return _coupang_url_key(
+        _clean(row.get("쿠팡링크"))
+        or _clean(row.get("coupang_partners_link"))
+        or _clean(row.get("product_url"))
+        or _clean(row.get("url"))
+    )
+
+
+def _load_used_coupang_url_keys() -> set[str]:
+    return {key for key in (_coupang_url_key(url) for url in _load_used_coupang_urls()) if key}
+
+
+def _choose_health_products(
+    seed_products: list[dict],
+    enriched_products: list[dict],
+    count: int = 3,
+    used_keys: set[str] | None = None,
+    seen_keys: set[str] | None = None,
+    require_minimum: bool = True,
+) -> tuple[list[dict], list[dict]]:
+    used_keys = set(used_keys) if used_keys is not None else _load_used_coupang_url_keys()
+    selected_seed: list[dict] = []
+    selected_enriched: list[dict] = []
+    seen_keys = seen_keys if seen_keys is not None else set()
+
+    for seed, enriched in zip(seed_products, enriched_products):
+        key = _row_coupang_url_key(enriched) or _row_coupang_url_key(seed)
+        if not _row_coupang_url_key(enriched):
+            print(f"[Products] API 파트너스 상품 URL이 없어 제외: {seed.get('상품명') or seed.get('키워드') or '상품'}")
+            continue
+        if key and key in used_keys:
+            print(f"[Products] 이미 사용한 쿠팡 상품 제외: {enriched.get('상품명') or seed.get('상품명') or key}")
+            continue
+        if key and key in seen_keys:
+            print(f"[Products] 이번 실행 내 중복 쿠팡 상품 제외: {enriched.get('상품명') or seed.get('상품명') or key}")
+            continue
+        if key:
+            seen_keys.add(key)
+        selected_seed.append(seed)
+        selected_enriched.append(enriched)
+        if len(selected_enriched) >= count:
+            break
+
+    if require_minimum and len(selected_enriched) < 2:
+        raise ValueError("건강식품 비교 상품은 최소 2개 이상 필요합니다.")
+    return selected_seed, selected_enriched
+
+
+def prepare_health_coupang_products(count: int = 3) -> tuple[Path, list[dict], list[dict]]:
+    if not COUPANG_API_ENABLED:
+        raise RuntimeError("건강식품 쿠팡 글은 쿠팡 API 사용이 필요합니다. COUPANG_API_ENABLED=1로 설정하세요.")
+    if not COUPANG_ACCESS_KEY or not COUPANG_SECRET_KEY:
+        raise RuntimeError("COUPANG_ACCESS_KEY 또는 COUPANG_SECRET_KEY가 없어 쿠팡 API를 사용할 수 없습니다.")
+
+    product_db_path = _health_product_db_path()
+    scan_limit = max(count, HEALTH_PRODUCT_SELECTION_SCAN_LIMIT)
+    batch_size = max(count, HEALTH_PRODUCT_ENRICH_BATCH_SIZE)
+    seed_products = select_products(count=scan_limit, product_db_path=product_db_path)
+    used_keys = _load_used_coupang_url_keys()
+    seen_keys: set[str] = set()
+    selected_seed: list[dict] = []
+    selected_enriched: list[dict] = []
+
+    for batch_start in range(0, len(seed_products), batch_size):
+        remaining = count - len(selected_enriched)
+        if remaining <= 0:
+            break
+        batch_seed_products = seed_products[batch_start:batch_start + batch_size]
+        excluded_url_keys = set(used_keys) | set(seen_keys)
+        enriched_products = enrich_products_with_coupang_links(
+            batch_seed_products,
+            api_enabled=COUPANG_API_ENABLED,
+            access_key=COUPANG_ACCESS_KEY or "",
+            secret_key=COUPANG_SECRET_KEY or "",
+            sub_id=COUPANG_SUB_ID,
+            fallback_to_similar=True,
+            require_api_product=True,
+            excluded_url_keys=excluded_url_keys,
+            url_key_func=_coupang_url_key,
+        )
+        batch_selected_seed, batch_selected_enriched = _choose_health_products(
+            batch_seed_products,
+            enriched_products,
+            count=remaining,
+            used_keys=used_keys,
+            seen_keys=seen_keys,
+            require_minimum=False,
+        )
+        selected_seed.extend(batch_selected_seed)
+        selected_enriched.extend(batch_selected_enriched)
+
+    if len(selected_enriched) < 2:
+        raise ValueError(
+            "건강식품 비교 상품은 최소 2개 이상 필요합니다. "
+            f"확인 후보 {len(seed_products)}개 중 API 파트너스 링크 확보/중복 제외 후 {len(selected_enriched)}개만 남았습니다."
+        )
+    print(f"[Products] 건강식품 DB: {product_db_path}")
+    print(f"[Products] 건강식품 쿠팡 비교 상품 확정: {len(selected_enriched)}개 / 확인 후보 {len(seed_products)}개")
+    return product_db_path, selected_seed, selected_enriched
 
 
 # ------------------------------------------------------------------
@@ -2059,7 +3750,11 @@ def _load_used_coupang_urls() -> set[str]:
 
 
 def validate_coupang_urls(prompt_text: str) -> None:
-    duplicated = sorted(set(_extract_coupang_urls(prompt_text)) & _load_used_coupang_urls())
+    used_keys = _load_used_coupang_url_keys()
+    duplicated = sorted(
+        url for url in set(_extract_coupang_urls(prompt_text))
+        if _coupang_url_key(url) and _coupang_url_key(url) in used_keys
+    )
     if duplicated:
         raise ValueError("중복 쿠팡 URL 감지:\n" + "\n".join(duplicated))
 
@@ -2084,6 +3779,109 @@ def log_coupang_urls(prompt_text: str) -> None:
     now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     for url in _extract_coupang_urls(prompt_text):
         _append_csv(USED_COUPANG_URL_LOG_PATH, ["used_at", "coupang_url"], {"used_at": now, "coupang_url": url})
+
+
+def _log_product_coupang_urls(products: list[dict]) -> None:
+    urls = "\n".join(_clean(p.get("쿠팡링크"), "") for p in products)
+    if urls.strip():
+        log_coupang_urls(urls)
+
+
+def _replace_product_link_markers(html_body: str, products: list[dict]) -> str:
+    result = html_body or ""
+    for i, product in enumerate(products, 1):
+        url = _clean(product.get("쿠팡링크"), "")
+        if not url:
+            continue
+        marker = f"[PRODUCT_LINK_{i}]"
+        for token in {marker, html.escape(marker), urllib.parse.quote(marker, safe="")}:
+            result = result.replace(token, url)
+    return result
+
+
+def _ensure_style_attr(attrs: str, style: str) -> str:
+    if re.search(r'\sstyle\s*=', attrs or "", flags=re.IGNORECASE):
+        return attrs
+    return f'{attrs} style="{style}"'
+
+
+def _style_opening_tag(html_body: str, tag_name: str, style: str) -> str:
+    pattern = re.compile(rf'<{tag_name}\b([^>]*)>', flags=re.IGNORECASE)
+    return pattern.sub(lambda m: f'<{tag_name}{_ensure_style_attr(m.group(1), style)}>', html_body)
+
+
+def _style_coupang_html_for_tistory(html_body: str, keyword: str = "") -> str:
+    if not html_body:
+        return html_body
+
+    html_body = re.sub(
+        r'<(p|h2|h3|li|strong|a)\b([^>]*)>\s*</\1>',
+        '',
+        html_body,
+        flags=re.IGNORECASE | re.DOTALL,
+    )
+
+    h2_style = "font-size:21px; font-weight:700; color:#1a1a2e; padding:0 0 12px; border-bottom:2px solid #f0f0f0; margin:36px 0 16px;"
+    h2_marker = '<span style="display:inline-block; width:8px; height:8px; background:#ff9500; border-radius:50%; margin-right:8px; vertical-align:middle;"></span>'
+
+    def _style_h2(match):
+        attrs = _ensure_style_attr(match.group(1), h2_style)
+        content = match.group(2).strip()
+        if not re.match(r'<span\b', content, flags=re.IGNORECASE):
+            content = h2_marker + content
+        return f'<h2{attrs}>{content}</h2>'
+
+    html_body = re.sub(r'<h2\b([^>]*)>(.*?)</h2>', _style_h2, html_body, flags=re.IGNORECASE | re.DOTALL)
+
+    html_body = _style_opening_tag(html_body, "h3", "font-size:18px; font-weight:700; color:#333; margin:24px 0 12px; padding-left:12px; border-left:3px solid #ff9500;")
+    html_body = _style_opening_tag(html_body, "p", "font-size:16px; line-height:1.95; color:#333; margin:0 0 18px; word-break:keep-all;")
+    html_body = _style_opening_tag(html_body, "ul", "list-style:none; padding:0; margin:0 0 24px;")
+    html_body = _style_opening_tag(html_body, "strong", "font-weight:700; color:#1a1a2e;")
+
+    li_style = "font-size:15px; color:#444; padding:10px 16px 10px 40px; background:#fafafa; border:1px solid #f0f0f0; border-radius:8px; margin-bottom:8px; position:relative; line-height:1.7;"
+    li_marker = '<span style="position:absolute; left:16px; color:#ff9500; font-weight:700;">✔</span>'
+
+    def _style_li(match):
+        attrs = _ensure_style_attr(match.group(1), li_style)
+        content = match.group(2).strip()
+        if not re.match(r'<span\b', content, flags=re.IGNORECASE):
+            content = li_marker + content
+        return f'<li{attrs}>{content}</li>'
+
+    html_body = re.sub(r'<li\b([^>]*)>(.*?)</li>', _style_li, html_body, flags=re.IGNORECASE | re.DOTALL)
+
+    cta_main_style = "display:block; background:linear-gradient(90deg,#ff6b35,#ff9500); color:#fff; text-align:center; padding:15px 20px; border-radius:10px; text-decoration:none; font-weight:700; font-size:15px; letter-spacing:0.5px; margin:18px 0;"
+    cta_sub_style = "display:block; background:#1a1a2e; color:#fff; text-align:center; padding:15px 20px; border-radius:10px; text-decoration:none; font-weight:700; font-size:15px; border:1px solid #333; margin:18px 0;"
+    link_index = {"value": 0}
+
+    def _style_anchor(match):
+        attrs = match.group(1)
+        if re.search(r'\sstyle\s*=', attrs, flags=re.IGNORECASE):
+            return match.group(0)
+        href_match = re.search(r'\shref\s*=\s*(["\'])(.*?)\1', attrs, flags=re.IGNORECASE | re.DOTALL)
+        href = html.unescape(href_match.group(2)) if href_match else ""
+        if "coupang.com" not in href:
+            return match.group(0)
+        link_index["value"] += 1
+        style = cta_main_style if link_index["value"] == 1 else cta_sub_style
+        return f'<a{_ensure_style_attr(attrs, style)}>'
+
+    html_body = re.sub(r'<a\b([^>]*)>', _style_anchor, html_body, flags=re.IGNORECASE | re.DOTALL)
+
+    img_style = "max-width:100%; border-radius:12px; display:block; margin:0 auto;"
+    escaped_keyword = html.escape(keyword or "상품 비교", quote=True)
+
+    def _style_img(match):
+        attrs = match.group(1)
+        self_closing = attrs.rstrip().endswith("/")
+        if self_closing:
+            attrs = attrs.rstrip()[:-1].rstrip()
+        attrs = _ensure_style_attr(attrs, img_style)
+        if not re.search(r'\salt\s*=', attrs, flags=re.IGNORECASE):
+            attrs = f'{attrs} alt="{escaped_keyword} 이미지"'
+        return f'<img{attrs} />' if self_closing else f'<img{attrs}>'
+
+    return re.sub(r'<img\b([^>]*)>', _style_img, html_body, flags=re.IGNORECASE | re.DOTALL)
 
 
 
@@ -2137,7 +3935,7 @@ def _replace_inline_coupang_links_with_cards(html_body: str, products: list[dict
             try:
                 price_html = (
                     f'<span style="display:block; font-size:24px; font-weight:900; '
-                    f'color:#e53935; margin:6px 0 2px;">{int(price):,}원</span>'
+                    f'color:#333333; margin:6px 0 2px;">{int(price):,}원</span>'
                 )
             except ValueError:
                 pass
@@ -2177,9 +3975,9 @@ def _replace_inline_coupang_links_with_cards(html_body: str, products: list[dict
             f'line-height:1.4; word-break:keep-all;">{name}{rocket_html}</span>'
             f'{price_html}'
             f'<span style="display:inline-block; margin-top:10px; padding:12px 24px; '
-            f'background:linear-gradient(135deg,#ff5722,#ff9800); color:#fff; '
+            f'background:#3f4a45; color:#fff; '
             f'font-size:16px; font-weight:800; border-radius:10px; text-align:center; '
-            f'letter-spacing:0.3px;">최저가 확인하기</span>'
+            f'letter-spacing:0.3px;">상세 정보 확인</span>'
             f'</span></a>'
         )
         return card
@@ -2200,23 +3998,29 @@ def ensure_exact_coupang_disclosure(html_body: str) -> str:
         f'{EXACT_COUPANG_DISCLOSURE}</p>'
     )
 
-    # 이미 새 문구가 들어가 있으면 그대로 반환
-    if EXACT_COUPANG_DISCLOSURE in html_body:
-        return html_body
+    html_body = re.sub(
+        r'<p\b[^>]*>\s*' + re.escape(EXACT_COUPANG_DISCLOSURE) + r'\s*</p>\s*',
+        '',
+        html_body or '',
+        flags=re.IGNORECASE,
+    )
+    html_body = re.sub(
+        re.escape(EXACT_COUPANG_DISCLOSURE) + r'\s*',
+        '',
+        html_body,
+        count=1,
+    )
 
-    # 옛 문구가 있으면 제거
     old_disclosures = [
         "쿠팡 파트너스 활동의 일환으로 일정 수수료를 제공받을 수 있습니다.",
     ]
     for old in old_disclosures:
-        # <p>...옛문구...</p> 패턴 제거 (스타일 포함 여부 무관)
         html_body = re.sub(
             r'<p[^>]*>' + re.escape(old) + r'</p>\s*',
             '',
             html_body,
         )
 
-    # 맨 위(첫 줄)에 고지 문구 삽입
     return disclosure_html + "\n" + html_body.lstrip()
 
 
@@ -2246,6 +4050,25 @@ def save_results(
     print(f"[저장] {GENERATED_RESULT_DIR}")
 
 
+def save_golf_image_result(image_url: str, image_data_url: str) -> None:
+    """골프 대표 이미지를 받은 즉시 재사용 가능한 형태로 보관합니다."""
+    GENERATED_RESULT_DIR.mkdir(parents=True, exist_ok=True)
+    (GENERATED_RESULT_DIR / "image_urls.txt").write_text(f"{image_url}\n\n", encoding="utf-8")
+    (GENERATED_RESULT_DIR / "image1_data_url.txt").write_text(image_data_url or "", encoding="utf-8")
+    (GENERATED_RESULT_DIR / "image2_data_url.txt").write_text("", encoding="utf-8")
+
+    if not image_data_url or not image_data_url.startswith("data:image/") or "," not in image_data_url:
+        print("[저장] 골프 대표 이미지 URL만 보관했습니다.")
+        return
+
+    header, encoded = image_data_url.split(",", 1)
+    mime_match = re.match(r"data:image/([^;]+);base64", header, re.IGNORECASE)
+    ext = (mime_match.group(1).lower() if mime_match else "png").replace("jpeg", "jpg")
+    image_path = GENERATED_RESULT_DIR / f"image1.{ext}"
+    image_path.write_bytes(base64.b64decode(encoded))
+    print(f"[저장] 골프 대표 이미지 보관 완료: {image_path}")
+
+
 def load_saved_result() -> dict:
     title_candidates_path = GENERATED_RESULT_DIR / "title_candidates.txt"
     body_path = GENERATED_RESULT_DIR / "body.html"
@@ -2268,6 +4091,13 @@ def load_saved_result() -> dict:
     image2_url = image_urls[1] if len(image_urls) >= 2 else ""
     image1_data_url = (GENERATED_RESULT_DIR / "image1_data_url.txt").read_text(encoding="utf-8").strip() if (GENERATED_RESULT_DIR / "image1_data_url.txt").exists() else ""
     image2_data_url = (GENERATED_RESULT_DIR / "image2_data_url.txt").read_text(encoding="utf-8").strip() if (GENERATED_RESULT_DIR / "image2_data_url.txt").exists() else ""
+    topic_strategy = {}
+    topic_strategy_path = GENERATED_RESULT_DIR / "topic_strategy.json"
+    if topic_strategy_path.exists():
+        try:
+            topic_strategy = json.loads(topic_strategy_path.read_text(encoding="utf-8"))
+        except Exception as exc:
+            print(f"[경고] 저장된 골프 주제 전략 JSON을 읽지 못했습니다: {exc}")
 
     return {
         "title":            pick_first_title(title_text),
@@ -2278,6 +4108,7 @@ def load_saved_result() -> dict:
         "image2_url":       image2_url,
         "image1_data_url":  image1_data_url,
         "image2_data_url":  image2_data_url,
+        "topic_strategy":   topic_strategy,
     }
 
 
@@ -2306,6 +4137,10 @@ def pick_first_title(title_text: str) -> str:
 
 GOLF_TOPIC_LOG_PATH = LOG_DIR / "golf_topics_used.json"
 GOLF_TOPIC_STRATEGY_PATH = GENERATED_RESULT_DIR / "topic_strategy.json"
+GOLF_RESEARCH_SOURCE_LOG_PATH = GENERATED_RESULT_DIR / "research_source_log.md"
+GOLF_TOPIC_PERFORMANCE_CSV_PATH = Path(
+    os.getenv("GOLF_TOPIC_PERFORMANCE_CSV_PATH", str(DATA_DIR / "golf_topic_performance.csv"))
+)
 
 
 # ------------------------------------------------------------------
@@ -2952,6 +4787,221 @@ def _save_used_golf_topic(topic_key: str) -> None:
     GOLF_TOPIC_LOG_PATH.write_text(json.dumps(used, ensure_ascii=False, indent=2), encoding="utf-8")
 
 
+def _read_golf_topic_performance_rows() -> list[dict]:
+    if not GOLF_TOPIC_PERFORMANCE_CSV_PATH.exists():
+        return []
+    for enc in ("utf-8-sig", "utf-8", "cp949"):
+        try:
+            with GOLF_TOPIC_PERFORMANCE_CSV_PATH.open("r", newline="", encoding=enc) as f:
+                rows = [row for row in csv.DictReader(f) if any((value or "").strip() for value in row.values())]
+            print(f"[골프 주제 성과 CSV] 로드 완료: {GOLF_TOPIC_PERFORMANCE_CSV_PATH} ({len(rows)}행)")
+            return rows
+        except UnicodeDecodeError:
+            continue
+    with GOLF_TOPIC_PERFORMANCE_CSV_PATH.open("r", newline="", errors="replace") as f:
+        rows = [row for row in csv.DictReader(f) if any((value or "").strip() for value in row.values())]
+    print(f"[골프 주제 성과 CSV] 대체 인코딩 로드 완료: {GOLF_TOPIC_PERFORMANCE_CSV_PATH} ({len(rows)}행)")
+    return rows
+
+
+def _row_value(row: dict, names: tuple[str, ...], default: str = "") -> str:
+    normalized = {str(key).strip().lower(): value for key, value in row.items()}
+    for name in names:
+        value = normalized.get(name.lower())
+        if value is not None and str(value).strip():
+            return str(value).strip()
+    return default
+
+
+def _row_number(row: dict, names: tuple[str, ...], default: float = 0.0) -> float:
+    value = _row_value(row, names)
+    if not value:
+        return default
+    value = value.replace(",", "").replace("%", "").strip()
+    try:
+        return float(value)
+    except ValueError:
+        return default
+
+
+def _row_list(row: dict, names: tuple[str, ...], fallback: list[str] | None = None) -> list[str]:
+    raw = _row_value(row, names)
+    if not raw:
+        return fallback or []
+    return [item.strip() for item in re.split(r"[,/;\n]", raw) if item.strip()]
+
+
+def _is_disabled_performance_row(row: dict) -> bool:
+    status = _row_value(row, ("status", "상태", "enabled", "사용", "exclude", "제외")).lower()
+    return status in {"n", "no", "false", "0", "skip", "exclude", "excluded", "used", "사용안함", "제외", "완료"}
+
+
+def _infer_golf_category_from_query(query: str) -> str:
+    overseas_terms = ("해외", "다낭", "베트남", "태국", "방콕", "파타야", "일본", "규슈", "필리핀", "클락", "세부", "괌", "사이판", "동남아")
+    insurance_terms = ("보험", "수하물", "골프백", "골프채 파손", "휴대품손해", "항공기 지연")
+    equipment_terms = ("거리측정기", "gps", "워치", "앱", "골프화", "준비물", "장비")
+    policy_terms = ("규칙", "노캐디", "캐디선택제", "개별소비세", "비회원제", "세금")
+    comparison_terms = ("비교", "vs", "순위", "랭킹", "국내 vs 해외")
+    lowered = query.lower()
+    if any(term in query for term in insurance_terms):
+        return "보험·수하물"
+    if any(term in query for term in overseas_terms):
+        return "해외여행"
+    if any(term.lower() in lowered for term in equipment_terms):
+        return "용품·기술"
+    if any(term in query for term in policy_terms):
+        return "정책·제도"
+    if any(term.lower() in lowered for term in comparison_terms):
+        return "비교분석"
+    if any(term in query for term in ("비용", "그린피", "예약", "회원권", "캐디피", "카트비")):
+        return "예약·비용"
+    return "가성비"
+
+
+def _infer_golf_club_from_query(query: str) -> str:
+    known_terms = (
+        "다낭",
+        "방콕",
+        "파타야",
+        "규슈",
+        "이바라키",
+        "클락",
+        "세부",
+        "괌",
+        "사이판",
+        "웰링턴",
+        "트리니티",
+        "잭니클라우스",
+    )
+    for term in known_terms:
+        if term in query:
+            return f"{term} 골프"
+    cleaned = re.sub(r"\s+", " ", query).strip()
+    return cleaned[:28] if cleaned else "골프"
+
+
+def _performance_topic_score(row: dict) -> float:
+    query = _row_value(row, ("query", "queries", "검색어", "키워드", "main_keyword", "메인키워드", "topic", "주제"))
+    clicks = _row_number(row, ("clicks", "클릭수", "클릭"))
+    impressions = _row_number(row, ("impressions", "노출수", "노출"))
+    ctr = _row_number(row, ("ctr", "CTR"))
+    position = _row_number(row, ("position", "avg_position", "average position", "게재순위", "평균 게재순위"), 99.0)
+    priority = _row_number(row, ("priority", "우선순위", "score", "점수"))
+
+    intent_terms = ("비용", "총비용", "가격", "그린피", "캐디피", "카트비", "예약", "패키지", "보험", "수하물", "골프백", "비교", "체크", "준비물")
+    broad_penalty_terms = ("골프 추천", "골프장 추천", "골프 잘 치는 법", "골프장 순위")
+    score = priority * 1000
+    score += clicks * 8
+    score += impressions * 0.08
+    score += ctr * 4
+    if position > 0:
+        score += max(0, 25 - position) * 2
+        if 5 <= position <= 20:
+            score += 30
+    score += sum(18 for term in intent_terms if term in query)
+    score -= sum(50 for term in broad_penalty_terms if term in query)
+    return score
+
+
+def _build_topic_from_performance_row(row: dict) -> dict:
+    query = _row_value(row, ("query", "queries", "검색어", "키워드", "main_keyword", "메인키워드", "topic", "주제"))
+    if not query:
+        raise ValueError("성과 CSV 행에 query/검색어/main_keyword/topic 값이 없습니다.")
+
+    club = _row_value(row, ("club", "골프장", "지역", "destination", "목적지"), _infer_golf_club_from_query(query))
+    category = _row_value(row, ("category", "카테고리"), _infer_golf_category_from_query(query))
+    topic = _row_value(row, ("topic", "주제", "title_topic", "글주제"))
+    if not topic:
+        if category == "해외여행":
+            topic = f"{query} 3박5일 비용·동선·골프장 후보 확인"
+        elif category == "보험·수하물":
+            topic = f"{query} 보장 항목·수하물 기준·예상 비용 확인"
+        else:
+            topic = f"{query} 비용·예약·선택 기준 체크"
+
+    sub_keywords = _row_list(
+        row,
+        ("sub_keywords", "보조키워드", "related_queries", "연관검색어"),
+        [query, category, "비용", "예약", "비교", "확인 기준"],
+    )
+
+    return {
+        "club": club,
+        "topic": topic,
+        "category": category,
+        "main_keyword": _row_value(row, ("main_keyword", "메인키워드", "query", "검색어", "키워드"), query),
+        "sub_keywords": sub_keywords[:8],
+        "search_intent": _row_value(row, ("search_intent", "검색의도"), f"{query} 검색자가 비용·예약·준비 기준을 빠르게 판단하려는 의도"),
+        "reader_problem": _row_value(row, ("reader_problem", "독자문제"), "정보가 흩어져 있어 실제 비용, 예약 조건, 준비 항목을 한 번에 비교하기 어렵습니다."),
+        "promised_answer": _row_value(row, ("promised_answer", "약속답변"), "방문 전 확인할 비용, 예약, 준비 기준을 실행 가능한 체크 항목으로 정리합니다."),
+        "adsense_value_reason": _row_value(row, ("adsense_value_reason", "광고가치"), "여행, 숙박, 예약, 보험, 장비 광고와 문맥상 연결되는 결정 직전 검색 주제입니다."),
+        "title_angle": _row_value(row, ("title_angle", "제목방향"), "검색어와 비용·예약·준비 체크포인트를 제목에 명확히 드러냅니다."),
+        "body_angle": _row_value(row, ("body_angle", "본문방향"), "성과가 확인된 검색어를 중심으로 비용, 예약, 준비, 주의사항 순서로 전개합니다."),
+        "image_angle": _row_value(row, ("image_angle", "이미지방향"), "골프여행 또는 라운딩 준비를 떠올릴 수 있는 차분한 정보형 장면"),
+        "concrete_points": _row_list(
+            row,
+            ("concrete_points", "구체포인트"),
+            ["예상 총비용", "예약 전 확인 항목", "이동 동선", "골프장 후보", "보험·수하물", "주의할 변동 정보"],
+        )[:8],
+        "outline_sections": _row_list(
+            row,
+            ("outline_sections", "소제목"),
+            ["먼저 확인할 핵심 기준", "비용 항목별 체크", "예약과 이동 동선", "보험·수하물·준비물", "마지막 판단 기준"],
+        )[:6],
+        "table_plan": _row_list(
+            row,
+            ("table_plan", "표계획"),
+            ["예상 비용표", "일정표", "예약 확인 항목", "주의 항목"],
+        )[:6],
+        "checklist_items": _row_list(
+            row,
+            ("checklist_items", "체크리스트"),
+            ["공식 홈페이지 확인", "예약 가능 시간 확인", "그린피·캐디피 확인", "수하물 규정 확인", "보험 보장 항목 확인", "취소 규정 확인"],
+        )[:8],
+        "risk_notes": _row_list(
+            row,
+            ("risk_notes", "주의표현"),
+            ["가격 단정 금지", "예약 가능 여부 단정 금지", "실제 방문 후기처럼 단정 금지"],
+        )[:5],
+        "source": "performance_csv",
+        "performance_score": round(_performance_topic_score(row), 2),
+    }
+
+
+def pick_golf_topic_from_performance_csv() -> dict | None:
+    rows = [row for row in _read_golf_topic_performance_rows() if not _is_disabled_performance_row(row)]
+    if not rows:
+        return None
+
+    used_keys = set(_load_used_golf_topics())
+    candidates = []
+    for row in rows:
+        try:
+            topic = _build_topic_from_performance_row(row)
+        except ValueError as exc:
+            print(f"[골프 주제 성과 CSV] 행 스킵: {exc}")
+            continue
+        topic_key = f"{topic['club']}|{topic['topic']}"
+        if topic_key in used_keys:
+            continue
+        candidates.append((_performance_topic_score(row), topic))
+
+    if not candidates:
+        print("[골프 주제 성과 CSV] 사용 가능한 미사용 후보가 없어 기존 주제 선택으로 fallback합니다.")
+        return None
+
+    candidates.sort(key=lambda item: item[0], reverse=True)
+    topic = candidates[0][1]
+    topic_key = f"{topic['club']}|{topic['topic']}"
+    _save_used_golf_topic(topic_key)
+    save_golf_topic_strategy(topic)
+    print(
+        f"[골프 주제 성과 CSV] 선택: {topic['club']} — {topic['topic']} "
+        f"(score={topic.get('performance_score')})"
+    )
+    return topic
+
+
 def pick_golf_topic() -> dict:
     """
     사용하지 않은 주제를 랜덤 선택합니다.
@@ -3196,6 +5246,10 @@ def build_fallback_adsense_topic() -> dict:
 
 
 def select_golf_adsense_topic(driver: webdriver.Chrome) -> dict:
+    performance_topic = pick_golf_topic_from_performance_csv()
+    if performance_topic:
+        return performance_topic
+
     prompt = build_golf_adsense_topic_prompt()
     archive_prompt("golf_topic_strategy_prompt", prompt)
     print("[STEP 0/5] 애드센스 수익형 주제 선정 중...")
@@ -3272,12 +5326,14 @@ def _strip_html_to_text(html_text: str) -> str:
 
 
 def _count_money_patterns(text: str) -> int:
-    money_pattern = (
-        r"(?:약|예상|대략|범위|1인\s*기준|1회\s*기준|3박5일\s*기준)?"
-        r"\s*(?:\d{1,3}(?:,\d{3})+|\d+(?:\.\d+)?)"
-        r"\s*(?:만\s*원|만원|원|바트|동|엔|달러|THB|VND|JPY|USD)"
-    )
-    return len(re.findall(money_pattern, text, flags=re.IGNORECASE))
+    number = r"(?:\d{1,3}(?:,\d{3})+|\d+(?:\.\d+)?)"
+    suffix = r"(?:만\s*원|만원|원|바트|동|엔|달러|불|THB|VND|JPY|USD|KRW)"
+    prefix = r"(?:US\$|USD|KRW|THB|VND|JPY|₩|\$)"
+    patterns = [
+        rf"(?:약|예상|대략|범위|1인\s*기준|1회\s*기준|3박5일\s*기준)?\s*{number}\s*{suffix}",
+        rf"(?:약|예상|대략|범위|1인\s*기준|1회\s*기준|3박5일\s*기준)?\s*{prefix}\s*{number}",
+    ]
+    return sum(len(re.findall(pattern, text, flags=re.IGNORECASE)) for pattern in patterns)
 
 
 def build_golf_research_brief_prompt(topic: dict) -> str:
@@ -3335,7 +5391,7 @@ def build_golf_research_brief_prompt(topic: dict) -> str:
 {detail_rule}
 
 [출력 형식]
-마크다운 표를 사용해도 됩니다. 단, 아래 8개 블록은 모두 채우세요.
+마크다운 표를 사용해도 됩니다. 단, 아래 9개 블록은 모두 채우세요.
 
 1. 목적지·일정 가정
 - 출발지, 도착 공항, 숙박 추천 지역, 권장 여행기간, 라운드 횟수, 최적 시즌을 작성합니다.
@@ -3362,7 +5418,12 @@ def build_golf_research_brief_prompt(topic: dict) -> str:
 8. 본문에서 단정하지 말아야 할 항목
 - 변동 가능성이 큰 금액, 규정, 영업시간, 예약 가능 여부를 분리해서 작성합니다.
 
-출처 URL 나열은 필요 없습니다. 대신 "공식 골프장 사이트", "지도앱", "항공사 수하물 안내", "보험사 다이렉트 계산", "상위 블로그 후기"처럼 확인처 유형을 적으세요.
+9. 리서치 확인처 로그
+- 이 블록은 공개 본문이 아니라 내부 검수 로그로 저장됩니다.
+- 확인처 유형, 확인한 항목, 검색어 또는 확인 위치, URL을 알 수 있으면 URL을 작성합니다.
+- URL을 정확히 모르면 절대 지어내지 말고 "URL 확인 필요"라고 씁니다.
+- 최소 5개 행을 작성합니다. 예: 공식 골프장 사이트, 지도앱, 항공사 수하물 안내, 보험사 다이렉트 계산, 예약 플랫폼, 여행사 상품 페이지, 상위 블로그 후기.
+- 각 행에는 "확인처 유형 / 확인 항목 / 검색어 또는 위치 / URL 또는 확인 필요 / 신뢰도"를 포함합니다.
 """
     _assert_prompt_text_clean(prompt, "골프 사전 리서치")
     return prompt
@@ -3385,6 +5446,141 @@ def validate_golf_research_brief(topic: dict, research_brief: str) -> None:
         failed = [name for name, ok in checks.items() if not ok]
         if failed:
             raise ValueError("사전 리서치 브리프의 실전 정보가 부족합니다: " + ", ".join(failed))
+
+
+def build_golf_research_rewrite_prompt(topic: dict, research_brief: str, reason: Exception | str) -> str:
+    club = str(topic.get("club", "")).strip()
+    topic_name = str(topic.get("topic", "")).strip()
+    category = str(topic.get("category", "")).strip()
+    main_keyword = str(topic.get("main_keyword", "")).strip()
+    previous_brief = clean_generated_text(research_brief).strip()
+    if len(previous_brief) > 12000:
+        previous_brief = previous_brief[:12000] + "\n\n[기존 브리프 일부 생략]"
+
+    prompt = f"""
+[골프 사전 리서치 브리프 보강 요청]
+
+직전 리서치 브리프가 자동 검증을 통과하지 못했습니다.
+검출된 문제: {reason}
+
+주제 정보:
+- 골프장/키워드: {club}
+- 세부 주제: {topic_name}
+- 카테고리: {category}
+- 메인 검색 키워드: {main_keyword}
+
+아래 기존 브리프를 버리지 말고, 누락된 실전 정보를 보강해 전체 브리프를 다시 작성하세요.
+
+필수 보강 규칙:
+- 3박5일 또는 4박6일 일정형이면 시:분 형식의 일정 후보를 최소 8개 포함
+- 예상 금액은 원/만원/바트/엔/달러/USD/$ 표기를 섞어 최소 6개 포함
+- 공항, 호텔 지역, 골프장 후보, 이동수단, 식당 또는 관광 후보를 각각 실명으로 포함
+- 보험, 수하물, 골프백, 골프채 파손 또는 휴대품손해 확인 항목을 포함
+- 금액과 시간은 예상/대략/범위/1인 기준 표현을 붙이고 단정하지 않기
+- 마지막에는 "9. 리서치 확인처 로그" 섹션을 두고 확인처 유형, 확인 항목, 검색어 또는 위치, URL 또는 확인 필요, 신뢰도를 적기
+
+[기존 브리프]
+{previous_brief}
+"""
+    _assert_prompt_text_clean(prompt, "골프 사전 리서치 보강")
+    return prompt
+
+
+def _split_golf_research_source_log(research_brief: str) -> tuple[str, str]:
+    """Separate the internal source/checkpoint log from the public body brief."""
+    text = clean_generated_text(research_brief).strip()
+    heading_patterns = [
+        r"(?im)^\s*9[.)]\s*(?:리서치\s*)?(?:확인처|출처)[^\n]*(?:로그|기록)?[^\n]*$",
+        r"(?im)^\s*#{1,6}\s*(?:리서치\s*)?(?:확인처|출처)[^\n]*(?:로그|기록)[^\n]*$",
+        r"(?im)^\s*\[(?:리서치\s*)?(?:확인처|출처)[^\]]*(?:로그|기록)[^\]]*\]\s*$",
+    ]
+    matches = []
+    for pattern in heading_patterns:
+        match = re.search(pattern, text)
+        if match:
+            matches.append(match)
+    if not matches:
+        return text, ""
+
+    match = min(matches, key=lambda item: item.start())
+    brief_without_sources = text[:match.start()].rstrip()
+    source_log = text[match.start():].strip()
+    return brief_without_sources or text, source_log
+
+
+def _build_golf_research_source_log_fallback(topic: dict, research_brief: str) -> str:
+    source_terms = (
+        "공식",
+        "지도",
+        "항공사",
+        "보험",
+        "예약",
+        "여행사",
+        "블로그",
+        "후기",
+        "확인처",
+        "출처",
+        "URL",
+        "http",
+    )
+    lines = []
+    for raw_line in clean_generated_text(research_brief).splitlines():
+        line = raw_line.strip()
+        if line and any(term in line for term in source_terms):
+            lines.append(line)
+
+    if not lines:
+        lines = [
+            f"- 공식 골프장 사이트 / {topic.get('club', '골프장')} 그린피·예약·코스 정보 / URL 확인 필요 / 중",
+            "- 지도앱 / 공항·호텔·골프장 이동시간 / URL 확인 필요 / 중",
+            "- 항공사 수하물 안내 / 골프백 위탁수하물·초과수하물 기준 / URL 확인 필요 / 중",
+            "- 보험사 다이렉트 계산 / 여행자보험·휴대품손해·골프채 파손 보장 / URL 확인 필요 / 중",
+            "- 예약 플랫폼 또는 여행사 상품 페이지 / 패키지 포함·불포함 항목 / URL 확인 필요 / 중",
+        ]
+
+    unique_lines = []
+    seen = set()
+    for line in lines:
+        if line in seen:
+            continue
+        seen.add(line)
+        unique_lines.append(line)
+        if len(unique_lines) >= 40:
+            break
+
+    return "\n".join(
+        [
+            "9. 리서치 확인처 로그",
+            "- 원본 응답에서 전용 확인처 로그 블록을 찾지 못해 관련 문장을 추출했습니다.",
+            *unique_lines,
+        ]
+    )
+
+
+def save_golf_research_source_log(topic: dict, research_brief: str) -> str:
+    brief_without_sources, source_log = _split_golf_research_source_log(research_brief)
+    if not source_log:
+        source_log = _build_golf_research_source_log_fallback(topic, research_brief)
+
+    GENERATED_RESULT_DIR.mkdir(parents=True, exist_ok=True)
+    saved_at = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    log_text = "\n".join(
+        [
+            "# 골프 리서치 확인처 로그",
+            "",
+            f"- 저장시각: {saved_at}",
+            f"- 골프장/키워드: {topic.get('club', '')}",
+            f"- 세부 주제: {topic.get('topic', '')}",
+            f"- 카테고리: {topic.get('category', '')}",
+            f"- 메인 검색 키워드: {topic.get('main_keyword', '')}",
+            "",
+            source_log.strip(),
+            "",
+        ]
+    )
+    GOLF_RESEARCH_SOURCE_LOG_PATH.write_text(log_text, encoding="utf-8")
+    print(f"[STEP 1/5] 리서치 확인처 로그 저장 완료: {GOLF_RESEARCH_SOURCE_LOG_PATH}")
+    return brief_without_sources
 
 
 def validate_golf_travel_specificity(topic: dict, html_body: str) -> None:
@@ -3423,7 +5619,8 @@ GOLF_STYLE_GUIDE = """
 - 디자인: 흰 배경, 짙은 회색 본문, 차분한 딥 그린 포인트만 사용합니다.
 - 구조: 글마다 다른 흐름을 사용하되 큰 제목, 짧은 요약, 본문 섹션, 확인 체크리스트, 필요 시 간단한 표, 마지막 판단 기준은 포함합니다.
 - 안정성: 티스토리에서 CSS가 텍스트로 보이지 않도록 <style> 태그를 절대 쓰지 말고, 필요한 스타일은 각 태그의 style 속성에 직접 넣습니다.
-- 고정형: 반응형 레이아웃을 쓰지 않습니다. 전체 본문은 width:680px 고정폭으로 중앙 정렬하고, width:100%, max-width, flex-wrap, min-width는 사용하지 않습니다.
+- 웹형: 데스크톱에서 좁은 앱 화면처럼 보이지 않도록 전체 본문은 width:100%; max-width:100%; margin:0 auto; 구조를 사용하고, 실제 폭은 티스토리 스킨 본문 영역을 따릅니다.
+- 표와 정보 박스는 본문 폭을 넓게 활용하되, 화려한 카드형 앱 UI처럼 보이지 않게 문서형 레이아웃을 유지합니다.
 - 문체: 정보형, 신뢰감 있는 골프 블로그 톤. 과장보다 비교와 정리 중심.
 - 금지: 코드블록, 마크다운, 빈 템플릿, placeholder, URL 나열, 각주, 제휴 링크, 제품 구매 유도 문구.
 - 허용: 공식 확인처 이름, 예약처 유형, 보험사·항공사·여행사에서 확인해야 할 항목을 본문에 자연스럽게 설명하는 것.
@@ -3615,23 +5812,25 @@ def build_golf_body_prompt(topic: dict, research_brief: str = "") -> str:
 - 마지막 문단은 구매나 광고가 아니라 "내 상황에서 먼저 확인할 1순위 기준"으로 끝냅니다.
 
 [디자인 세부 요구]
-- 전체 폭은 width:680px 고정폭으로 중앙 정렬합니다.
+- 전체 폭은 width:100%; max-width:100%; margin:0 auto; 로 스킨 본문 영역을 꽉 채웁니다.
+- 데스크톱 웹에서 양쪽 여백이 과하게 남지 않도록 생성 HTML 자체에서 작은 고정폭을 걸지 않습니다.
 - 바탕은 #ffffff 또는 #fbfbf8 계열로 밝게 유지합니다.
 - 본문 글씨는 17~18px, line-height는 1.85~1.95로 둡니다.
 - 본문 색은 #333333 또는 #3a3a3a로 하여 눈이 피로하지 않게 합니다.
 - 제목 색은 #18392f 또는 #243b34 정도의 차분한 딥 그린만 사용합니다.
 - 포인트 색은 한 가지 딥 그린 계열만 사용하고, 금색/주황/빨강 포인트는 사용하지 않습니다.
-- 카드형 박스는 1~2개 이내만 사용하고, box-shadow는 쓰지 않거나 매우 약하게 사용합니다.
+- 카드형 박스는 1~2개 이내만 사용하고, box-shadow는 쓰지 않거나 매우 약하게 사용합니다. 앱 대시보드처럼 카드만 나열하지 않습니다.
 - border-radius는 6~10px 정도로 낮춥니다.
 - 배경 그라데이션, 진한 컬러 헤더, 큰 배지, 버튼형 장식은 사용하지 않습니다.
 - 전체적으로 신문 칼럼이나 골프장 이용 가이드처럼 차분하게 보이게 합니다.
-- 반응형 속성은 사용하지 않습니다. width:100%, max-width, flex-wrap, min-width:220px 같은 모바일 대응 속성은 출력하지 않습니다.
+- 최상위 래퍼에는 width:100%와 max-width:100%를 함께 사용합니다. min-width나 화면 밖으로 넘기는 넓은 고정폭은 사용하지 않습니다.
+- 표와 체크리스트는 본문 폭을 자연스럽게 채우되, 좁은 모바일 앱 카드처럼 가운데 작은 박스로 몰아넣지 않습니다.
 
 [권장 HTML 시작 구조]
-<div style="width:680px; margin:0 auto; padding:26px 22px 42px; color:#333333; font-family:-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Noto Sans KR','Malgun Gothic',Arial,sans-serif; line-height:1.9; background:#ffffff; box-sizing:border-box;">
+<div style="width:100%; max-width:100%; margin:0 auto; padding:30px 34px 46px; color:#333333; font-family:-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Noto Sans KR','Malgun Gothic',Arial,sans-serif; line-height:1.9; background:#ffffff; box-sizing:border-box;">
   <header style="padding:0 0 18px; border-bottom:2px solid #e4ebe6; margin:0 0 22px;">
     <p style="margin:0 0 8px; color:#557064; font-size:14px; font-weight:700;">{category}</p>
-    <h1 style="margin:0; color:#18392f; font-size:29px; line-height:1.38; font-weight:800;">{club} {subject}</h1>
+    <h1 style="margin:0; color:#18392f; font-size:31px; line-height:1.36; font-weight:800;">{club} {subject}</h1>
     <p style="margin:14px 0 0; color:#555555; font-size:17px; line-height:1.85;">주제에 맞는 핵심 요약을 실제 문장으로 작성합니다.</p>
   </header>
   <!-- 요약, 본문 섹션, 체크리스트, 필요 시 표, 마지막 정리를 실제 내용으로 추가 -->
@@ -3639,6 +5838,173 @@ def build_golf_body_prompt(topic: dict, research_brief: str = "") -> str:
 
 위 구조를 참고하되, 반드시 실제 내용이 채워진 완성 HTML만 출력하세요.
 """
+    _assert_prompt_text_clean(prompt, "골프 본문")
+    return prompt
+
+
+def compact_golf_research_brief_for_body(topic: dict, research_brief: str) -> str:
+    """본문 품질에 필요한 숫자·동선·확인 항목을 보존하면서 ChatGPT 웹 입력량을 줄입니다."""
+    text = clean_generated_text(research_brief).strip()
+    if not text:
+        return "사전 리서치 브리프 없음. 확인되지 않은 값은 단정하지 말고 공식 확인 항목으로 처리하세요."
+
+    max_chars = 3600 if _is_overseas_golf_topic(topic) else 2800
+    if len(text) <= max_chars:
+        return text
+
+    raw_lines = [re.sub(r"\s+", " ", line).strip() for line in text.splitlines()]
+    lines = [line for line in raw_lines if line]
+    money_pattern = re.compile(
+        r"(?:\d{1,3}(?:,\d{3})+|\d+(?:\.\d+)?)\s*(?:만\s*원|만원|원|VND|THB|JPY|USD|KRW|엔|달러|바트|동)",
+        re.IGNORECASE,
+    )
+    section_specs = [
+        (
+            "기본 가정",
+            ("기준일", "대표 일정", "출발지", "도착", "숙박", "권장", "라운드", "검색 의도"),
+            420,
+        ),
+        (
+            "시간·동선 핵심",
+            ("Day", "공항", "호텔", "골프장", "이동", "택시", "Grab", "송영", "셔틀", "분", "시간"),
+            780,
+        ),
+        (
+            "비용·요금 핵심",
+            ("비용", "요금", "예상", "그린피", "캐디", "카트", "팁", "항공", "숙박", "총액", "환율"),
+            760,
+        ),
+        (
+            "골프장·식당·관광 후보",
+            ("후보", "BRG", "Ba Na", "Laguna", "Montgomerie", "Hoiana", "식당", "관광", "호이안", "미케", "한강", "마사지"),
+            520,
+        ),
+        (
+            "보험·수하물·장비 체크",
+            ("보험", "수하물", "골프백", "골프채", "위탁", "초과", "파손", "휴대품손해", "배상책임", "항공기 지연", "하드케이스", "포장"),
+            760,
+        ),
+    ]
+
+    used: set[int] = set()
+
+    def pick_lines(keywords: tuple[str, ...], char_limit: int) -> list[str]:
+        picked: list[str] = []
+        total = 0
+        for idx, line in enumerate(lines):
+            if idx in used:
+                continue
+            is_money = bool(money_pattern.search(line))
+            if not is_money and not any(keyword in line for keyword in keywords):
+                continue
+            next_total = total + len(line) + 1
+            if next_total > char_limit and picked:
+                continue
+            picked.append(line)
+            used.add(idx)
+            total = next_total
+            if total >= char_limit:
+                break
+        return picked
+
+    output_lines = [
+        "사전 리서치 핵심 압축본",
+        f"- 원본 {len(text)}자 중 본문 품질에 필요한 시간·지명·비용·규정·확인 항목만 압축했습니다.",
+        "- 아래 값은 확정값이 아니라 본문에서 예상/대략/확인 필요 표현과 함께 사용합니다.",
+        "",
+    ]
+    for title, keywords, char_limit in section_specs:
+        picked = pick_lines(keywords, char_limit)
+        if not picked:
+            continue
+        output_lines.append(f"[{title}]")
+        output_lines.extend(f"- {line}" for line in picked)
+        output_lines.append("")
+
+    compact = "\n".join(output_lines).strip()
+    if len(compact) > max_chars:
+        compact = compact[:max_chars].rsplit("\n", 1)[0].rstrip()
+        compact += "\n- 이하 세부값은 원본 리서치 브리프와 확인처 로그 기준으로 단정 없이 처리합니다."
+    return compact
+
+
+def build_golf_body_prompt_stable(topic: dict, research_brief: str = "") -> str:
+    """ChatGPT 웹 안정성을 위해 긴 원본 가이드를 본문 품질 계약 중심으로 압축한 골프 본문 프롬프트."""
+    club = topic["club"]
+    subject = topic["topic"]
+    category = topic["category"]
+    today = _today_korean()
+    main_keyword = _topic_text(topic, "main_keyword", f"{club} {subject}")
+    search_intent = _topic_text(topic, "search_intent", "검색자가 방문 전 판단 기준을 알고 싶어 합니다.")
+    reader_problem = _topic_text(topic, "reader_problem", "독자가 비용과 예약 조건을 한 번에 비교하기 어렵습니다.")
+    promised_answer = _topic_text(topic, "promised_answer", "방문 전 확인할 기준을 구체적으로 정리합니다.")
+    body_angle = _topic_text(topic, "body_angle", "비용, 예약, 비교 기준 중심으로 전개합니다.")
+    sub_keywords_text = _format_topic_list(_topic_list(topic, "sub_keywords"))
+    concrete_points_text = _format_topic_list(_topic_list(topic, "concrete_points"))
+    outline_sections_text = _format_topic_list(_topic_list(topic, "outline_sections"))
+    table_plan_text = _format_topic_list(_topic_list(topic, "table_plan"))
+    checklist_items_text = _format_topic_list(_topic_list(topic, "checklist_items"))
+    risk_notes_text = _format_topic_list(_topic_list(topic, "risk_notes"))
+    research_brief_text = clean_generated_text(research_brief).strip()
+    if not research_brief_text:
+        research_brief_text = "사전 리서치 브리프 없음. 공개 정보 확인이 어려운 값은 단정하지 말고, 구체적인 확인처와 확인 항목을 제시하세요."
+
+    prompt = f"""티스토리 HTML 모드에 넣을 골프 정보글 본문 HTML만 작성하세요.
+
+[주제]
+- 날짜: {today}
+- 키워드: {club}
+- 세부 주제: {subject}
+- 카테고리: {category}
+- 메인 검색어: {main_keyword}
+- 검색 의도: {search_intent}
+- 독자 문제: {reader_problem}
+- 약속할 답: {promised_answer}
+- 전개 방향: {body_angle}
+
+[반영할 항목]
+- 보조 키워드: {sub_keywords_text}
+- 구체 답변: {concrete_points_text}
+- 권장 소제목: {outline_sections_text}
+- 표 후보: {table_plan_text}
+- 체크리스트: {checklist_items_text}
+- 주의 표현: {risk_notes_text}
+
+[리서치 핵심]
+{research_brief_text}
+
+[작성 규칙]
+1. HTML 본문만 출력합니다. 코드블록, 마크다운, 설명 문구는 쓰지 않습니다.
+2. 직접 다녀온 후기처럼 쓰지 말고 공개 정보 기반 편집 글로 씁니다.
+3. 가격·규정·예약 가능 여부는 확정하지 말고 예상, 범위, 확인 필요, 공식 페이지/예약처 확인 문맥으로 씁니다.
+4. 첫 250자 안에 {main_keyword}와 독자의 문제를 자연스럽게 넣습니다.
+5. 구조: 상단 제목 영역, 3~4줄 요약, 본문 섹션 4개 이상, 표 1개, 방문 전 체크리스트, 주의 문단, 마지막 판단 기준.
+6. 해외 골프여행 글이면 일정/동선, 그린피·캐디피·카트비·팁, 송영/교통, 보험·수하물·장비·앱 체크를 반드시 넣습니다.
+7. 표는 5열 이하로 작성하고, 항목/예상 범위 또는 확인 기준/어디서 확인할지/판단 포인트를 포함합니다.
+8. 공백 제외 최소 1,500자 이상의 실제 내용을 작성합니다.
+9. 마지막 문단은 구매 유도가 아니라 내 상황에서 먼저 확인할 1순위 기준으로 끝냅니다.
+10. "광고", "애드센스", "수익", "클릭", "VIP", "프리미엄"은 본문에 쓰지 않습니다.
+
+[골프 전문성 표현 규칙]
+- 본문 섹션마다 골프 전문 용어를 1~3개 자연스럽게 사용하되, 용어만 나열하지 말고 쉬운 설명과 실제 판단 기준을 붙입니다.
+- 예: 세컨드 샷은 "티샷 뒤 그린을 노리는 두 번째 샷"처럼 풀고, 캐리 거리는 "공이 공중으로 날아가 떨어지는 거리"처럼 독자가 바로 이해하게 씁니다.
+- 코스·라운딩 설명에는 주제에 맞게 세컨드 샷, 페어웨이 안착률, 레귤러 온, 그린 스피드, 언듈레이션, 도그레그, 레이업, 캐리 거리, 런, 워터 해저드, 벙커 턱, 핀 포지션, 어프로치 각도, 오르막/내리막 라이, 카트 동선, 티오프 간격 중 필요한 용어를 고릅니다.
+- 비용·예약 글에서도 용어를 억지로 넣지 말고, 그린피·캐디피·카트비·캐디팁·티오프 시간·취소 규정·회원동반 여부 같은 실제 결제/예약 판단어와 연결합니다.
+- 해외 골프여행 글은 일정·비용 중심을 유지하되, 골프장 후보 설명에서는 세컨드 샷 지점, 해저드 위치, 카트 이동, 티오프 시간대, 캐디팁 기준처럼 라운딩 의사결정에 도움이 되는 표현을 넣습니다.
+- 전문 용어가 들어간 문장은 반드시 "그래서 무엇을 확인해야 하는지"로 끝나야 합니다. 예: 그린 스피드가 빠른 코스라면 퍼팅 난도보다 동반자 평균 핸디와 티오프 시간대를 같이 확인해야 한다.
+- 같은 용어를 반복하지 말고, 글 전체에서 6~10개 정도만 분산해 사용합니다.
+
+[HTML 규칙]
+- 최상위 래퍼: <div style="width:100%; max-width:100%; margin:0 auto; padding:30px 34px 46px; color:#333333; font-family:-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Noto Sans KR','Malgun Gothic',Arial,sans-serif; line-height:1.9; background:#ffffff; box-sizing:border-box;">
+- 모든 스타일은 style 속성으로만 씁니다.
+- <style>, <script>, 외부 CSS, 이미지 태그, figure 태그, %%IMAGE1_PLACEHOLDER%%, %%IMAGE2_PLACEHOLDER%%는 절대 쓰지 않습니다.
+- 본문 글씨는 17~18px, line-height는 1.85~1.95, 색상은 흰 배경/짙은 회색/딥 그린 포인트만 사용합니다.
+- 화려한 히어로, 그라데이션, 큰 그림자, 버튼형 링크, 이모지는 쓰지 않습니다.
+
+완성된 HTML 본문만 출력하세요.
+"""
+    if len(prompt) > 9000:
+        print(f"[Golf] 본문 프롬프트 길이 경고: {len(prompt)}자")
     _assert_prompt_text_clean(prompt, "골프 본문")
     return prompt
 
@@ -3860,7 +6226,7 @@ def build_golf_image_prompt(topic: dict) -> str:
     scene_hint = """
 Main visual direction:
 - A premium Korean private golf course atmosphere
-- Wide fixed-composition editorial thumbnail for a blog article
+- Square editorial thumbnail for a Korean Tistory representative image
 - Realistic fairway, green, bunkers, rough, pin flag, cart path, and clubhouse only when relevant
 """.strip()
 
@@ -3877,7 +6243,7 @@ Main visual direction:
 Main visual direction:
 - Early summer morning tee time
 - Fresh green fairway with soft haze, dew on grass, bright but calm sunlight
-- Golfer-free approach-shot view toward the green
+- Refined middle-aged golfers in the scene, with an approach-shot view toward the green
 """.strip()
     elif any(k in subject_text for k in ["가을", "단풍"]):
         scene_hint = """
@@ -3905,7 +6271,7 @@ Main visual direction:
 Main visual direction:
 - Premium membership and business golf mood
 - Elegant clubhouse exterior, luxury cart path, manicured entrance landscaping, refined private-club atmosphere
-- No people, no logos, no readable signs
+- Up to four refined middle-aged golfers or companions, no logos, no readable signs
 """.strip()
     elif any(k in subject_text for k in ["비용", "그린피", "가성비", "만족도", "예약", "부킹"]):
         scene_hint = """
@@ -3919,7 +6285,7 @@ Main visual direction:
 Main visual direction:
 - Premium golf club facility review
 - Elegant clubhouse, terrace, restaurant exterior mood, refined interior-inspired composition
-- Golf course visible in background, no people, no readable signs
+- Golf course visible in background, up to four refined middle-aged golfers or companions, no readable signs
 """.strip()
     elif any(k in subject_text for k in ["숙소", "맛집", "주변", "1박 2일", "골프 여행"]):
         scene_hint = """
@@ -3933,7 +6299,7 @@ Main visual direction:
 Main visual direction:
 - Golf etiquette and dress-code article mood
 - Clean tee box, neatly placed golf bag and clubs, refined private-club atmosphere
-- No people, no faces, no brand logos
+- Refined middle-aged golfers in tasteful golfwear, no brand logos
 """.strip()
     elif any(k in subject_text for k in ["비교", "vs", "3대장", "순위", "시장"]):
         scene_hint = """
@@ -3965,12 +6331,27 @@ Style:
 - Calm, trustworthy, informative, refined
 - Realistic, high-quality, natural light
 - No exaggerated fantasy, no cartoon, no illustration
+- Photorealistic people, natural posture, natural hands, realistic clothing texture
+
+Tistory representative image composition:
+- Create a 1:1 square image, ideal output 1200x1200 pixels.
+- Tistory representative thumbnails commonly crop with cover behavior, so keep every important subject inside the central 70% safe area.
+- Do not place the clubhouse, flagstick, golf cart, golf bag, person silhouette, title-like object, or main visual detail near the left or right edge.
+- Leave generous clean background around all four edges so the image still works if Tistory crops it to square, card, or list thumbnail.
+- Center-weighted composition: main focus in the middle, secondary scenery around it, no edge-dependent panorama.
+
+Human presence:
+- Include 1 to 4 affluent-looking Korean middle-aged adults in their 40s to 50s when it fits the scene.
+- They should look like refined golf travelers or private-club members, not young models.
+- Use natural candid poses: walking near a cart, checking clubs, talking before tee time, or looking toward the fairway.
+- Faces may be visible only at normal editorial distance; avoid close-up portrait framing and avoid celebrity likeness.
+- Keep people inside the central 70% safe area, with the golf course and article topic still clearly visible.
 
 Restrictions:
 - No logos, trademarked signage, readable text, club emblems, scorecard text, watermarks, or private property signs
-- No people's faces
+- No close-up faces, no celebrity likeness, no distorted hands or artificial-looking people
 - No text overlays
-- Landscape orientation, 16:9 ratio
+- Square orientation, 1:1 ratio
 - High quality, realistic but not an exact real-world course reproduction"""
     return prompt
 
@@ -4017,7 +6398,7 @@ def _build_golf_main_image_html(image_data_url: str, alt_text: str) -> str:
     return (
         '<figure style="text-align:center; margin:24px 0;">'
         f'<img src="{image_data_url}" alt="{safe_alt}" '
-        'style="width:680px; height:auto; border-radius:14px; display:block; margin:0 auto;" />'
+        'style="width:100%; max-width:100%; height:auto; border-radius:10px; display:block; margin:0 auto;" />'
         '</figure>\n'
     )
 
@@ -4100,10 +6481,27 @@ def generate_golf_article(driver: webdriver.Chrome) -> dict:
     print("[STEP 1/5] 사전 리서치 브리프 생성 중...")
     research_brief = send_text_prompt(driver, research_prompt, timeout=420)
     research_brief = clean_generated_text(research_brief)
-    validate_golf_research_brief(topic, research_brief)
+    try:
+        validate_golf_research_brief(topic, research_brief)
+    except Exception as exc:
+        print(f"[STEP 1/5] 사전 리서치 브리프 보강 필요: {exc} — 1회 보강합니다.")
+        archive_prompt("golf_research_brief_response_initial", research_brief)
+        rewrite_prompt = build_golf_research_rewrite_prompt(topic, research_brief, exc)
+        archive_prompt("golf_research_brief_rewrite_prompt", rewrite_prompt)
+        research_brief = send_text_prompt(driver, rewrite_prompt, timeout=420)
+        research_brief = clean_generated_text(research_brief)
+        validate_golf_research_brief(topic, research_brief)
+        archive_prompt("golf_research_brief_rewrite_response", research_brief)
     archive_prompt("golf_research_brief_response", research_brief)
     GENERATED_RESULT_DIR.mkdir(parents=True, exist_ok=True)
-    (GENERATED_RESULT_DIR / "research_brief.txt").write_text(research_brief, encoding="utf-8")
+    research_brief_for_body = save_golf_research_source_log(topic, research_brief)
+    (GENERATED_RESULT_DIR / "research_brief.txt").write_text(research_brief_for_body, encoding="utf-8")
+    (GENERATED_RESULT_DIR / "research_brief_with_sources.txt").write_text(research_brief, encoding="utf-8")
+    research_brief_for_body_compact = compact_golf_research_brief_for_body(topic, research_brief_for_body)
+    (GENERATED_RESULT_DIR / "research_brief_for_body_compact.txt").write_text(
+        research_brief_for_body_compact,
+        encoding="utf-8",
+    )
     log_run("golf_research_brief", research_prompt)
     print(f"[STEP 1/5] 완료 ({len(research_brief)}자)")
 
@@ -4114,6 +6512,7 @@ def generate_golf_article(driver: webdriver.Chrome) -> dict:
     try:
         image_url = send_image_prompt(driver, image_prompt, timeout=180, needed=1)[0]
         image_data_url = download_image_as_base64(driver, image_url)
+        save_golf_image_result(image_url, image_data_url)
         log_run("golf_image", image_prompt)
         print("[STEP 2/5] 완료")
     except Exception as e:
@@ -4121,11 +6520,14 @@ def generate_golf_article(driver: webdriver.Chrome) -> dict:
         image_url = ""
         image_data_url = ""
 
+    wait_after_image_before_text_prompt("골프 본문 생성", wait_seconds=10)
+    open_chatgpt_text_thread_after_image(driver)
+
     # STEP 3: 본문
-    body_prompt = build_golf_body_prompt(topic, research_brief)
+    body_prompt = build_golf_body_prompt_stable(topic, research_brief_for_body_compact)
     archive_prompt("golf_body_prompt", body_prompt)
     print("[STEP 3/5] 프리미엄 본문 HTML 생성 중...")
-    html_body = send_text_prompt(driver, body_prompt, timeout=600)
+    html_body = send_golf_body_prompt(driver, body_prompt, timeout=600)
     html_body = clean_generated_html_body(html_body)
     try:
         validate_golf_generated_content(html_body)
@@ -4147,19 +6549,14 @@ def generate_golf_article(driver: webdriver.Chrome) -> dict:
 """
         _assert_prompt_text_clean(rewrite_prompt, "골프 본문 재작성")
         archive_prompt("golf_body_rewrite_prompt", rewrite_prompt)
-        html_body = send_text_prompt(driver, rewrite_prompt, timeout=600)
+        html_body = send_golf_body_prompt(driver, rewrite_prompt, timeout=600)
         html_body = clean_generated_html_body(html_body)
         validate_golf_generated_content(html_body)
         validate_golf_travel_specificity(topic, html_body)
     _log_golf_image_state("본문 생성 직후", html_body, image_data_url)
     if image_data_url:
-        html_body = _ensure_golf_main_image_html(
-            html_body,
-            image_data_url,
-            f"{topic['club']} {topic['topic']}",
-            context="Golf",
-        )
-    _log_golf_image_state("본문 이미지 보정 후", html_body, image_data_url)
+        print("[Golf] 대표 이미지는 티스토리 HTML 모드 업로드 단계에서 파일로 삽입합니다.")
+    _log_golf_image_state("본문 저장 전", html_body, image_data_url)
     validate_golf_generated_content(html_body)
     validate_golf_travel_specificity(topic, _strip_data_images_for_prompt(html_body))
     log_run("golf_body", body_prompt)
@@ -4192,6 +6589,7 @@ def generate_golf_article(driver: webdriver.Chrome) -> dict:
         "image1_url":      image_url,
         "image1_data_url": image_data_url,
         "image2_data_url": "",
+        "topic_strategy":  topic,
     }
 
 
@@ -4202,14 +6600,17 @@ def generate_golf_article(driver: webdriver.Chrome) -> dict:
 # ------------------------------------------------------------------
 
 def generate_article(driver: webdriver.Chrome, values: dict, products: list[dict] = None) -> dict:
-    """STEP1 image1/image2 -> STEP2 body -> STEP3 title -> STEP4 hashtags"""
+    """STEP1 image -> STEP2 body -> STEP3 title -> STEP4 hashtags"""
     if products is None:
         products = []
 
-    image_prompt_1 = fill_prompt(PROMPT_IMAGE_1, values)
-    image_prompt_2 = fill_prompt(PROMPT_IMAGE_2, values)
+    single_image_mode = values.get("content_vertical") == "health_supplement"
+    image_prompt_1 = build_health_coupang_image_prompt(values) if single_image_mode else fill_prompt(PROMPT_IMAGE_1, values)
     validate_coupang_urls(image_prompt_1)
-    validate_coupang_urls(image_prompt_2)
+    image_prompt_2 = ""
+    if not single_image_mode:
+        image_prompt_2 = fill_prompt(PROMPT_IMAGE_2, values)
+        validate_coupang_urls(image_prompt_2)
 
     print("[STEP 1/4] 이미지 1 생성 중...")
     image1_url = send_image_prompt(driver, image_prompt_1, timeout=180, needed=1)[0]
@@ -4221,35 +6622,48 @@ def generate_article(driver: webdriver.Chrome, values: dict, products: list[dict
     print("[STEP 1/4] 이미지 1 URL 확보 완료")
     print("[STEP 1/4] 이미지 1 완료")
 
-    print("[STEP 1/4] 이미지 2 생성 중...")
-    image2_url = send_image_prompt(driver, image_prompt_2, timeout=180, needed=1)[0]
-    image2_data_url = download_image_as_base64(driver, image2_url)
-    values["image2_url"] = image2_url
-    log_run("image_2", image_prompt_2)
-    log_coupang_urls(image_prompt_2)
-    
-    print("[STEP 1/4] 이미지 2 URL 확보 완료")
-    print("[STEP 1/4] 이미지 2 완료")
+    image2_url = ""
+    image2_data_url = ""
+    if single_image_mode:
+        values["image2_url"] = ""
+        print("[STEP 1/4] 건강식품 쿠팡 글은 이미지 1장만 사용합니다. 이미지 2 생성을 건너뜁니다.")
+        wait_after_image_before_text_prompt("건강식품 쿠팡 본문 생성", wait_seconds=10)
+    else:
+        print("[STEP 1/4] 이미지 2 생성 중...")
+        image2_url = send_image_prompt(driver, image_prompt_2, timeout=180, needed=1)[0]
+        image2_data_url = download_image_as_base64(driver, image2_url)
+        values["image2_url"] = image2_url
+        log_run("image_2", image_prompt_2)
+        log_coupang_urls(image_prompt_2)
+
+        print("[STEP 1/4] 이미지 2 URL 확보 완료")
+        print("[STEP 1/4] 이미지 2 완료")
+        wait_after_image_before_text_prompt("쿠팡 본문 생성", wait_seconds=10)
 
     body_prompt = build_coupang_body_prompt(values)
     validate_coupang_urls(body_prompt)
     print("[STEP 2/4] 본문 생성 중...")
-    html_body = send_text_prompt(driver, body_prompt, timeout=600)
+    if single_image_mode:
+        html_body = send_health_body_prompt_after_image(driver, body_prompt, timeout=600)
+    else:
+        html_body = send_text_prompt_after_image_with_refresh(driver, body_prompt, "쿠팡 본문 생성", timeout=600)
+    html_body = _replace_product_link_markers(html_body, products)
     html_body = ensure_exact_coupang_disclosure(html_body)
     html_body = _replace_inline_coupang_links_with_cards(html_body, products)
+    html_body = _style_coupang_html_for_tistory(html_body, values.get("keyword", ""))
     
     # HTML은 '%%IMAGE1_PLACEHOLDER%%' 같은 플레이스홀더를 원본 그대로 유지해야 WAF를 피합니다.
     log_run("body", body_prompt)
     log_coupang_urls(body_prompt)
     print(f"[STEP 2/4] 완료 ({len(html_body)}자)")
 
-    title_prompt = fill_prompt(MASTER_PROMPTS["title"], values)
+    title_prompt = build_coupang_title_prompt(values)
     print("[STEP 3/4] 제목 생성 중...")
     title_text = send_text_prompt(driver, title_prompt, timeout=180)
     log_run("title", title_prompt)
     print("[STEP 3/4] 완료")
 
-    hashtags_prompt = fill_prompt(MASTER_PROMPTS["hashtags"], values)
+    hashtags_prompt = build_coupang_hashtags_prompt(values)
     print("[STEP 4/4] 해시태그 생성 중...")
     hashtags_text = send_text_prompt(driver, hashtags_prompt, timeout=180)
     log_run("hashtags", hashtags_prompt)
@@ -4302,7 +6716,8 @@ def generate_daily_article(driver: webdriver.Chrome) -> dict:
     print("[STEP 1/3] 완료")
 
     print("[STEP 2/3] 인플루언서 로직 탑재 HTML 본문 생성 중...")
-    html_body = send_text_prompt(driver, PROMPT_DAILY_BODY, timeout=240)
+    wait_after_image_before_text_prompt("일상 본문 생성", wait_seconds=10)
+    html_body = send_text_prompt_after_image_with_refresh(driver, PROMPT_DAILY_BODY, "일상 본문 생성", timeout=240)
     log_run("daily_body", PROMPT_DAILY_BODY)
     
     # 일상글에서도 WAF 방지를 위해 Base64가 아닌 토큰으로 치환
@@ -4329,7 +6744,7 @@ def generate_daily_article(driver: webdriver.Chrome) -> dict:
     }
 
 
-def login_and_open_tistory_editor(driver: webdriver.Chrome) -> None:
+def login_and_open_tistory_editor(driver: webdriver.Chrome, allow_manual_login: bool = True) -> None:
     """
     Tistory 글쓰기 화면 진입.
     중요:
@@ -4365,54 +6780,82 @@ def login_and_open_tistory_editor(driver: webdriver.Chrome) -> None:
             pass
         return False
 
-    # 이미 jxbooklove 글쓰기 화면이면 통과
-    if not _is_editor_ready() and _is_login_required():
-        print("[Tistory] 로그인이 필요합니다. 로그인 화면으로 이동합니다.")
+    def _wait_for_saved_session_auto_recovery() -> bool:
+        timeout = max(0, int(TISTORY_SAVED_SESSION_RECOVERY_SECONDS))
+        if timeout <= 0:
+            return _is_editor_ready()
 
-        # 카카오 로그인 진입
-        driver.get(TISTORY_URL)
-        random_sleep(0.8, 1.5)
-
-        try:
-            if driver.find_elements(By.XPATH, TISTORY_KAKAO_START_XPATH):
-                WebDriverWait(driver, 10).until(
-                    EC.presence_of_element_located((By.XPATH, TISTORY_KAKAO_START_XPATH))
-                )
-                driver.find_element(By.XPATH, TISTORY_KAKAO_START_XPATH).click()
-                random_sleep(0.5, 1.0)
-        except Exception as exc:
-            print(f"[경고] 카카오 시작 버튼 클릭 실패 또는 불필요: {exc}")
-
-        try:
-            if driver.find_elements(By.XPATH, TISTORY_KAKAO_LOGIN_XPATH):
-                WebDriverWait(driver, 10).until(
-                    EC.presence_of_element_located((By.XPATH, TISTORY_KAKAO_LOGIN_XPATH))
-                )
-                driver.find_element(By.XPATH, TISTORY_KAKAO_LOGIN_XPATH).click()
-                random_sleep(1.0, 1.8)
-        except Exception as exc:
-            print(f"[경고] 카카오 로그인 버튼 클릭 실패 또는 불필요: {exc}")
-
-        print("[Tistory] 로그인 완료 대기 중입니다. 로그인 후 자동으로 jxbooklove 글쓰기 화면으로 이동합니다.")
-
-        started_at = time.time()
-        while time.time() - started_at < 300:
-            current_url = driver.current_url or ""
-
-            # 로그인 완료로 판단되는 순간 jxbooklove 글쓰기 URL로 다시 강제 이동
-            if (
-                "accounts.kakao.com" not in current_url
-                and "login" not in current_url.lower()
-            ):
+        print(f"[Tistory] 로그인 화면 감지 - 저장 세션 자동 복귀를 {timeout}초 확인합니다.")
+        deadline = time.time() + timeout
+        while time.time() < deadline:
+            if _is_editor_ready():
+                return True
+            if not _is_login_required():
                 driver.get(target_url)
-                random_sleep(1.2, 2.0)
+                random_sleep(0.8, 1.4)
                 _handle_tistory_editor_alert(driver)
                 if _is_editor_ready():
-                    break
-
+                    return True
             time.sleep(2)
+        return _is_editor_ready()
+
+    # 이미 jxbooklove 글쓰기 화면이면 통과
+    if not _is_editor_ready() and _is_login_required():
+        if not allow_manual_login:
+            if _wait_for_saved_session_auto_recovery():
+                print("[Tistory] 저장 세션으로 글쓰기 화면 자동 복귀 확인")
+            else:
+                raise RuntimeError(
+                    "티스토리 저장 세션이 로그인 화면으로 이동했습니다. "
+                    "--tistory-login-only로 티스토리 세션을 다시 저장하세요."
+                )
         else:
-            raise TimeoutError("Tistory 로그인 대기 시간 초과")
+            print("[Tistory] 로그인이 필요합니다. 로그인 화면으로 이동합니다.")
+
+            # 카카오 로그인 진입
+            driver.get(TISTORY_URL)
+            random_sleep(0.8, 1.5)
+
+            try:
+                if driver.find_elements(By.XPATH, TISTORY_KAKAO_START_XPATH):
+                    WebDriverWait(driver, 10).until(
+                        EC.presence_of_element_located((By.XPATH, TISTORY_KAKAO_START_XPATH))
+                    )
+                    driver.find_element(By.XPATH, TISTORY_KAKAO_START_XPATH).click()
+                    random_sleep(0.5, 1.0)
+            except Exception as exc:
+                print(f"[경고] 카카오 시작 버튼 클릭 실패 또는 불필요: {exc}")
+
+            try:
+                if driver.find_elements(By.XPATH, TISTORY_KAKAO_LOGIN_XPATH):
+                    WebDriverWait(driver, 10).until(
+                        EC.presence_of_element_located((By.XPATH, TISTORY_KAKAO_LOGIN_XPATH))
+                    )
+                    driver.find_element(By.XPATH, TISTORY_KAKAO_LOGIN_XPATH).click()
+                    random_sleep(1.0, 1.8)
+            except Exception as exc:
+                print(f"[경고] 카카오 로그인 버튼 클릭 실패 또는 불필요: {exc}")
+
+            print("[Tistory] 로그인 완료 대기 중입니다. 로그인 후 자동으로 jxbooklove 글쓰기 화면으로 이동합니다.")
+
+            started_at = time.time()
+            while time.time() - started_at < 300:
+                current_url = driver.current_url or ""
+
+                # 로그인 완료로 판단되는 순간 jxbooklove 글쓰기 URL로 다시 강제 이동
+                if (
+                    "accounts.kakao.com" not in current_url
+                    and "login" not in current_url.lower()
+                ):
+                    driver.get(target_url)
+                    random_sleep(1.2, 2.0)
+                    _handle_tistory_editor_alert(driver)
+                    if _is_editor_ready():
+                        break
+
+                time.sleep(2)
+            else:
+                raise TimeoutError("Tistory 로그인 대기 시간 초과")
 
     # 대표 블로그 글쓰기 화면으로 빠졌다면 즉시 jxbooklove로 재진입
     current_url = driver.current_url or ""
@@ -4444,7 +6887,12 @@ def login_and_open_tistory_editor(driver: webdriver.Chrome) -> None:
 
 
 
-def run_tistory_only_flow(publish: bool = False, post_type: str = "golf") -> dict:
+def run_tistory_only_flow(
+    publish: bool = False,
+    post_type: str = "golf",
+    visibility: str = "public",
+    allow_manual_login: bool = True,
+) -> dict:
     if check_captcha_lock():
         sys.exit(0)
     post_type = normalize_post_type(post_type)
@@ -4460,7 +6908,7 @@ def run_tistory_only_flow(publish: bool = False, post_type: str = "golf") -> dic
 
     try:
         print("\n[Tistory] 저장된 결과로 글쓰기 진입 중...")
-        login_and_open_tistory_editor(driver)
+        login_and_open_tistory_editor(driver, allow_manual_login=allow_manual_login)
         write_tistory_html_post(
             driver,
             title           = result["title"],
@@ -4468,8 +6916,10 @@ def run_tistory_only_flow(publish: bool = False, post_type: str = "golf") -> dic
             tags            = result["hashtags"],
             post_type       = post_type,
             publish         = publish,
+            visibility      = visibility,
             image1_data_url = result.get("image1_data_url", ""),
             image2_data_url = result.get("image2_data_url", ""),
+            golf_topic      = result.get("topic_strategy"),
         )
 
         return result
@@ -4484,7 +6934,12 @@ def run_tistory_only_flow(publish: bool = False, post_type: str = "golf") -> dic
         quit_driver(driver, keep_browser=error_occurred)
 
 
-def run_full_flow(publish: bool = False, post_type: str = "golf") -> dict:
+def run_full_flow(
+    publish: bool = False,
+    post_type: str = "golf",
+    visibility: str = "public",
+    keep_browser_on_error: bool = True,
+) -> dict:
     if check_captcha_lock():
         sys.exit(0)
     post_type = normalize_post_type(post_type)
@@ -4494,19 +6949,13 @@ def run_full_flow(publish: bool = False, post_type: str = "golf") -> dict:
             "먼저 python 챗지피티웹.py --login 을 실행해 세션을 저장하세요."
         )
 
-    selected_products = []
-    products = []
-    values = {}
-    if post_type == "coupang":
-        selected_products = select_products(count=3)
-        products = enrich_products_with_coupang_links(
-            selected_products,
-            api_enabled=COUPANG_API_ENABLED,
-            access_key=COUPANG_ACCESS_KEY or "",
-            secret_key=COUPANG_SECRET_KEY or "",
-            sub_id=COUPANG_SUB_ID,
-        )
-        values = build_prompt_values(products)
+    selected_products: list[dict] = []
+    product_db_path: Path | None = None
+    coupang_products: list[dict] = []
+    coupang_values: dict = {}
+    if post_type == "health":
+        product_db_path, selected_products, coupang_products = prepare_health_coupang_products(count=3)
+        coupang_values = build_prompt_values(coupang_products, content_vertical="health_supplement")
 
     driver = create_driver(save_session=False, session_dir=CHATGPT_SESSION_DIR)
     tistory_driver = None
@@ -4517,10 +6966,12 @@ def run_full_flow(publish: bool = False, post_type: str = "golf") -> dict:
         
         if post_type == "golf":
             result = generate_golf_article(driver)
+        elif post_type == "health":
+            result = generate_article(driver, coupang_values, coupang_products)
         elif post_type == "daily":
             result = generate_daily_article(driver)
         else:
-            result = generate_article(driver, values, products)
+            raise ValueError(f"main_golf.py에서 지원하지 않는 post_type 입니다: {post_type}")
 
         has_tistory_session = _has_saved_tistory_session()
         if not has_tistory_session:
@@ -4536,7 +6987,7 @@ def run_full_flow(publish: bool = False, post_type: str = "golf") -> dict:
             print("\n[Tistory] 저장된 티스토리 세션이 없어 현재 브라우저에서 이어서 진행합니다...")
 
         print("\n[Tistory] 로그인 및 에디터 진입 중...")
-        login_and_open_tistory_editor(driver)
+        login_and_open_tistory_editor(driver, allow_manual_login=keep_browser_on_error)
         
         write_tistory_html_post(
             driver,
@@ -4545,23 +6996,29 @@ def run_full_flow(publish: bool = False, post_type: str = "golf") -> dict:
             tags            = result["hashtags"],
             post_type       = post_type,
             publish         = publish,
+            visibility      = visibility,
             image1_data_url = result.get("image1_data_url", ""),
             image2_data_url = result.get("image2_data_url", ""),
+            golf_topic      = result.get("topic_strategy"),
         )
 
-        if publish and post_type == "coupang":
-            mark_products_as_used(selected_products, post_title=result["title"])
+        if publish and post_type == "health":
+            mark_products_as_used(selected_products, post_title=result["title"], product_db_path=product_db_path)
+            _log_product_coupang_urls(coupang_products)
         print(f"\n[완료] {'발행 완료' if publish else '임시 저장 완료 (수동 발행 필요)'}")
         return result
 
     except Exception as e:
         error_occurred = True
         print(f"\n[오류] {e}")
-        print("[오류] 브라우저를 열어 둡니다. 확인 후 수동으로 닫아주세요.")
+        if keep_browser_on_error:
+            print("[오류] 브라우저를 열어 둡니다. 확인 후 수동으로 닫아주세요.")
+        else:
+            print("[오류] 스케줄 실행 중 오류라 브라우저를 닫고 다음 작업과 세션 충돌을 방지합니다.")
         raise
 
     finally:
-        quit_driver(driver, keep_browser=error_occurred)
+        quit_driver(driver, keep_browser=(error_occurred and keep_browser_on_error))
 
 
 # ------------------------------------------------------------------
@@ -4590,11 +7047,12 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--tistory-login-only", action="store_true", help="티스토리 로그인 세션만 저장 및 검증")
     parser.add_argument("--headless", action="store_true", help="Chrome을 헤드리스 모드로 실행")
     parser.add_argument("--publish", action="store_true", help="작성 완료 후 자동 발행 (기본값)")
-    parser.add_argument("--draft", action="store_true", help="자동 발행하지 않고 임시저장/작성까지만 실행")
+    parser.add_argument("--draft", action="store_true", help="자동 발행하지 않고 임시저장만 실행")
     parser.add_argument("--resume-tistory", action="store_true", help="저장된 결과로 티스토리 작성만 실행")
     parser.add_argument("--resume-tistory-publish", action="store_true", help="저장된 결과로 바로 발행")
     parser.add_argument("--scheduled", action="store_true", help="스케줄러 백그라운드 실행 모드")
-    parser.add_argument("--post-type", default="golf", help="글 유형 (golf, daily, coupang)")
+    parser.add_argument("--private", action="store_true", help="발행 시 비공개로 등록")
+    parser.add_argument("--post-type", default="golf", help="글 유형 (golf, health/건강식품, daily)")
     return parser.parse_args()
 
 
@@ -4618,18 +7076,34 @@ if __name__ == "__main__":
             scheduled_log_file = enable_scheduled_logging(cli_args.post_type)
 
         post_type = normalize_post_type(cli_args.post_type)
+        visibility = "private" if cli_args.private else "public"
 
         if cli_args.login:
             save_login_session()
         elif cli_args.tistory_login_only:
             save_tistory_session()
         elif cli_args.resume_tistory_publish:
-            run_tistory_only_flow(publish=True, post_type=post_type)
+            run_tistory_only_flow(
+                publish=True,
+                post_type=post_type,
+                visibility=visibility,
+                allow_manual_login=not cli_args.scheduled,
+            )
         elif cli_args.resume_tistory:
-            run_tistory_only_flow(publish=False, post_type=post_type)
+            run_tistory_only_flow(
+                publish=False,
+                post_type=post_type,
+                visibility=visibility,
+                allow_manual_login=not cli_args.scheduled,
+            )
         else:
             publish = not cli_args.draft
-            run_full_flow(publish=publish, post_type=post_type)
+            run_full_flow(
+                publish=publish,
+                post_type=post_type,
+                visibility=visibility,
+                keep_browser_on_error=not cli_args.scheduled,
+            )
     finally:
         _automation_lock.release()
         print("[Lock] 락 해제 완료")

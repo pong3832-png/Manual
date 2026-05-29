@@ -503,6 +503,8 @@ python -m py_compile src\tistory_automation\pipeline\category_crawler.py
 - 골프/건강식품 스케줄러는 `--today-only --max-posts N --golf-posts G --health-posts H`로 현재 시각부터 오늘 23:59 안에만 N개 개별 작업을 만들 수 있다. 기본 부모 작업 `Tistory_Golf_24H_Random_15`는 내일부터 매일 15개를 만들며 기본 비율은 골프 10개, 건강식품 쿠팡 글 5개다.
 - 예약 실행 PowerShell 로그는 UTF-8 보존이 중요하다. `run_scheduled_post.ps1`의 `ForEach-Object + Add-Content -Encoding UTF8` 출력 방식을 `Tee-Object` 중심으로 되돌리면 한글 로그가 다시 깨질 수 있다.
 - `golf/main_golf.py`의 ChatGPT 프롬프트 전송은 전송 버튼 클릭 후 입력창이 비워졌는지 확인해야 한다. `_wait_for_text()`에서 같은 프롬프트를 자동 재전송하면 본문이 여러 번 생성되므로 되돌리지 않는다.
+- `golf/main_golf.py` 예약 실행에서 티스토리 로그인 화면으로 이동하면 수동 로그인을 기다리지 않는다. 저장 세션 자동 복귀 확인 후에도 글쓰기 화면이 아니면 실패로 남기고, 다음 실행 전 티스토리 세션 저장/검증을 먼저 한다.
+- `golf/main_golf.py` ChromeDriver는 설치된 Chrome 메이저 버전과 맞는 캐시 드라이버를 우선 사용한다. Chrome 업데이트 후 브라우저가 바로 닫히거나 세션 생성이 실패하면 오래된 `CHROMEDRIVER_PATH`보다 현재 Chrome 메이저 후보가 먼저 잡히는지 확인한다.
 - 골프 글 비공개 테스트는 `--publish --private`로 실행한다. 비공개 버튼을 찾지 못하면 공개 발행 위험이 있으므로 중단해야 한다.
 - 해외 골프여행 금액 검증은 `원/만원/바트/엔/달러`뿐 아니라 `$`, `US$`, `USD` 접두 표기도 금액으로 센다.
 - 티스토리 글 표가 두 줄로 접히는 문제는 먼저 스킨 CSS의 본문 폭과 table 가로 스크롤로 해결한다. 프롬프트는 보조로 시간대별 동선 표를 5열 이하(`Day`, `시간`, `일정`, `이동·비용`, `확인처`)로 제한한다.
@@ -515,6 +517,8 @@ python -m py_compile src\tistory_automation\pipeline\category_crawler.py
 - `src/tistory_automation/main.py` 계열은 현재 공개 발행하지 않는다. `--publish`와 `--resume-tistory-publish`가 들어와도 대표이미지 지정 후 임시저장으로 마무리한다.
 - `src/tistory_automation/scheduler.py`, `scripts/scheduled/run_scheduled_post.ps1`, `scripts/scheduled/run_refresh_schedule.ps1`도 항상 `--draft`/`-Draft`를 붙인다. 스케줄러 등록/재등록 전에는 이 동작을 되돌리지 않는다.
 - `main.py` ChromeDriver는 설치된 Chrome 메이저 버전과 일치하는 캐시 드라이버를 먼저 사용한다. Chrome 업데이트 후 티스토리 창이 닫히거나 `window_handles` 타임아웃이 나면 드라이버 후보 1순위가 현재 Chrome 메이저와 맞는지 먼저 확인한다.
+- `main.py` 예약 실행에서 티스토리 로그인 화면으로 이동하면 수동 로그인을 기다리지 않는다. 저장 세션 자동 복귀 확인 후에도 글쓰기 화면이 아니면 `--tistory-login-only`로 세션을 다시 저장한다.
+- 쿠팡 성과 주제 API 치환은 비교 상품 2개를 최소 기준으로 진행할 수 있다. 예약 로그가 `API 상품 확정 2/3` 전후에서 끝나면 티스토리 임시저장 문제가 아니라 ChatGPT/Tistory 진입 전 상품 치환 단계 실패로 먼저 본다.
 - `daily` 글은 넓은 `여행 준비`가 아니라 히타, 나고야, 가나자와, 이토시마처럼 지역/권역 단위의 세분화 여행 주제를 코드가 먼저 고른다. 이미지/본문/메타 프롬프트가 같은 세부 주제를 공유해야 하며, 제목에는 세부 지역 키워드가 들어가야 한다.
 - 티스토리 글쓰기 진입 시 `작성하던 글`/`이어서 작성`/`작성하시겠습니까` DOM 팝업이 보이는 경우에만 `ESC`로 닫는다. 다른 팝업이나 발행창 동작에 무조건 `ESC`를 보내지 않는다.
 

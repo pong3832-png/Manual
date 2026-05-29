@@ -1,5 +1,31 @@
 # Work Log
 
+## 2026-05-29 - 티스토리 자동화 ing
+
+### 오늘 변경
+
+- `src/tistory_automation/main.py`: 스케줄 실행 중 티스토리 저장 세션이 로그인 화면으로 이동하면 5분 수동 로그인 대기에 들어가지 않고, `--tistory-login-only`로 세션 재저장이 필요하다는 오류로 즉시 중단하도록 최소 보정.
+- `tests/test_tistory_session_login_flow.py`: 티스토리 저장 세션이 만료된 스케줄 상황에서 수동 로그인 대기로 넘어가지 않는 회귀 테스트 추가.
+- `src/tistory_automation/main.py`: 티스토리 저장 세션이 로그인 화면을 잠깐 거친 뒤 글쓰기창으로 자동 복귀하는 정상 케이스를 막지 않도록, 예약 실행에서도 30초 자동 복귀 확인 후에만 세션 재저장 오류를 내도록 보정.
+- `golf/main_golf.py`: 예약 실행 중 티스토리 저장 세션이 로그인 화면으로 이동하면 5분 수동 로그인 대기 없이 즉시 중단하도록 보정. 현재 Chrome 메이저와 맞는 캐시 ChromeDriver를 오래된 `CHROMEDRIVER_PATH`보다 우선 선택하도록 조정.
+- `tests/test_main_golf_runtime_guards.py`: `main_golf.py` 예약 로그인 fail-fast와 현재 Chrome 메이저 드라이버 우선순위 회귀 테스트 추가.
+- `golf/main_golf.py`: 티스토리 저장 세션이 로그인 화면을 잠깐 거친 뒤 글쓰기창으로 자동 복귀하는 정상 케이스를 막지 않도록, 예약 실행에서도 30초 자동 복귀 확인 후에만 세션 재저장 오류를 내도록 보정.
+- 사용자 승인으로 티스토리 관련 Windows 작업 스케줄러 32개를 삭제 후 재등록. `main.py`는 2026-05-29 17:47부터 10개 임시저장, `main_golf.py`는 18:03부터 골프 7개/health 7개 공개발행, 부모 재등록 작업은 2026-05-30 00:05로 설정.
+
+### 검증
+
+- `.venv\Scripts\python.exe -m unittest tests.test_tistory_session_login_flow` 통과.
+- `.venv\Scripts\python.exe -X utf8 -m py_compile .\src\tistory_automation\main.py` 통과.
+- main.py 자동 복귀 허용 보정 후 `.venv\Scripts\python.exe -m unittest tests.test_tistory_session_login_flow`, `.venv\Scripts\python.exe -X utf8 -m py_compile .\src\tistory_automation\main.py` 통과.
+- `.venv\Scripts\python.exe -m unittest tests.test_main_golf_runtime_guards` 통과.
+- `.venv\Scripts\python.exe -X utf8 -m py_compile .\golf\main_golf.py` 통과.
+- 자동 복귀 허용 보정 후 `.venv\Scripts\python.exe -m unittest tests.test_main_golf_runtime_guards`, `.venv\Scripts\python.exe -X utf8 -m py_compile .\golf\main_golf.py` 통과.
+- 스케줄러 재등록 후 `Get-ScheduledTask`로 `TistoryChatGPTAutoPost_01..10`, `TistoryChatGPTAutoPost_RefreshDaily`, `Tistory_Golf_24H_Random_15`, `Tistory_Golf_24H_Random_15_01..14`가 `Ready` 상태이고 다음 실행 시간이 현재 이후로 잡힌 것 확인.
+
+### 다음 세션
+
+- 티스토리 임시저장이 다시 끊기면 먼저 `--tistory-login-only`로 세션을 다시 저장하고, 이후 최신 `runtime/logs/scheduled/*.log`와 `runtime/logs/scheduled_golf/*.log`에서 `티스토리 저장 세션이 로그인 화면으로 이동했습니다` 문구와 임시저장 성공 여부를 대조한다.
+
 ## 2026-05-28 - 티스토리 자동화 ing
 
 ### 오늘 변경
@@ -202,3 +228,14 @@
 - 다음 작업: 남은 `Tistory_Golf_24H_Random*` health 로그에서 같은 스트리밍 중지 후 새로고침 흐름이 통과하는지 확인. health 발행을 중단하거나 임시저장으로 바꿀지 사용자와 정책 결정. 카테고리 선택 경고가 반복되면 티스토리 카테고리 선택 로직만 별도 점검.
 - 추가 변경: 이미지 뒤 첫 본문 프롬프트 안정화 로직을 `main.py` 일상/쿠팡, `main_golf.py` 골프/health/일상 전체에 적용. 스트리밍 중지 문구가 사라지면 즉시 새로고침하지 않고 3초 대기 후 새로고침한다. 정상 응답이 시작되면 새로고침 감시는 종료한다.
 - 검증: 전체 적용 후 `티스토리 자동화 ing\.venv\Scripts\python.exe -X utf8 -m py_compile 티스토리 자동화 ing/src/tistory_automation/main.py`, `티스토리 자동화 ing\.venv\Scripts\python.exe -X utf8 -m py_compile 티스토리 자동화 ing/golf/main_golf.py` 통과. 잔여 `chromedriver` 없음.
+
+## 2026-05-29 - 티스토리 자동화 ing
+
+- `src/tistory_automation/main.py`: 예약 실행 시 티스토리 로그인 화면이 뜨면 수동 로그인을 기다리지 않고 저장 세션 자동 복귀를 짧게 확인한 뒤 실패 처리하도록 보강. `--publish`가 들어와도 `main.py`는 계속 임시저장만 수행.
+- `golf/main_golf.py`: ChromeDriver 후보를 현재 설치된 Chrome 메이저 버전 우선으로 고르고, 예약 실행의 티스토리 저장 세션 자동 복귀/실패 처리를 `main.py`와 맞춤.
+- 검증/실행: `main.py --post-type coupang --draft` 수동 실행은 임시저장 성공. `main_golf.py --post-type golf --publish` 수동 실행은 공개 발행 성공. `tests.test_tistory_session_login_flow`, `tests.test_main_golf_runtime_guards`, `main.py`/`main_golf.py` `py_compile`, `git diff --check` 통과.
+- 스케줄러: 사용자 승인 후 기존 티스토리 관련 작업을 삭제하고 오늘 기준 작업을 재등록. `main.py`는 `TistoryChatGPTAutoPost_*` 임시저장, `main_golf.py`는 `Tistory_Golf_24H_Random*` 공개 발행 작업으로 등록됨.
+- 17:47 `TistoryChatGPTAutoPost_01` 쿠팡 예약 실행은 `Last Result=1`로 실패. 로그상 ChatGPT/Tistory 진입 전 `장마철 제습 기능 에어컨 배수 물통 확인` 주제의 쿠팡 API 상품 치환 중 2/3개 확정 직후 종료되어 임시저장까지 가지 못함.
+- `src/tistory_automation/main.py`: 성과 주제 쿠팡 API 치환에서 최소 필요 상품 2개를 확보하면 추가 API 조회를 멈추고 해당 개수로 진행하도록 변경. 개별 API 조회 예외는 전체 실행 중단 대신 해당 후보 제외 로그로 남기게 보강.
+- 검증: `.venv\Scripts\python.exe -m unittest tests.test_tistory_session_login_flow`, `.venv\Scripts\python.exe -X utf8 -m py_compile .\src\tistory_automation\main.py` 통과.
+- 다음 세션: 최신 `runtime/logs/scheduled/*.log`, `runtime/logs/scheduled_golf/*.log`에서 재등록 후 첫 성공/실패를 확인한다. 특히 `main.py`는 쿠팡 API 치환 이후 ChatGPT/Tistory까지 이어졌는지, `main_golf.py`는 예약 모드 티스토리 세션 자동 복귀가 통과했는지 먼저 본다.
