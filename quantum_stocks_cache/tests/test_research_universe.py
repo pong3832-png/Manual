@@ -16,6 +16,7 @@ from quantum_trainer.research_universe import (
     add_research_symbols_from_csv,
     build_research_universe,
     merge_research_universe,
+    normalize_full_krx_universe,
 )
 
 
@@ -261,3 +262,50 @@ def test_add_research_symbols_from_csv_updates_existing_rows_when_replace_enable
         assert result.actions.loc[0, "action"] == "UPDATED"
         assert written.loc[0, "company_name"] == "LG Corp"
         assert written.loc[0, "sector"] == "Holding"
+
+
+def test_normalize_full_krx_universe_keeps_all_security_types_from_krx_style_csv() -> None:
+    source = pd.DataFrame(
+        [
+            {
+                "단축코드": "005930",
+                "한글 종목명": "삼성전자",
+                "시장구분": "KOSPI",
+                "업종명": "반도체",
+                "증권구분": "주권",
+                "주식종류": "보통주",
+            },
+            {
+                "단축코드": "000545",
+                "한글 종목명": "흥국화재2우B",
+                "시장구분": "KOSPI",
+                "업종명": "보험",
+                "증권구분": "주권",
+                "주식종류": "우선주",
+            },
+            {
+                "단축코드": "305720",
+                "한글 종목명": "TIGER 2차전지테마",
+                "시장구분": "KOSPI",
+                "업종명": "ETF",
+                "증권구분": "ETF",
+                "주식종류": "ETF",
+            },
+            {
+                "단축코드": "456789",
+                "한글 종목명": "테스트스팩",
+                "시장구분": "KOSDAQ",
+                "업종명": "금융",
+                "증권구분": "SPAC",
+                "주식종류": "보통주",
+            },
+        ]
+    )
+
+    universe = normalize_full_krx_universe(source)
+
+    assert universe["symbol"].tolist() == ["005930.KS", "000545.KS", "305720.KS", "456789.KQ"]
+    assert universe["company_name"].tolist() == ["삼성전자", "흥국화재2우B", "TIGER 2차전지테마", "테스트스팩"]
+    assert universe["security_type"].tolist() == ["주권", "주권", "ETF", "SPAC"]
+    assert universe["share_type"].tolist() == ["보통주", "우선주", "ETF", "보통주"]
+    assert len(universe) == 4

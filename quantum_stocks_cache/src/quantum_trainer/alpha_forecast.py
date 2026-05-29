@@ -21,6 +21,13 @@ FEATURE_COLUMNS = [
     "drawdown_20d",
 ]
 
+ENHANCED_FEATURE_COLUMNS = FEATURE_COLUMNS + [
+    "market_relative_return_20d",
+    "trend_quality_60d",
+    "volatility_regime_20_60",
+    "breakout_120d_gap",
+]
+
 
 @dataclass(frozen=True)
 class AlphaForecastConfig:
@@ -29,6 +36,7 @@ class AlphaForecastConfig:
     ridge_lambda: float = 1.0
     min_expected_return: float = -0.20
     max_expected_return: float = 0.20
+    evaluate_enhanced_features: bool = False
 
 
 def _fit_ridge_predict(
@@ -72,7 +80,8 @@ def run_alpha_forecast(
         labels = build_forward_labels(prices, horizon=config.horizon)
         return_col = f"forward_{config.horizon}d_return"
         upside_col = f"forward_{config.horizon}d_upside"
-        dataset = features.merge(labels, on=["date", "symbol"], how="inner").dropna()
+        dataset = features.merge(labels, on=["date", "symbol"], how="inner")
+        dataset = dataset.dropna(subset=FEATURE_COLUMNS + [return_col, upside_col])
 
         rows: list[dict[str, float | str | int]] = []
         latest_features = features.sort_values("date").groupby("symbol").tail(1)
@@ -103,17 +112,91 @@ def run_alpha_forecast(
                 probability = float(np.clip(prob_linear, 0.01, 0.99))
 
             expected = float(np.clip(expected, config.min_expected_return, config.max_expected_return))
-            rows.append(
-                {
-                    "symbol": symbol,
-                    "expected_20d_return": expected,
-                    "upside_probability": probability,
-                    "sample_count": sample_count,
-                    "model_r2": float(r2),
-                }
-            )
+            row = {
+                "symbol": symbol,
+                "expected_20d_return": expected,
+                "upside_probability": probability,
+                "sample_count": sample_count,
+                "model_r2": float(r2),
+            }
+            if config.evaluate_enhanced_features:
+                row.update(_feature_set_evaluation(train, return_col, upside_col, config.ridge_lambda))
+            rows.append(row)
 
+        if not rows:
+            columns = ["expected_20d_return", "upside_probability", "sample_count", "model_r2"]
+            if config.evaluate_enhanced_features:
+                columns.extend(
+                    [
+                        "base_directional_accuracy",
+                        "enhanced_directional_accuracy",
+                        "enhanced_feature_policy",
+                    ]
+                )
+            empty = pd.DataFrame(columns=columns)
+            empty.index = pd.Index([], name="symbol")
+            return empty
         return pd.DataFrame(rows).set_index("symbol")
     except Exception as exc:
         logger.exception("Alpha forecast failed: %s", exc)
         raise
+
+
+def _feature_set_evaluation(
+    train: pd.DataFrame,
+    return_col: str,
+    upside_col: str,
+    ridge_lambda: float,
+) -> dict[str, float | str]:
+    base = train.dropna(subset=FEATURE_COLUMNS + [return_col, upside_col]).copy()
+    enhanced = train.dropna(subset=ENHANCED_FEATURE_COLUMNS + [return_col, upside_col]).copy()
+    base_accuracy = _walk_forward_directional_accuracy(base, return_col, upside_col, FEATURE_COLUMNS, ridge_lambda)
+    enhanced_accuracy = _walk_forward_directional_accuracy(
+        enhanced,
+        return_col,
+        upside_col,
+        ENHANCED_FEATURE_COLUMNS,
+        ridge_lambda,
+    )
+    policy = (
+        "IMPROVED_CANDIDATE"
+        if enhanced_accuracy > base_accuracy and len(enhanced) >= 30
+        else "EVALUATION_ONLY"
+    )
+    return {
+        "base_directional_accuracy": base_accuracy,
+        "enhanced_directional_accuracy": enhanced_accuracy,
+        "enhanced_feature_policy": policy,
+    }
+
+
+def _walk_forward_directional_accuracy(
+    train: pd.DataFrame,
+    return_col: str,
+    upside_col: str,
+    features: Sequence[str],
+    ridge_lambda: float,
+) -> float:
+    if len(train) < 30:
+        return 0.0
+    ordered = train.sort_values("date").reset_index(drop=True)
+    split = max(20, int(len(ordered) * 0.70))
+    if split >= len(ordered):
+        return 0.0
+    train_part = ordered.iloc[:split].copy()
+    test_part = ordered.iloc[split:].copy()
+    predictions: list[int] = []
+    actuals: list[int] = []
+    for _, latest in test_part.iterrows():
+        prediction, _ = _fit_ridge_predict(
+            train=train_part,
+            latest=latest,
+            target_col=return_col,
+            features=features,
+            ridge_lambda=ridge_lambda,
+        )
+        predictions.append(1 if prediction > 0.0 else 0)
+        actuals.append(int(latest[upside_col]))
+    if not actuals:
+        return 0.0
+    return float(np.mean(np.array(predictions) == np.array(actuals)))

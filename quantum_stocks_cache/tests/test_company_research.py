@@ -11,7 +11,13 @@ SRC_PATH = PROJECT_ROOT / "src"
 if str(SRC_PATH) not in sys.path:
     sys.path.insert(0, str(SRC_PATH))
 
-from quantum_trainer.company_research import run_company_research
+from quantum_trainer.company_research import (
+    _extension_penalty,
+    _extension_risk,
+    _research_view,
+    _why_summary,
+    run_company_research,
+)
 
 
 def _prices(rows: int = 150) -> pd.DataFrame:
@@ -147,3 +153,24 @@ def test_company_research_combines_fundamentals_when_csv_is_provided() -> None:
         assert top["symbol"] == "000660.KS"
         assert top["fundamental_view"] == "FUNDAMENTAL_STRONG"
         assert "FUNDAMENTAL_STRONG" in top["why_summary"]
+
+
+def test_company_research_marks_overextended_buy_ready_as_pullback_wait() -> None:
+    row = pd.Series(
+        {
+            "decision": "BUY_READY",
+            "return_20d": 0.397,
+            "ma20_gap": 0.091,
+            "drawdown_20d": -0.04,
+            "expected_20d_return": 0.17,
+            "upside_probability": 0.99,
+            "fundamental_view": "FUNDAMENTAL_NEUTRAL",
+        }
+    )
+    row["extension_risk"] = _extension_risk(row)
+    row["extension_penalty"] = _extension_penalty(row)
+
+    assert row["extension_risk"] == "OVEREXTENDED_WAIT"
+    assert row["extension_penalty"] > 0
+    assert _research_view(row) == "WAIT_PULLBACK"
+    assert "OVEREXTENDED_20D_RETURN" in _why_summary(row)

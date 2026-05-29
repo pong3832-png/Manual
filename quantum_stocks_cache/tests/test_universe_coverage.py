@@ -91,3 +91,45 @@ def test_universe_coverage_flags_small_universe_missing_required_symbols_and_pri
         assert row["price_coverage_status"] == "PRICE_DATA_REQUIRED"
         assert row["price_missing_count"] == 1
         assert row["order_status"] == "NO_ORDER"
+
+
+def test_universe_coverage_accepts_full_universe_with_small_price_gap() -> None:
+    with TemporaryDirectory(dir=PROJECT_ROOT) as tmp_dir:
+        root = Path(tmp_dir)
+        universe_csv = root / "universe.csv"
+        prices_csv = root / "prices.csv"
+        required_rows = [
+            ("005930.KS", "Samsung Electronics", "Semiconductors", "KOSPI", "005930"),
+            ("005380.KS", "Hyundai Motor", "Autos", "KOSPI", "005380"),
+            ("000660.KS", "SK hynix", "Semiconductors", "KOSPI", "000660"),
+            ("028260.KS", "Samsung C&T", "Holding", "KOSPI", "028260"),
+            ("003550.KS", "LG Corp", "Holding", "KOSPI", "003550"),
+            ("012330.KS", "Hyundai Mobis", "Autos", "KOSPI", "012330"),
+        ]
+        generated_rows = [
+            (f"{900000 + index:06d}.KQ", f"Sample {index}", "UNKNOWN", "KOSDAQ", f"{900000 + index:06d}")
+            for index in range(1000)
+        ]
+        rows = required_rows + generated_rows
+        pd.DataFrame(rows, columns=["symbol", "company_name", "sector", "market", "code"]).to_csv(
+            universe_csv, index=False
+        )
+        price_dates = pd.date_range("2026-01-01", periods=30, freq="B", name="date")
+        priced_symbols = [symbol for symbol, *_ in rows if symbol != "900999.KQ"]
+        prices = pd.DataFrame({symbol: [100.0 + i for i in range(30)] for symbol in priced_symbols}, index=price_dates)
+        prices.to_csv(prices_csv, encoding="utf-8-sig", index_label="date")
+
+        output = run_universe_coverage(
+            universe_csv=universe_csv,
+            prices_csv=prices_csv,
+            output_dir=root / "reports",
+            min_count=20,
+            max_count=50,
+        )
+
+        row = output.report.iloc[0]
+        assert row["universe_status"] == "PASS_CANDIDATE"
+        assert row["count_status"] == "FULL_UNIVERSE_OK"
+        assert row["price_coverage_status"] == "PRICE_COVERAGE_PARTIAL"
+        assert row["price_missing_count"] == 1
+        assert row["next_step"] == "run company research, manual gates, and dashboard review"

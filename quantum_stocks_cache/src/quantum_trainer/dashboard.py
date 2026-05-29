@@ -376,6 +376,9 @@ TEXT_REPLACEMENTS = {
     "manual gate not ready": "수동 확인이 끝나지 않았습니다",
     "manual gate required": "수동 확인이 필요합니다",
     "manual review required": "수동 검토가 필요합니다",
+    "pre-buy decision is": "매수 준비 판단은",
+    "filing risk summary not available": "공시 리스크 요약이 없습니다",
+    "filing risk hold review": "공시 리스크 보류 검토",
     "capital amount required": "투자금 입력이 필요합니다",
     "actual manual review config not applied": "최종 수동 검토값이 아직 반영되지 않았습니다",
     "waiting for explicit user confirmation": "사용자 최종 확인을 기다립니다",
@@ -437,6 +440,7 @@ def run_dashboard(reports_dir: Path | str, output_dir: Path | str | None = None)
     memo_row = _row_for_symbol(memo, top_symbol)
     gate_row = _row_for_symbol(gate, top_symbol)
     filing_risk = _load_filing_risk_summary(reports_root, top_symbol)
+    all_filing_risks = _load_all_filing_risk_summaries(reports_root)
     filing_risk_opinion = _filing_risk_opinion(filing_risk)
     pre_buy = _load_pre_buy_decision(reports_root, top_symbol)
     manual_draft = _load_manual_review_draft(reports_root, top_symbol)
@@ -459,6 +463,8 @@ def run_dashboard(reports_dir: Path | str, output_dir: Path | str | None = None)
         "order_status": str(gate_row.get("order_status", memo_row.get("order_status", "NO_ORDER"))),
         "pre_buy_decision": str(pre_buy.get("decision_status", "NO_ORDER")),
         "filing_risk_opinion": filing_risk_opinion,
+        "filing_risk_symbol_count": int(all_filing_risks["symbol"].nunique()) if not all_filing_risks.empty else 0,
+        "filing_risk_fatal_symbol_count": _fatal_filing_symbol_count(all_filing_risks),
         "manual_review_draft": str(manual_draft.get("recommended_actual_action", "UNKNOWN")),
         "manual_review_proposal": str(manual_proposal.get("proposal_status", "UNKNOWN")),
         "manual_review_actual_written": str(manual_apply.get("actual_config_written", "UNKNOWN")),
@@ -484,6 +490,7 @@ def run_dashboard(reports_dir: Path | str, output_dir: Path | str | None = None)
             memo_row,
             gate_row,
             filing_risk,
+            all_filing_risks,
             pre_buy,
             manual_draft,
             manual_proposal,
@@ -537,6 +544,19 @@ def _load_filing_risk_summary(reports_root: Path, symbol: str) -> pd.DataFrame:
     return _load_csv(path, FILING_RISK_COLUMNS, "filing risk summary")
 
 
+def _load_all_filing_risk_summaries(reports_root: Path) -> pd.DataFrame:
+    filing_root = reports_root / "filing_review"
+    if not filing_root.exists():
+        return pd.DataFrame(columns=sorted(FILING_RISK_COLUMNS))
+    frames = [
+        _load_csv(path, FILING_RISK_COLUMNS, "filing risk summary")
+        for path in sorted(filing_root.glob("filing_risk_summary_*.csv"))
+    ]
+    if not frames:
+        return pd.DataFrame(columns=sorted(FILING_RISK_COLUMNS))
+    return pd.concat(frames, ignore_index=True)
+
+
 def _filing_risk_opinion(filing_risk: pd.DataFrame) -> str:
     if filing_risk.empty:
         return "UNKNOWN"
@@ -545,6 +565,14 @@ def _filing_risk_opinion(filing_risk: pd.DataFrame) -> str:
     if (filing_risk["gate_opinion"].astype(str) == "HOLD_REVIEW").any():
         return "HOLD_REVIEW"
     return "PASS_CANDIDATE_WITH_MONITORING"
+
+
+def _fatal_filing_symbol_count(filing_risks: pd.DataFrame) -> int:
+    if filing_risks.empty:
+        return 0
+    fatal = filing_risks["fatal_risk"].astype(str).str.upper() == "YES"
+    exclude = filing_risks["gate_opinion"].astype(str).str.upper() == "EXCLUDE"
+    return int(filing_risks.loc[fatal | exclude, "symbol"].nunique())
 
 
 def _load_pre_buy_decision(reports_root: Path, symbol: str) -> pd.Series:
@@ -656,6 +684,7 @@ def _render_html(
     memo: pd.Series,
     gate: pd.Series,
     filing_risk: pd.DataFrame,
+    all_filing_risks: pd.DataFrame,
     pre_buy: pd.Series,
     manual_draft: pd.Series,
     manual_proposal: pd.Series,
@@ -717,6 +746,11 @@ def _render_html(
         "</section>",
         '<section class="quick-grid">',
         _metric("1순위 후보", display_name, "focus"),
+        _metric(
+            "1순위 공시 리스크",
+            _filing_risk_status_text(filing_risk, str(summary["filing_risk_opinion"])),
+            _status_class(summary["filing_risk_opinion"]),
+        ),
         _metric("판단", _ko_status(decision), _status_class(decision)),
         _metric("검토 수량", _order_size_text(order_candidate), "neutral"),
         _metric("비교 종목", f"{int(summary['universe_count'])}개", "neutral"),
@@ -754,6 +788,10 @@ def _render_html(
         '<section class="panel">',
         "<h2>공시 리스크 요약</h2>",
         _filing_risk_summary(filing_risk, str(summary["filing_risk_opinion"])),
+        "</section>",
+        '<section class="panel">',
+        "<h2>후보별 공시 리스크 현황</h2>",
+        _filing_risk_board(all_filing_risks, profit),
         "</section>",
         '<section class="panel">',
         "<h2>자본 계획</h2>",
@@ -954,13 +992,25 @@ def _pill(value: object) -> str:
 
 def _decision_sentence(company: str, decision: object) -> str:
     label = _ko_status(decision)
+    subject = f"{company}{_topic_particle(company)}"
     if str(decision).upper() == "BUY_READY":
-        return f"{company}은 매수 검토 가능 상태입니다"
+        return f"{subject} 매수 검토 가능 상태입니다"
     if str(decision).upper() == "WAIT":
-        return f"{company}은 아직 기다림입니다"
+        return f"{subject} 아직 기다림입니다"
     if str(decision).upper() == "REJECT":
-        return f"{company}은 오늘 제외입니다"
+        return f"{subject} 오늘 제외입니다"
     return f"현재 판단은 {label}입니다"
+
+
+def _topic_particle(text: str) -> str:
+    stripped = str(text).strip()
+    if not stripped:
+        return "은"
+    char = stripped[-1]
+    code = ord(char)
+    if 0xAC00 <= code <= 0xD7A3:
+        return "은" if (code - 0xAC00) % 28 else "는"
+    return "은"
 
 
 def _main_action_sentence(decision: object, gate_status: object, blockers: object) -> str:
@@ -1095,6 +1145,13 @@ def _manual_review(
     return "\n".join(rows)
 
 
+def _filing_risk_status_text(filing_risk: pd.DataFrame, opinion: str) -> str:
+    if filing_risk.empty:
+        return "공시요약 없음 / 검토 필요"
+    fatal_count = int((filing_risk["fatal_risk"].astype(str).str.upper() == "YES").sum())
+    return f"치명 {fatal_count}개 / {_ko_status(opinion)}"
+
+
 def _filing_risk_summary(filing_risk: pd.DataFrame, opinion: str) -> str:
     if filing_risk.empty:
         return '<p class="muted">공시 리스크 요약 파일이 없습니다. OpenDART 리스크 요약을 먼저 생성하세요.</p>'
@@ -1116,6 +1173,53 @@ def _filing_risk_summary(filing_risk: pd.DataFrame, opinion: str) -> str:
         )
     rows.extend(["</tbody>", "</table>"])
     return "\n".join(rows)
+
+
+def _filing_risk_board(filing_risks: pd.DataFrame, profit: pd.DataFrame) -> str:
+    if filing_risks.empty:
+        return '<p class="muted">후보별 공시 리스크 요약이 없습니다.</p>'
+
+    name_by_symbol = {
+        str(row.symbol): _company_name(row.company_name)
+        for row in profit[["symbol", "company_name"]].itertuples(index=False)
+    }
+    ordered_symbols = _ordered_risk_symbols(filing_risks, profit)
+
+    rows = [
+        "<table>",
+        "<thead><tr><th>후보</th><th>치명 리스크</th><th>판단</th><th>핵심 리스크</th></tr></thead>",
+        "<tbody>",
+    ]
+    for symbol in ordered_symbols:
+        group = filing_risks.loc[filing_risks["symbol"] == symbol]
+        fatal_count = int((group["fatal_risk"].astype(str).str.upper() == "YES").sum())
+        opinion = _filing_risk_opinion(group)
+        risks = " · ".join(_friendly_text(title) for title in group["risk_title"].head(5).tolist())
+        company = name_by_symbol.get(str(symbol), str(symbol))
+        rows.append(
+            "<tr>"
+            f"<td>{escape(company)}<br><span class=\"muted\">{escape(str(symbol))}</span></td>"
+            f"<td>{fatal_count}개</td>"
+            f"<td>{escape(_ko_status(opinion))}</td>"
+            f"<td>{escape(risks)}</td>"
+            "</tr>"
+        )
+    rows.extend(["</tbody>", "</table>"])
+    return "\n".join(rows)
+
+
+def _ordered_risk_symbols(filing_risks: pd.DataFrame, profit: pd.DataFrame) -> list[str]:
+    profit_order = profit.copy()
+    profit_order["_rank"] = profit_order["profit_focus_status"].map(
+        {"CORE_FOCUS": 4, "WAIT_RISK": 3, "NEEDS_CHECKLIST": 2, "WATCH_ONLY": 1}
+    ).fillna(0)
+    profit_order = profit_order.sort_values(["_rank", "conviction_score"], ascending=[False, False])
+    ordered = [str(symbol) for symbol in profit_order["symbol"].tolist()]
+    for symbol in filing_risks["symbol"].drop_duplicates().tolist():
+        text = str(symbol)
+        if text not in ordered:
+            ordered.append(text)
+    return [symbol for symbol in ordered if symbol in set(filing_risks["symbol"].astype(str).tolist())]
 
 
 def _capital_scenarios(capital_scenarios: pd.DataFrame, capital_plan: pd.Series) -> str:

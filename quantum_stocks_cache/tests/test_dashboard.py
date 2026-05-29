@@ -137,6 +137,21 @@ def test_dashboard_renders_easy_korean_quant_trainer_view() -> None:
         pd.DataFrame(
             [
                 {
+                    "symbol": "005930.KS",
+                    "risk_id": "semiconductor_cycle_risk",
+                    "risk_title": "Semiconductor filing risk",
+                    "source_checks": "business_driver_review",
+                    "evidence_count": 2,
+                    "key_evidence": "반도체 업황 변동 확인",
+                    "fatal_risk": "NO",
+                    "gate_opinion": "HOLD_REVIEW",
+                    "monitoring_rule": "업황과 밸류에이션 확인",
+                }
+            ]
+        ).to_csv(filing_dir / "filing_risk_summary_005930.csv", index=False)
+        pd.DataFrame(
+            [
+                {
                     "symbol": "028260.KS",
                     "company_name": "삼성물산",
                     "decision_status": "WAIT",
@@ -446,11 +461,15 @@ def test_dashboard_renders_easy_korean_quant_trainer_view() -> None:
         assert "기다림" in html
         assert "자동 주문 없음" in html
         assert "주문은 자동 실행되지 않습니다" in html
+        assert "1순위 공시 리스크" in html
+        assert "치명 0개 / 통과 후보(모니터링 필요)" in html
         assert "왜 후보인가" in html
         assert "매수 금지 이유" in html
         assert "손실 방어 규칙" in html
         assert "공시 리스크 요약" in html
         assert "치명적 리스크 0개" in html
+        assert "후보별 공시 리스크 현황" in html
+        assert "Semiconductor filing risk" in html
         assert "수동 확인 6개 항목" in html
         assert "자본 계획" in html
         assert "투자 후 성과 추적" in html
@@ -468,3 +487,14 @@ def test_dashboard_renders_easy_korean_quant_trainer_view() -> None:
         assert "actual_config_written" not in html
         assert "missing cached price history" not in html
         assert "Broker order" not in html
+
+
+def test_dashboard_labels_missing_top_filing_risk_as_review_required() -> None:
+    module = importlib.import_module("quantum_trainer.dashboard")
+
+    assert module._filing_risk_status_text(pd.DataFrame(), "UNKNOWN") == "공시요약 없음 / 검토 필요"
+    assert "filing risk summary" not in module._friendly_text(
+        "pre-buy decision is WAIT; filing risk summary not available"
+    )
+    assert "filing risk hold review" not in module._friendly_text("filing risk hold review")
+    assert module._decision_sentence("코미코", "WAIT").startswith("코미코는")

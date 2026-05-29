@@ -181,3 +181,5 @@ def test_filing_risk_summary_uses_generic_titles_for_non_samsung_ct_symbols() ->
     )
     assert "Samsung Biologics" not in combined_text
     assert "Construction order" not in combined_text
+    assert "130개 종속기업" not in combined_text
+    assert "52개 관계기업" not in combined_text

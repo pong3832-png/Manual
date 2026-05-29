@@ -5,6 +5,7 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 
 import pandas as pd
+import pytest
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 SRC_PATH = PROJECT_ROOT / "src"
@@ -15,6 +16,7 @@ from quantum_trainer.config import load_runtime_config
 from quantum_trainer.market_data import (
     MarketDataConfig,
     fetch_market_prices,
+    fetch_market_prices_batched,
     resolve_market_data_symbols,
     write_price_cache,
 )
@@ -42,6 +44,71 @@ def test_fetch_market_prices_normalizes_yfinance_multiindex_close_data() -> None
 
     assert list(prices.columns) == ["000660.KS", "005380.KS"]
     assert prices.iloc[-1]["000660.KS"] == 102.0
+    assert prices.index.name == "date"
+
+
+def test_fetch_market_prices_batched_downloads_and_merges_symbol_batches() -> None:
+    dates = pd.date_range("2026-01-01", periods=3, freq="B")
+    calls: list[list[str]] = []
+
+    def fake_downloader(*args: object, **kwargs: object) -> pd.DataFrame:
+        tickers = list(kwargs["tickers"])
+        calls.append(tickers)
+        raw = pd.DataFrame(
+            {("Close", symbol): [float(index + 1), float(index + 2), float(index + 3)] for index, symbol in enumerate(tickers)},
+            index=dates,
+        )
+        raw.columns = pd.MultiIndex.from_tuples(raw.columns)
+        return raw
+
+    prices = fetch_market_prices_batched(
+        symbols=["000660.KS", "005380.KS", "003550.KS"],
+        config=MarketDataConfig(start="2026-01-01"),
+        batch_size=2,
+        downloader=fake_downloader,
+    )
+
+    assert calls == [["000660.KS", "005380.KS"], ["003550.KS"]]
+    assert list(prices.columns) == ["000660.KS", "005380.KS", "003550.KS"]
+    assert prices.index.name == "date"
+
+
+def test_fetch_market_prices_batched_can_skip_failed_symbols_when_partial_allowed() -> None:
+    dates = pd.date_range("2026-01-01", periods=3, freq="B")
+    calls: list[list[str]] = []
+
+    def fake_downloader(*args: object, **kwargs: object) -> pd.DataFrame:
+        tickers = list(kwargs["tickers"])
+        calls.append(tickers)
+        columns = {
+            ("Close", symbol): [100.0, 101.0, 102.0]
+            for symbol in tickers
+            if symbol != "099520.KQ"
+        }
+        raw = pd.DataFrame(columns, index=dates)
+        if columns:
+            raw.columns = pd.MultiIndex.from_tuples(raw.columns)
+        return raw
+
+    with pytest.raises(ValueError, match="Price frame is empty"):
+        fetch_market_prices_batched(
+            symbols=["005930.KS", "099520.KQ"],
+            config=MarketDataConfig(start="2026-01-01"),
+            batch_size=2,
+            downloader=fake_downloader,
+        )
+
+    calls.clear()
+    prices = fetch_market_prices_batched(
+        symbols=["005930.KS", "099520.KQ"],
+        config=MarketDataConfig(start="2026-01-01"),
+        batch_size=2,
+        downloader=fake_downloader,
+        allow_partial=True,
+    )
+
+    assert calls == [["005930.KS", "099520.KQ"], ["005930.KS"], ["099520.KQ"]]
+    assert list(prices.columns) == ["005930.KS"]
     assert prices.index.name == "date"
 
 

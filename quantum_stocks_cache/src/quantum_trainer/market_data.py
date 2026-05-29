@@ -92,6 +92,81 @@ def fetch_market_prices(
         raise
 
 
+def fetch_market_prices_batched(
+    symbols: Sequence[str],
+    config: MarketDataConfig,
+    batch_size: int = 200,
+    downloader: DownloadFn | None = None,
+    allow_partial: bool = False,
+) -> pd.DataFrame:
+    try:
+        if batch_size <= 0:
+            raise ValueError("batch_size must be greater than 0.")
+        cleaned = [str(symbol).strip() for symbol in symbols if str(symbol).strip()]
+        if not cleaned:
+            raise ValueError("symbols must not be empty.")
+        if len(cleaned) != len(set(cleaned)):
+            raise ValueError("Market data symbols contain duplicates.")
+
+        frames: list[pd.DataFrame] = []
+        for start in range(0, len(cleaned), batch_size):
+            batch = cleaned[start : start + batch_size]
+            if allow_partial:
+                frame = _fetch_market_prices_batch_allow_partial(
+                    batch,
+                    config=config,
+                    downloader=downloader,
+                )
+                if not frame.empty:
+                    frames.append(frame)
+            else:
+                frames.append(fetch_market_prices(batch, config=config, downloader=downloader))
+
+        if not frames:
+            raise ValueError("No market data could be fetched for requested symbols.")
+        prices = pd.concat(frames, axis=1)
+        prices = prices.loc[:, ~prices.columns.duplicated()]
+        columns = [symbol for symbol in cleaned if symbol in prices.columns] if allow_partial else cleaned
+        drop_mode = "all" if allow_partial else "any"
+        prices = prices.reindex(columns=columns).ffill().dropna(how=drop_mode)
+        prices.index.name = "date"
+        if prices.empty:
+            raise ValueError("Price frame is empty after batched fetch.")
+        return prices
+    except Exception as exc:
+        logger.exception("Failed to fetch batched market prices: %s", exc)
+        raise
+
+
+def _fetch_market_prices_batch_allow_partial(
+    symbols: Sequence[str],
+    config: MarketDataConfig,
+    downloader: DownloadFn | None = None,
+) -> pd.DataFrame:
+    try:
+        return fetch_market_prices(symbols, config=config, downloader=downloader)
+    except Exception as exc:
+        if len(symbols) == 1:
+            logger.warning("Skipping symbol with unavailable market data: %s (%s)", symbols[0], exc)
+            return pd.DataFrame()
+
+        midpoint = len(symbols) // 2
+        left = _fetch_market_prices_batch_allow_partial(
+            symbols[:midpoint],
+            config=config,
+            downloader=downloader,
+        )
+        right = _fetch_market_prices_batch_allow_partial(
+            symbols[midpoint:],
+            config=config,
+            downloader=downloader,
+        )
+        frames = [frame for frame in [left, right] if not frame.empty]
+        if not frames:
+            return pd.DataFrame()
+        return pd.concat(frames, axis=1)
+
+
 def resolve_market_data_symbols(
     portfolio_symbols: Sequence[str],
     universe_csv: Path | str | None = None,
@@ -124,6 +199,27 @@ async def fetch_market_prices_async(
         return await asyncio.to_thread(fetch_market_prices, symbols, config, downloader)
     except Exception as exc:
         logger.exception("Async market price fetch failed: %s", exc)
+        raise
+
+
+async def fetch_market_prices_batched_async(
+    symbols: Sequence[str],
+    config: MarketDataConfig,
+    batch_size: int = 200,
+    downloader: DownloadFn | None = None,
+    allow_partial: bool = False,
+) -> pd.DataFrame:
+    try:
+        return await asyncio.to_thread(
+            fetch_market_prices_batched,
+            symbols,
+            config,
+            batch_size,
+            downloader,
+            allow_partial,
+        )
+    except Exception as exc:
+        logger.exception("Async batched market price fetch failed: %s", exc)
         raise
 
 

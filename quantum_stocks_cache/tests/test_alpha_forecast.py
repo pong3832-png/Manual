@@ -35,6 +35,12 @@ def test_build_feature_frame_outputs_expected_columns() -> None:
     assert {"symbol", "return_5d", "return_20d", "ma20_gap", "realized_vol_20d"}.issubset(
         features.columns
     )
+    assert {
+        "market_relative_return_20d",
+        "trend_quality_60d",
+        "volatility_regime_20_60",
+        "breakout_120d_gap",
+    }.issubset(features.columns)
     assert set(features["symbol"].unique()) == {"000660.KS", "005380.KS"}
 
 
@@ -56,6 +62,35 @@ def test_run_alpha_forecast_outputs_expected_return_probability_and_diagnostics(
     )
     assert forecast["upside_probability"].between(0.01, 0.99).all()
     assert (forecast["sample_count"] >= 20).all()
+
+
+def test_run_alpha_forecast_can_compare_base_and_enhanced_time_series_features() -> None:
+    forecast = run_alpha_forecast(
+        prices=_prices(rows=180),
+        config=AlphaForecastConfig(horizon=20, min_samples=20, evaluate_enhanced_features=True),
+    )
+
+    assert {
+        "base_directional_accuracy",
+        "enhanced_directional_accuracy",
+        "enhanced_feature_policy",
+    }.issubset(forecast.columns)
+    assert forecast["enhanced_feature_policy"].isin(["EVALUATION_ONLY", "IMPROVED_CANDIDATE"]).all()
+
+
+def test_run_alpha_forecast_returns_empty_schema_when_no_symbol_has_enough_history() -> None:
+    prices = pd.DataFrame(
+        {"005930.KS": [100.0, 101.0, 102.0]},
+        index=pd.date_range("2026-01-01", periods=3, freq="B", name="date"),
+    )
+
+    forecast = run_alpha_forecast(prices=prices, config=AlphaForecastConfig(horizon=20))
+
+    assert forecast.empty
+    assert forecast.index.name == "symbol"
+    assert {"expected_20d_return", "upside_probability", "sample_count", "model_r2"}.issubset(
+        forecast.columns
+    )
 
 
 def test_score_buy_timing_maps_forecasts_to_decisions() -> None:

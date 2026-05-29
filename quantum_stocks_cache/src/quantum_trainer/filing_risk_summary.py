@@ -153,6 +153,17 @@ def _risk_definitions(symbol: str) -> list[RiskDefinition]:
         if is_samsung_ct
         else "프로젝트 마진 악화, 실행 손실, 대규모 투자로 인한 이익 훼손이 확인되면 보류"
     )
+    related_party_evidence = (
+        (
+            "130개 종속기업과 52개 관계기업/공동기업 등 그룹 구조가 복잡해 관련자 거래와 "
+            "지분법 손익 변동을 계속 확인해야 합니다."
+        )
+        if is_samsung_ct
+        else (
+            "특수관계자 거래, 계열회사 지분, 주요 주주와의 거래 조건은 이익 변동과 "
+            "지배구조 할인 요인이 될 수 있어 계속 확인해야 합니다."
+        )
+    )
     return [
         RiskDefinition(
             risk_id="legal_litigation_exposure",
@@ -192,10 +203,7 @@ def _risk_definitions(symbol: str) -> list[RiskDefinition]:
             risk_title="Complex affiliate and related-party structure",
             matcher=lambda frame: frame["review_check"] == "related_party_review",
             fallback_checks=("related_party_review",),
-            key_evidence=(
-                "130개 종속기업과 52개 관계기업/공동기업 등 그룹 구조가 복잡해 관련자 거래와 "
-                "지분법 손익 변동을 계속 확인해야 합니다."
-            ),
+            key_evidence=related_party_evidence,
             monitoring_rule="대주주/특수관계인 거래, 계열사 출자, 지분법 손익 훼손이 커지면 보류",
         ),
         RiskDefinition(

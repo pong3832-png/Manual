@@ -90,6 +90,7 @@ def test_today_pipeline_market_refresh_adds_external_price_update_first() -> Non
         assert output.steps[0].name == "market_data_refresh"
         assert output.steps[0].external_api is True
         assert output.steps[0].command[1].endswith("update_market_data.py")
+        assert "--allow-partial" in output.steps[0].command
         assert output.summary["external_api_requested"] == "YES"
 
 

@@ -147,6 +147,8 @@ def _filing_review(symbol: str, filing_risk_dir: Path) -> tuple[str, str]:
     opinion = frame.get("gate_opinion", pd.Series(dtype=object)).astype(str).str.upper()
     if (fatal == "YES").any() or (opinion == "EXCLUDE").any():
         return "FAIL_CANDIDATE", "filing risk summary has fatal or exclude opinion"
+    if (opinion == "HOLD_REVIEW").any():
+        return "UNKNOWN", "filing risk summary has hold-review opinion"
     return "PASS_CANDIDATE", "filing risk summary has no fatal risk"
 
 

@@ -184,6 +184,9 @@ def build_today_pipeline_steps(
                     str(config_path),
                     "--universe-csv",
                     str(universe_csv),
+                    "--batch-size",
+                    "100",
+                    "--allow-partial",
                 ],
                 external_api=True,
             )

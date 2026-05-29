@@ -173,6 +173,7 @@ def _build_report(
                 "readiness_blockers": _readiness_blockers(
                     decision_status=decision_status,
                     gate=gate_row,
+                    filing_risk=filing_risk,
                     manual_proposal=proposal_row,
                     capital_plan=capital_row,
                 ),
@@ -218,6 +219,10 @@ def _decision_status(row: dict[str, object], gate: pd.Series, filing_risk: pd.Da
     gate_status = str(gate.get("decision_gate_status", "WAITING_MANUAL_EVIDENCE"))
     if _has_fatal_filing_risk(filing_risk) or "BLOCKED" in gate_status:
         return "REJECT"
+    if filing_risk.empty:
+        return "WAIT"
+    if _has_filing_hold_review(filing_risk):
+        return "WAIT"
     if gate_status == "READY_FOR_SIZING_REVIEW" and row.get("profit_focus_status") == "CORE_FOCUS":
         return "BUY_READY"
     return "WAIT"
@@ -226,6 +231,7 @@ def _decision_status(row: dict[str, object], gate: pd.Series, filing_risk: pd.Da
 def _readiness_blockers(
     decision_status: str,
     gate: pd.Series,
+    filing_risk: pd.DataFrame,
     manual_proposal: pd.Series,
     capital_plan: pd.Series,
 ) -> str:
@@ -239,6 +245,10 @@ def _readiness_blockers(
             blockers.append("actual manual review config not applied")
         else:
             blockers.append("manual gate not ready")
+    if filing_risk.empty:
+        blockers.append("filing risk summary not available")
+    if _has_filing_hold_review(filing_risk):
+        blockers.append("filing risk hold review")
     if str(capital_plan.get("amount_status", "")).upper() == "CAPITAL_AMOUNT_REQUIRED":
         blockers.append("capital amount required")
     return "; ".join(dict.fromkeys(blockers)) if blockers else "no automatic blocker; user approval still required"
@@ -250,7 +260,7 @@ def _buy_reasons(row: dict[str, object], filing_risk: pd.DataFrame) -> str:
         f"expected_20d_return={_pct(row.get('expected_20d_return'))}",
         f"upside_probability={_pct(row.get('upside_probability'))}",
     ]
-    if not filing_risk.empty and not _has_fatal_filing_risk(filing_risk):
+    if not filing_risk.empty and not _has_fatal_filing_risk(filing_risk) and not _has_filing_hold_review(filing_risk):
         reasons.append("filing risk summary has no fatal risk")
     return "; ".join(reason for reason in reasons if reason)
 
@@ -260,6 +270,10 @@ def _buy_ban_reasons(row: dict[str, object], gate: pd.Series, filing_risk: pd.Da
     gate_status = str(gate.get("decision_gate_status", "WAITING_MANUAL_EVIDENCE"))
     if gate_status != "READY_FOR_SIZING_REVIEW":
         reasons.append("manual gate not ready")
+    if filing_risk.empty:
+        reasons.append("filing risk summary not available")
+    if _has_filing_hold_review(filing_risk):
+        reasons.append("filing risk hold review")
     if _has_fatal_filing_risk(filing_risk):
         reasons.append("fatal filing risk")
     if _number(row.get("return_20d")) >= 0.25:
@@ -276,6 +290,13 @@ def _has_fatal_filing_risk(filing_risk: pd.DataFrame) -> bool:
     fatal = filing_risk["fatal_risk"].astype(str).str.upper()
     opinions = filing_risk["gate_opinion"].astype(str).str.upper()
     return bool((fatal == "YES").any() or (opinions == "EXCLUDE").any())
+
+
+def _has_filing_hold_review(filing_risk: pd.DataFrame) -> bool:
+    if filing_risk.empty:
+        return False
+    opinions = filing_risk["gate_opinion"].astype(str).str.upper()
+    return bool((opinions == "HOLD_REVIEW").any())
 
 
 def _entry_band(latest_price: float, ma20_gap: float) -> tuple[int, int]:

@@ -224,7 +224,7 @@ def _blockers(
         blockers.append("capital amount required")
     if universe_status not in {"PASS_CANDIDATE", "UNIVERSE_READY"}:
         blockers.append("universe coverage not ready")
-    if price_coverage_status != "PRICE_COVERAGE_READY":
+    if price_coverage_status not in {"PRICE_COVERAGE_READY", "PRICE_COVERAGE_PARTIAL"}:
         blockers.append("price coverage not ready")
 
     for blocker in [part.strip() for part in readiness_blockers.split(";")]:

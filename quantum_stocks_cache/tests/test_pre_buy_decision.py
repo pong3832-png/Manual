@@ -246,3 +246,153 @@ def test_pre_buy_decision_rejects_fatal_filing_risk_even_if_gate_ready() -> None
         assert output.report.loc[0, "decision_status"] == "REJECT"
         assert output.report.loc[0, "order_status"] == "NO_ORDER"
         assert "fatal filing risk" in output.report.loc[0, "buy_ban_reasons"]
+
+
+def test_pre_buy_decision_waits_when_filing_risk_summary_is_missing() -> None:
+    module = importlib.import_module("quantum_trainer.pre_buy_decision")
+
+    with TemporaryDirectory(dir=PROJECT_ROOT) as tmp_dir:
+        root = Path(tmp_dir)
+        profit_csv = root / "profit_focus.csv"
+        gate_csv = root / "decision_gate.csv"
+        research_csv = root / "company_research.csv"
+        filing_dir = root / "filing_review"
+        output_dir = root / "reports"
+        filing_dir.mkdir()
+
+        pd.DataFrame(
+            [
+                {
+                    "symbol": "183300.KQ",
+                    "company_name": "Komico",
+                    "sector": "Equipment",
+                    "profit_focus_status": "CORE_FOCUS",
+                    "conviction_score": 66.0,
+                    "expected_20d_return": 0.20,
+                    "upside_probability": 0.99,
+                    "ma20_gap": 0.11,
+                    "return_20d": 0.21,
+                    "why_profit_candidate": "conviction_score=66.0",
+                    "why_not_now": "",
+                    "invalidation_rule": "TODAY_FOCUS exit",
+                    "next_step": "manual filing check",
+                }
+            ]
+        ).to_csv(profit_csv, index=False)
+        pd.DataFrame(
+            [
+                {
+                    "symbol": "183300.KQ",
+                    "company_name": "Komico",
+                    "decision_gate_status": "READY_FOR_SIZING_REVIEW",
+                    "order_status": "NO_ORDER",
+                    "gate_reason": "manual checks passed",
+                    "filing_review": "PASS",
+                    "earnings_review": "PASS",
+                    "business_driver_review": "PASS",
+                    "valuation_review": "PASS",
+                    "loss_rule_review": "PASS",
+                    "capital_plan_review": "PASS",
+                    "loss_defense": "TODAY_FOCUS exit",
+                }
+            ]
+        ).to_csv(gate_csv, index=False)
+        pd.DataFrame([{"symbol": "183300.KQ", "latest_price": 90000, "ma20_gap": 0.11}]).to_csv(
+            research_csv, index=False
+        )
+
+        output = module.run_pre_buy_decision(
+            profit_focus_csv=profit_csv,
+            decision_gate_csv=gate_csv,
+            company_research_csv=research_csv,
+            filing_risk_dir=filing_dir,
+            output_dir=output_dir,
+        )
+
+        assert output.report.loc[0, "decision_status"] == "WAIT"
+        assert output.report.loc[0, "order_status"] == "NO_ORDER"
+        assert "filing risk summary not available" in output.report.loc[0, "readiness_blockers"]
+        assert "filing risk summary not available" in output.report.loc[0, "buy_ban_reasons"]
+
+
+def test_pre_buy_decision_waits_when_filing_risk_summary_has_hold_review() -> None:
+    module = importlib.import_module("quantum_trainer.pre_buy_decision")
+
+    with TemporaryDirectory(dir=PROJECT_ROOT) as tmp_dir:
+        root = Path(tmp_dir)
+        profit_csv = root / "profit_focus.csv"
+        gate_csv = root / "decision_gate.csv"
+        research_csv = root / "company_research.csv"
+        filing_dir = root / "filing_review"
+        output_dir = root / "reports"
+        filing_dir.mkdir()
+
+        pd.DataFrame(
+            [
+                {
+                    "symbol": "183300.KQ",
+                    "company_name": "Komico",
+                    "sector": "Equipment",
+                    "profit_focus_status": "CORE_FOCUS",
+                    "conviction_score": 74.83,
+                    "expected_20d_return": 0.20,
+                    "upside_probability": 0.99,
+                    "ma20_gap": 0.11,
+                    "return_20d": 0.21,
+                    "why_profit_candidate": "conviction_score=74.83",
+                    "why_not_now": "",
+                    "invalidation_rule": "TODAY_FOCUS exit",
+                    "next_step": "manual filing check",
+                }
+            ]
+        ).to_csv(profit_csv, index=False)
+        pd.DataFrame(
+            [
+                {
+                    "symbol": "183300.KQ",
+                    "company_name": "Komico",
+                    "decision_gate_status": "READY_FOR_SIZING_REVIEW",
+                    "order_status": "NO_ORDER",
+                    "gate_reason": "manual checks passed",
+                    "filing_review": "PASS",
+                    "earnings_review": "PASS",
+                    "business_driver_review": "PASS",
+                    "valuation_review": "PASS",
+                    "loss_rule_review": "PASS",
+                    "capital_plan_review": "PASS",
+                    "loss_defense": "TODAY_FOCUS exit",
+                }
+            ]
+        ).to_csv(gate_csv, index=False)
+        pd.DataFrame([{"symbol": "183300.KQ", "latest_price": 90000, "ma20_gap": 0.11}]).to_csv(
+            research_csv, index=False
+        )
+        pd.DataFrame(
+            [
+                {
+                    "symbol": "183300.KQ",
+                    "risk_id": "regulatory_accounting_litigation_overhang",
+                    "risk_title": "Regulatory/accounting litigation overhang",
+                    "source_checks": "",
+                    "evidence_count": 0,
+                    "key_evidence": "keyword hit 부족",
+                    "fatal_risk": "NO",
+                    "gate_opinion": "HOLD_REVIEW",
+                    "monitoring_rule": "추가 확인",
+                }
+            ]
+        ).to_csv(filing_dir / "filing_risk_summary_183300.csv", index=False)
+
+        output = module.run_pre_buy_decision(
+            profit_focus_csv=profit_csv,
+            decision_gate_csv=gate_csv,
+            company_research_csv=research_csv,
+            filing_risk_dir=filing_dir,
+            output_dir=output_dir,
+        )
+
+        assert output.report.loc[0, "decision_status"] == "WAIT"
+        assert output.report.loc[0, "order_status"] == "NO_ORDER"
+        assert "filing risk hold review" in output.report.loc[0, "readiness_blockers"]
+        assert "filing risk hold review" in output.report.loc[0, "buy_ban_reasons"]
+        assert "filing risk summary has no fatal risk" not in output.report.loc[0, "buy_reasons"]

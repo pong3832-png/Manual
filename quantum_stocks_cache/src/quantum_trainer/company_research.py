@@ -32,7 +32,7 @@ def run_company_research(
     min_samples: int = 80,
 ) -> CompanyResearchOutput:
     runtime_config = load_runtime_config(config_path)
-    prices = load_price_csv(runtime_config.prices_csv)
+    prices = load_price_csv(runtime_config.prices_csv, drop_incomplete=False)
     latest_price_date = prices.index.max().date().isoformat()
     latest_prices = prices.tail(1).T.reset_index()
     latest_prices.columns = ["symbol", "latest_price"]
@@ -55,6 +55,8 @@ def run_company_research(
         fundamentals = fundamentals.drop(columns=["latest_price"], errors="ignore")
         report = report.merge(fundamentals, on="symbol", how="left")
     report["latest_price_date"] = latest_price_date
+    report["extension_risk"] = report.apply(_extension_risk, axis=1)
+    report["extension_penalty"] = report.apply(_extension_penalty, axis=1)
     report["research_score"] = report.apply(_research_score, axis=1)
     report["research_view"] = report.apply(_research_view, axis=1)
     report["why_summary"] = report.apply(_why_summary, axis=1)
@@ -124,6 +126,7 @@ def _research_score(row: pd.Series) -> float:
         score -= 5.0
     if _number(row.get("drawdown_20d")) < -0.10:
         score -= 10.0
+    score -= _number(row.get("extension_penalty"))
     if "fundamental_score" in row.index:
         score = score * 0.60 + _number(row.get("fundamental_score")) * 0.40
     return float(np.clip(score, 0.0, 100.0))
@@ -132,6 +135,8 @@ def _research_score(row: pd.Series) -> float:
 def _research_view(row: pd.Series) -> str:
     if row.get("decision") == "AVOID":
         return "AVOID_FOR_NOW"
+    if str(row.get("extension_risk", "ENTRY_RANGE_OK")) != "ENTRY_RANGE_OK":
+        return "WAIT_PULLBACK"
     if (
         row.get("decision") == "BUY_READY"
         and _number(row.get("return_20d")) > 0.0
@@ -168,10 +173,40 @@ def _why_summary(row: pd.Series) -> str:
         reasons.append("DRAWDOWN_CONTROLLED")
     else:
         reasons.append("DRAWDOWN_DEEP")
+    extension_risk = str(row.get("extension_risk", "ENTRY_RANGE_OK"))
+    if extension_risk == "OVEREXTENDED_WAIT":
+        reasons.append("OVEREXTENDED_20D_RETURN")
+    elif extension_risk == "EXTREME_EXTENSION":
+        reasons.append("EXTREME_PRICE_EXTENSION")
     fundamental_view = row.get("fundamental_view")
     if isinstance(fundamental_view, str) and fundamental_view:
         reasons.append(fundamental_view)
     return ",".join(reasons)
+
+
+def _extension_risk(row: pd.Series) -> str:
+    return_20d = _number(row.get("return_20d"))
+    ma20_gap = _number(row.get("ma20_gap"))
+    if return_20d >= 0.50 or ma20_gap >= 0.25:
+        return "EXTREME_EXTENSION"
+    if return_20d >= 0.25 or ma20_gap >= 0.15:
+        return "OVEREXTENDED_WAIT"
+    return "ENTRY_RANGE_OK"
+
+
+def _extension_penalty(row: pd.Series) -> float:
+    return_20d = _number(row.get("return_20d"))
+    ma20_gap = _number(row.get("ma20_gap"))
+    penalty = 0.0
+    if return_20d >= 0.50:
+        penalty += 25.0
+    elif return_20d >= 0.25:
+        penalty += 12.0
+    if ma20_gap >= 0.25:
+        penalty += 20.0
+    elif ma20_gap >= 0.15:
+        penalty += 8.0
+    return penalty
 
 
 def _number(value: object, default: float = 0.0) -> float:
@@ -235,6 +270,7 @@ def _render_company_detail(rank: int, row: object) -> list[str]:
         f"- Research view: {row.research_view}",
         f"- Research score: {float(row.research_score):.2f}",
         f"- Alpha decision: {row.decision}",
+        f"- Extension risk: {getattr(row, 'extension_risk', 'ENTRY_RANGE_OK')}",
         f"- Fundamental view: {getattr(row, 'fundamental_view', 'NOT_PROVIDED')}",
         f"- Latest price date: {getattr(row, 'latest_price_date', 'UNKNOWN')}",
         "",
@@ -279,6 +315,10 @@ def _investment_thesis(row: object) -> list[str]:
 
 def _risk_points(row: object) -> list[str]:
     items: list[str] = []
+    if str(getattr(row, "extension_risk", "ENTRY_RANGE_OK")) == "OVEREXTENDED_WAIT":
+        items.append("Recent 20-day move is stretched; wait for a pullback before first entry.")
+    if str(getattr(row, "extension_risk", "ENTRY_RANGE_OK")) == "EXTREME_EXTENSION":
+        items.append("Short-term price extension is extreme; chase-buy risk is high.")
     if _number(getattr(row, "return_20d", 0.0)) <= 0.0:
         items.append("20일 모멘텀이 약해 단기 추세 확인이 필요합니다.")
     if _number(getattr(row, "ma20_gap", 0.0)) <= 0.0:

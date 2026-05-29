@@ -106,3 +106,27 @@ def test_load_price_csv_and_write_reports() -> None:
         assert paths["equity_curve"].exists()
         assert paths["position_matrix"].exists()
         assert paths["performance_summary"].exists()
+
+
+def test_load_price_csv_can_keep_sparse_research_universe_rows() -> None:
+    with TemporaryDirectory(dir=PROJECT_ROOT) as tmp_dir:
+        tmp_path = Path(tmp_dir)
+        prices_csv = tmp_path / "prices.csv"
+        prices_csv.write_text(
+            "\n".join(
+                [
+                    "date,005930.KS,477850.KQ",
+                    "2026-01-01,100,",
+                    "2026-01-02,101,",
+                    "2026-05-29,150,20",
+                ]
+            ),
+            encoding="utf-8",
+        )
+
+        strict = load_price_csv(prices_csv)
+        sparse = load_price_csv(prices_csv, drop_incomplete=False)
+
+        assert len(strict) == 1
+        assert len(sparse) == 3
+        assert pd.isna(sparse.loc[pd.Timestamp("2026-01-01"), "477850.KQ"])

@@ -190,3 +190,90 @@ def test_manual_review_draft_uses_capital_plan_review_as_candidate_evidence() ->
         row = output.report.iloc[0]
         assert row["capital_plan_review"] == "PASS_CANDIDATE"
         assert "capital_plan=CAPITAL_AMOUNT_REQUIRED" in row["review_notes"]
+
+
+def test_manual_review_draft_keeps_filing_unknown_when_summary_has_hold_review() -> None:
+    module = importlib.import_module("quantum_trainer.manual_review_draft")
+
+    with TemporaryDirectory(dir=PROJECT_ROOT) as tmp_dir:
+        root = Path(tmp_dir)
+        memo_csv = root / "investment_memo.csv"
+        checklist_csv = root / "investment_checklist.csv"
+        research_csv = root / "company_research.csv"
+        filing_dir = root / "filing_review"
+        output_dir = root / "reports"
+        filing_dir.mkdir()
+
+        pd.DataFrame(
+            [
+                {
+                    "symbol": "183300.KQ",
+                    "company_name": "Komico",
+                    "sector": "Equipment",
+                    "memo_status": "THESIS_REVIEW",
+                    "order_status": "NO_ORDER",
+                    "core_thesis": "Komico is CORE_FOCUS from local data.",
+                    "evidence": "conviction_score=74.83",
+                    "risks": "filing hold review",
+                    "manual_checks": "최근 공시 확인",
+                    "loss_defense": "TODAY_FOCUS exit",
+                    "next_action": "수동 확인",
+                }
+            ]
+        ).to_csv(memo_csv, index=False)
+        pd.DataFrame(
+            [
+                {
+                    "symbol": "183300.KQ",
+                    "checklist_status": "READY_FOR_MANUAL_REVIEW",
+                    "automatic_blockers": "없음",
+                    "manual_checklist": "최근 공시 확인",
+                }
+            ]
+        ).to_csv(checklist_csv, index=False)
+        pd.DataFrame(
+            [
+                {
+                    "symbol": "183300.KQ",
+                    "research_score": 69.0,
+                    "research_view": "RESEARCH_CANDIDATE",
+                    "decision": "BUY_READY",
+                    "fundamental_view": "FUNDAMENTAL_NEUTRAL",
+                    "expected_20d_return": 0.2,
+                    "upside_probability": 0.99,
+                    "return_20d": 0.21,
+                    "ma20_gap": 0.11,
+                    "drawdown_20d": -0.09,
+                    "per": 20.0,
+                    "pbr": 1.5,
+                    "debt_ratio": 0.4,
+                }
+            ]
+        ).to_csv(research_csv, index=False)
+        pd.DataFrame(
+            [
+                {
+                    "symbol": "183300.KQ",
+                    "risk_id": "regulatory_accounting_litigation_overhang",
+                    "risk_title": "Regulatory/accounting litigation overhang",
+                    "source_checks": "",
+                    "evidence_count": 0,
+                    "key_evidence": "keyword hit 부족",
+                    "fatal_risk": "NO",
+                    "gate_opinion": "HOLD_REVIEW",
+                    "monitoring_rule": "추가 확인",
+                }
+            ]
+        ).to_csv(filing_dir / "filing_risk_summary_183300.csv", index=False)
+
+        output = module.run_manual_review_draft(
+            investment_memo_csv=memo_csv,
+            investment_checklist_csv=checklist_csv,
+            company_research_csv=research_csv,
+            filing_risk_dir=filing_dir,
+            output_dir=output_dir,
+        )
+
+        row = output.report.iloc[0]
+        assert row["filing_review"] == "UNKNOWN"
+        assert "filing risk summary has hold-review opinion" in row["review_notes"]

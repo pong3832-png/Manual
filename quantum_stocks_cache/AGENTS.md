@@ -2,6 +2,17 @@
 
 ## Local Addendum - Research Universe Merge
 
+- `scripts/import_krx_universe.py` imports a user-provided full KRX-style CSV locally and writes `configs/research_universe.full.csv` by default.
+- `scripts/import_kind_corp_list.py` imports a downloaded KRX KIND listed-corporation HTML/XLS file locally and can write `configs/research_universe.actual.csv` for the active KOSPI/KOSDAQ company universe.
+- `scripts/fetch_pykrx_universe.py` calls pykrx/KRX and is an external data operation. It must keep `order_status=NO_ORDER` and requires explicit user approval before execution.
+- Full KRX import keeps KOSPI/KOSDAQ common stocks, preferred shares, ETFs, SPACs, and other security types unless the user explicitly asks for a filtered active universe.
+- Importing an already downloaded local CSV is safe/local-only and must print `external_api_requested=NO`.
+- Downloading the full KRX source file from an external site and refreshing prices for the full KOSPI/KOSDAQ universe are bulk external data operations and require explicit user approval in the same turn.
+- `update_market_data.py --batch-size <n> --allow-partial` exists for large universes so thousands of tickers are not sent in one request and isolated provider-missing symbols do not block the whole cache refresh.
+- Full-universe coverage may report `PRICE_COVERAGE_PARTIAL` when only a tiny fraction of symbols is unavailable from the provider. Treat it as usable for ranking, not as order permission.
+- `load_price_csv(..., drop_incomplete=False)` is for sparse full-universe research data. Keep default strict loading for backtest/trading-style flows unless a research workflow explicitly needs sparse histories.
+- Enhanced time-series features such as market-relative strength, trend quality, volatility regime, and breakout gap are evaluation-only until walk-forward comparison shows improvement.
+- `company_research` may mark a strong but recently stretched candidate as `WAIT_PULLBACK`. Treat it as a chase-buy warning, not as a clean first-entry signal.
 - `scripts/build_research_universe.py` accepts repeated `--source-csv` arguments and optional `--limit`.
 - `scripts/add_research_symbol.py` adds or updates one company in `configs/research_universe.actual.csv` without rebuilding the whole universe.
 - `scripts/add_research_symbols.py` adds or updates multiple companies from a CSV and is local-only.
@@ -53,6 +64,8 @@
 - Universe coverage checks the 20-50 company target, required core comparison symbols, and cached price coverage. Missing price data must be reported as `PRICE_DATA_REQUIRED`; do not fetch prices automatically.
 - `scripts/run_pre_buy_decision.py` is local-only. It reads existing local reports and writes `reports/pre_buy_decision/`; all rows must keep `order_status=NO_ORDER`.
 - Pre-buy decision should surface manual-proposal and capital blockers such as `actual manual review config not applied` and `capital amount required`; these are stop signs before any real order.
+- If the top candidate has no `reports/filing_review/filing_risk_summary_<code>.csv`, pre-buy decision must stay `WAIT / NO_ORDER` and surface `filing risk summary not available` until a user-approved OpenDART review creates evidence.
+- If a filing risk summary contains any `gate_opinion=HOLD_REVIEW`, manual review draft must keep `filing_review=UNKNOWN` and pre-buy decision must stay `WAIT / NO_ORDER`; do not treat "no fatal risk" as enough for filing PASS.
 - `scripts/run_operating_status.py` is local-only. It reads the final local reports and writes `reports/operating_status/operating_status.csv|md` with `completion_status=DONE` or `NOT_DONE`.
 - Operating status is the explicit "끝/아직 끝 아님" report. Even when it says `DONE`, it must keep `order_status=NO_ORDER` and `broker_order_requested=NO`; broker orders remain manual and outside this repo.
 - `scripts/run_decision_gate.py` is local-only. It reads `reports/investment_memo/investment_memo.csv` plus an optional manual review CSV and writes `reports/decision_gate/`.

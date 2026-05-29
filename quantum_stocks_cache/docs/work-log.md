@@ -1,5 +1,85 @@
 # Work Log
 
+## 2026-05-29 - Full KOSPI/KOSDAQ Universe Activated
+
+- Installed and pinned `pykrx`, but direct pykrx/KRX calls returned empty/JSON errors in this environment, so the active full universe was built from the KRX KIND listed-corporation download instead.
+- Added:
+  - `src/quantum_trainer/kind_universe.py`
+  - `scripts/import_kind_corp_list.py`
+  - `tests/test_kind_universe.py`
+  - `src/quantum_trainer/krx_universe.py`
+  - `scripts/fetch_pykrx_universe.py`
+  - `tests/test_krx_universe.py`
+- Changed:
+  - `configs/research_universe.actual.csv` now contains 2,657 KOSPI/KOSDAQ listed companies: 838 KOSPI and 1,819 KOSDAQ.
+  - `data/prices.csv` was refreshed for 2,656 symbols through the approved bulk yfinance path; `099520.KQ` was unavailable from the provider.
+  - `update_market_data.py --allow-partial` isolates failed symbols instead of failing the whole full-universe refresh.
+  - Full-universe coverage now treats tiny provider gaps as `PRICE_COVERAGE_PARTIAL` and usable for ranking.
+  - Company research now loads sparse full-universe price history for research ranking while strict loading remains the default for other flows.
+- Result:
+  - Local today pipeline completed with `external_api_requested=NO` after the approved data refresh.
+  - Full-universe top research scores: `003550.KS` LG 89.72, `028260.KS` Samsung C&T 88.38, `005930.KS` Samsung Electronics 87.55, `005380.KS` Hyundai Motor 82.68, `009150.KS` Samsung Electro-Mechanics 81.63.
+  - Final operating status is still `NOT_DONE` because Samsung C&T pre-buy decision is `WAIT` until manual review evidence is confirmed. Broker/order state remains `NO_ORDER`.
+- Verification:
+  - `.\.venv\Scripts\python.exe -m pytest .\tests\test_config_io.py .\tests\test_alpha_forecast.py .\tests\test_market_data.py .\tests\test_today_pipeline.py .\tests\test_universe_coverage.py -q` -> `30 passed`.
+  - `.\.venv\Scripts\python.exe -m pytest .\tests\test_kind_universe.py .\tests\test_krx_universe.py .\tests\test_universe_coverage.py .\tests\test_operating_status.py -q` -> `12 passed`.
+  - `.\.venv\Scripts\python.exe .\scripts\run_today_pipeline.py` -> `executed_count=23`, `external_api_requested=NO`, dashboard regenerated, `order_status=NO_ORDER`.
+
+## 2026-05-29 - Full Universe And Time-Series Gate Prep
+
+- Added a local full-KRX universe import path.
+- New/changed files:
+  - `scripts/import_krx_universe.py`
+  - `src/quantum_trainer/research_universe.py`
+  - `src/quantum_trainer/market_data.py`
+  - `scripts/update_market_data.py`
+  - `src/quantum_trainer/features.py`
+  - `src/quantum_trainer/alpha_forecast.py`
+  - `tests/test_research_universe.py`
+  - `tests/test_market_data.py`
+  - `tests/test_alpha_forecast.py`
+  - `AGENTS.md`
+  - `docs/superpowers/plans/2026-05-29-full-krx-universe-timeseries.md`
+- Result:
+  - `normalize_full_krx_universe()` accepts KRX-style Korean/English columns and keeps all security types, including preferred shares, ETFs, and SPACs.
+  - `scripts/import_krx_universe.py --source-csv <csv>` writes a normalized full universe locally and prints `external_api_requested=NO`.
+  - `update_market_data.py` now supports `--batch-size` and uses batched fetches for large universes.
+  - Time-series candidate features were added: market-relative 20D return, 60D trend quality, 20/60 volatility regime, and 120D breakout gap.
+  - Enhanced time-series features remain evaluation-only unless walk-forward comparison marks them `IMPROVED_CANDIDATE`.
+- Verification:
+  - `.\.venv\Scripts\python.exe -m pytest .\tests\test_research_universe.py .\tests\test_market_data.py .\tests\test_alpha_forecast.py -q` -> `20 passed`.
+
+## 2026-05-29 - Approved Market Refresh
+
+- Ran the user-approved `run_today_pipeline.py --refresh-market-data`.
+- Result:
+  - `data/prices.csv` latest date updated to `2026-05-29`.
+  - `configs/fundamentals.actual.csv` valuation metrics refreshed with PER/PBR/market cap and existing ROE/fundamental inputs.
+  - Current program top remains `003550.KS` LG Corp: `BUY_READY`, `CORE_FOCUS`, `order_status=NO_ORDER`.
+  - `028260.KS` Samsung C&T is also `CORE_FOCUS` but pre-buy decision remains `WAIT` because the manual gate is not active for that symbol.
+  - `000270.KS` Kia is `WAIT`, not the top quant candidate.
+- Verification:
+  - Pipeline completed 25 steps with `external_api_requested=YES`.
+  - Operating status is `DONE`, broker order remains `NO_ORDER`.
+
+## 2026-05-29 - Dashboard Filing Risk Board
+
+- Added a top-candidate filing risk card to the dashboard so the first candidate shows its fatal-risk count and review opinion beside the main decision metrics.
+- Added a candidate-level filing risk board that reads all local `reports/filing_review/filing_risk_summary_*.csv` files, so Samsung C&T `028260.KS` remains visible even when it is not the current top candidate.
+- Changed files:
+  - `src/quantum_trainer/dashboard.py`
+  - `tests/test_dashboard.py`
+  - `docs/work-log.md`
+- Result:
+  - The dashboard keeps `order_status=NO_ORDER` and does not fetch external data.
+  - Current regenerated dashboard top candidate is `003550.KS`; the new board also shows `028260.KS` with 0 fatal filing risks and `PASS_CANDIDATE_WITH_MONITORING`.
+- Verification:
+  - `.\.venv\Scripts\python.exe -m pytest .\tests\test_dashboard.py -q` -> `1 passed`.
+  - `.\.venv\Scripts\python.exe -m py_compile .\src\quantum_trainer\dashboard.py` -> passed.
+  - `.\.venv\Scripts\python.exe .\scripts\run_dashboard.py --reports-dir .\reports` -> regenerated `reports/dashboard/index.html`, `top_symbol=003550.KS`, `order_status=NO_ORDER`.
+  - `rg "1순위 공시 리스크|후보별 공시 리스크 현황|028260.KS|삼성물산|치명 0개" .\reports\dashboard\index.html` -> matched.
+  - `rg "order_status=|Broker order|manual gate|actual_config_written|conviction_score|upside_probability" .\reports\dashboard\index.html` -> no matches.
+
 ## 2026-05-28 - Company Name Search UI
 
 - Added local company-name search so users do not need to know the 6-digit stock code for covered names.
@@ -1326,3 +1406,102 @@
   - `.\.venv\Scripts\python.exe -m pytest .\tests\test_dashboard.py -q`
   - `.\.venv\Scripts\python.exe .\scripts\run_dashboard.py --reports-dir .\reports`
   - `rg "퀀트 트레이너|오늘 결론|주문은 자동 실행되지 않습니다|다른 후보와 비교|내가 넣은 종목 분석 상태" .\reports\dashboard\index.html`
+
+## 2026-05-29 - Full Universe And Buy-Blocker Tightening
+
+- Expanded `configs/research_universe.actual.csv` to the active KRX KOSPI/KOSDAQ universe from KIND-listed corporation data.
+  - Current universe: 2,657 rows (`KOSPI 838`, `KOSDAQ 1,819`).
+  - Price cache refreshed for 2,656 symbols through `2026-05-29`; only `099520.KQ` is missing, so `PRICE_COVERAGE_PARTIAL` is accepted for review use.
+- Added KIND/pykrx universe import modules and tests:
+  - `src/quantum_trainer/kind_universe.py`
+  - `src/quantum_trainer/krx_universe.py`
+  - `scripts/import_kind_corp_list.py`
+  - `scripts/fetch_pykrx_universe.py`
+  - `tests/test_kind_universe.py`
+  - `tests/test_krx_universe.py`
+- Added full-universe sparse price support:
+  - `load_price_csv(..., drop_incomplete=False)` keeps columns with isolated missing history.
+  - `company_research` and alpha forecast handle partial symbol coverage without crashing.
+  - `universe_coverage` and `operating_status` distinguish `PRICE_COVERAGE_PARTIAL` from a hard blocker.
+- Added overextension/chase-buy control in `company_research`:
+  - `extension_risk=OVEREXTENDED_WAIT` or `EXTREME_EXTENSION` lowers score and changes the research view to `WAIT_PULLBACK`.
+  - This prevents already-stretched names from being treated as clean first-entry candidates.
+- Tightened pre-buy and dashboard blockers:
+  - Missing `filing_risk_summary_<code>.csv` now keeps the candidate at `WAIT / NO_ORDER`.
+  - Dashboard shows `1순위 공시 리스크 = 공시요약 없음 / 검토 필요`.
+  - Dashboard Korean text now translates the filing-summary blocker and uses a natural topic particle such as `코미코는`.
+- Current local pipeline result:
+  - Top quantitative candidate: `183300.KQ` 코미코.
+  - Final pre-buy status: `WAIT`.
+  - Final order status: `NO_ORDER`.
+  - Main blockers: manual gate not ready, filing risk summary not available.
+- Verification:
+  - `.\.venv\Scripts\python.exe -m pytest .\tests\test_pre_buy_decision.py .\tests\test_dashboard.py -q` -> `5 passed`
+  - `.\.venv\Scripts\python.exe .\scripts\run_today_pipeline.py` -> success, `executed_count=23`, `external_api_requested=NO`
+  - `.\.venv\Scripts\python.exe .\scripts\run_dashboard.py --reports-dir .\reports` -> success
+  - `rg "코미코는|공시요약 없음|공시 리스크 요약이 없습니다" .\reports\dashboard\index.html` -> expected lines found
+- Next:
+  - To make a new full-universe top candidate actionable, generate OpenDART filing text scans and `filing_risk_summary_<code>.csv` for that specific symbol after explicit external API approval.
+  - Do not write `PASS` into `configs/manual_review.actual.csv` automatically; keep using manual proposal/apply-plan files until final user confirmation.
+
+## 2026-05-29 - Komico OpenDART Filing Gate
+
+- Ran user-approved single-symbol OpenDART review for current top candidate `183300.KQ` 코미코.
+  - Disclosure list: `reports/filing_review/opendart_filings_183300.csv`
+  - Filing review draft: `reports/filing_review/opendart_filing_review_183300.csv|md`
+  - Text risk scan: `reports/filing_review/opendart_text_risk_scan_183300.csv|md`
+  - Compressed risk summary: `reports/filing_review/filing_risk_summary_183300.csv|md`
+- OpenDART scan scope:
+  - `disclosure_count=34`
+  - `document_count=2`
+  - `evidence_count=31`
+  - External API was used only for the approved single-symbol OpenDART fetch/scan steps.
+- Filing risk result for 코미코:
+  - Core risks: 5
+  - Fatal risk count: 0
+  - Overall opinion: `HOLD_REVIEW`
+  - Dashboard now shows `1순위 공시 리스크 = 치명 0개 / 보류 검토`.
+- Fixed filing gate behavior:
+  - Generic filing summaries no longer reuse Samsung C&T-specific related-party evidence such as "130개 종속기업/52개 관계기업".
+  - If any filing risk row is `gate_opinion=HOLD_REVIEW`, `manual_review_draft` keeps `filing_review=UNKNOWN`.
+  - If any filing risk row is `HOLD_REVIEW`, `pre_buy_decision` stays `WAIT / NO_ORDER` and surfaces `filing risk hold review`.
+  - Dashboard translates that blocker to `공시 리스크 보류 검토`.
+- Current final state:
+  - Top candidate: `183300.KQ` 코미코
+  - Pre-buy status: `WAIT`
+  - Order status: `NO_ORDER`
+  - Manual filing review: `UNKNOWN`
+  - Main blockers: manual gate not ready, filing risk hold review.
+- Verification:
+  - `.\.venv\Scripts\python.exe -m pytest .\tests\test_filing_risk_summary.py -q` -> `2 passed`
+  - `.\.venv\Scripts\python.exe -m pytest .\tests\test_manual_review_draft.py .\tests\test_pre_buy_decision.py -q` -> `7 passed`
+  - `.\.venv\Scripts\python.exe -m pytest .\tests\test_dashboard.py -q` -> `2 passed`
+  - `.\.venv\Scripts\python.exe .\scripts\run_today_pipeline.py` -> success, `executed_count=24`, `external_api_requested=NO`
+  - `.\.venv\Scripts\python.exe .\scripts\run_dashboard.py --reports-dir .\reports` -> success
+  - `rg "코미코|보류 검토|공시 리스크 보류 검토" .\reports\dashboard\index.html` -> expected lines found
+- Next:
+  - Human review should decide whether the `HOLD_REVIEW` row is a true issue or a conservative keyword gap.
+  - Do not apply `configs/manual_review.actual.csv` PASS values until the user explicitly confirms final manual review.
+
+## 2026-05-29 - Next Session Handoff
+
+- Current top candidate: `183300.KQ` 코미코.
+- Current final status: `WAIT / NO_ORDER`.
+- Current blockers:
+  - `filing_review=UNKNOWN` because `filing_risk_summary_183300.csv` contains `gate_opinion=HOLD_REVIEW`.
+  - `valuation_review=UNKNOWN` because 코미코 PER/PBR inputs are still `0.00`.
+  - manual actual config has not been applied.
+- Key files to open next:
+  - `reports/filing_review/filing_risk_summary_183300.md`
+  - `reports/decision_gate/manual_review_draft.csv`
+  - `reports/pre_buy_decision/pre_buy_decision.csv`
+  - `reports/dashboard/index.html`
+- Recommended next work:
+  1. Decide whether 코미코 `Regulatory/accounting litigation overhang` is a real issue or only a conservative keyword-gap hold.
+  2. Fill 코미코 valuation inputs: PER, PBR, ROE, debt ratio, market cap.
+  3. Write one-page 코미코 investment thesis after filing + valuation checks.
+  4. Run the same OpenDART risk summary for next top candidates only after explicit approval.
+- Do not:
+  - Do not write `PASS` into `configs/manual_review.actual.csv` without final user confirmation.
+  - Do not treat `CORE_FOCUS`, `BUY_READY`, nonzero order sizing, or `PERSISTENT_FOCUS` as buy permission.
+  - Do not run bulk price/OpenDART/API refresh without explicit approval.

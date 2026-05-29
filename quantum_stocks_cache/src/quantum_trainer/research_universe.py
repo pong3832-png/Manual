@@ -248,6 +248,55 @@ def normalize_research_universe(source: pd.DataFrame) -> pd.DataFrame:
     return normalized.loc[:, ["symbol", "company_name", "sector", "market", "code"]]
 
 
+def normalize_full_krx_universe(source: pd.DataFrame) -> pd.DataFrame:
+    """Normalize a full KRX-style listing CSV without filtering instruments out."""
+    if source.empty:
+        return pd.DataFrame(
+            columns=[
+                "symbol",
+                "company_name",
+                "sector",
+                "market",
+                "code",
+                "security_type",
+                "share_type",
+                "listing_status",
+            ]
+        )
+
+    base = pd.DataFrame(
+        {
+            "code": _first_column(source, ["code", "단축코드", "종목코드", "short_code", "ticker"]),
+            "company_name": _first_column(source, ["company_name", "한글 종목명", "종목명", "name", "Name"]),
+            "market": _first_column(source, ["market", "시장구분", "시장", "Market"]),
+            "sector": _first_column(source, ["sector", "업종명", "업종", "Sector"]),
+        }
+    )
+    if base["code"].eq("").all() and "symbol" in source.columns:
+        base["symbol"] = source["symbol"].astype(str)
+
+    normalized = normalize_research_universe(base)
+    normalized["security_type"] = _first_column(source, ["security_type", "증권구분", "증권종류", "SecurityType"])
+    normalized["share_type"] = _first_column(source, ["share_type", "주식종류", "종목구분", "ShareType"])
+    normalized["listing_status"] = _first_column(source, ["listing_status", "상장상태", "status", "Status"])
+    normalized.loc[normalized["security_type"] == "", "security_type"] = "UNKNOWN"
+    normalized.loc[normalized["share_type"] == "", "share_type"] = "UNKNOWN"
+    normalized.loc[normalized["listing_status"] == "", "listing_status"] = "LISTED"
+    return normalized.loc[
+        :,
+        [
+            "symbol",
+            "company_name",
+            "sector",
+            "market",
+            "code",
+            "security_type",
+            "share_type",
+            "listing_status",
+        ],
+    ]
+
+
 def _normalize_code(value: object) -> str:
     text = str(value).strip()
     if text.endswith(".KS") or text.endswith(".KQ"):
@@ -271,3 +320,10 @@ def _symbol_from_code_and_market(code: str, market: str) -> str:
     if normalized_market in {"KOSDAQ", "KQ"}:
         return f"{normalized_code}.KQ"
     return f"{normalized_code}.KS"
+
+
+def _first_column(source: pd.DataFrame, candidates: list[str]) -> pd.Series:
+    for column in candidates:
+        if column in source.columns:
+            return source[column].astype(str).str.strip()
+    return pd.Series(["" for _ in range(len(source))], index=source.index, dtype=str)

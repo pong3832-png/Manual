@@ -10,7 +10,7 @@ from quantum_trainer.trend import BacktestResult
 logger = logging.getLogger(__name__)
 
 
-def load_price_csv(path: Path | str) -> pd.DataFrame:
+def load_price_csv(path: Path | str, drop_incomplete: bool = True) -> pd.DataFrame:
     try:
         csv_path = Path(path).resolve()
         if not csv_path.exists():
@@ -25,7 +25,8 @@ def load_price_csv(path: Path | str) -> pd.DataFrame:
         if prices.empty or len(prices.columns) == 0:
             raise ValueError("Price CSV must include at least one price column.")
 
-        prices = prices.apply(pd.to_numeric, errors="coerce").ffill().dropna(how="any")
+        drop_mode = "any" if drop_incomplete else "all"
+        prices = prices.apply(pd.to_numeric, errors="coerce").ffill().dropna(how=drop_mode)
         if prices.empty:
             raise ValueError("Price data became empty after numeric conversion.")
         return prices

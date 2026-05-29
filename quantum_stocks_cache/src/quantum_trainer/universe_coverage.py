@@ -34,6 +34,8 @@ def run_universe_coverage(
     prices_csv: Path | str | None = None,
     min_count: int = 20,
     max_count: int = 50,
+    full_universe_min_count: int = 1000,
+    min_price_coverage_ratio: float = 0.99,
     required_symbols: Sequence[str] | None = None,
 ) -> UniverseCoverageOutput:
     if min_count <= 0:
@@ -54,11 +56,23 @@ def run_universe_coverage(
     required_missing = [symbol for symbol in required if symbol not in symbol_set]
 
     price_missing = _missing_price_symbols(symbols=symbols, prices_csv=prices_csv)
-    count_status = _count_status(len(universe), min_count=min_count, max_count=max_count)
-    price_status = "PRICE_COVERAGE_READY" if not price_missing else "PRICE_DATA_REQUIRED"
+    count_status = _count_status(
+        len(universe),
+        min_count=min_count,
+        max_count=max_count,
+        full_universe_min_count=full_universe_min_count,
+    )
+    price_coverage_ratio = (len(symbols) - len(price_missing)) / len(symbols) if symbols else 0.0
+    price_status = _price_status(
+        price_missing=price_missing,
+        coverage_ratio=price_coverage_ratio,
+        min_price_coverage_ratio=min_price_coverage_ratio,
+    )
     universe_status = (
         "PASS_CANDIDATE"
-        if count_status == "COUNT_OK" and not required_missing and price_status == "PRICE_COVERAGE_READY"
+        if count_status in {"COUNT_OK", "FULL_UNIVERSE_OK"}
+        and not required_missing
+        and price_status in {"PRICE_COVERAGE_READY", "PRICE_COVERAGE_PARTIAL"}
         else "EXPAND_UNIVERSE"
     )
 
@@ -73,6 +87,7 @@ def run_universe_coverage(
         "required_missing_count": int(len(required_missing)),
         "required_missing_symbols": ";".join(required_missing),
         "price_coverage_status": price_status,
+        "price_coverage_ratio": round(float(price_coverage_ratio), 6),
         "price_missing_count": int(len(price_missing)),
         "price_missing_symbols": ";".join(price_missing),
         "order_status": "NO_ORDER",
@@ -81,6 +96,7 @@ def run_universe_coverage(
             count_status=count_status,
             required_missing=required_missing,
             price_missing=price_missing,
+            price_status=price_status,
         ),
     }
 
@@ -119,12 +135,26 @@ def _missing_price_symbols(symbols: Sequence[str], prices_csv: Path | str | None
     return [symbol for symbol in symbols if symbol not in available]
 
 
-def _count_status(count: int, min_count: int, max_count: int) -> str:
+def _count_status(count: int, min_count: int, max_count: int, full_universe_min_count: int) -> str:
     if count < min_count:
         return "TOO_SMALL"
+    if count >= full_universe_min_count:
+        return "FULL_UNIVERSE_OK"
     if count > max_count:
         return "TOO_LARGE"
     return "COUNT_OK"
+
+
+def _price_status(
+    price_missing: Sequence[str],
+    coverage_ratio: float,
+    min_price_coverage_ratio: float,
+) -> str:
+    if not price_missing:
+        return "PRICE_COVERAGE_READY"
+    if coverage_ratio >= min_price_coverage_ratio:
+        return "PRICE_COVERAGE_PARTIAL"
+    return "PRICE_DATA_REQUIRED"
 
 
 def _normalize_required_symbol(symbol: str) -> str:
@@ -140,6 +170,7 @@ def _next_step(
     count_status: str,
     required_missing: Sequence[str],
     price_missing: Sequence[str],
+    price_status: str,
 ) -> str:
     if count_status == "TOO_SMALL":
         return "add more core companies until the universe reaches the target range"
@@ -147,7 +178,7 @@ def _next_step(
         return "trim the universe to the strongest 20-50 comparable companies"
     if required_missing:
         return "add missing core comparison companies before ranking"
-    if price_missing:
+    if price_missing and price_status == "PRICE_DATA_REQUIRED":
         return "refresh cached prices with explicit approval before ranking"
     return "run company research, manual gates, and dashboard review"
 

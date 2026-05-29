@@ -84,6 +84,24 @@ def test_operating_status_ignores_pre_buy_user_approval_note_as_blocker() -> Non
         assert row["blockers"] == ""
 
 
+def test_operating_status_accepts_partial_full_universe_price_coverage() -> None:
+    module = importlib.import_module("quantum_trainer.operating_status")
+
+    with TemporaryDirectory(dir=PROJECT_ROOT) as tmp_dir:
+        reports = Path(tmp_dir) / "reports"
+        _write_pre_buy(reports, decision_status="BUY_READY", capital_status="CAPITAL_PROVIDED", blockers="")
+        _write_decision_gate(reports, status="READY_FOR_SIZING_REVIEW")
+        _write_manual_apply_plan(reports, actual_written="YES")
+        _write_universe_coverage(reports, universe_status="PASS_CANDIDATE", price_status="PRICE_COVERAGE_PARTIAL")
+        _write_order_candidates(reports, order_status="REVIEW_ONLY", capital_status="CAPITAL_PROVIDED")
+
+        output = module.run_operating_status(reports_dir=reports)
+
+        row = output.report.iloc[0]
+        assert row["completion_status"] == "DONE"
+        assert "price coverage not ready" not in row["blockers"]
+
+
 def _write_pre_buy(
     reports: Path,
     decision_status: str,
