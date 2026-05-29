@@ -31,7 +31,10 @@ import urllib.parse
 from datetime import datetime, timedelta
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-AUTOMATION_LOCK_PATH = os.path.join(BASE_DIR, "자동발행상태기록파일", "automation.lock")
+PROJECT_ROOT = os.path.dirname(BASE_DIR)
+AUTOMATION_LOCK_PATH = os.path.join(PROJECT_ROOT, "자동발행상태기록파일", "automation.lock")
+DEFAULT_NAVER_ID = "skssj2628"
+os.makedirs(os.path.dirname(AUTOMATION_LOCK_PATH), exist_ok=True)
 
 
 def load_env_file(path):
@@ -125,6 +128,60 @@ def resolve_default_csv_path():
     return os.path.join(BASE_DIR, "skssj2628_db.csv")
 
 
+def get_installed_chrome_major_version():
+    chrome_paths = [
+        r"C:\Program Files\Google\Chrome\Application\chrome.exe",
+        r"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe",
+    ]
+    for chrome_path in chrome_paths:
+        if not os.path.exists(chrome_path):
+            continue
+        try:
+            safe_path = chrome_path.replace("'", "''")
+            completed = subprocess.run(
+                ["powershell", "-NoProfile", "-Command", f"(Get-Item -LiteralPath '{safe_path}').VersionInfo.ProductVersion"],
+                capture_output=True,
+                text=True,
+                timeout=5,
+            )
+            match = re.search(r"(\d+)\.", completed.stdout or "")
+            if match:
+                return match.group(1)
+        except Exception:
+            continue
+    return None
+
+
+def get_chromedriver_major_version(chromedriver_path):
+    try:
+        completed = subprocess.run(
+            [chromedriver_path, "--version"],
+            capture_output=True,
+            text=True,
+            timeout=5,
+        )
+        match = re.search(r"ChromeDriver\s+(\d+)\.", completed.stdout or "")
+        if match:
+            return match.group(1)
+    except Exception:
+        return None
+    return None
+
+
+def is_chromedriver_compatible(chromedriver_path):
+    chrome_major = get_installed_chrome_major_version()
+    driver_major = get_chromedriver_major_version(chromedriver_path)
+    if not chrome_major or not driver_major:
+        return True
+    if chrome_major != driver_major:
+        print(
+            "   >> [주의] ChromeDriver 버전 불일치로 건너뜁니다: "
+            f"Chrome {chrome_major}, Driver {driver_major}, {chromedriver_path}"
+        )
+        return False
+    return True
+
+
 def create_chrome_driver(options):
     """
     ChromeDriver 경로가 지정돼 있으면 우선 사용하고,
@@ -137,9 +194,11 @@ def create_chrome_driver(options):
             raise FileNotFoundError(
                 f"CHROMEDRIVER_PATH 경로를 찾을 수 없습니다: {chromedriver_path}"
             )
-        return webdriver.Chrome(service=Service(chromedriver_path), options=options)
+        if is_chromedriver_compatible(chromedriver_path):
+            return webdriver.Chrome(service=Service(chromedriver_path), options=options)
 
     candidate_paths = [
+        os.path.join(os.path.expanduser("~"), ".wdm", "drivers", "chromedriver", "win64", "148.0.7778.167", "chromedriver-win32", "chromedriver.exe"),
         os.path.join(os.path.expanduser("~"), ".cache", "selenium", "chromedriver", "win64", "147.0.7727.117", "chromedriver.exe"),
         os.path.join(os.path.expanduser("~"), ".cache", "selenium", "chromedriver", "win64", "147.0.7727.56", "chromedriver.exe"),
         r"C:\py_temp\chromedriver.exe",
@@ -149,7 +208,7 @@ def create_chrome_driver(options):
         os.path.join(os.path.expanduser("~"), "workspace", "chromedriver", "chromedriver-win64", "chromedriver.exe"),
     ]
     for candidate_path in candidate_paths:
-        if os.path.exists(candidate_path):
+        if os.path.exists(candidate_path) and is_chromedriver_compatible(candidate_path):
             print(f"   >> [안내] 로컬 ChromeDriver 사용: {candidate_path}")
             return webdriver.Chrome(service=Service(candidate_path), options=options)
 
@@ -182,13 +241,24 @@ def sanitize_profile_name(name):
 
 
 def resolve_naver_profile_path(naver_id):
-    env_profile_path = os.getenv("NAVER_PROFILE_PATH", "").strip()
+    env_profile_path = os.getenv("SKSSJ2628_NAVER_PROFILE_PATH", "").strip()
     if env_profile_path:
         return env_profile_path
+
+    legacy_env_profile_path = os.getenv("NAVER_PROFILE_PATH", "").strip()
+    if legacy_env_profile_path:
+        print(
+            "   >> [안내] skssj2628은 계정 혼선을 막기 위해 NAVER_PROFILE_PATH 대신 "
+            "SKSSJ2628_NAVER_PROFILE_PATH 또는 계정별 기본 프로필을 사용합니다."
+        )
 
     id_profile = os.path.join(BASE_DIR, f"ChromeNaverBot_{sanitize_profile_name(naver_id)}")
 
     return id_profile
+
+
+def resolve_gemini_profile_path():
+    return os.getenv("GEMINI_PROFILE_PATH", "").strip() or os.path.join(os.path.expanduser("~"), "ChromeGeminiBot")
 
 
 def get_naver_write_url(naver_id):
@@ -202,29 +272,36 @@ def parse_args():
     parser.add_argument("--naver-password", help="네이버 로그인 비밀번호")
     parser.add_argument("--csv-path", help="쿠팡 상품 CSV 경로")
     parser.add_argument("--scheduled", action="store_true", help="작업 스케줄러 등 비대화형 실행 모드")
+    parser.add_argument(
+        "--login",
+        "--gemini-login",
+        dest="gemini_login",
+        action="store_true",
+        help="Gemini 웹사이트 로그인 세션만 저장하고 종료",
+    )
+    parser.add_argument(
+        "--naver-login",
+        action="store_true",
+        help="네이버 블로그 로그인 세션만 저장하고 종료",
+    )
     return parser.parse_args()
 
 
 def load_runtime_settings(args):
     """환경변수/인자/대화형 입력 순서로 실행 설정을 결정한다."""
     settings = {
-        "naver_id": (args.naver_id or os.getenv("NAVER_ID", "skssj2628")).strip(),
-        "naver_password": (args.naver_password or os.getenv("NAVER_PASSWORD", "")).strip(),
-        "csv_file_path": (args.csv_path or os.getenv("COUPANG_CSV_PATH", "") or resolve_default_csv_path()).strip(),
+        "naver_id": (args.naver_id or os.getenv("SKSSJ2628_NAVER_ID", "") or DEFAULT_NAVER_ID).strip(),
+        "naver_password": (
+            args.naver_password
+            or os.getenv("SKSSJ2628_NAVER_PASSWORD", "")
+            or os.getenv("NAVER_PASSWORD", "")
+        ).strip(),
+        "csv_file_path": (args.csv_path or resolve_default_csv_path()).strip(),
     }
 
     if not settings["csv_file_path"]:
         settings["csv_file_path"] = resolve_default_csv_path()
 
-    if args.scheduled:
-        if not settings["naver_password"]:
-            print("   >> [안내] NAVER_PASSWORD가 비어 있습니다. 저장된 네이버 세션이 만료되면 로그인 단계에서 실패할 수 있습니다.")
-        return settings
-
-    if not settings["naver_id"]:
-        settings["naver_id"] = input("🔑 네이버 로그인 ID를 입력하세요: ").strip()
-    if not settings["naver_password"]:
-        settings["naver_password"] = input("🔑 네이버 로그인 비밀번호를 입력하세요: ").strip()
     if not args.scheduled and not args.csv_path and not os.getenv("COUPANG_CSV_PATH", ""):
         entered_csv_path = input("📂 쿠팡 상품 CSV 경로 (엔터 시 기본값): ").strip()
         if entered_csv_path:
@@ -308,10 +385,10 @@ DAILY_SCENE_BANK = [
 ]
 
 PHOTO_STYLE_BANK = [
-    "한국의 현실적인 일상 스냅 사진",
-    "따뜻한 생활감이 느껴지는 자연광 사진",
-    "과하게 연출되지 않은 블로그용 라이프스타일 사진",
-    "동네 산책이나 카페 기록처럼 보이는 사진",
+    "20대 성인 한국인 여자가 자연스럽게 등장하는 현실적인 일상 스냅 사진",
+    "20대 성인 한국인 여자가 편안하게 머무는 따뜻한 자연광 사진",
+    "20대 성인 한국인 여자가 생활 속에 자연스럽게 보이는 블로그용 라이프스타일 사진",
+    "20대 성인 한국인 여자의 동네 산책이나 카페 기록처럼 보이는 사진",
 ]
 
 DAILY_CATEGORY_BANK = [
@@ -672,7 +749,6 @@ DAILY_SEARCH_INTENT_BANK = {
     ],
 }
 
-
 HEALTH_TOPIC_BANK = [
     "피곤할 때 생활 루틴 점검",
     "수면 습관과 하루 집중력",
@@ -917,6 +993,66 @@ def infer_coupang_product_group(row):
     return "기타생활용품"
 
 
+def build_coupang_group_writing_guide(group_name, row):
+    text_blob = " ".join(
+        [
+            group_name,
+            get_product_field(row, "상품명"),
+            get_product_field(row, "키워드"),
+            get_product_field(row, "카테고리"),
+            get_product_field(row, "상품군"),
+        ]
+    ).lower()
+
+    if any(keyword in text_blob for keyword in ["식품", "간식", "음료", "쌀", "김치", "커피", "차", "라면", "소스", "고기", "과일"]):
+        return (
+            "- 식품은 맛을 단정하지 말고 보관 방식, 용량, 소비 속도, 유통기한 확인, 가족 수 기준을 중심으로 쓴다.\n"
+            "- 냉장/냉동/상온 보관 여부와 한 번에 소비하기 쉬운 양인지 같은 생활 판단을 구체적으로 다룬다.\n"
+            "- 효능, 건강 개선, 체중감량, 치료처럼 확인되지 않은 표현은 넣지 않는다."
+        )
+
+    if any(keyword in text_blob for keyword in ["선풍기", "써큘레이터", "서큘레이터", "에어컨", "냉풍기", "제습기", "가습기"]):
+        return (
+            "- 계절가전은 방 크기, 소음, 전기 사용 부담, 물통/필터/청소 관리, 설치 공간을 중심으로 쓴다.\n"
+            "- 시원해진다, 습도가 완전히 잡힌다 같은 성능 보장은 피하고 사용 환경에 따라 체감이 달라질 수 있음을 넣는다.\n"
+            "- 계절성 수요가 있는 만큼 지금 필요한 사람과 천천히 비교해도 되는 사람을 나눠서 설명한다."
+        )
+
+    if any(keyword in text_blob for keyword in ["모기", "훈증", "살충", "퇴치", "홈매트"]):
+        return (
+            "- 벌레/모기 관련 제품은 사용 공간, 환기, 아이나 반려동물 여부, 사용 시간대, 교체 주기를 중심으로 쓴다.\n"
+            "- 완전 차단, 박멸, 치료처럼 과한 표현은 금지하고 생활 불편을 줄이는 확인 기준으로 풀어낸다.\n"
+            "- 성분이나 안전성은 단정하지 말고 상세페이지와 사용 설명 확인이 필요하다고 안내한다."
+        )
+
+    if any(keyword in text_blob for keyword in ["건조대", "빨래", "세탁"]):
+        return (
+            "- 세탁/건조 관련 제품은 설치 공간, 접었을 때 크기, 가족 빨래량, 이동 편의성, 습한 날 사용성을 중심으로 쓴다.\n"
+            "- 튼튼함을 단정하지 말고 하중, 소재, 바닥 공간처럼 상세페이지에서 확인할 항목을 구체화한다.\n"
+            "- 원룸, 베란다, 욕실 앞처럼 실제 배치 장면을 떠올릴 수 있게 문장을 만든다."
+        )
+
+    if any(keyword in text_blob for keyword in ["포트", "주전자", "전기포트"]):
+        return (
+            "- 주방 소형가전은 용량, 세척 편의, 보관 위치, 전원선, 안전 기능 확인을 중심으로 쓴다.\n"
+            "- 끓는 속도나 내구성을 임의로 단정하지 말고 상세 스펙에서 확인할 부분으로 안내한다.\n"
+            "- 1인 가구, 사무실, 가족용처럼 물 사용량이 다른 상황을 나눠 설명한다."
+        )
+
+    if any(keyword in text_blob for keyword in ["소모품", "휴지", "세제", "청소", "필터", "리필", "봉투", "수세미"]):
+        return (
+            "- 소모품은 개수, 리필 가능 여부, 보관 부피, 교체 주기, 사용 장소별 소비량을 중심으로 쓴다.\n"
+            "- 싸다/오래 간다처럼 단정하지 말고 집의 소비 속도와 보관 공간에 맞는지 따지게 한다.\n"
+            "- 대량 구성은 장점과 함께 보관 부담도 같이 다룬다."
+        )
+
+    return (
+        "- 생활용품은 사용 장소, 보관 공간, 구성, 크기, 관리 편의성, 자주 쓰는 빈도를 중심으로 쓴다.\n"
+        "- 상품군이 애매할수록 일반 칭찬보다 어떤 상황에서 확인할 만한지 구체적인 장면을 먼저 제시한다.\n"
+        "- 가격보다 내 생활 방식과 맞는지 따지는 흐름을 유지한다."
+    )
+
+
 def score_coupang_candidate(row, recent_history):
     group_name = infer_coupang_product_group(row)
     keyword = get_product_field(row, "키워드")
@@ -1141,7 +1277,10 @@ def build_daily_image_prompt(daily_context):
     return (
         f"{daily_context['photo_style']}, {daily_context['season']} 분위기, "
         f"{daily_context['weather_key']} 느낌, {daily_context['daily_scene']}, "
-        f"{daily_context['seasonal_topic']}를 연상시키는 장면"
+        f"{daily_context['search_phrase']}와 연결되는 생활 문제 해결 장면, "
+        f"{daily_context['seasonal_topic']}를 연상시키는 장면, "
+        "20대 성인 한국인 여자가 반드시 등장하고 자연스러운 표정과 생활감이 보이는 사진, "
+        "인물이 신뢰감을 주되 과하게 모델처럼 연출되지 않은 현실적인 네이버 블로그 사진"
     )
 
 
@@ -1377,6 +1516,22 @@ def get_product_field(row, *keys, default=""):
     return default
 
 
+def normalize_coupang_cta_text(text):
+    cleaned = re.sub(r"\s+", " ", str(text or "")).strip()
+    replacements = {
+        "아래 링크": "상세정보 확인 링크",
+        "하단 링크": "상세정보 확인 링크",
+        "마지막 링크": "상세정보 확인 링크",
+        "위 링크": "상세정보 확인 링크",
+        "아래에서": "상세페이지에서",
+        "하단에서": "상세페이지에서",
+        "마지막에": "확인 단계에서",
+    }
+    for old, new in replacements.items():
+        cleaned = cleaned.replace(old, new)
+    return cleaned
+
+
 def build_coupang_link_block(label, message, product_name, product_link):
     return (
         f"{'─' * 25}\n\n"
@@ -1392,12 +1547,10 @@ def distribute_coupang_links(raw_content, product_name, product_link, cta_text):
     if not paragraphs:
         return raw_content
 
-    custom_cta = (cta_text or "").strip()
+    custom_cta = normalize_coupang_cta_text(cta_text)
     mid_message = custom_cta or "구성, 용량, 보관 조건이 궁금해졌다면 상세 정보에서 한 번 더 확인해보면 좋다"
-    bottom_message = "가격, 옵션, 후기, 배송 조건은 변동될 수 있으니 마지막에는 상세페이지에서 한 번 더 확인하는 편이 좋다"
 
     mid_block = build_coupang_link_block("관련 정보 확인", mid_message, product_name, product_link)
-    bottom_block = build_coupang_link_block("가격과 후기 확인", bottom_message, product_name, product_link)
 
     if len(paragraphs) >= 5:
         mid_index = max(2, len(paragraphs) // 2)
@@ -1409,8 +1562,7 @@ def distribute_coupang_links(raw_content, product_name, product_link, cta_text):
         mid_index = len(paragraphs)
 
     paragraphs.insert(mid_index, mid_block)
-    paragraphs.append(bottom_block)
-    print("   >> 쿠팡 링크 삽입 완료: 2회")
+    print("   >> 쿠팡 링크 삽입 완료: 1회")
     return "\n\n".join(paragraphs)
 
 
@@ -1428,21 +1580,6 @@ def extract_hashtag_line(text, min_count=5):
     return " ".join(unique_tags[:15])
 
 
-def clean_editor_marker_text(text):
-    if not text:
-        return ""
-    cleaned = re.sub(r"[\u200b\u200c\u200d\ufeff\xa0]", "", str(text)).strip()
-    cleaned = re.sub(r"\s+", " ", cleaned)
-    placeholders = {"문장", "문장내용", "핵심문장", "내용", "인용구", "quote", "text"}
-    if cleaned.lower() in placeholders:
-        return ""
-    return cleaned
-
-
-def is_valid_quote_text(text):
-    return len(clean_editor_marker_text(text)) >= 12
-
-
 # =============================================================
 # 2. GeminiWebBot - 웹사이트에서 텍스트+이미지 모두 생성
 # =============================================================
@@ -1451,8 +1588,7 @@ class GeminiWebBot:
     
     def __init__(self):
         gem_options = Options()
-        _default_gemini_profile = os.path.join(os.path.expanduser("~"), "ChromeGeminiBot")
-        automation_profile = os.getenv("GEMINI_PROFILE_PATH", "").strip() or _default_gemini_profile
+        automation_profile = resolve_gemini_profile_path()
         gem_options.add_argument(f"--user-data-dir={automation_profile}")
         gem_options.add_experimental_option("excludeSwitches", ["enable-automation"])
         gem_options.add_experimental_option("useAutomationExtension", False)
@@ -1480,9 +1616,6 @@ class GeminiWebBot:
         
         # 임시 채팅 버튼 클릭 (채팅 목록에 쌓이지 않도록)
         self._click_temp_chat()
-        
-        # 사고 모델 선택
-        self._select_thinking_model()
         
         self.response_count = 0  # 현재 대화에서 응답 수 추적
     
@@ -1563,7 +1696,7 @@ class GeminiWebBot:
             return False
     
     def _select_thinking_model(self):
-        """사고 모델 선택 (모드 선택 드롭다운 → 사고 모델 클릭)"""
+        """Gemini 3.1 Pro 선택 (모드 선택 드롭다운 → 3.1 Pro 클릭)"""
         try:
             # 1) 모드 선택 버튼 클릭
             mode_btn_selectors = [
@@ -1587,32 +1720,29 @@ class GeminiWebBot:
             mode_btn.click()
             time.sleep(2)
             
-            # 2) 사고 모델 옵션 클릭
-            thinking_selectors = [
-                'button[data-test-id="bard-mode-option-사고모델"]',
-                'button[data-mode-id="e051ce1aa80aa576"]',
+            # 2) Gemini 3.1 Pro 옵션 클릭
+            model_option_xpaths = [
+                '//*[self::button or @role="menuitem" or @role="option"][contains(normalize-space(.), "3.1") and contains(normalize-space(.), "Pro")]',
+                '//*[self::button or @role="menuitem" or @role="option"][contains(normalize-space(.), "3.1") and contains(normalize-space(.), "프로")]',
+                '//*[contains(@class, "bard-mode-list-button")][contains(normalize-space(.), "3.1") and contains(normalize-space(.), "Pro")]',
+                '//*[contains(@class, "bard-mode-list-button")][contains(normalize-space(.), "3.1") and contains(normalize-space(.), "프로")]',
             ]
-            for sel in thinking_selectors:
+            for xpath in model_option_xpaths:
                 try:
-                    option = self.driver.find_element(By.CSS_SELECTOR, sel)
-                    if option.is_displayed():
-                        option.click()
-                        time.sleep(2)
-                        print("   >> 🧠 사고 모델 선택 완료!")
-                        return True
+                    options = self.driver.find_elements(By.XPATH, xpath)
+                    for option in options:
+                        if option.is_displayed():
+                            self.driver.execute_script("arguments[0].scrollIntoView({block:'center'});", option)
+                            time.sleep(0.3)
+                            try:
+                                option.click()
+                            except:
+                                self.driver.execute_script("arguments[0].click();", option)
+                            time.sleep(2)
+                            print("   >> 🧠 Gemini 3.1 Pro 선택 완료!")
+                            return True
                 except:
                     continue
-            
-            # XPath 폴백: 텍스트로 찾기
-            try:
-                option = self.driver.find_element(By.XPATH, 
-                    '//button[contains(@class, "bard-mode-list-button")]//span[contains(text(), "사고")]/..')
-                option.click()
-                time.sleep(2)
-                print("   >> 🧠 사고 모델 선택 완료!")
-                return True
-            except:
-                pass
             
             # 드롭다운 닫기 (선택 실패 시)
             try:
@@ -1621,7 +1751,7 @@ class GeminiWebBot:
             except:
                 pass
             
-            print("   >> [주의] 사고 모델을 찾지 못했습니다. 기본 모델로 진행합니다.")
+            print("   >> [주의] Gemini 3.1 Pro 모델을 찾지 못했습니다. 현재 선택된 모델로 진행합니다.")
             return False
         except:
             return False
@@ -2032,6 +2162,49 @@ class GeminiWebBot:
             pass
 
 
+def save_gemini_login_session():
+    profile_path = resolve_gemini_profile_path()
+    print(f"\n[Gemini 로그인 저장 모드] 프로필 경로: {profile_path}")
+    print("브라우저가 열리면 원하는 Google 계정으로 Gemini에 로그인하고 입력창이 보이는지 확인한 뒤 엔터를 누르세요.\n")
+    bot = GeminiWebBot()
+    try:
+        input("→ Gemini 로그인/입력창 확인 완료 후 엔터를 누르세요...")
+        print("   >> [저장 중] Gemini 브라우저를 정상 종료합니다...")
+    finally:
+        bot.close()
+    print(f"[완료] Gemini 로그인 세션 저장: {profile_path}\n")
+
+
+def save_naver_login_session(naver_id):
+    naver_profile = resolve_naver_profile_path(naver_id)
+    os.makedirs(naver_profile, exist_ok=True)
+
+    options = Options()
+    options.add_argument(f"--user-data-dir={naver_profile}")
+    options.add_argument("--profile-directory=Default")
+    options.add_experimental_option("excludeSwitches", ["enable-automation"])
+    options.add_experimental_option("useAutomationExtension", False)
+    options.add_argument("--disable-blink-features=AutomationControlled")
+
+    driver = create_chrome_driver(options)
+    driver.maximize_window()
+    try:
+        write_url = get_naver_write_url(naver_id)
+        print(f"\n[네이버 로그인 저장 모드] 네이버 ID: {naver_id}")
+        print(f"[네이버 로그인 저장 모드] 프로필 경로: {naver_profile}")
+        print(f"[네이버 로그인 저장 모드] 글쓰기 URL: {write_url}")
+        print("브라우저에서 해당 네이버 계정으로 로그인하고 글쓰기 화면이 보이면 콘솔에서 엔터를 누르세요.\n")
+        driver.get(write_url)
+        input("→ 네이버 로그인/글쓰기 화면 확인 완료 후 엔터를 누르세요...")
+        print("   >> [저장 중] 네이버 브라우저를 정상 종료합니다...")
+    finally:
+        try:
+            driver.quit()
+        except:
+            pass
+    print(f"[완료] 네이버 세션 저장: {naver_profile}\n")
+
+
 # =============================================================
 # 3. 콘텐츠 생성 함수 (Gemini 웹 전용)
 # =============================================================
@@ -2106,13 +2279,16 @@ def generate_content(post_type):
         인사말부터 마무리까지 블로그 본문 내용만 출력해야 하며, 글자 수가 1000자 이상이 되도록 구체적으로 적어주세요.
         결과는 반드시 자연스러운 한국어로만 작성하고, 영어 문장이나 영어 제목 후보, 작업 메모 같은 문구는 절대 쓰지 마세요.
         절대 마크다운 서식('**' 기호 등)을 사용하지 마세요. 번호를 매길 일이 있다면 평범하게 '1. 내용', '2. 내용' 처럼 적어주세요.
+        일반 본문 문장은 한 줄 40자 안팎으로 쓰고, 길어도 45자를 넘기지 마세요.
+        한 문장을 길게 한 문단으로 늘어쓰지 말고, 의미 단위마다 엔터를 눌러 아래 줄로 내려써주세요.
+        긴 문단으로 쭉 나열하지 말고 2~4줄이 하나의 자연스러운 흐름이 되게 작성해주세요.
         
         [서식 마커 규칙 - 반드시 지켜줘]
         - 글의 주요 흐름이 바뀌는 곳(예: 인사→본문, 본문→마무리) 2~3곳에 새 줄로 [구분선] 이라고만 적어줘.
         - 글 중간에 감성적이거나 인상적인 문장 1~2개를 [인용구]문장내용[/인용구] 형식으로 감싸줘.
-        - 인용구 안에는 반드시 25자 이상 70자 이하의 자연스러운 한국어 완성 문장을 넣어줘.
-        - [인용구][/인용구], [인용구] [/인용구], [인용구]문장내용[/인용구]처럼 비어 있거나 자리표시자만 있는 인용구는 절대 쓰지 마.
-        - 인용구는 글의 핵심 감정이나 판단 기준이 담긴 문장이어야 하며, 빈 서식만 만들지 마.
+        - 인용구의 문장내용은 반드시 20자 이상 60자 이하의 완성된 한국어 문장이어야 해.
+        - [인용구][/인용구], [인용구] [/인용구], [인용구]문장내용[/인용구]처럼 비어 있거나 예시 문구가 남은 인용구는 절대 출력하지 마.
+        - 쓸 만한 인용 문장이 없으면 인용구를 생략하고, 빈 인용구만 덩그러니 만들지 마.
         - 위 마커들은 에디터 서식으로 자동 변환되므로 반드시 정확히 적어줘.
             """
             
@@ -2133,7 +2309,7 @@ def generate_content(post_type):
             else:
                 blog_title = "오늘의 일상 기록"
             
-            img_description = "한국의 일상, 카페, 산책, 맛집 등 따뜻한 분위기의 고품질 사진"
+            img_description = "20대 성인 한국인 여자가 등장하는 한국의 일상, 카페, 산책, 맛집 등 따뜻한 분위기의 고품질 사진"
             
         elif post_type == '쿠팡':
             product_state = select_unused_coupang_product(csv_file_path)
@@ -2144,6 +2320,7 @@ def generate_content(post_type):
             p_name = target['상품명']
             p_keyword = target['키워드']
             p_link = target['쿠팡링크']
+            product_group = product_state.get("selected_group") or infer_coupang_product_group(target)
             
             problem_scenario = get_product_field(target, "문제상황", default=f"{p_keyword}이 필요한데 어떤 제품을 골라야 할지 애매한 상황")
             target_reader = get_product_field(target, "대상독자", default="구매 전에 실제 후기와 현실적인 추천 포인트를 같이 보고 싶은 사람")
@@ -2157,7 +2334,14 @@ def generate_content(post_type):
             post_angle = get_product_field(target, "글관점", default=angle_direction)
             title_seed = get_product_field(target, "제목시드", default=coupang_angle.get("title_seed", f"{p_keyword} 고를 때 구매 전 보기 쉬운 체크포인트"))
             thumbnail_prompt = get_product_field(target, "썸네일프롬프트", default=coupang_angle.get("thumbnail_prompt", f"{p_keyword}를 {usage_place}에서 실제로 사용하는 한국형 라이프스타일 장면"))
-            cta_text = get_product_field(target, "CTA문구", default=coupang_angle.get("cta_text", "제품 상세정보와 현재 가격은 아래 링크에서 바로 확인 가능"))
+            cta_text = normalize_coupang_cta_text(
+                get_product_field(
+                    target,
+                    "CTA문구",
+                    default=coupang_angle.get("cta_text", "가격, 구성, 옵션은 상세페이지에서 확인해보는 흐름"),
+                )
+            )
+            group_writing_guide = build_coupang_group_writing_guide(product_group, target)
             disclosure_text = get_product_field(
                 target,
                 "광고고지문",
@@ -2178,6 +2362,7 @@ def generate_content(post_type):
 [오늘 작성할 상품 정보]
 - 상품명: {p_name}
 - 메인 키워드: {p_keyword}
+- 상품군: {product_group}
 - 대상 독자: {target_reader}
 - 사용 상황: {problem_scenario}
 - 사용 장소: {usage_place}
@@ -2192,6 +2377,9 @@ def generate_content(post_type):
 - 제목 방향 참고: {title_seed}
 - CTA 방향: {cta_text}
 
+[상품군별 밀도 기준]
+{group_writing_guide}
+
 [블로그 운영 방향]
 이 블로그는 잡다한 상품 홍보 블로그가 아니라,
 생활용품식품소모품계절가전 구매 전에 필요한 기준을 정리해주는 생활 구매 판단 블로그다.
@@ -2204,6 +2392,13 @@ def generate_content(post_type):
 - 검색자가 글을 끝까지 읽을 이유가 있어야 한다.
 - 쿠팡 링크 클릭은 글의 결론이 아니라, 판단 후 확인 단계처럼 자연스럽게 연결한다.
 
+[반복감 방지 규칙]
+- 각 문단은 새 기준이나 새 상황을 하나씩 추가하고, 같은 말을 다른 표현으로 되풀이하지 않는다.
+- 구매 전 확인, 상세정보 확인, 내 사용 환경 같은 표현은 필요한 곳에만 쓰고, 상품군에 맞는 구체 명사로 바꿔 쓴다.
+- 모든 단락을 가격 이야기로 끝내지 말고 공간, 보관, 관리, 구성, 소비 속도, 사용 빈도 중 다른 축을 섞는다.
+- FAQ는 본문 소제목을 반복하지 말고 실제 검색자가 따로 물어볼 질문으로 만든다.
+- 문장 첫머리를 그래서, 다만, 특히, 결국 같은 접속어로 반복하지 않는다.
+
 [가장 중요한 작성 원칙]
 - 실제 구매하거나 사용했다고 단정하지 마라.
 - 내돈내산, 직접 써봤다, 제가 샀다, 며칠 써보니 같은 표현은 쓰지 마라.
@@ -2213,13 +2408,6 @@ def generate_content(post_type):
 - 후기는 실제 사용자 후기를 인용한 것처럼 꾸미지 마라.
 - 광고 느낌보다 정보형 구매 가이드 느낌을 우선한다.
 - 오늘 글 변주인 {angle_name} 흐름을 반영하되, 실제 구매나 직접 사용을 한 것처럼 꾸미지는 마라.
-
-[인용구 품질 규칙]
-- 인용구는 반드시 2회만 사용한다.
-- 모든 인용구는 [인용구]문장[/인용구] 형식을 지키되, 안쪽 문장은 25자 이상 70자 이하의 자연스러운 한국어 완성 문장이어야 한다.
-- [인용구][/인용구], [인용구] [/인용구], [인용구]문장내용[/인용구], [인용구]핵심문장[/인용구]처럼 비어 있거나 자리표시자만 있는 인용구는 절대 출력하지 마라.
-- 인용구 2개는 각각 '{p_keyword}', '{usage_place}', '{problem_scenario}', '{caution_note}' 중 최소 1가지와 직접 연결되는 판단 문장으로 작성하라.
-- 상품과 무관한 감성 문장, 일기식 문장, 광고 문구를 인용구로 쓰지 마라.
 
 [SEO 규칙]
 - 상품명 '{p_name}'은 본문에 3~5회만 자연스럽게 포함한다.
@@ -2274,21 +2462,22 @@ def generate_content(post_type):
 
 [구분선]
 
-5. 추천 대상과 비추천 대상
-- 추천 대상 3가지를 구체적으로 작성하라.
-- 비추천 대상 또는 신중히 볼 대상 2가지를 작성하라.
+5. 먼저 확인할 환경과 한 번 더 확인할 환경
+- 먼저 확인해볼 환경 3가지를 구체적으로 작성하라.
+- 한 번 더 따져볼 환경 2가지를 작성하라.
 - 이 구간은 신뢰도를 높이는 핵심 구간이다.
+- 추천합니다, 비추천합니다 같은 판정형 표현보다 이 경우는 먼저 확인하세요에 가까운 문장으로 작성하라.
 - 아래 형식의 목록 마커를 사용하라.
 
-[목록주제]이런 분들에게 잘 맞을 수 있습니다
-- 구체적인 대상 1
-- 구체적인 대상 2
-- 구체적인 대상 3
+[목록주제]이런 환경이라면 먼저 확인하세요
+- 먼저 확인할 환경 1
+- 먼저 확인할 환경 2
+- 먼저 확인할 환경 3
 [목록끝]
 
 [목록주제]이런 경우에는 한 번 더 확인하세요
-- 신중히 볼 대상 1
-- 신중히 볼 대상 2
+- 한 번 더 따져볼 환경 1
+- 한 번 더 따져볼 환경 2
 [목록끝]
 
 6. 비교 관점
@@ -2309,13 +2498,20 @@ def generate_content(post_type):
 - 구매 강요가 아니라 확인 유도형으로 작성하라.
 - 아래 CTA 방향을 자연스럽게 반영하라.
 - {cta_text}
+- 링크는 코드가 본문 중간의 '관련 정보 확인' 구간에 자동 삽입한다.
+- 따라서 아래 링크, 하단 링크, 마지막 링크, 위 링크처럼 위치를 가리키는 표현은 쓰지 마라.
+- 본문 안에 URL이나 상품 링크 문장을 직접 만들지 마라.
 - 반드시 아래 의미를 포함하라.
   - 현재 가격과 구성은 변동될 수 있음
   - 구매 전 상세정보와 옵션을 확인하는 것이 좋음
   - 내 사용 환경에 맞는지 확인 후 선택하는 것이 안전함
+- 아래 인용구 2개는 반드시 내용이 있는 완성된 문장으로 출력하라.
+- 인용구 안에는 반드시 20자 이상 60자 이하의 한국어 문장을 넣어라.
+- 인용구는 {p_keyword}, {usage_place}, {caution_note} 중 최소 1가지와 연결된 판단 문장으로 새로 작성하라.
+- 빈 인용구, 공백만 있는 인용구, 예시 문구가 그대로 남은 인용구는 절대 출력하지 마라.
 
-[인용구]{p_keyword}는 가격보다 내 사용 환경과 맞는지 확인하는 게 먼저였습니다[/인용구]
-[인용구]상세정보를 볼 때는 구성과 주의점을 같이 확인해야 선택이 덜 흔들립니다[/인용구]
+[인용구]상품군과 상황에 맞는 판단 문장을 새로 작성하라[/인용구]
+[인용구]가격보다 사용 공간과 관리 조건을 함께 보라는 뜻의 문장을 새로 작성하라[/인용구]
 
 9. FAQ
 - 마지막에 FAQ 4개를 넣어라.
@@ -2333,12 +2529,22 @@ def generate_content(post_type):
 - [사진삽입]은 정확히 1회
 - [구분선]은 정확히 3회 이상
 - [인용구]문장[/인용구] 형식 2회 포함
-- 인용구 안쪽 문장은 절대 비우지 말고, 상품 선택 기준과 직접 관련된 완성 문장으로 채울 것
+- 인용구 내부 문장은 반드시 20자 이상이어야 하며, 빈 인용구 출력 금지
 - [목록주제]와 [목록끝] 마커는 철자 그대로 유지
+- [목록주제] 뒤에는 반드시 실제 주제 문장을 붙이고, 빈 목록주제는 출력하지 말 것
+- 목록 항목에는 기준 1개, 구체적인 대상 1 같은 자리표시자 표현을 절대 남기지 말 것
+- 일반 본문 문장은 한 줄 40자 안팎으로 쓰고, 길어도 45자를 넘기지 말 것
+- 한 문장을 길게 한 문단으로 늘어쓰지 말고, 의미 단위마다 엔터를 눌러 아래 줄로 내려쓸 것
+- 긴 문단으로 쭉 나열하지 말고 2~4줄이 하나의 자연스러운 흐름이 되게 작성할 것
+- 목록 항목도 너무 짧게 쪼개지 말고 40자 안팎의 자연스러운 호흡으로 쓰며, URL과 마커 형식은 그대로 유지할 것
 
 [절대 금지]
 - 광고 고지문 출력 금지
 - 상품 링크 출력 금지
+- 아래 링크, 하단 링크, 마지막 링크, 위 링크 같은 위치 지시 표현 금지
+- [인용구][/인용구], [인용구] [/인용구], [인용구]문장[/인용구]처럼 내용 없는 인용구 출력 금지
+- [인용구]상품군과 상황에 맞는 판단 문장을 새로 작성하라[/인용구] 같은 지시문을 그대로 출력 금지
+- 기준 1개를 구체적으로 작성, 구체적인 대상 1, 신중히 볼 대상 1 같은 템플릿 문구 그대로 출력 금지
 - 가격, 할인율, 배송일, 리뷰 수, 평점 임의 생성 금지
 - 내돈내산 표현 금지
 - 실제 사용한 것처럼 단정 금지
@@ -2351,8 +2557,6 @@ def generate_content(post_type):
             if not raw_content:
                 return None, None, None, "", None
             
-            ad_disclaimer = "🚨 본 포스팅은 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다.\n\n"
-            bottom_link = f"\n\n{'─' * 25}\n\n🛒 {p_name}\n✅ 제품 상세정보 및 구매 링크 바로가기:\n{p_link}\n"
             ad_disclaimer = disclosure_text + "\n\n"
             linked_content = distribute_coupang_links(raw_content, p_name, p_link, cta_text)
             blog_content = ad_disclaimer + linked_content
@@ -2360,41 +2564,48 @@ def generate_content(post_type):
             # 2단계: 해시태그 생성 (사고 모델 → 최대 180초 대기)
             print("   >> #️⃣ 해시태그 생성 중 (사고 모델)...")
             hashtag_prompt = f"""
-'{p_name}' 상품으로 네이버 블로그에 붙일 해시태그를 10~12개 만들어줘.
+너는 네이버 블로그 쿠팡파트너스 글의 해시태그를 만드는 실전형 검색 유입 편집자다.
+아래 상품과 직접 관련 있는 태그만 10~12개 만들어라.
 
-조건
+[상품 정보]
+- 상품명: {p_name}
 - 메인 키워드: {p_keyword}
-- 상품명에서 뽑을 핵심 명사: {p_name}
 - 대상 독자: {target_reader}
 - 사용 상황: {problem_scenario}
 - 사용 장소: {usage_place}
-- 상품 성격: 생활용품, 식품, 소모품, 계절가전, 구매 전 체크
+- 상품군/성격 참고: 생활용품, 식품, 소모품, 계절가전, 구매 전 체크
+- 핵심 장점: {selling_point_1}, {selling_point_2}, {selling_point_3}
+- 구매 전 주의점: {caution_note}
+
+[태그 작성 원칙]
+- 첫 번째 태그는 반드시 메인 키워드 '{p_keyword}'를 공백 없이 자연스럽게 바꾼 태그로 작성
+- 두 번째 태그는 상품군 또는 품목명이 바로 보이는 태그로 작성
+- 나머지는 상품명, 품목, 사용장소, 사용상황, 구매 전 비교 기준에서만 뽑기
+- 상품과 직접 관련 없는 범용 태그 금지
+- 실제 검색자가 네이버에서 상품을 찾을 때 쓸 법한 구매 의도형 태그 위주로 작성
+- 너무 넓은 광고성 태그보다 구체적인 롱테일 태그를 우선
+- 상품명 전체를 그대로 길게 붙이지 말고, 브랜드/품목/용량/개수/핵심 속성 중 검색에 도움이 되는 부분만 사용
+- 상품과 맞지 않으면 가정용, 사무실용, 자취용, 생활용품추천 같은 태그를 넣지 말 것
+- 식품이면 보관, 용량, 개수, 장보기, 대량구매, 소비속도 같은 기준을 우선
+- 가전이면 크기, 소음, 전기요금, 설치, 관리, 사용공간 같은 기준을 우선
+- 소모품이면 구성, 개수, 보관, 교체주기, 사용장소 같은 기준을 우선
+
+[절대 금지 태그]
+- #일상 #소통 #맞팔 #데일리 #오늘 #감성 #리뷰 #후기 #추천템 #핫딜 #최저가 #인생템
+- 상품과 무관한 #가정용 #사무실용 #자취용 #생활용품추천 #가격비교 #구성비교 남발 금지
+- 쿠팡, 쿠팡파트너스, 광고, 협찬, 로켓배송만 단독으로 강조하는 태그 금지
+
+[출력 규칙]
 - '#태그' 형식만 사용
+- 정확히 10~12개
 - 한 줄에 공백으로 구분
 - 설명 금지
-- 상품명 전체를 무리하게 긴 태그로 만들지 말 것
-- 구매 의도형 태그를 포함할 것
-- 광고 느낌이 강한 태그는 피할 것
-- 첫 번째 태그는 반드시 메인 키워드 '{p_keyword}'를 해시태그 형태로 자연스럽게 바꾼 것
-- 최소 7개 태그는 상품명, 메인 키워드, 사용 상황, 사용 장소와 직접 관련되어야 함
-- 범용 태그는 최대 3개까지만 허용: 구매전체크, 구성비교, 가격비교, 상세정보확인, 생활용품추천 중 문맥에 맞는 것만 사용
-- 상품 정보에 없는 카테고리 태그를 상상해서 넣지 말 것
-- 제습기, 에어컨, 선풍기, 가습기, 공기청정기, 식품, 생활가전, 계절가전 같은 태그는 상품명/메인 키워드/사용 상황과 직접 맞을 때만 사용
-- 쿠팡, 쿠팡추천, 쿠팡파트너스, 광고, 협찬, 최저가 태그 금지
+- 영어 태그 금지
+- 같은 의미의 태그 반복 금지
+- 상품과 직접 관련 없는 태그 금지
 
-태그 방향
-- 메인 키워드 태그
-- 상품명에서 핵심 명사만 뽑은 태그
-- 실제 상품군 태그
-- 사용상황 태그
-- 사용장소 태그
-- 구매전체크 태그
-- 가격비교, 구성비교, 상세정보확인 같은 판단형 태그
-
-출력 전 자체 점검
-- 이 상품을 모르는 사람이 태그만 봐도 어떤 상품인지 짐작할 수 있어야 함
-- 상품과 직접 관련 없는 유행어, 다른 카테고리, 계절가전 고정 태그를 넣었다면 다시 작성
-- 출력은 해시태그 10~12개 한 줄만
+출력 예시 형식
+#메인키워드 #품목명 #구매전체크 #용량확인 #구성확인 #보관방법 #사용장소 #비교기준 #상세정보확인 #구매전확인
 """
             hashtags = ""
             for hashtag_attempt in range(2):
@@ -2467,10 +2678,13 @@ def generate_content(post_type):
 {thumbnail_prompt}
 
 Korean blog thumbnail feeling.
+20대 성인 한국인 여성이 {p_name}을 실제로 사용하며 만족감과 행복함이 느껴지는 자연스러운 미소를 짓는 장면.
+Product promotional lifestyle photo for Coupang Partners.
+Make the product clearly visible and trustworthy.
 Realistic daily-life scene.
 Natural lighting.
 No text in image.
-Not too commercial.
+Clean promotional photo, but not overly artificial.
 Show a believable problem-solving moment while using {p_name}.
 """
         
@@ -2669,51 +2883,13 @@ class NaverBlogBot:
         
             # 제목 입력
             print(f"   >> 제목 입력 중: {blog_title[:30]}...")
-            title_field = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "div.se-documentTitle")))
-            driver.execute_script("arguments[0].scrollIntoView({block:'center', inline:'center'});", title_field)
-            time.sleep(0.7)
+            title_field = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, "div.se-documentTitle")))
+            title_field.click()
+            time.sleep(1)
 
-            focused = False
-            last_error = None
-            for attempt in range(1, 4):
-                try:
-                    driver.execute_script("""
-                        const root = arguments[0];
-                        const editable = root.querySelector('[contenteditable="true"], textarea, input') || root;
-                        editable.scrollIntoView({block:'center', inline:'center'});
-                        editable.focus();
-                    """, title_field)
-                    time.sleep(0.2)
-                    title_field.click()
-                    focused = True
-                    break
-                except Exception as exc:
-                    last_error = exc
-                    print(f"   >> 제목 영역 일반 클릭 재시도 {attempt}/3: {type(exc).__name__}")
-                try:
-                    ActionChains(driver).move_to_element(title_field).pause(0.2).click().perform()
-                    focused = True
-                    break
-                except Exception as exc:
-                    last_error = exc
-                try:
-                    driver.execute_script("""
-                        const root = arguments[0];
-                        const editable = root.querySelector('[contenteditable="true"], textarea, input') || root;
-                        editable.click();
-                        editable.focus();
-                    """, title_field)
-                    focused = True
-                    break
-                except Exception as exc:
-                    last_error = exc
-                time.sleep(0.8)
-
-            if not focused:
-                raise RuntimeError(f"제목 영역 포커스 실패: {last_error}")
-
-            pyperclip.copy(blog_title)
-            ActionChains(driver).key_down(Keys.CONTROL).send_keys('v').key_up(Keys.CONTROL).perform()
+            for char in blog_title:
+                actions.send_keys(char).perform()
+                time.sleep(random.uniform(0.01, 0.05))
             time.sleep(1)
         
             # 본문으로 이동
@@ -2790,36 +2966,60 @@ class NaverBlogBot:
                 print("   >> [주의] AI 활용 설정 버튼을 찾지 못했습니다.")
                 return False
 
+            def set_image_clipboard(image_path):
+                """이미지가 클립보드에 올라간 경우에만 True를 반환한다."""
+                safe_img_path = image_path.replace('\\', '/')
+                ps_script = f'''
+                Add-Type -AssemblyName System.Windows.Forms
+                Add-Type -AssemblyName System.Drawing
+                [System.Windows.Forms.Clipboard]::Clear()
+                $img = [System.Drawing.Image]::FromFile("{safe_img_path}")
+                try {{
+                    [System.Windows.Forms.Clipboard]::SetImage($img)
+                    if (-not [System.Windows.Forms.Clipboard]::ContainsImage()) {{
+                        throw "Clipboard image was not set"
+                    }}
+                }} finally {{
+                    $img.Dispose()
+                }}
+                '''
+                result = subprocess.run(
+                    ["powershell", "-NoProfile", "-STA", "-Command", ps_script],
+                    capture_output=True,
+                    text=True,
+                )
+                if result.returncode != 0:
+                    error_text = (result.stderr or result.stdout or "").strip()
+                    print(f"   >> [주의] 이미지 클립보드 설정 실패: {error_text[:200]}")
+                    return False
+                return True
+
             # 사진 업로드 (일상글만 본문 앞에 배치, 쿠팡글은 [사진삽입] 위치에서 삽입)
             if post_type != '쿠팡' and img_path and os.path.exists(img_path):
                 print("   >> 사진 클립보드 업로드 시도...")
-                safe_img_path = img_path.replace('\\', '/')
-                ps_script = f'''
-                Add-Type -AssemblyName System.Windows.Forms
-                $img = [System.Drawing.Image]::FromFile("{safe_img_path}")
-                [System.Windows.Forms.Clipboard]::SetImage($img)
-                '''
-                subprocess.run(["powershell", "-NoProfile", "-Command", ps_script], capture_output=True)
-                time.sleep(2)
-            
-                actions.key_down(Keys.CONTROL).send_keys('v').key_up(Keys.CONTROL).perform()
-                print("   >> 🎨 사진 업로드 대기 중 (15초)...")
-                time.sleep(15)
-            
-                # 업로드된 사진 클릭
-                try:
-                    uploaded_imgs = driver.find_elements(By.CSS_SELECTOR, 'img.se-image-resource')
-                    if uploaded_imgs:
-                        uploaded_imgs[-1].click()
-                        print("   >> 📸 업로드된 사진 클릭 완료!")
-                        time.sleep(1)
-                except Exception as e:
-                    print(f"   >> [주의] 사진 클릭 실패: {e}")
-            
-                # AI 활용 설정 버튼 클릭
-                click_ai_utilization_after_image()
-            
-                actions.send_keys(Keys.ENTER).perform()
+                if set_image_clipboard(img_path):
+                    time.sleep(2)
+
+                    actions.key_down(Keys.CONTROL).send_keys('v').key_up(Keys.CONTROL).perform()
+                    print("   >> 🎨 사진 업로드 대기 중 (15초)...")
+                    time.sleep(15)
+
+                    # 업로드된 사진 클릭
+                    try:
+                        uploaded_imgs = driver.find_elements(By.CSS_SELECTOR, 'img.se-image-resource')
+                        if uploaded_imgs:
+                            uploaded_imgs[-1].click()
+                            print("   >> 📸 업로드된 사진 클릭 완료!")
+                            time.sleep(1)
+                    except Exception as e:
+                        print(f"   >> [주의] 사진 클릭 실패: {e}")
+
+                    # AI 활용 설정 버튼 클릭
+                    click_ai_utilization_after_image()
+
+                    actions.send_keys(Keys.ENTER).perform()
+                else:
+                    print("   >> [주의] 사진 클립보드 업로드 실패. 프롬프트 텍스트 붙여넣기 방지를 위해 사진 삽입을 건너뜁니다.")
                 time.sleep(1)
         
             # ── [안정성 최강 버전] 오토메이션 서식 헬퍼 ──
@@ -2893,6 +3093,20 @@ class NaverBlogBot:
                     return True
                 except: return False
         
+            def insert_quotation(style=None):
+                quote_styles = ['quotation_line', 'quotation_bubble', 'quotation_underline', 'quotation_postit', 'quotation_corner']
+                if style is None: style = random.choice(quote_styles)
+                try:
+                    driver.find_element(By.CSS_SELECTOR, 'button[data-name="quotation"][data-type="icon-select"]').click()
+                    time.sleep(0.5)
+                    driver.find_element(By.CSS_SELECTOR, f'button[data-value="{style}"]').click()
+                    time.sleep(0.5)
+                    # 인용구 진입으로 인해 서식 초기화되므로 트래킹 업데이트
+                    for k in ["font_size", "font_color", "bg_color", "bold", "underline"]:
+                        editor_state[k] = None
+                    return True
+                except: return False
+
             def set_bold(activate=None):
                 target_state = not bool(editor_state["bold"]) if activate is None else activate
                 if editor_state["bold"] is not None and editor_state["bold"] == target_state: return
@@ -2955,6 +3169,31 @@ class NaverBlogBot:
                         # 복구
                         set_font_size("16")
 
+            def clean_marker_text(text, *markers):
+                cleaned = re.sub(r"[\u200b\u200c\u200d\ufeff\xa0]", "", str(text or ""))
+                for marker in markers:
+                    cleaned = cleaned.replace(marker, "")
+                cleaned = re.sub(r"\s+", " ", cleaned).strip().strip('"').strip("'").strip("“”‘’").strip()
+                placeholder_values = {
+                    "문장",
+                    "문장내용",
+                    "내용",
+                    "핵심문장",
+                    "인용구",
+                    "quote",
+                    "text",
+                    "상품군과 상황에 맞는 판단 문장을 새로 작성하라",
+                    "가격보다 사용 공간과 관리 조건을 함께 보라는 뜻의 문장을 새로 작성하라",
+                }
+                if cleaned.lower() in placeholder_values:
+                    return ""
+                return cleaned
+
+            def is_valid_quote_text(text):
+                cleaned = clean_marker_text(text)
+                compact = re.sub(r"\s+", "", cleaned)
+                return len(compact) >= 12
+
             # ── 본문 타이핑 및 파싱 루프 ──
             print("   >> 지침서 반영 본문 타이핑 (상품강조, 목록구조 엄격 적용)...")
             bold_triggers = ['쿠팡 파트너스', '구매 링크', '제품 상세정보', '───']
@@ -2976,28 +3215,24 @@ class NaverBlogBot:
                 if '[사진삽입]' in line_s and post_type == '쿠팡':
                     if img_path and os.path.exists(img_path):
                         print("   >> 📸 본문 중간(문제 심화 뒤)에 사진 삽입 중...")
-                        safe_img_path = img_path.replace('\\', '/')
-                        ps_script = f'''
-                        Add-Type -AssemblyName System.Windows.Forms
-                        $img = [System.Drawing.Image]::FromFile("{safe_img_path}")
-                        [System.Windows.Forms.Clipboard]::SetImage($img)
-                        '''
-                        subprocess.run(["powershell", "-NoProfile", "-Command", ps_script], capture_output=True)
-                        time.sleep(2)
-                        actions.key_down(Keys.CONTROL).send_keys('v').key_up(Keys.CONTROL).perform()
-                        print("   >> 🎨 사진 업로드 대기 중 (15초)...")
-                        time.sleep(15)
-                        try:
-                            uploaded_imgs = driver.find_elements(By.CSS_SELECTOR, 'img.se-image-resource')
-                            if uploaded_imgs:
-                                uploaded_imgs[-1].click()
-                                print("   >> 📸 업로드된 사진 클릭 완료!")
-                                time.sleep(1)
-                        except Exception as e:
-                            print(f"   >> [주의] 사진 클릭 실패: {e}")
-                        click_ai_utilization_after_image()
-                        actions.send_keys(Keys.ENTER).perform()
-                        time.sleep(1)
+                        if set_image_clipboard(img_path):
+                            time.sleep(2)
+                            actions.key_down(Keys.CONTROL).send_keys('v').key_up(Keys.CONTROL).perform()
+                            print("   >> 🎨 사진 업로드 대기 중 (15초)...")
+                            time.sleep(15)
+                            try:
+                                uploaded_imgs = driver.find_elements(By.CSS_SELECTOR, 'img.se-image-resource')
+                                if uploaded_imgs:
+                                    uploaded_imgs[-1].click()
+                                    print("   >> 📸 업로드된 사진 클릭 완료!")
+                                    time.sleep(1)
+                            except Exception as e:
+                                print(f"   >> [주의] 사진 클릭 실패: {e}")
+                            click_ai_utilization_after_image()
+                            actions.send_keys(Keys.ENTER).perform()
+                            time.sleep(1)
+                        else:
+                            print("   >> [주의] 사진 클립보드 업로드 실패. 프롬프트 텍스트 붙여넣기 방지를 위해 사진 삽입을 건너뜁니다.")
                     else:
                         print("   >> [주의] [사진삽입] 위치가 있었지만 업로드할 이미지 파일이 없습니다.")
                     continue
@@ -3030,20 +3265,23 @@ class NaverBlogBot:
 
                 # 📌 구조 ①: 목록 주제 + 기호목록
                 if is_list_topic:
-                    topic_text = clean_editor_marker_text(
-                        line_s.replace('[목록주제]', '').replace('[/목록주제]', '')
-                    )
+                    topic_text = clean_marker_text(line_s, '[목록주제]', '[/목록주제]')
                     if not topic_text:
-                        print("   >> [주의] 빈 목록주제 마커 감지 → 서식 삽입 건너뜀")
+                        print("   >> [주의] 비어 있는 목록 주제는 건너뜁니다.")
                         continue
                     actions.send_keys(Keys.ENTER).perform() # 엔터
                     time.sleep(0.2) # 한 줄 띄움 (스마트 에디터 기본 간격)
-                    # 네이버 인용구 컴포넌트는 포커스 실패 시 빈 박스가 남을 수 있어 자동화에서는 쓰지 않습니다.
-                    reset_formatting()
+                    quote_inserted = insert_quotation("quotation_underline") # 인용구(라인/따옴표)
                     set_font_size("16")
                     set_bold(True)
                     type_formatted_line(topic_text)
                     set_bold(False)
+                    # 인용구 탈출 (방향키 ↓ ↓ + 엔터 1회)
+                    if quote_inserted:
+                        actions.send_keys(Keys.ARROW_DOWN).perform()
+                        time.sleep(0.2)
+                        actions.send_keys(Keys.ARROW_DOWN).perform()
+                        time.sleep(0.2)
                     actions.send_keys(Keys.ENTER).perform()
                     time.sleep(0.2)
                     force_sync_state()
@@ -3071,19 +3309,22 @@ class NaverBlogBot:
 
                 # 📌 구조 ②: 일반 인용구 탈출 (지침서 지정순서)
                 if is_quote:
-                    quote_text = clean_editor_marker_text(
-                        line_s.replace('[인용구]', '').replace('[/인용구]', '')
-                    )
+                    quote_text = clean_marker_text(line_s, '[인용구]', '[/인용구]')
                     if not is_valid_quote_text(quote_text):
-                        print("   >> [주의] 빈 인용구 마커 감지 → 인용구 서식 삽입 건너뜀")
+                        print("   >> [주의] 비어 있거나 너무 짧은 인용구는 건너뜁니다.")
                         continue
-                    # 빈 인용구 방지: 네이버 인용구 컴포넌트 대신 일반 문단에 따옴표 문장으로 안전 입력
-                    reset_formatting()
+                    quote_inserted = insert_quotation()
                     set_font_color("#0095e9")
                     set_bold(True)
-                    type_formatted_line(f"“{quote_text}”")
+                    type_formatted_line(quote_text)
                     set_bold(False)
                     set_font_color("#000000")
+                    # 인용구 탈출 (방향키 ↓ ↓ + 엔터 1회)
+                    if quote_inserted:
+                        actions.send_keys(Keys.ARROW_DOWN).perform()
+                        time.sleep(0.2)
+                        actions.send_keys(Keys.ARROW_DOWN).perform()
+                        time.sleep(0.2)
                     actions.send_keys(Keys.ENTER).perform()
                     time.sleep(0.2)
                     force_sync_state()
@@ -3284,8 +3525,16 @@ def generate_daily_schedule():
     daily_stats["쿠팡"] = 0
     daily_stats["에러"] = 0
     
-    # 00:30 ~ 23:30 사이에서 랜덤 10개 시각 생성 (최소 30분 간격)
-    random_minutes = sorted(random.sample(range(30, 1410, 15), 10))  # 15분 단위 중 10개 선택
+    # 00:30 ~ 23:30 사이에서 1분 단위 후보를 쓰되, 자체 작업끼리는 최소 15분 간격 유지
+    candidate_minutes = list(range(30, 1410, 1))
+    random_minutes = []
+    for _ in range(2000):
+        temp = sorted(random.sample(candidate_minutes, 10))
+        if all(temp[i + 1] - temp[i] >= 15 for i in range(9)):
+            random_minutes = temp
+            break
+    if not random_minutes:
+        random_minutes = sorted(random.sample(candidate_minutes, 10))
     
     # 글 종류 배정: 일상 5 + 쿠팡 5 → 섞기
     post_types = ['일상'] * 5 + ['쿠팡'] * 5
@@ -3319,6 +3568,14 @@ naver_bot = None  # 전역 네이버 봇 인스턴스
 
 if __name__ == "__main__":
     args = parse_args()
+    if args.gemini_login:
+        save_gemini_login_session()
+        sys.exit(0)
+    if args.naver_login:
+        naver_login_id = (args.naver_id or os.getenv("SKSSJ2628_NAVER_ID", "") or DEFAULT_NAVER_ID).strip()
+        save_naver_login_session(naver_login_id)
+        sys.exit(0)
+
     scheduled_log_file = None
     original_stdout = sys.stdout
     original_stderr = sys.stderr
@@ -3333,6 +3590,7 @@ if __name__ == "__main__":
     # 클립보드 충돌 방지: 다른 자동화 스크립트 완료까지 대기 (최대 30분)
     _lock = FileLock(AUTOMATION_LOCK_PATH, timeout=1800)
     print(f"[Lock] 다른 자동화 작업 확인 중...")
+    print(f"[Lock] 전역 락 파일: {AUTOMATION_LOCK_PATH}")
     _lock.acquire()
     print(f"[Lock] 락 획득 완료 — 스크립트 실행을 시작합니다.")
     

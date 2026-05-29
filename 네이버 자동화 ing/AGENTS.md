@@ -40,10 +40,21 @@
 ## Gemini Web Automation
 
 - `네이버 블로그 글쓰기/제미나이웹.py` uses the Gemini Chrome profile at `C:\Users\itwill\ChromeGeminiBot`.
+- `네이버 블로그 글쓰기/skssj2628/skssj2628.py` also uses Gemini Web. Save only its Gemini session with `--login`/`--gemini-login`; use `GEMINI_PROFILE_PATH` when separating the account profile, for example `C:\Users\itwill\ChromeGeminiBot_skssj2628`.
 - To change the Gemini Google account, close any Chrome/ChromeDriver using that profile, back up or rename `ChromeGeminiBot`, then log in with a fresh profile. Do not delete old session folders unless the user explicitly approves.
 - Close any manually opened Gemini Chrome window before running automation, because the same profile can be locked by an existing browser process.
 - Gemini UI no longer exposes the old `사고 모델` option. `제미나이웹.py` should select `Gemini 3.1 Pro` by visible model text.
+- `skssj2628.py` should not force the Gemini model selector during startup unless the user explicitly asks to restore it; keep the already-selected/default Gemini model and debug input readiness first.
 - If Gemini model selection fails after a UI update, inspect `_select_thinking_model()` and the visible model menu first; do not guess new selectors.
+
+## skssj2628 Account And Links
+
+- `skssj2628/skssj2628.py` defaults to Naver ID `skssj2628`; do not let global `NAVER_ID` or `NAVER_PROFILE_PATH` silently point it at another account.
+- Use `SKSSJ2628_NAVER_ID`, `SKSSJ2628_NAVER_PASSWORD`, and `SKSSJ2628_NAVER_PROFILE_PATH` for `skssj2628`-specific overrides.
+- Use `skssj2628.py --naver-login` to save only the `skssj2628` Naver session before scheduled posting. This does not publish.
+- The default `skssj2628` Naver profile is `네이버 블로그 글쓰기/skssj2628/ChromeNaverBot_skssj2628`; do not save its session into the home-level `C:\Users\itwill\ChromeNaverBot_skssj2628` profile unless `SKSSJ2628_NAVER_PROFILE_PATH` intentionally points there.
+- In `skssj2628.py`, Coupang deeplink conversion failures skip that CSV candidate and try the next candidate. Do not publish with the original non-deeplink URL after conversion failure.
+- `skssj2628.py` currently has no similar-product API fallback after deeplink conversion failures; add one only after the user explicitly asks.
 
 ## Daily Content Quality
 
@@ -66,6 +77,10 @@
 
 - The actual posting schedule is Windows Task Scheduler, not necessarily any in-code `generate_daily_schedule()` helper.
 - Querying schedules is read-only, but scheduler registration, deletion, or edits require explicit approval.
+- `skssj2628` scheduler entry point is `네이버 블로그 글쓰기/skssj2628/skssj2628(스케줄러).py`.
+- `skssj2628` scheduler tasks use `NaverBlogAutoPost_skssj2628_*`; the daily refresh task is `NaverBlogAutoPost_skssj2628_RefreshDaily` and defaults to `00:05`.
+- After changing scheduler command construction, re-run `skssj2628(스케줄러).py --target-date auto` before judging live behavior; already-registered Windows tasks keep the old command until re-registered.
+- When debugging `skssj2628` scheduler account issues, query a registered task with `schtasks /Query /TN "NaverBlogAutoPost_skssj2628_01" /V /FO LIST` and check that `Task To Run` includes `--naver-id "skssj2628"`.
 - `skssj2629` scheduler entry point is `네이버 블로그 글쓰기/skssj2629/skssj2629(스케줄러).py`.
 - `skssj2629` scheduler tasks use `NaverBlogAutoPost_2629_*`; the daily refresh task is `NaverBlogAutoPost_2629_RefreshDaily` and defaults to `00:05`.
 - `skssj2629` scheduled runs use `네이버 블로그 글쓰기/skssj2629/자동발행실행보조파일/run_scheduled_post.ps1`; do not reuse parent `자동발행실행보조파일` because it targets the older parent scripts.

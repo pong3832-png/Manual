@@ -1,5 +1,26 @@
 # Work Log
 
+## 2026-05-29
+
+### Changed
+
+- Re-saved the `skssj2628` Naver login session with `skssj2628.py --naver-login`, using the actual scheduled profile under `네이버 블로그 글쓰기/skssj2628/ChromeNaverBot_skssj2628`.
+- User-approved manual `skssj2628` Coupang run succeeded. Published title: `팔도 비빔장 시그니처 구매 전 확인할 2개 구성과 보관 기준`.
+- Updated `네이버 블로그 글쓰기/skssj2628/skssj2628.py` so `GeminiWebBot` no longer forces the Gemini 3.1 Pro model selector during startup; it now keeps the already-selected/default Gemini model and continues with the normal prompt flow.
+
+### Verified
+
+- Manual `skssj2628` Coupang run reused the Naver session, published 1 post, released the lock, and left no `skssj2628` Python/ChromeDriver process.
+- Public RSS showed the 15:24 `팔도 비빔장...` post and the 16:19 scheduled `코멧 논슬립 바지걸이...` post.
+- The 17:10 scheduled run did not publish: Gemini reached the body prompt but never returned body text after the input/model UI was not ready.
+- Confirmed the `GeminiWebBot` initializer no longer calls `_select_thinking_model()`.
+- `py_compile` passed for `네이버 블로그 글쓰기/skssj2628/skssj2628.py`.
+
+### Next Session Handoff
+
+- Watch the next `skssj2628` scheduled log for Gemini input readiness. If another body-generation timeout happens, inspect recent logs and Gemini UI state before adding retries or selectors.
+- Do not re-enable forced Gemini model selection in `skssj2628.py` unless the visible Gemini UI proves it is needed.
+
 ## 2026-05-26
 
 ### Changed
