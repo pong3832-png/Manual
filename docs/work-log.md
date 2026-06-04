@@ -1,5 +1,145 @@
 # Work Log
 
+## 2026-06-04
+
+### 오늘 최종 인수인계
+
+- 최종 활성 스케줄러 2개
+  - 부모 `네이버 블로그 글쓰기/스케줄러.py`: `제미나이웹.py` 전용, `일상 3건`, `쿠팡 0건`.
+  - `skssj2628/skssj2628(스케줄러).py`: `skssj2628.py` 전용, `일상 7건 + 쿠팡 3건`.
+- 오늘 등록/취소
+  - `skssj2629`는 현재 미사용. 잘못 등록했던 `NaverBlogAutoPost_2629_01`~`10`, `NaverBlogAutoPost_2629_RefreshDaily` 삭제 완료.
+  - `제미나이웹.py` 스케줄: 2026-06-04 `17:47`, `18:03`, `18:20` 일상 3건 등록.
+  - `skssj2628.py` 스케줄: 2026-06-04 쿠팡 `11:54`, `19:25`, `21:15`; 일상 `12:13`, `13:47`, `16:28`, `20:39`, `22:10`, `22:54`, `23:22` 등록.
+- 오늘 코드/프롬프트 변경
+  - `skssj2628(스케줄러).py`: `Python311` 대신 `티스토리 자동화 ing/.venv/Scripts/python.exe`를 우선 사용하게 수정. 원인: `Python311`에는 `pyperclip`이 없어 10:43 작업이 import 단계에서 종료됨.
+  - `제미나이웹.py`: 애드포스트 분석 반영. 모바일 본문 체류와 PC 하단까지 읽히도록 도입부 결론 소진 방지, 후반 `오늘 바로 확인할 순서` 정리표, 짧은 FAQ, 3000~3600자 목표를 일상 프롬프트에 추가. 본문에 `광고/클릭/수익/애드포스트` 직접 출력 금지.
+- 검증 결과
+  - `skssj2628.py --help`는 `Python311`에서 `No module named 'pyperclip'` 재현, venv Python에서 정상 출력.
+  - `schtasks /Query`로 `NaverBlogAutoPost_skssj2628_01`과 RefreshDaily가 venv Python 경로로 등록된 것 확인.
+  - `NaverBlogAutoPost_2629` 잔여 작업 없음 확인.
+  - `python -m py_compile` 통과: `제미나이웹.py`, `스케줄러.py`, `skssj2628(스케줄러).py`.
+  - 실패 로그 분석: 오늘 `skssj2628` 11:54 쿠팡, 12:13 일상, 13:47 일상은 모두 발행 성공. `제미나이웹.py`는 오늘 등록 시간이 아직 도래하지 않아 오늘 실행 로그 없음.
+- 다음 세션에서 먼저 볼 것
+  - `제미나이웹.py` 최신 로그: `네이버 블로그 글쓰기/자동발행상태기록파일/logs/`에서 2026-06-04 17:47/18:03/18:20 실행 성공 여부와 새 프롬프트 글 품질 확인.
+  - `skssj2628` 최신 로그: `skssj2628/자동발행상태기록파일/logs/`에서 16:28 이후 예약 성공 여부 확인.
+  - 쿠팡 실패가 보이면 먼저 딥링크/API 제한 문구를 확인. 원본 링크로 발행하지 말고 후보 스킵 정책 유지.
+- 반복 실수 방지
+  - 사용자가 "스케줄러 두 개"라고 하면 `스케줄러.py`와 `skssj2628(스케줄러).py`만 의미한다. `skssj2629`는 재활성화 승인 전 실행 금지.
+  - 스케줄러를 실행한 뒤에는 `_01`, RefreshDaily, `NaverBlogAutoPost_2629` 잔여 여부를 반드시 조회한다.
+  - `skssj2628` 작업이 켜졌다 꺼지면 먼저 Last Result, 최신 로그 존재 여부, `Task To Run`의 Python 경로를 확인한다.
+
+### 네이버 자동화 ing/스케줄러 대상 정정
+
+- 확인사항
+  - 현재 사용 중인 스케줄러 2개는 부모 `네이버 블로그 글쓰기/스케줄러.py`와 `skssj2628/skssj2628(스케줄러).py`.
+  - `skssj2629`는 현재 스케줄 발행에 쓰지 않는 파일/계정으로 확인. 기존 `AGENTS.md`와 과거 work-log에는 active처럼 남아 있어 혼선이 발생.
+  - `제미나이웹.py` 컨셉은 애드포스트 중심 생활비 체크형(월세, 이사, 통신, 공과금)이고, 부모 스케줄러는 `일상 3건`만 등록.
+  - `skssj2628.py` 컨셉은 체험단 플랫폼 유입용 정보글이고, 스케줄러는 `체험단형 일상 7건 + 쿠팡 3건`.
+- 변경사항
+  - `네이버 자동화 ing/AGENTS.md`에서 `skssj2629` active scheduler 문구를 비활성/히스토리 파일 문구로 정정.
+  - 부모 `스케줄러.py`와 `skssj2628(스케줄러).py`의 peer schedule 참조에서 비활성 `skssj2629` daily_schedule 경로를 제거.
+  - 사용자 확인 후 잘못 등록된 `NaverBlogAutoPost_2629_01`~`10` 및 `NaverBlogAutoPost_2629_RefreshDaily`를 삭제.
+  - 부모 `스케줄러.py --target-date auto` 재실행: 2026-06-04 `제미나이웹.py` 일상 3건 등록.
+  - `skssj2628(스케줄러).py --target-date auto` 재실행: 2026-06-04 체험단형 일상 9건 + 쿠팡 1건 등록.
+  - 이후 사용자 요청으로 `skssj2628(스케줄러).py` 기본 비율을 체험단형 일상 7건 + 쿠팡 3건으로 변경. 기존 등록 작업은 재등록 전까지 이전 비율일 수 있음.
+  - 10:43 `NaverBlogAutoPost_skssj2628_01`이 켜지자마자 종료된 원인 확인: 작업이 `Python311`로 등록되어 있었고 해당 환경에 `pyperclip`이 없어 `skssj2628.py` import 단계에서 `ModuleNotFoundError`로 종료됨.
+  - `skssj2628(스케줄러).py`가 패키지가 설치된 `티스토리 자동화 ing/.venv/Scripts/python.exe`를 우선 사용해 post task와 RefreshDaily를 등록하도록 수정.
+  - `skssj2628(스케줄러).py --target-date auto`를 venv Python으로 재실행: 2026-06-04 체험단형 일상 7건 + 쿠팡 3건 등록.
+- 검증
+  - `python -m py_compile "...\스케줄러.py" "...\skssj2628(스케줄러).py"` 통과.
+  - `Python311`으로 `skssj2628.py --help` 실행 시 `No module named 'pyperclip'` 재현.
+  - `티스토리 자동화 ing/.venv/Scripts/python.exe`로 `skssj2628.py --help` 정상 출력 확인.
+  - `schtasks /Query`로 `NaverBlogAutoPost_skssj2628_01`과 `NaverBlogAutoPost_skssj2628_RefreshDaily`의 `Task To Run`이 venv Python 경로로 바뀐 것을 확인.
+  - `schtasks /Query /TN "NaverBlogAutoPost_2629_01"` 미존재 확인.
+  - `schtasks /Query`로 `NaverBlogAutoPost_01`, `NaverBlogAutoPost_RefreshDaily`, `NaverBlogAutoPost_skssj2628_01`, `NaverBlogAutoPost_skssj2628_RefreshDaily`가 `Ready` 상태임을 확인.
+- 다음 작업
+  - 다음 세션부터 스케줄러 2개 요청은 부모 `스케줄러.py`와 `skssj2628(스케줄러).py`만 대상으로 한다.
+  - `skssj2628` 재등록 시 체험단형 일상 7건 + 쿠팡 3건으로 등록되는지 확인한다.
+  - `skssj2629`를 다시 쓰려면 사용자에게 계정 재활성화 여부를 먼저 확인한다.
+
+### 네이버 자동화 ing/네이버 블로그 글쓰기/제미나이웹.py
+
+- 변경사항
+  - 애드포스트 수익이 모바일 본문과 PC 하단에서 많이 난다는 사용자 분석을 반영해 일상글 프롬프트를 보강.
+  - 도입부에서 결론을 모두 소진하지 않고, 핵심 기준을 본문 중반/후반에 나눠 배치하도록 수정.
+  - PC 하단까지 읽히도록 후반부에 `오늘 바로 확인할 순서` 정리표와 짧은 FAQ를 추가하도록 지시.
+  - 광고/클릭/수익/애드포스트 같은 직접 표현은 본문에 출력하지 못하게 금지어를 보강.
+  - 일상글 목표 분량을 2600~3200자에서 3000~3600자로 늘려 후반부 정보 밀도를 높임.
+- 검증
+  - `python -m py_compile "네이버 자동화 ing\네이버 블로그 글쓰기\제미나이웹.py"` 통과.
+  - `rg`로 애드포스트 수익형 읽기 흐름 기준, 하단 정리표, 짧은 FAQ, 3000~3600자 목표 문구 반영 확인.
+  - 기존 네이버 입력 파서가 여러 `[목록주제]`/`[목록끝]` 블록을 순차 처리하는 구조임을 확인.
+- 다음 작업
+  - 다음 `제미나이웹.py` 일상 발행 로그와 실제 글에서 모바일 중반 체류 문장, 후반부 정리표/FAQ, PC 하단까지 읽히는 흐름을 확인.
+
+## 2026-06-02
+
+### 네이버 자동화 ing/네이버 블로그 글쓰기/skssj2628
+
+- 변경사항
+  - `skssj2628.py` 일상 글을 체험단 플랫폼 유입용 정보글로 전환. 주제는 체험단 신청, 후기 작성, 블로그 운영, 네이버 플레이스/리뷰 마케팅, 소상공인 캠페인 운영 중심.
+  - 플랫폼 정보 반영: `CheheomMoa`, 메인 `https://camp-platform-liart.vercel.app/`, 블로거 모집 `https://camp-platform-liart.vercel.app/app?tab=explore`. 사장님 캠페인 등록 URL은 아직 빈 값.
+  - 일상 프롬프트를 체험단형 정보글로 단일화하고, 검색 의도 일관성, 초반 5줄 답 방향, 저장용 체크리스트, 제목-도입-FAQ 연결 규칙을 추가.
+  - `skssj2628(스케줄러).py` 예약 비율을 `일상 9건 + 쿠팡 1건`으로 변경. 사용자 승인 후 2026-06-02 예약 재등록 완료.
+  - `네이버 자동화 ing/AGENTS.md`에 skssj2628 수익화 방향, URL/프롬프트 주의사항을 반영.
+- 검증
+  - `python -m py_compile "...\skssj2628.py" "...\skssj2628(스케줄러).py"` 통과.
+  - `rg`로 체험단 카테고리, CheheomMoa URL, `일상 9 + 쿠팡 1`, 프롬프트 강화 문구 반영 확인.
+  - `schtasks /Query`로 `_01`, `_06`, `_10`, `_RefreshDaily`가 `Ready`이고 `--naver-id "skssj2628"` 포함 확인.
+  - `git diff --check` 통과. LF/CRLF 경고만 출력.
+- 다음 작업
+  - 첫 체험단형 일상 발행 후 `skssj2628/자동발행상태기록파일/logs/`와 실제 글 확인: 검색 의도, 링크 위치, 과장 금지 표현, 체험단 정보글 톤.
+  - 사장님 캠페인 등록 전용 URL이 생기면 `EXPERIENCE_PLATFORM_ADVERTISER_URL`에 연결.
+  - 추가 스케줄러 변경/발행 재시도는 사용자 승인 후 진행.
+
+### 네이버 자동화 ing/네이버 블로그 글쓰기/skssj2627
+
+- 변경사항
+  - 사용자 승인으로 `스케줄러.py --target-date auto`를 실행해 `제미나이웹.py` 예약 작업을 일상 3건으로 재등록.
+  - 사용자 요청으로 18시 전 작성이 끝나도록 `NaverBlogAutoPost_01~03` 시간을 다시 앞당김.
+  - 등록 작업: `NaverBlogAutoPost_01` 10:20, `NaverBlogAutoPost_02` 12:50, `NaverBlogAutoPost_03` 15:20.
+  - 매일 재등록 작업 `NaverBlogAutoPost_RefreshDaily`는 00:05로 등록.
+- 검증
+  - `schtasks /Query`로 3개 일상 작업과 refresh 작업이 `Ready` 상태임을 확인.
+  - `자동발행상태기록파일/daily_schedule.json` 저장 확인.
+- 다음 작업
+  - `자동발행상태기록파일/logs/`에서 10:20/12:50/15:20 제미나이웹 일상 발행 성공 여부와 네이버/Gemini 세션 상태 확인.
+
+## 2026-06-01
+
+### 네이버 자동화 ing/네이버 블로그 글쓰기/skssj2627
+
+- 변경사항
+  - `제미나이웹.py`: Gemini 임시 채팅/`Gemini 3.1 Pro` 선택 셀렉터 보강 후 쿠팡 1건, 일상 1건 실제 발행 성공 확인.
+  - `제미나이웹.py`: 애드포스트 중심으로 일상 주제를 `월세·이사·통신·공과금` 체크형으로 전환. 보험·자동차·렌탈 축은 자동 회전/프롬프트/후보 블록에서 제거.
+  - `제미나이웹.py`: 네이버 공식 품질 기준은 내부 작성 기준으로만 반영하고, 본문에는 `D.I.A.`, `C-Rank`, `AI 브리핑`, `상위노출`, `SEO` 노출 금지.
+  - `스케줄러.py`: `NaverBlogAutoPost_*`를 `일상 3건/일, 쿠팡 0건`으로 변경. 기존 10건 작업은 재등록 시 정리하고 1~3번만 생성.
+  - QA 보조 스크립트 추가: `qa/check_adpost_topic_rotation.py`, `qa/check_gemini_scheduler_mix.py` (`.gitignore` 대상이라 status에는 안 보임).
+- 검증
+  - `python -m py_compile "...\제미나이웹.py"`, `python -m py_compile "...\스케줄러.py"` 통과.
+  - `python "...\qa\check_adpost_topic_rotation.py"`, `python "...\qa\check_gemini_scheduler_mix.py"` 통과.
+  - `git diff --check` 통과. LF/CRLF 경고만 출력.
+  - 발행 로그 확인: `20260601_105926_쿠팡.log`, `20260601_154845_일상.log` 모두 임시 채팅, Gemini 3.1 Pro, 발행 성공.
+  - 스케줄러 등록 확인: 2026-06-01 `18:28`, `21:51`, `23:06` 일상 3건, `NaverBlogAutoPost_04~10` 없음, `RefreshDaily` 00:05 Ready.
+- 다음 작업
+  - 다음 세션은 최근 `자동발행상태기록파일/logs/`에서 18:28/21:51/23:06 실행 성공 여부부터 확인.
+  - 애드포스트 전환 성과는 최소 1주일간 `일상 3건/일` 유지 후 조회수/유입 키워드/수익 기준으로 판단.
+  - 쿠팡 자동 스케줄 재도입, 보험·자동차·렌탈 주제 재도입, 스케줄러 삭제/변경은 사용자 승인 후 진행.
+
+### 네이버 자동화 ing/네이버 블로그 글쓰기/skssj2629
+
+- 변경사항
+  - `skssj2629.py`: 로컬 `.wdm`/Selenium cache의 ChromeDriver 버전 폴더를 자동 탐색해 최신 호환 드라이버를 먼저 사용하도록 보강.
+  - 기존 변경 중 `PROJECT_ROOT` 상위 공용 락 경로는 `skssj2628` 계열과 같은 클립보드 충돌 방지 패턴으로 확인했고, 상태 JSON/로그는 기존 `skssj2629/자동발행상태기록파일`을 유지하는 구조로 확인.
+  - `skssj2629_naver.csv`는 diff 통계만 확인했고 링크 원문은 출력하지 않음.
+- 검증
+  - `python -m py_compile "네이버 자동화 ing\네이버 블로그 글쓰기\skssj2629\skssj2629.py" "네이버 자동화 ing\네이버 블로그 글쓰기\skssj2629\skssj2629(스케줄러).py"` 통과.
+  - `git diff --check -- ...skssj2629.py ...skssj2629(스케줄러).py` 통과. LF/CRLF 경고만 출력됨.
+- 다음 작업
+  - 실제 발행, 스케줄러 등록/삭제, 대량 외부 호출은 사용자 명시 승인 후 진행.
+  - `skssj2629_naver.csv` 변경 내용은 링크 노출 없이 별도 확인이 필요하면 비민감 컬럼 기준으로만 점검.
+
 ## 2026-05-28
 
 ### 티스토리 자동화 ing
