@@ -87,11 +87,13 @@ def run_symbol_analysis(
         blocking_reason = f"price csv invalid: {exc}"
 
     if price_status == "READY":
+        analysis_reports_root = _symbol_research_reports_root(reports_root, target_symbol)
+        analysis_universe_csv = _write_symbol_universe(add_result.universe, target_symbol, analysis_reports_root)
         research_output = run_company_research(
             config_path=config_path,
-            universe_csv=universe_path,
+            universe_csv=analysis_universe_csv,
             fundamentals_csv=fundamentals_csv,
-            reports_dir=reports_root,
+            reports_dir=analysis_reports_root,
             min_samples=min_samples,
         )
         matches = research_output.report.loc[research_output.report["symbol"] == target_symbol]
@@ -160,11 +162,13 @@ def run_symbol_batch_analysis(
     research_output = None
     research_by_symbol: dict[str, tuple[str, dict[str, object]]] = {}
     if ready_symbols:
+        analysis_reports_root = reports_root / "symbol_analysis" / "batch_company_research"
+        analysis_universe_csv = _write_symbols_universe(add_result.universe, ready_symbols, analysis_reports_root)
         research_output = run_company_research(
             config_path=config_path,
-            universe_csv=universe_path,
+            universe_csv=analysis_universe_csv,
             fundamentals_csv=fundamentals_csv,
-            reports_dir=reports_root,
+            reports_dir=analysis_reports_root,
             min_samples=min_samples,
         )
         for symbol in ready_symbols:
@@ -260,6 +264,25 @@ def _batch_price_info(
         else:
             info[symbol]["price_status"] = "READY"
     return info
+
+
+def _symbol_research_reports_root(reports_root: Path, symbol: str) -> Path:
+    slug = symbol.replace(".", "_")
+    return reports_root / "symbol_analysis" / f"company_research_{slug}"
+
+
+def _write_symbol_universe(universe: pd.DataFrame, symbol: str, output_root: Path) -> Path:
+    return _write_symbols_universe(universe, [symbol], output_root)
+
+
+def _write_symbols_universe(universe: pd.DataFrame, symbols: list[str], output_root: Path) -> Path:
+    output_root.mkdir(parents=True, exist_ok=True)
+    symbol_set = set(symbols)
+    filtered = universe.loc[universe["symbol"].isin(symbol_set)].copy()
+    ordered = filtered.set_index("symbol").loc[symbols].reset_index()
+    path = output_root / "research_universe.csv"
+    ordered.to_csv(path, index=False, encoding="utf-8-sig")
+    return path
 
 
 def _target_universe_row(universe: pd.DataFrame, symbol: str) -> pd.Series:

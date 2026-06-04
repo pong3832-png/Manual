@@ -49,6 +49,16 @@ def parse_args() -> argparse.Namespace:
         help="Directory containing capital_plan_review_<code>.csv files.",
     )
     parser.add_argument(
+        "--trend-forecast-csv",
+        default=str(PROJECT_ROOT / "reports" / "trend_forecast" / "trend_forecast.csv"),
+        help="Optional local trend forecast CSV used to block high chase-risk entries.",
+    )
+    parser.add_argument(
+        "--market-regime-csv",
+        default=str(PROJECT_ROOT / "reports" / "market_regime" / "market_regime.csv"),
+        help="Optional local market/sector regime CSV used to block broad-risk entries.",
+    )
+    parser.add_argument(
         "--output-dir",
         default=str(PROJECT_ROOT / "reports"),
         help="Output reports root.",
@@ -67,6 +77,8 @@ def main() -> int:
             output_dir=Path(args.output_dir),
             manual_proposal_csv=Path(args.manual_proposal_csv),
             capital_plan_dir=Path(args.capital_plan_dir),
+            trend_forecast_csv=Path(args.trend_forecast_csv),
+            market_regime_csv=Path(args.market_regime_csv),
         )
         logger.info("Pre-buy decision complete.")
         logger.info("CSV report: %s", output.csv_path)

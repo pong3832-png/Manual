@@ -396,3 +396,292 @@ def test_pre_buy_decision_waits_when_filing_risk_summary_has_hold_review() -> No
         assert "filing risk hold review" in output.report.loc[0, "readiness_blockers"]
         assert "filing risk hold review" in output.report.loc[0, "buy_ban_reasons"]
         assert "filing risk summary has no fatal risk" not in output.report.loc[0, "buy_reasons"]
+
+
+def test_pre_buy_decision_marks_manual_resolution_filing_as_non_fatal_evidence() -> None:
+    module = importlib.import_module("quantum_trainer.pre_buy_decision")
+
+    with TemporaryDirectory(dir=PROJECT_ROOT) as tmp_dir:
+        root = Path(tmp_dir)
+        profit_csv = root / "profit_focus.csv"
+        gate_csv = root / "decision_gate.csv"
+        research_csv = root / "company_research.csv"
+        filing_dir = root / "filing_review"
+        output_dir = root / "reports"
+        filing_dir.mkdir()
+
+        pd.DataFrame(
+            [
+                {
+                    "symbol": "183300.KQ",
+                    "company_name": "Komico",
+                    "sector": "Equipment",
+                    "profit_focus_status": "CORE_FOCUS",
+                    "conviction_score": 74.83,
+                    "expected_20d_return": 0.20,
+                    "upside_probability": 0.99,
+                    "ma20_gap": 0.11,
+                    "return_20d": 0.21,
+                    "why_profit_candidate": "conviction_score=74.83",
+                    "why_not_now": "",
+                    "invalidation_rule": "TODAY_FOCUS exit",
+                    "next_step": "manual valuation check",
+                }
+            ]
+        ).to_csv(profit_csv, index=False)
+        pd.DataFrame(
+            [
+                {
+                    "symbol": "183300.KQ",
+                    "company_name": "Komico",
+                    "decision_gate_status": "WAITING_MANUAL_EVIDENCE",
+                    "order_status": "NO_ORDER",
+                    "gate_reason": "valuation_review UNKNOWN",
+                    "filing_review": "PASS",
+                    "earnings_review": "PASS",
+                    "business_driver_review": "PASS",
+                    "valuation_review": "UNKNOWN",
+                    "loss_rule_review": "PASS",
+                    "capital_plan_review": "PASS",
+                    "loss_defense": "TODAY_FOCUS exit",
+                }
+            ]
+        ).to_csv(gate_csv, index=False)
+        pd.DataFrame([{"symbol": "183300.KQ", "latest_price": 90000, "ma20_gap": 0.11}]).to_csv(
+            research_csv, index=False
+        )
+        pd.DataFrame(
+            [
+                {
+                    "symbol": "183300.KQ",
+                    "risk_id": "regulatory_accounting_litigation_overhang",
+                    "risk_title": "Regulatory/accounting litigation overhang",
+                    "source_checks": "manual_resolution",
+                    "evidence_count": 0,
+                    "key_evidence": "HOLD_REVIEW resolved as keyword-evidence gap",
+                    "fatal_risk": "NO",
+                    "gate_opinion": "PASS_CANDIDATE_WITH_MONITORING",
+                    "monitoring_rule": "audit opinion, restatement, sanction, litigation",
+                }
+            ]
+        ).to_csv(filing_dir / "filing_risk_summary_183300.csv", index=False)
+
+        output = module.run_pre_buy_decision(
+            profit_focus_csv=profit_csv,
+            decision_gate_csv=gate_csv,
+            company_research_csv=research_csv,
+            filing_risk_dir=filing_dir,
+            output_dir=output_dir,
+        )
+
+        row = output.report.loc[0]
+        assert row["decision_status"] == "WAIT"
+        assert row["order_status"] == "NO_ORDER"
+        assert "manual gate not ready" in row["readiness_blockers"]
+        assert "fatal filing risk" not in row["readiness_blockers"]
+        assert "filing risk hold review" not in row["readiness_blockers"]
+        assert "filing risk manually resolved as non-fatal" in row["buy_reasons"]
+
+
+def test_pre_buy_decision_waits_when_trend_forecast_says_pullback_high_chase_risk() -> None:
+    module = importlib.import_module("quantum_trainer.pre_buy_decision")
+
+    with TemporaryDirectory(dir=PROJECT_ROOT) as tmp_dir:
+        root = Path(tmp_dir)
+        profit_csv = root / "profit_focus.csv"
+        gate_csv = root / "decision_gate.csv"
+        research_csv = root / "company_research.csv"
+        trend_csv = root / "trend_forecast.csv"
+        filing_dir = root / "filing_review"
+        output_dir = root / "reports"
+        filing_dir.mkdir()
+
+        pd.DataFrame(
+            [
+                {
+                    "symbol": "183300.KQ",
+                    "company_name": "Komico",
+                    "sector": "Equipment",
+                    "profit_focus_status": "CORE_FOCUS",
+                    "conviction_score": 74.83,
+                    "expected_20d_return": 0.20,
+                    "upside_probability": 0.99,
+                    "ma20_gap": 0.11,
+                    "return_20d": 0.21,
+                    "why_profit_candidate": "conviction_score=74.83",
+                    "why_not_now": "",
+                    "invalidation_rule": "TODAY_FOCUS exit",
+                    "next_step": "wait for pullback",
+                }
+            ]
+        ).to_csv(profit_csv, index=False)
+        pd.DataFrame(
+            [
+                {
+                    "symbol": "183300.KQ",
+                    "company_name": "Komico",
+                    "decision_gate_status": "READY_FOR_SIZING_REVIEW",
+                    "order_status": "NO_ORDER",
+                    "gate_reason": "manual checks passed",
+                    "filing_review": "PASS",
+                    "earnings_review": "PASS",
+                    "business_driver_review": "PASS",
+                    "valuation_review": "PASS",
+                    "loss_rule_review": "PASS",
+                    "capital_plan_review": "PASS",
+                    "loss_defense": "TODAY_FOCUS exit",
+                }
+            ]
+        ).to_csv(gate_csv, index=False)
+        pd.DataFrame([{"symbol": "183300.KQ", "latest_price": 90000, "ma20_gap": 0.11}]).to_csv(
+            research_csv, index=False
+        )
+        pd.DataFrame(
+            [
+                {
+                    "symbol": "183300.KQ",
+                    "risk_id": "manual_resolved",
+                    "risk_title": "Resolved filing risk",
+                    "source_checks": "manual_resolution",
+                    "evidence_count": 0,
+                    "key_evidence": "resolved as non-fatal",
+                    "fatal_risk": "NO",
+                    "gate_opinion": "PASS_CANDIDATE_WITH_MONITORING",
+                    "monitoring_rule": "monitor filings",
+                }
+            ]
+        ).to_csv(filing_dir / "filing_risk_summary_183300.csv", index=False)
+        pd.DataFrame(
+            [
+                {
+                    "symbol": "183300.KQ",
+                    "trend_regime": "UPTREND",
+                    "forecast_bias": "WATCH_PULLBACK",
+                    "chase_risk": "HIGH",
+                    "trend_score": 100.0,
+                    "action_summary": "trend strong but extended",
+                }
+            ]
+        ).to_csv(trend_csv, index=False)
+
+        output = module.run_pre_buy_decision(
+            profit_focus_csv=profit_csv,
+            decision_gate_csv=gate_csv,
+            company_research_csv=research_csv,
+            filing_risk_dir=filing_dir,
+            output_dir=output_dir,
+            trend_forecast_csv=trend_csv,
+        )
+
+        row = output.report.loc[0]
+        assert row["decision_status"] == "WAIT"
+        assert row["order_status"] == "NO_ORDER"
+        assert "trend forecast wait pullback" in row["readiness_blockers"]
+        assert "trend chase risk high" in row["buy_ban_reasons"]
+
+
+def test_pre_buy_decision_waits_when_market_or_sector_regime_blocks_entry() -> None:
+    module = importlib.import_module("quantum_trainer.pre_buy_decision")
+
+    with TemporaryDirectory(dir=PROJECT_ROOT) as tmp_dir:
+        root = Path(tmp_dir)
+        profit_csv = root / "profit_focus.csv"
+        gate_csv = root / "decision_gate.csv"
+        research_csv = root / "company_research.csv"
+        market_regime_csv = root / "market_regime.csv"
+        filing_dir = root / "filing_review"
+        output_dir = root / "reports"
+        filing_dir.mkdir()
+
+        pd.DataFrame(
+            [
+                {
+                    "symbol": "183300.KQ",
+                    "company_name": "Komico",
+                    "sector": "반도체 장비",
+                    "profit_focus_status": "CORE_FOCUS",
+                    "conviction_score": 74.83,
+                    "expected_20d_return": 0.20,
+                    "upside_probability": 0.99,
+                    "ma20_gap": 0.02,
+                    "return_20d": 0.05,
+                    "why_profit_candidate": "conviction_score=74.83",
+                    "why_not_now": "",
+                    "invalidation_rule": "TODAY_FOCUS exit",
+                    "next_step": "wait for market regime",
+                }
+            ]
+        ).to_csv(profit_csv, index=False)
+        pd.DataFrame(
+            [
+                {
+                    "symbol": "183300.KQ",
+                    "company_name": "Komico",
+                    "decision_gate_status": "READY_FOR_SIZING_REVIEW",
+                    "order_status": "NO_ORDER",
+                    "gate_reason": "manual checks passed",
+                    "filing_review": "PASS",
+                    "earnings_review": "PASS",
+                    "business_driver_review": "PASS",
+                    "valuation_review": "PASS",
+                    "loss_rule_review": "PASS",
+                    "capital_plan_review": "PASS",
+                    "loss_defense": "TODAY_FOCUS exit",
+                }
+            ]
+        ).to_csv(gate_csv, index=False)
+        pd.DataFrame([{"symbol": "183300.KQ", "latest_price": 90000, "ma20_gap": 0.02}]).to_csv(
+            research_csv, index=False
+        )
+        pd.DataFrame(
+            [
+                {
+                    "symbol": "183300.KQ",
+                    "risk_id": "manual_resolved",
+                    "risk_title": "Resolved filing risk",
+                    "source_checks": "manual_resolution",
+                    "evidence_count": 0,
+                    "key_evidence": "resolved as non-fatal",
+                    "fatal_risk": "NO",
+                    "gate_opinion": "PASS_CANDIDATE_WITH_MONITORING",
+                    "monitoring_rule": "monitor filings",
+                }
+            ]
+        ).to_csv(filing_dir / "filing_risk_summary_183300.csv", index=False)
+        pd.DataFrame(
+            [
+                {
+                    "scope": "MARKET",
+                    "sector": "ALL",
+                    "symbol_count": 100,
+                    "regime_status": "RISK_OFF",
+                    "risk_posture": "DEFENSIVE",
+                    "order_status": "NO_ORDER",
+                    "external_api_requested": "NO",
+                },
+                {
+                    "scope": "SECTOR",
+                    "sector": "반도체 장비",
+                    "symbol_count": 10,
+                    "regime_status": "RISK_ON",
+                    "risk_posture": "SELECTIVE_BUY_REVIEW",
+                    "order_status": "NO_ORDER",
+                    "external_api_requested": "NO",
+                },
+            ]
+        ).to_csv(market_regime_csv, index=False)
+
+        output = module.run_pre_buy_decision(
+            profit_focus_csv=profit_csv,
+            decision_gate_csv=gate_csv,
+            company_research_csv=research_csv,
+            filing_risk_dir=filing_dir,
+            output_dir=output_dir,
+            market_regime_csv=market_regime_csv,
+        )
+
+        row = output.report.loc[0]
+        assert row["decision_status"] == "WAIT"
+        assert row["order_status"] == "NO_ORDER"
+        assert "market regime defensive" in row["readiness_blockers"]
+        assert "market regime defensive" in row["buy_ban_reasons"]

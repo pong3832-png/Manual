@@ -146,6 +146,191 @@ UNIVERSE_STOCK_COLUMNS = {
     "action_summary",
 }
 
+TREND_FORECAST_COLUMNS = {
+    "symbol",
+    "company_name",
+    "sector",
+    "latest_price",
+    "latest_price_date",
+    "sample_count",
+    "return_5d",
+    "return_20d",
+    "return_60d",
+    "ma20_position",
+    "ma60_position",
+    "volatility_20d",
+    "max_drawdown_60d",
+    "trend_regime",
+    "forecast_bias",
+    "chase_risk",
+    "trend_score",
+    "research_score",
+    "order_status",
+    "external_api_requested",
+    "action_summary",
+}
+
+MARKET_REGIME_COLUMNS = {
+    "scope",
+    "sector",
+    "symbol_count",
+    "bullish_count",
+    "watch_pullback_count",
+    "watch_rebound_count",
+    "bearish_count",
+    "high_chase_count",
+    "bullish_ratio",
+    "bearish_ratio",
+    "high_chase_ratio",
+    "average_trend_score",
+    "regime_status",
+    "risk_posture",
+    "order_status",
+    "external_api_requested",
+    "action_summary",
+}
+
+MARKET_RECOVERY_WATCH_COLUMNS = {
+    "scope",
+    "sector",
+    "recovery_status",
+    "review_priority",
+    "regime_status",
+    "risk_posture",
+    "symbol_count",
+    "bullish_ratio",
+    "bearish_ratio",
+    "high_chase_ratio",
+    "blocked_watch_count",
+    "unlock_condition",
+    "required_evidence",
+    "review_cadence",
+    "action_summary",
+    "order_status",
+    "external_api_requested",
+    "broker_order_requested",
+}
+
+SECTOR_ROTATION_WATCH_COLUMNS = {
+    "sector",
+    "rotation_status",
+    "rotation_priority",
+    "recovery_status",
+    "regime_status",
+    "symbol_count",
+    "bullish_ratio",
+    "bearish_ratio",
+    "high_chase_ratio",
+    "candidate_count",
+    "bullish_candidate_count",
+    "rebound_candidate_count",
+    "high_chase_candidate_count",
+    "opportunity_score",
+    "top_candidates",
+    "operator_action",
+    "order_status",
+    "external_api_requested",
+    "broker_order_requested",
+}
+
+TACTICAL_WATCHLIST_COLUMNS = {
+    "symbol",
+    "company_name",
+    "sector",
+    "tactical_status",
+    "tactical_priority",
+    "priority_score",
+    "final_watch_status",
+    "entry_watch_status",
+    "sector_rotation_status",
+    "sector_recovery_status",
+    "sector_regime_status",
+    "final_rank_score",
+    "chase_risk",
+    "latest_price",
+    "key_reason",
+    "next_check",
+    "operator_action",
+    "order_status",
+    "external_api_requested",
+    "broker_order_requested",
+}
+
+EVENT_CATALYST_COLUMNS = {
+    "symbol",
+    "company_name",
+    "catalyst_title",
+    "catalyst_type",
+    "impact_level",
+    "event_status",
+    "source",
+    "summary",
+    "event_score",
+    "event_decision",
+    "chase_risk",
+    "research_score",
+    "research_view",
+    "quant_decision",
+    "return_20d",
+    "ma20_gap",
+    "extension_risk",
+    "action_summary",
+    "order_status",
+    "external_api_requested",
+}
+
+EVENT_ADJUSTED_RANKING_COLUMNS = {
+    "symbol",
+    "company_name",
+    "sector",
+    "final_watch_status",
+    "rank_bucket",
+    "final_rank_score",
+    "quant_decision",
+    "research_score",
+    "event_decision",
+    "event_score",
+    "chase_risk",
+    "entry_status",
+    "latest_price",
+    "expected_20d_return",
+    "upside_probability",
+    "return_20d",
+    "ma20_gap",
+    "valuation_status",
+    "risk_status",
+    "catalyst_title",
+    "action_summary",
+    "order_status",
+    "external_api_requested",
+}
+
+ENTRY_SIGNAL_WATCH_COLUMNS = {
+    "symbol",
+    "company_name",
+    "sector",
+    "watch_status",
+    "trigger_priority",
+    "final_watch_status",
+    "decision_status",
+    "entry_status",
+    "primary_blocker",
+    "market_regime_status",
+    "sector_regime_status",
+    "forecast_bias",
+    "chase_risk",
+    "latest_price",
+    "entry_price_low",
+    "entry_price_high",
+    "trigger_condition",
+    "required_evidence",
+    "review_cadence",
+    "action_summary",
+    "order_status",
+    "external_api_requested",
+    "broker_order_requested",
+}
+
 ORDER_CANDIDATE_COLUMNS = {
     "symbol",
     "company_name",
@@ -346,6 +531,45 @@ STATUS_KO = {
     "RISK_OK": "위험 낮음",
     "RISK_REVIEW": "위험 검토",
     "WATCHLIST": "관찰 목록",
+    "EVENT_FOCUS": "핵심 이벤트",
+    "EVENT_WATCH": "이벤트 관찰",
+    "WAIT_PULLBACK_EVENT": "이벤트 강함 / 눌림 대기",
+    "BACKGROUND_EVENT": "배경 이벤트",
+    "NO_EVENT": "이벤트 없음",
+    "NO_EVENT_INPUT": "이벤트 입력 없음",
+    "READY_REVIEW": "검토 가능",
+    "MARKET_WAIT": "시장/섹터 대기",
+    "WAIT_PULLBACK": "눌림 대기",
+    "WAIT_MARKET_REGIME": "시장 회복 대기",
+    "WAIT_BREADTH_RECOVERY": "폭 회복 대기",
+    "WAIT_OVERHEAT_COOLING": "과열 진정 대기",
+    "WAIT_PRICE_PULLBACK": "가격 눌림 대기",
+    "WAIT_FILING_EVIDENCE": "공시 근거 대기",
+    "WAIT_MANUAL_GATES": "수동 게이트 대기",
+    "READY_MANUAL_REVIEW": "수동 검토 가능",
+    "WATCH_EVENT_ONLY": "이벤트만 관찰",
+    "WATCH_CONFIRMATION": "회복 확인 대기",
+    "SELECTIVE_SECTOR_WATCH": "선별 섹터 관찰",
+    "RECOVERY_CONFIRMED": "회복 확인",
+    "RECOVERY_LEADER": "회복 선도",
+    "EARLY_ROTATION": "초기 회복",
+    "SELECTIVE_ROTATION": "선별 회복",
+    "SECTOR_RECOVERY_WATCH": "섹터 회복 관찰",
+    "MARKET_DEFENSIVE_WAIT": "시장 방어 대기",
+    "PULLBACK_WATCH": "눌림 관찰",
+    "EVENT_MONITOR": "이벤트 관찰",
+    "OVERHEATED_WAIT": "과열 대기",
+    "DEFENSIVE_WAIT": "방어 대기",
+    "MARKET_REGIME": "시장/섹터",
+    "PRICE_PULLBACK": "가격 눌림",
+    "FILING_REVIEW": "공시 검토",
+    "MANUAL_REVIEW": "수동 검토",
+    "USER_CONFIRMATION": "사용자 확인",
+    "EVENT_EVIDENCE": "이벤트 근거",
+    "EVENT_ONLY": "이벤트만 강함",
+    "QUANT_WAIT": "정량 대기",
+    "LOW_PRIORITY": "낮은 우선순위",
+    "ENTRY_REVIEW": "진입가 확인",
     "TRACKING_ACTIVE": "성과 추적 중",
     "NO_TRADE_JOURNAL": "매수 기록 없음",
     "ONE_WEEK_REVIEW_DUE": "1주 점검 필요",
@@ -357,6 +581,24 @@ STATUS_KO = {
     "INTACT": "유지",
     "BROKEN": "깨짐",
     "NOT_STARTED": "시작 전",
+    "UPTREND": "상승 추세",
+    "PULLBACK_UPTREND": "상승 추세 눌림",
+    "DOWNTREND": "하락 추세",
+    "RANGE": "박스권",
+    "INSUFFICIENT_DATA": "가격 데이터 부족",
+    "BULLISH": "상승 우세",
+    "WATCH_REBOUND": "반등 확인",
+    "BEARISH": "하락 우세",
+    "RISK_ON": "위험 선호",
+    "EXTENDED_UPTREND": "과열 상승",
+    "RISK_OFF": "위험 회피",
+    "RECOVERY_WATCH": "회복 관찰",
+    "MIXED": "혼조",
+    "SELECTIVE_BUY_REVIEW": "선별 검토",
+    "SELECTIVE_WATCH": "선별 관찰",
+    "WAIT_CONFIRMATION": "확인 대기",
+    "DEFENSIVE": "방어",
+    "DATA_REQUIRED": "데이터 필요",
 }
 
 TEXT_REPLACEMENTS = {
@@ -400,6 +642,14 @@ TEXT_REPLACEMENTS = {
     "capital plan needs final confirmation": "자본 계획 최종 확인 필요",
     "rules fixed before amount": "금액보다 규칙을 먼저 확정",
     "USER_CONFIRMATION_REQUIRED": "사용자 확인 필요",
+    "trend favorable": "가격 흐름 우호적",
+    "trend strong but extended": "추세는 강하지만 이격 부담이 큼",
+    "trend is strong but crowded": "흐름은 강하지만 과열 부담이 큼",
+    "wait for pullback before new entries": "신규 진입은 눌림 확인 후 검토",
+    "mixed market breadth": "시장 폭은 혼조",
+    "compare sectors before individual names": "개별 종목보다 섹터 흐름을 먼저 비교",
+    "wait for pullback or consolidation": "눌림이나 횡보 확인 필요",
+    "confirm valuation and manual gates": "밸류와 수동 게이트 확인 필요",
     "conviction_score": "확신 점수",
     "upside_probability": "상승 확률",
     "TODAY_FOCUS": "오늘 핵심 후보",
@@ -447,6 +697,14 @@ def run_dashboard(reports_dir: Path | str, output_dir: Path | str | None = None)
     manual_proposal = _load_manual_review_proposal(reports_root, top_symbol)
     manual_apply = _load_manual_review_apply_plan(reports_root, top_symbol)
     universe = _load_universe_stock_analysis(reports_root)
+    trend_forecast = _load_trend_forecast(reports_root)
+    market_regime = _load_market_regime(reports_root)
+    market_recovery_watch = _load_market_recovery_watch(reports_root)
+    sector_rotation_watch = _load_sector_rotation_watch(reports_root)
+    tactical_watchlist = _load_tactical_watchlist(reports_root)
+    event_catalysts = _load_event_catalysts(reports_root)
+    event_adjusted_ranking = _load_event_adjusted_ranking(reports_root)
+    entry_signal_watch = _load_entry_signal_watch(reports_root)
     universe_coverage = _load_universe_coverage(reports_root)
     operating_status = _load_operating_status(reports_root)
     symbol_analysis = _load_symbol_analysis(reports_root)
@@ -478,6 +736,23 @@ def run_dashboard(reports_dir: Path | str, output_dir: Path | str | None = None)
         "wait_count": int((profit["profit_focus_status"] != "CORE_FOCUS").sum()),
         "universe_count": int(len(universe)),
         "universe_buy_ready_count": int((universe["decision_status"] == "BUY_READY").sum()) if not universe.empty else 0,
+        "trend_forecast_count": int(len(trend_forecast)),
+        "trend_bullish_count": int((trend_forecast["forecast_bias"] == "BULLISH").sum()) if not trend_forecast.empty else 0,
+        "trend_pullback_count": int((trend_forecast["forecast_bias"] == "WATCH_PULLBACK").sum()) if not trend_forecast.empty else 0,
+        "market_regime_count": int(len(market_regime)),
+        "market_regime_risk_off_count": int((market_regime["regime_status"] == "RISK_OFF").sum()) if not market_regime.empty else 0,
+        "market_recovery_watch_count": int(len(market_recovery_watch)),
+        "market_recovery_breadth_wait_count": int((market_recovery_watch["recovery_status"] == "WAIT_BREADTH_RECOVERY").sum()) if not market_recovery_watch.empty else 0,
+        "sector_rotation_watch_count": int(len(sector_rotation_watch)),
+        "sector_rotation_leader_count": int((sector_rotation_watch["rotation_status"] == "RECOVERY_LEADER").sum()) if not sector_rotation_watch.empty else 0,
+        "tactical_watchlist_count": int(len(tactical_watchlist)),
+        "tactical_sector_recovery_count": int((tactical_watchlist["tactical_status"] == "SECTOR_RECOVERY_WATCH").sum()) if not tactical_watchlist.empty else 0,
+        "event_catalyst_count": int(len(event_catalysts)),
+        "event_focus_count": int((event_catalysts["event_decision"] == "EVENT_FOCUS").sum()) if not event_catalysts.empty else 0,
+        "event_pullback_count": int((event_catalysts["event_decision"] == "WAIT_PULLBACK_EVENT").sum()) if not event_catalysts.empty else 0,
+        "event_adjusted_rank_count": int(len(event_adjusted_ranking)),
+        "event_adjusted_ready_count": int((event_adjusted_ranking["final_watch_status"] == "READY_REVIEW").sum()) if not event_adjusted_ranking.empty else 0,
+        "entry_signal_watch_count": int(len(entry_signal_watch)),
         "symbol_analysis_count": int(len(symbol_analysis)),
         "symbol_data_required_count": int((symbol_analysis["analysis_status"] == "DATA_REQUIRED").sum()) if not symbol_analysis.empty else 0,
     }
@@ -496,6 +771,14 @@ def run_dashboard(reports_dir: Path | str, output_dir: Path | str | None = None)
             manual_proposal,
             manual_apply,
             universe,
+            trend_forecast,
+            market_regime,
+            market_recovery_watch,
+            sector_rotation_watch,
+            tactical_watchlist,
+            event_catalysts,
+            event_adjusted_ranking,
+            entry_signal_watch,
             universe_coverage,
             operating_status,
             symbol_analysis,
@@ -614,6 +897,62 @@ def _load_universe_stock_analysis(reports_root: Path) -> pd.DataFrame:
     return _load_csv(path, UNIVERSE_STOCK_COLUMNS, "universe stock analysis")
 
 
+def _load_trend_forecast(reports_root: Path) -> pd.DataFrame:
+    path = reports_root / "trend_forecast" / "trend_forecast.csv"
+    if not path.exists():
+        return pd.DataFrame(columns=sorted(TREND_FORECAST_COLUMNS))
+    return _load_csv(path, TREND_FORECAST_COLUMNS, "trend forecast")
+
+
+def _load_market_regime(reports_root: Path) -> pd.DataFrame:
+    path = reports_root / "market_regime" / "market_regime.csv"
+    if not path.exists():
+        return pd.DataFrame(columns=sorted(MARKET_REGIME_COLUMNS))
+    return _load_csv(path, MARKET_REGIME_COLUMNS, "market regime")
+
+
+def _load_market_recovery_watch(reports_root: Path) -> pd.DataFrame:
+    path = reports_root / "market_recovery_watch" / "market_recovery_watch.csv"
+    if not path.exists():
+        return pd.DataFrame(columns=sorted(MARKET_RECOVERY_WATCH_COLUMNS))
+    return _load_csv(path, MARKET_RECOVERY_WATCH_COLUMNS, "market recovery watch")
+
+
+def _load_sector_rotation_watch(reports_root: Path) -> pd.DataFrame:
+    path = reports_root / "sector_rotation_watch" / "sector_rotation_watch.csv"
+    if not path.exists():
+        return pd.DataFrame(columns=sorted(SECTOR_ROTATION_WATCH_COLUMNS))
+    return _load_csv(path, SECTOR_ROTATION_WATCH_COLUMNS, "sector rotation watch")
+
+
+def _load_tactical_watchlist(reports_root: Path) -> pd.DataFrame:
+    path = reports_root / "tactical_watchlist" / "tactical_watchlist.csv"
+    if not path.exists():
+        return pd.DataFrame(columns=sorted(TACTICAL_WATCHLIST_COLUMNS))
+    return _load_csv(path, TACTICAL_WATCHLIST_COLUMNS, "tactical watchlist")
+
+
+def _load_event_catalysts(reports_root: Path) -> pd.DataFrame:
+    path = reports_root / "event_catalysts" / "event_catalysts.csv"
+    if not path.exists():
+        return pd.DataFrame(columns=sorted(EVENT_CATALYST_COLUMNS))
+    return _load_csv(path, EVENT_CATALYST_COLUMNS, "event catalysts")
+
+
+def _load_event_adjusted_ranking(reports_root: Path) -> pd.DataFrame:
+    path = reports_root / "event_adjusted_ranking" / "event_adjusted_ranking.csv"
+    if not path.exists():
+        return pd.DataFrame(columns=sorted(EVENT_ADJUSTED_RANKING_COLUMNS))
+    return _load_csv(path, EVENT_ADJUSTED_RANKING_COLUMNS, "event adjusted ranking")
+
+
+def _load_entry_signal_watch(reports_root: Path) -> pd.DataFrame:
+    path = reports_root / "entry_signal_watch" / "entry_signal_watch.csv"
+    if not path.exists():
+        return pd.DataFrame(columns=sorted(ENTRY_SIGNAL_WATCH_COLUMNS))
+    return _load_csv(path, ENTRY_SIGNAL_WATCH_COLUMNS, "entry signal watch")
+
+
 def _load_universe_coverage(reports_root: Path) -> pd.Series:
     path = reports_root / "universe_coverage" / "universe_coverage.csv"
     if not path.exists():
@@ -690,6 +1029,14 @@ def _render_html(
     manual_proposal: pd.Series,
     manual_apply: pd.Series,
     universe: pd.DataFrame,
+    trend_forecast: pd.DataFrame,
+    market_regime: pd.DataFrame,
+    market_recovery_watch: pd.DataFrame,
+    sector_rotation_watch: pd.DataFrame,
+    tactical_watchlist: pd.DataFrame,
+    event_catalysts: pd.DataFrame,
+    event_adjusted_ranking: pd.DataFrame,
+    entry_signal_watch: pd.DataFrame,
     universe_coverage: pd.Series,
     operating_status: pd.Series,
     symbol_analysis: pd.DataFrame,
@@ -753,6 +1100,7 @@ def _render_html(
         ),
         _metric("판단", _ko_status(decision), _status_class(decision)),
         _metric("검토 수량", _order_size_text(order_candidate), "neutral"),
+        _metric("이벤트 촉매", _event_metric_text(event_catalysts), "neutral"),
         _metric("비교 종목", f"{int(summary['universe_count'])}개", "neutral"),
         "</section>",
         '<section class="two-column">',
@@ -800,6 +1148,38 @@ def _render_html(
         '<section class="panel">',
         "<h2>투자 후 성과 추적</h2>",
         _performance_tracking(performance_tracking),
+        "</section>",
+        '<section class="panel">',
+        "<h2>이벤트 조정 최종 감시 랭킹</h2>",
+        _event_adjusted_ranking_board(event_adjusted_ranking),
+        "</section>",
+        '<section class="panel">',
+        "<h2>진입 트리거 감시</h2>",
+        _entry_signal_watch_board(entry_signal_watch),
+        "</section>",
+        '<section class="panel">',
+        "<h2>시장 회복 감시</h2>",
+        _market_recovery_watch_board(market_recovery_watch),
+        "</section>",
+        '<section class="panel">',
+        "<h2>섹터 로테이션 감시</h2>",
+        _sector_rotation_watch_board(sector_rotation_watch),
+        "</section>",
+        '<section class="panel">',
+        "<h2>오늘 전술 관찰 우선순위</h2>",
+        _tactical_watchlist_board(tactical_watchlist),
+        "</section>",
+        '<section class="panel">',
+        "<h2>뉴스/이벤트 촉매</h2>",
+        _event_catalysts_board(event_catalysts),
+        "</section>",
+        '<section class="panel">',
+        "<h2>가격 흐름 예측</h2>",
+        _trend_forecast_board(trend_forecast),
+        "</section>",
+        '<section class="panel">',
+        "<h2>시장/섹터 흐름</h2>",
+        _market_regime_board(market_regime),
         "</section>",
         '<section class="panel">',
         "<h2>다른 후보와 비교</h2>",
@@ -1272,6 +1652,303 @@ def _performance_tracking(performance_tracking: pd.DataFrame) -> str:
     return "\n".join(rows)
 
 
+def _event_metric_text(event_catalysts: pd.DataFrame) -> str:
+    if event_catalysts.empty:
+        return "입력 없음"
+    focus_count = int((event_catalysts["event_decision"] == "EVENT_FOCUS").sum())
+    pullback_count = int((event_catalysts["event_decision"] == "WAIT_PULLBACK_EVENT").sum())
+    return f"핵심 {focus_count}개 / 눌림 {pullback_count}개"
+
+
+def _event_adjusted_ranking_board(event_adjusted_ranking: pd.DataFrame) -> str:
+    if event_adjusted_ranking.empty:
+        return '<p class="muted">정량 점수와 이벤트 촉매를 합친 최종 감시 랭킹이 아직 없습니다.</p>'
+
+    ordered = event_adjusted_ranking.copy()
+    ordered["_has_event_sort"] = (ordered["event_decision"].astype(str).str.upper() != "NO_EVENT").astype(int)
+    ordered["_rank_bucket_sort"] = ordered["rank_bucket"].apply(_number)
+    ordered["_final_score_sort"] = ordered["final_rank_score"].apply(_number)
+    ordered = ordered.sort_values(
+        ["_has_event_sort", "_rank_bucket_sort", "_final_score_sort"],
+        ascending=[False, True, False],
+    ).head(10)
+
+    rows = [
+        "<p>정량+이벤트 기준으로 보되, 이벤트가 붙은 후보를 먼저 보여줍니다. 실제 주문은 모두 금지 상태로 분리합니다.</p>",
+        "<table>",
+        "<thead><tr><th>후보</th><th>정량+이벤트</th><th>진입</th><th>대응</th></tr></thead>",
+        "<tbody>",
+    ]
+    for row in ordered.itertuples(index=False):
+        rows.append(
+            "<tr>"
+            f"<td>{escape(_company_name(row.company_name))}<br><span class=\"muted\">{escape(str(row.symbol))}</span></td>"
+            f"<td>{escape(_ko_status(row.final_watch_status))}<br><span class=\"muted\">점수 {_number(row.final_rank_score):.1f} · 정량 {escape(_ko_status(row.quant_decision))} · 촉매 {escape(_ko_status(row.event_decision))}</span></td>"
+            f"<td>{escape(_ko_status(row.entry_status))}<br><span class=\"muted\">추격위험 {escape(_ko_status(row.chase_risk))} · 현재가 {_money(row.latest_price)}</span></td>"
+            f"<td>{escape(_friendly_text(row.action_summary))}<br><span class=\"muted\">{escape(_ko_status(row.order_status))}</span></td>"
+            "</tr>"
+        )
+    rows.extend(["</tbody>", "</table>"])
+    return "\n".join(rows)
+
+
+def _entry_signal_watch_board(entry_signal_watch: pd.DataFrame) -> str:
+    if entry_signal_watch.empty:
+        return '<p class="muted">진입 트리거 감시 리포트가 아직 없습니다. pre-buy 판단 뒤 entry_signal_watch를 생성하세요.</p>'
+
+    ordered = entry_signal_watch.copy()
+    ordered["_priority_sort"] = ordered["trigger_priority"].apply(_number)
+    ordered = ordered.sort_values(["_priority_sort", "symbol"], ascending=[True, True]).head(10)
+    rows = [
+        "<p>현재 살 종목을 고르는 표가 아니라, 어떤 조건이 풀려야 다시 볼지 정리한 대기표입니다. 모든 행은 자동 주문 없음입니다.</p>",
+        "<table>",
+        "<thead><tr><th>후보</th><th>대기 상태</th><th>해제 조건</th><th>다음 확인</th></tr></thead>",
+        "<tbody>",
+    ]
+    for row in ordered.itertuples(index=False):
+        entry_band = _entry_band_text(row.entry_price_low, row.entry_price_high)
+        rows.append(
+            "<tr>"
+            f"<td>{escape(_company_name(row.company_name))}<br><span class=\"muted\">{escape(str(row.symbol))}</span></td>"
+            f"<td>{escape(_ko_status(row.watch_status))}<br><span class=\"muted\">{escape(_ko_status(row.primary_blocker))} · {escape(_ko_status(row.order_status))}</span></td>"
+            f"<td>{escape(_friendly_text(row.trigger_condition))}<br><span class=\"muted\">진입가 {escape(entry_band)}</span></td>"
+            f"<td>{escape(_friendly_text(row.action_summary))}<br><span class=\"muted\">{escape(_friendly_text(row.review_cadence))}</span></td>"
+            "</tr>"
+        )
+    rows.extend(["</tbody>", "</table>"])
+    return "\n".join(rows)
+
+
+def _entry_band_text(low: object, high: object) -> str:
+    low_value = _number(low)
+    high_value = _number(high)
+    if low_value <= 0 and high_value <= 0:
+        return "확인 필요"
+    if low_value <= 0:
+        return _money(high_value)
+    if high_value <= 0:
+        return _money(low_value)
+    return f"{_money(low_value)}~{_money(high_value)}"
+
+
+def _market_recovery_watch_board(market_recovery_watch: pd.DataFrame) -> str:
+    if market_recovery_watch.empty:
+        return '<p class="muted">시장 회복 감시 리포트가 아직 없습니다. market_regime과 entry_signal_watch 뒤에 market_recovery_watch를 생성하세요.</p>'
+
+    ordered = market_recovery_watch.copy()
+    ordered["_priority_sort"] = ordered["review_priority"].apply(_number)
+    ordered["_scope_sort"] = ordered["scope"].map({"MARKET": 0, "SECTOR": 1}).fillna(9)
+    ordered["_blocked_sort"] = ordered["blocked_watch_count"].apply(_number)
+    ordered = ordered.sort_values(
+        ["_priority_sort", "_scope_sort", "_blocked_sort", "sector"],
+        ascending=[True, True, False, True],
+    ).head(12)
+
+    rows = [
+        "<p>시장 게이트가 풀리려면 전체 폭과 섹터 폭이 어떤 조건을 만족해야 하는지 보는 표입니다. 회복 확인도 자동 매수 허가가 아닙니다.</p>",
+        "<table>",
+        "<thead><tr><th>범위</th><th>회복 상태</th><th>시장 폭</th><th>해제 조건</th></tr></thead>",
+        "<tbody>",
+    ]
+    for row in ordered.itertuples(index=False):
+        scope = "전체 시장" if str(row.scope).upper() == "MARKET" else str(row.sector)
+        rows.append(
+            "<tr>"
+            f"<td>{escape(scope)}<br><span class=\"muted\">{int(_number(row.symbol_count))}개 종목 · 대기 {int(_number(row.blocked_watch_count))}개</span></td>"
+            f"<td>{escape(_ko_status(row.recovery_status))}<br><span class=\"muted\">{escape(_market_regime_label(row.regime_status))} · {escape(_ko_status(row.order_status))}</span></td>"
+            f"<td>상승/눌림 {_pct(row.bullish_ratio)}<br><span class=\"muted\">하락 {_pct(row.bearish_ratio)} · 추격위험 {_pct(row.high_chase_ratio)}</span></td>"
+            f"<td>{escape(_friendly_text(row.unlock_condition))}<br><span class=\"muted\">{escape(_friendly_text(row.action_summary))}</span></td>"
+            "</tr>"
+        )
+    rows.extend(["</tbody>", "</table>"])
+    return "\n".join(rows)
+
+
+def _sector_rotation_watch_board(sector_rotation_watch: pd.DataFrame) -> str:
+    if sector_rotation_watch.empty:
+        return '<p class="muted">섹터 로테이션 감시 리포트가 아직 없습니다. market_recovery_watch 뒤에 sector_rotation_watch를 생성하세요.</p>'
+
+    ordered = sector_rotation_watch.copy()
+    ordered["_priority_sort"] = ordered["rotation_priority"].apply(_number)
+    ordered["_score_sort"] = ordered["opportunity_score"].apply(_number)
+    ordered = ordered.sort_values(["_priority_sort", "_score_sort", "sector"], ascending=[True, False, True]).head(12)
+
+    rows = [
+        "<p>시장 전체가 약할 때도 어느 섹터가 먼저 회복되는지 분리해서 봅니다. 이 표도 자동 주문 없이 관찰 우선순위만 정리합니다.</p>",
+        "<table>",
+        "<thead><tr><th>섹터</th><th>로테이션</th><th>후보</th><th>대응</th></tr></thead>",
+        "<tbody>",
+    ]
+    for row in ordered.itertuples(index=False):
+        top_candidates = _friendly_text(row.top_candidates)
+        if top_candidates == "없음":
+            top_candidates = "추격 없이 대기"
+        rows.append(
+            "<tr>"
+            f"<td>{escape(str(row.sector))}<br><span class=\"muted\">{int(_number(row.symbol_count))}개 종목 · 점수 {_number(row.opportunity_score):.1f}</span></td>"
+            f"<td>{escape(_ko_status(row.rotation_status))}<br><span class=\"muted\">{escape(_ko_status(row.recovery_status))} · {escape(_ko_status(row.order_status))}</span></td>"
+            f"<td>{escape(top_candidates)}<br><span class=\"muted\">상승 {int(_number(row.bullish_candidate_count))} · 반등 {int(_number(row.rebound_candidate_count))} · 추격위험 {int(_number(row.high_chase_candidate_count))}</span></td>"
+            f"<td>{escape(_friendly_text(row.operator_action))}<br><span class=\"muted\">폭 {_pct(row.bullish_ratio)} · 하락 {_pct(row.bearish_ratio)}</span></td>"
+            "</tr>"
+        )
+    rows.extend(["</tbody>", "</table>"])
+    return "\n".join(rows)
+
+
+def _tactical_watchlist_board(tactical_watchlist: pd.DataFrame) -> str:
+    if tactical_watchlist.empty:
+        return '<p class="muted">오늘 전술 관찰 리포트가 아직 없습니다. sector_rotation_watch 뒤에 tactical_watchlist를 생성하세요.</p>'
+
+    ordered = tactical_watchlist.copy()
+    ordered["_priority_sort"] = ordered["tactical_priority"].apply(_number)
+    ordered["_score_sort"] = ordered["priority_score"].apply(_number)
+    ordered = ordered.sort_values(["_priority_sort", "_score_sort", "symbol"], ascending=[True, False, True]).head(12)
+
+    rows = [
+        "<p>최종 감시 랭킹, 진입 트리거, 섹터 로테이션을 한 줄로 합쳐 오늘 무엇부터 다시 볼지 정리합니다. 이 표도 주문 실행 없이 관찰 우선순위만 표시합니다.</p>",
+        "<table>",
+        "<thead><tr><th>후보</th><th>전술 상태</th><th>섹터/트리거</th><th>다음 확인</th></tr></thead>",
+        "<tbody>",
+    ]
+    for row in ordered.itertuples(index=False):
+        rows.append(
+            "<tr>"
+            f"<td>{escape(_company_name(row.company_name))}<br><span class=\"muted\">{escape(str(row.symbol))} · 점수 {_number(row.priority_score):.1f}</span></td>"
+            f"<td>{escape(_ko_status(row.tactical_status))}<br><span class=\"muted\">{escape(_ko_status(row.final_watch_status))} · {escape(_ko_status(row.order_status))}</span></td>"
+            f"<td>{escape(str(row.sector))}<br><span class=\"muted\">{escape(_ko_status(row.sector_rotation_status))} · {escape(_ko_status(row.entry_watch_status))} · 추격위험 {escape(_ko_status(row.chase_risk))}</span></td>"
+            f"<td>{escape(_friendly_text(row.next_check))}<br><span class=\"muted\">{escape(_friendly_text(row.operator_action))}</span></td>"
+            "</tr>"
+        )
+    rows.extend(["</tbody>", "</table>"])
+    return "\n".join(rows)
+
+
+def _event_catalysts_board(event_catalysts: pd.DataFrame) -> str:
+    if event_catalysts.empty:
+        return '<p class="muted">로컬 뉴스/이벤트 촉매 입력이 없습니다. 이벤트 CSV를 준비하면 정량 후보와 함께 표시합니다.</p>'
+
+    ordered = event_catalysts.copy()
+    ordered["_rank"] = ordered["event_decision"].map(
+        {"EVENT_FOCUS": 4, "WAIT_PULLBACK_EVENT": 3, "EVENT_WATCH": 2, "BACKGROUND_EVENT": 1}
+    ).fillna(0)
+    ordered["_event_score_sort"] = ordered["event_score"].apply(_number)
+    ordered = ordered.sort_values(["_rank", "_event_score_sort"], ascending=[False, False]).head(10)
+
+    rows = [
+        "<p>뉴스 수혜주와 실제 매수 가능 종목을 분리합니다. 모든 이벤트 행은 자동 주문 없음 상태입니다.</p>",
+        "<table>",
+        "<thead><tr><th>후보</th><th>이벤트</th><th>점수</th><th>판단</th><th>대응</th></tr></thead>",
+        "<tbody>",
+    ]
+    for row in ordered.itertuples(index=False):
+        rows.append(
+            "<tr>"
+            f"<td>{escape(_company_name(row.company_name))}<br><span class=\"muted\">{escape(str(row.symbol))}</span></td>"
+            f"<td>{escape(_friendly_text(row.catalyst_title))}<br><span class=\"muted\">{escape(_friendly_text(row.source))}</span></td>"
+            f"<td>{_number(row.event_score):.1f}</td>"
+            f"<td>{escape(_ko_status(row.event_decision))}<br><span class=\"muted\">추격위험 {escape(_ko_status(row.chase_risk))}</span></td>"
+            f"<td>{escape(_friendly_text(row.action_summary))}</td>"
+            "</tr>"
+        )
+    rows.extend(["</tbody>", "</table>"])
+    return "\n".join(rows)
+
+
+def _trend_forecast_board(trend_forecast: pd.DataFrame) -> str:
+    if trend_forecast.empty:
+        return '<p class="muted">가격 흐름 예측 리포트가 아직 없습니다. 로컬 가격 데이터로 trend_forecast를 먼저 생성하세요.</p>'
+
+    ordered = trend_forecast.copy()
+    ordered["_bias_rank"] = ordered["forecast_bias"].map(
+        {"BULLISH": 5, "WATCH_PULLBACK": 4, "WATCH_REBOUND": 3, "NEUTRAL": 2, "BEARISH": 1, "UNKNOWN": 0}
+    ).fillna(0)
+    ordered["_trend_score_sort"] = ordered["trend_score"].apply(_number)
+    ordered = ordered.sort_values(["_bias_rank", "_trend_score_sort", "research_score"], ascending=[False, False, False]).head(12)
+
+    rows = [
+        "<p>캐시된 가격만으로 5일/20일/60일 흐름, 이동평균 정렬, 변동성, 추격위험을 같은 기준으로 봅니다. 실제 주문은 모두 금지 상태입니다.</p>",
+        "<table>",
+        "<thead><tr><th>종목</th><th>흐름</th><th>예측</th><th>추격위험</th><th>대응</th></tr></thead>",
+        "<tbody>",
+    ]
+    for row in ordered.itertuples(index=False):
+        rows.append(
+            "<tr>"
+            f"<td>{escape(_company_name(row.company_name))}<br><span class=\"muted\">{escape(str(row.symbol))}</span></td>"
+            f"<td>{escape(_ko_status(row.trend_regime))}<br><span class=\"muted\">20일 {_pct(row.return_20d)} · 60일 {_pct(row.return_60d)}</span></td>"
+            f"<td>{escape(_ko_status(row.forecast_bias))}<br><span class=\"muted\">점수 {_number(row.trend_score):.1f}</span></td>"
+            f"<td>{escape(_chase_risk_text(row.chase_risk))}<br><span class=\"muted\">20일선 이격 {_pct(row.ma20_position)}</span></td>"
+            f"<td>{escape(_friendly_text(row.action_summary))}<br><span class=\"muted\">{escape(_ko_status(row.order_status))}</span></td>"
+            "</tr>"
+        )
+    rows.extend(["</tbody>", "</table>"])
+    return "\n".join(rows)
+
+
+def _chase_risk_text(value: object) -> str:
+    risk = str(value).strip().upper()
+    if risk == "HIGH":
+        return "추격위험 높음"
+    if risk == "MEDIUM":
+        return "추격위험 보통"
+    if risk == "LOW":
+        return "추격위험 낮음"
+    return "추격위험 확인 필요"
+
+
+def _market_regime_board(market_regime: pd.DataFrame) -> str:
+    if market_regime.empty:
+        return '<p class="muted">시장/섹터 흐름 리포트가 아직 없습니다. trend_forecast 이후 market_regime을 생성하세요.</p>'
+
+    market_row = _market_regime_row(market_regime, "MARKET", "ALL")
+    sectors = market_regime.loc[market_regime["scope"].astype(str).str.upper() == "SECTOR"].copy()
+    sectors["_status_rank"] = sectors["regime_status"].map(
+        {"RISK_ON": 5, "EXTENDED_UPTREND": 4, "RECOVERY_WATCH": 3, "MIXED": 2, "RISK_OFF": 1}
+    ).fillna(0)
+    sectors["_symbol_count_sort"] = sectors["symbol_count"].apply(_number)
+    sectors["_score_sort"] = sectors["average_trend_score"].apply(_number)
+    sectors = sectors.sort_values(["_status_rank", "_symbol_count_sort", "_score_sort"], ascending=[False, False, False]).head(10)
+
+    rows = [
+        "<p>개별 종목보다 먼저 전체 시장과 섹터 폭을 확인합니다. 과열 상승은 매수 허가가 아니라 눌림 대기 신호입니다.</p>",
+        '<div class="small-grid">',
+        _mini("전체 시장", _market_regime_label(market_row.get("regime_status", "UNKNOWN"))),
+        _mini("대응", _ko_status(market_row.get("risk_posture", "UNKNOWN"))),
+        _mini("상승/눌림", f"{_pct(market_row.get('bullish_ratio'))}"),
+        _mini("추격위험", f"{_pct(market_row.get('high_chase_ratio'))}"),
+        "</div>",
+        "<table>",
+        "<thead><tr><th>섹터 흐름</th><th>상태</th><th>폭</th><th>위험</th><th>대응</th></tr></thead>",
+        "<tbody>",
+    ]
+    for row in sectors.itertuples(index=False):
+        rows.append(
+            "<tr>"
+            f"<td>{escape(str(row.sector))}<br><span class=\"muted\">{int(_number(row.symbol_count))}개 종목</span></td>"
+            f"<td>{escape(_market_regime_label(row.regime_status))}<br><span class=\"muted\">평균 점수 {_number(row.average_trend_score):.1f}</span></td>"
+            f"<td>상승/눌림 {_pct(row.bullish_ratio)}<br><span class=\"muted\">하락 {_pct(row.bearish_ratio)}</span></td>"
+            f"<td>추격위험 {_pct(row.high_chase_ratio)}<br><span class=\"muted\">고위험 {int(_number(row.high_chase_count))}개</span></td>"
+            f"<td>{escape(_ko_status(row.risk_posture))}<br><span class=\"muted\">{escape(_ko_status(row.order_status))}</span></td>"
+            "</tr>"
+        )
+    rows.extend(["</tbody>", "</table>"])
+    return "\n".join(rows)
+
+
+def _market_regime_row(market_regime: pd.DataFrame, scope: str, sector: str) -> pd.Series:
+    rows = market_regime.loc[
+        (market_regime["scope"].astype(str).str.upper() == scope)
+        & (market_regime["sector"].astype(str) == sector)
+    ]
+    if rows.empty:
+        return pd.Series(dtype=object)
+    return rows.iloc[0]
+
+
+def _market_regime_label(value: object) -> str:
+    return _ko_status(value)
+
+
 def _universe_stock_analysis(universe: pd.DataFrame) -> str:
     if universe.empty:
         return '<p class="muted">비교 후보 분석 파일이 없습니다. 후보군을 먼저 생성하세요.</p>'
@@ -1279,23 +1956,56 @@ def _universe_stock_analysis(universe: pd.DataFrame) -> str:
     ordered["_rank"] = ordered["decision_status"].map({"BUY_READY": 4, "WAIT": 3, "REJECT": 1}).fillna(0)
     ordered = ordered.sort_values(["_rank", "research_score"], ascending=[False, False]).head(12)
     rows = [
-        f"<p>삼성물산 하나만 보지 않고, 현재 {len(universe)}개 기업을 같은 기준으로 비교합니다.</p>",
+        f"<p>한 후보만 보지 않고, 현재 {len(universe)}개 기업을 정량 후보, 수동 게이트, 실제 매수 금지, 보류 사유로 나눠 비교합니다.</p>",
         "<table>",
-        "<thead><tr><th>종목</th><th>판단</th><th>점수</th><th>현재가</th><th>해야 할 일</th></tr></thead>",
+        "<thead><tr><th>종목</th><th>정량 후보</th><th>수동 게이트</th><th>실제 매수</th><th>보류 사유</th></tr></thead>",
         "<tbody>",
     ]
     for row in ordered.itertuples(index=False):
         rows.append(
             "<tr>"
             f"<td>{escape(_company_name(row.company_name))}<br><span class=\"muted\">{escape(str(row.symbol))}</span></td>"
-            f"<td>{escape(_ko_status(row.decision_status))}</td>"
-            f"<td>{_number(row.research_score):.1f}</td>"
-            f"<td>{_money(row.latest_price)}</td>"
-            f"<td>{escape(_friendly_text(row.action_summary))}</td>"
+            f"<td>{escape(_universe_quant_candidate_text(row))}</td>"
+            f"<td>{escape(_universe_manual_gate_text(row))}</td>"
+            f"<td>{escape(_universe_buy_permission_text(row))}</td>"
+            f"<td>{escape(_universe_hold_reason_text(row))}</td>"
             "</tr>"
         )
     rows.extend(["</tbody>", "</table>"])
     return "\n".join(rows)
+
+
+def _universe_quant_candidate_text(row: object) -> str:
+    alpha = _ko_status(getattr(row, "alpha_status", "UNKNOWN"))
+    score = _number(getattr(row, "research_score", 0))
+    expected = _pct(getattr(row, "expected_20d_return", 0))
+    price = _money(getattr(row, "latest_price", 0))
+    return f"{alpha} · {score:.1f}점 · 20일 기대 {expected} · 현재가 {price}"
+
+
+def _universe_manual_gate_text(row: object) -> str:
+    decision = str(getattr(row, "decision_status", "")).upper()
+    if decision == "REJECT":
+        return "제외"
+    if str(getattr(row, "order_status", "")).upper() == "NO_ORDER":
+        return "수동 게이트 전"
+    return _ko_status(decision)
+
+
+def _universe_buy_permission_text(row: object) -> str:
+    if str(getattr(row, "order_status", "")).upper() == "NO_ORDER":
+        return "실제 매수 금지"
+    return "직접 확인 필요"
+
+
+def _universe_hold_reason_text(row: object) -> str:
+    reason = _friendly_text(getattr(row, "action_summary", ""))
+    if reason != "없음":
+        return reason
+    decision = str(getattr(row, "decision_status", "")).upper()
+    if decision == "BUY_READY":
+        return "정량 후보일 뿐 실제 주문 전 수동 확인이 필요합니다"
+    return _ko_status(decision)
 
 
 def _symbol_analysis(symbol_analysis: pd.DataFrame) -> str:
@@ -1348,8 +2058,16 @@ def _report_links() -> str:
         ("결정 게이트", "../decision_gate/decision_gate.md"),
         ("공시 리스크", "../filing_review/"),
         ("매수 준비 판단서", "../pre_buy_decision/pre_buy_decision.md"),
+        ("진입 트리거 감시", "../entry_signal_watch/entry_signal_watch.md"),
+        ("시장 회복 감시", "../market_recovery_watch/market_recovery_watch.md"),
+        ("섹터 로테이션 감시", "../sector_rotation_watch/sector_rotation_watch.md"),
+        ("오늘 전술 관찰", "../tactical_watchlist/tactical_watchlist.md"),
         ("주문 후보", "../orders/order_candidates.md"),
         ("자본 시나리오", "../orders/capital_scenarios.md"),
+        ("최종 감시 랭킹", "../event_adjusted_ranking/event_adjusted_ranking.md"),
+        ("이벤트 촉매", "../event_catalysts/event_catalysts.md"),
+        ("가격 흐름 예측", "../trend_forecast/trend_forecast.md"),
+        ("시장/섹터 흐름", "../market_regime/market_regime.md"),
         ("비교 후보", "../universe_stock_analysis/universe_stock_analysis.md"),
         ("개별 종목 분석", "../symbol_analysis/"),
     ]

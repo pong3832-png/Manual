@@ -66,6 +66,18 @@
 - Pre-buy decision should surface manual-proposal and capital blockers such as `actual manual review config not applied` and `capital amount required`; these are stop signs before any real order.
 - If the top candidate has no `reports/filing_review/filing_risk_summary_<code>.csv`, pre-buy decision must stay `WAIT / NO_ORDER` and surface `filing risk summary not available` until a user-approved OpenDART review creates evidence.
 - If a filing risk summary contains any `gate_opinion=HOLD_REVIEW`, manual review draft must keep `filing_review=UNKNOWN` and pre-buy decision must stay `WAIT / NO_ORDER`; do not treat "no fatal risk" as enough for filing PASS.
+- `scripts/run_market_regime.py` is local-only. It reads `reports/trend_forecast/trend_forecast.csv` and writes `reports/market_regime/`; market/sector `RISK_OFF`, `EXTENDED_UPTREND`, `RECOVERY_WATCH`, or `NO_DATA` must be treated as entry blockers, not buy permission.
+- `scripts/run_event_catalysts.py` is local-only. It reads manual `configs/event_catalysts.actual.csv` input plus local company research, then writes `reports/event_catalysts/` with `external_api_requested=NO` and `order_status=NO_ORDER`.
+- `configs/event_catalysts.actual.csv` is an operator-maintained event watch input, not a news crawler or verified official source. Do not auto-fetch news, scrape portals, or bulk-call external APIs to populate it without explicit approval.
+- Event catalyst labels such as `EVENT_FOCUS` and `WAIT_PULLBACK_EVENT` are research attention labels only. They do not override quant gates, manual review gates, price-entry rules, or `NO_ORDER`.
+- `scripts/run_event_adjusted_ranking.py` is local-only. It combines `reports/universe_stock_analysis/` with `reports/event_catalysts/` into `reports/event_adjusted_ranking/` and must keep `external_api_requested=NO` and `order_status=NO_ORDER`.
+- Event-adjusted statuses such as `READY_REVIEW`, `WAIT_PULLBACK`, and `EVENT_ONLY` are final watchlist labels only. They do not authorize buying, do not write `configs/manual_review.actual.csv`, and do not override manual gates or price-entry rules.
+- `MARKET_WAIT` means the candidate was strong enough for watch review but broad market/sector posture blocks entry. It is a wait label only and must remain `NO_ORDER`.
+- `scripts/run_entry_signal_watch.py` is local-only. It converts wait reasons into re-check triggers under `reports/entry_signal_watch/`; trigger labels such as `WAIT_MARKET_REGIME`, `WAIT_PRICE_PULLBACK`, and `WATCH_EVENT_ONLY` are monitoring states only and must remain `NO_ORDER`.
+- `scripts/run_market_recovery_watch.py` is local-only. It converts market/sector regime blockers into recovery unlock conditions under `reports/market_recovery_watch/`; recovery labels such as `WAIT_BREADTH_RECOVERY`, `WAIT_OVERHEAT_COOLING`, and `RECOVERY_CONFIRMED` are monitoring states only and must remain `NO_ORDER`.
+- `scripts/run_sector_rotation_watch.py` is local-only. It ranks sector recovery/rotation states under `reports/sector_rotation_watch/`; labels such as `RECOVERY_LEADER`, `EARLY_ROTATION`, `SELECTIVE_ROTATION`, `OVERHEATED_WAIT`, and `DEFENSIVE_WAIT` are sector watch states only and must remain `NO_ORDER`.
+- `scripts/run_tactical_watchlist.py` is local-only. It combines final ranking, entry triggers, and sector rotation into `reports/tactical_watchlist/`; tactical labels such as `READY_MANUAL_REVIEW`, `SECTOR_RECOVERY_WATCH`, `PULLBACK_WATCH`, `MARKET_DEFENSIVE_WAIT`, and `OVERHEATED_WAIT` are today's review priorities only and must remain `NO_ORDER`.
+- Dashboard event-adjusted display may prioritize event-tagged rows ahead of no-event quant names. For raw ranking, check `reports/event_adjusted_ranking/event_adjusted_ranking.csv` fields `rank_bucket` and `final_rank_score`; still treat every row as `NO_ORDER`.
 - `scripts/run_operating_status.py` is local-only. It reads the final local reports and writes `reports/operating_status/operating_status.csv|md` with `completion_status=DONE` or `NOT_DONE`.
 - Operating status is the explicit "끝/아직 끝 아님" report. Even when it says `DONE`, it must keep `order_status=NO_ORDER` and `broker_order_requested=NO`; broker orders remain manual and outside this repo.
 - `scripts/run_decision_gate.py` is local-only. It reads `reports/investment_memo/investment_memo.csv` plus an optional manual review CSV and writes `reports/decision_gate/`.
@@ -76,7 +88,8 @@
 - The dashboard is a read-only operating view. Do not add order execution, broker API calls, or automatic external data refresh to it without explicit approval.
 - `scripts/run_today_pipeline.py` is the integrated "today candidate refresh" entrypoint. It can rebuild company research, filters, briefs, checklist, market watch, conviction, profit focus, memo, capital plan review, filing summaries, manual draft, manual proposal, dry-run manual apply plan, decision gate, pre-buy decision with blockers, no-capital order candidates, capital scenarios, operating status, and dashboard in order.
 - `scripts/app.py` starts the local web app at `http://127.0.0.1:8765` by default. It is the simple user flow for stock input, today analysis, and dashboard viewing.
-- The local web app must keep `주문 실행: 안함`. Its default form submission must not call external APIs; the `최신 가격 갱신` checkbox is the explicit external market data path and still requires user approval before use.
+- As of 2026-06-02, the user approved latest-price refresh as the default for user-facing daily analysis. The local web app must keep `주문 실행: 안함`; full/no-stock daily analysis requests latest market data by default, and unchecking `최신 가격 갱신` uses cached `data/prices.csv`.
+- As of 2026-06-04, GUI background analysis with a stock input uses the quick local symbol-analysis path by default. It uses cached `data/prices.csv`, skips bulk `update_market_data.py`, skips full-universe pipeline regeneration, writes `reports/symbol_analysis/`, refreshes the dashboard, and keeps `order_status=NO_ORDER`.
 - The local web app should not auto-open a browser, place orders, connect to broker APIs, or edit manual review actual config.
 - `scripts/run_web_app.py` starts the FastAPI + React app at `http://127.0.0.1:8766` by default. It serves `web/dist` and exposes local APIs such as `/api/status` and `/api/analyze`.
 - The FastAPI + React app is the preferred product-style UI. It must keep `order_status=NO_ORDER` and `broker_order_requested=NO`; do not add broker execution, auto-clicking, or order buttons.
@@ -84,12 +97,12 @@
 - Name search should let ordinary users type company names such as `삼성전자`, `삼성바이오로직스`, `LG화학`, or `한국전력` without knowing the 6-digit stock code.
 - If `/api/search` cannot find a company name locally, do not guess the code. Ask for a 6-digit KRX code or add a broader local KRX universe only after approved data import/update work.
 - React source lives under `web/`. `web/node_modules/` and `web/dist/` are generated and must not be committed. Rebuild with `npm.cmd run build` after frontend edits.
-- `/api/analyze` must default to cached/local analysis. External price refresh may only happen when the request explicitly sets `refresh_market_data=true` and the user has approved that action.
+- `/api/analyze` defaults to latest-price refresh for the user-facing app after the 2026-06-02 approval. To force cached analysis, requests must set `cache_market_data=true`.
 - `scripts/today.py [stock]` is the user-facing one-command wrapper for the today pipeline. It may accept easy stock input such as `삼성전자` or `005930`, then rebuild the local review reports and dashboard. It must keep `주문 실행: 안함` and must not add broker/order execution.
 - `scripts/today.py --dry-run` is safe inspection and does not rewrite reports or call external APIs.
-- `scripts/today.py --refresh-market-data` forwards to the same approval-gated external market data refresh path as `run_today_pipeline.py --refresh-market-data`.
+- `scripts/today.py [stock]` now requests latest market data by default after the 2026-06-02 approval. Use `--cached-market-data` to force existing cached prices.
 - `scripts/run_today_pipeline.py --dry-run` is safe inspection: it prints the planned steps and does not rewrite reports or call external APIs.
-- `scripts/run_today_pipeline.py` without `--refresh-market-data` is local/report generation only and uses existing cached data.
+- `scripts/run_today_pipeline.py` now requests latest market data by default when run from the CLI after the 2026-06-02 approval. Use `--cached-market-data` to force local/report generation only.
 - `scripts/run_today_pipeline.py --add-code/--add-symbol/--add-symbols-csv` may add companies to the universe before the local refresh and create Symbol Analysis Intake before dashboard. It must keep all generated order fields `NO_ORDER`.
 - `scripts/add_stock.py <stock>` is the easy local intake command for user-facing stock input such as `삼성전자`, `현대차`, `005930`, or `005930.KS`. It resolves local aliases/existing universe rows only, does not call external APIs, and must keep order execution out of scope.
 - `scripts/run_today_pipeline.py --add-stock <stock>` uses the same easy local resolver before the local refresh. Unknown company names must ask for a 6-digit KRX code instead of performing automatic external lookup.
@@ -97,7 +110,7 @@
 - If `configs/capital.actual.csv` exists, `scripts/run_today_pipeline.py` should use its `total_capital_krw` by default for capital review and review-only sizing.
 - `configs/capital.actual.csv` is a local actual capital input. Do not create or edit its amount unless the user supplies the actual amount; use `configs/capital.example.csv` as the template.
 - If `configs/manual_review.actual.csv` exists, `scripts/run_today_pipeline.py` should pass it to `decision_gate` by default.
-- `scripts/run_today_pipeline.py --refresh-market-data` starts with `update_market_data.py`, calls the external market data provider, then reapplies valuation metrics when fundamentals and shares CSVs exist. It requires explicit user approval before execution.
+- `scripts/run_today_pipeline.py --refresh-market-data` starts with `update_market_data.py`, calls the external market data provider, then reapplies valuation metrics when fundamentals and shares CSVs exist. The user's 2026-06-02 request is standing approval for normal user-facing daily refresh; bulk/non-daily refresh work still requires explicit approval in the current turn.
 - Manual review draft files under `reports/decision_gate/manual_review_draft_*.csv|md` are decision support only. Do not convert draft statuses into `configs/manual_review.actual.csv` `PASS` values without user confirmation.
 - Manual review proposal files under `reports/decision_gate/manual_review_proposal*.csv|md` are final-confirmation support only. They do not unblock `decision_gate` unless a confirmed manual review CSV is supplied.
 - Manual review apply-plan candidate files under `reports/decision_gate/manual_review_actual_candidate.csv` are still reports, not active config.
@@ -196,6 +209,8 @@ CLI 진입점:
 | `scripts/apply_valuation_metrics.py` | 최신 가격과 발행주식수로 PER/PBR 보강 |
 | `scripts/run_company_research.py` | 로컬 가격 캐시 기반 기업 리서치 후보 랭킹과 근거 리포트 생성 |
 | `scripts/run_universe_stock_analysis.py` | `company_research.csv`의 모든 종목을 같은 가격/알파/밸류에이션/리스크 기준으로 재분석 |
+| `scripts/run_event_catalysts.py` | 수동 이벤트 입력과 로컬 리서치 결과를 결합해 이벤트 촉매 리포트 생성. 외부 API 없음 |
+| `scripts/run_event_adjusted_ranking.py` | 정량 후보, 이벤트 촉매, 추격위험을 합친 최종 감시 랭킹 생성. 주문 실행 없음 |
 | `scripts/run_capital_plan_review.py` | 투자금 입력 전 한 종목 최대 비중, 분할 매수, 손절/중단 규칙을 자금 계획 초안으로 생성. 주문 실행 없음 |
 | `scripts/run_manual_review_draft.py` | memo/checklist/research evidence로 수동 6개 gate 초안을 생성. 실제 manual config는 수정하지 않음 |
 
@@ -497,6 +512,8 @@ Audit/registry:
 
 외부 API/네트워크:
 
+일반 사용자-facing daily analysis는 2026-06-02 요청으로 최신 가격 갱신 기본 실행이 승인되었다. 아래 명령은 별도 bulk/non-daily refresh 또는 수동 실행 맥락에서는 여전히 승인 필요 작업이다.
+
 ```powershell
 .\.venv\Scripts\python.exe .\scripts\update_market_data.py --config .\configs\portfolio.yaml
 .\.venv\Scripts\python.exe .\scripts\update_market_data.py --config .\configs\portfolio.yaml --universe-csv .\configs\research_universe.actual.csv
@@ -558,6 +575,20 @@ Get-ChildItem -Recurse -File -Name -Exclude *.pyc
 ```
 
 `reports/`, `ledger/`, `models/registry/`의 내용 확인은 가능하지만 투자 판단/개인 기록 성격이 있으므로 답변에 과도하게 원문 전체를 붙이지 않는다.
+
+## Local GUI Notes
+
+- `scripts/run_web_app.py`는 FastAPI + React 로컬 GUI를 `127.0.0.1:8766`에서 제공한다.
+- GUI의 `/api/status`, `/api/search`, `/api/candidates`는 로컬 파일을 읽어 요약한다.
+- `/api/candidates`는 `reports/tactical_watchlist/tactical_watchlist.csv`, `reports/pre_buy_decision/pre_buy_decision.csv`, `reports/market_regime/market_regime.csv`, `data/prices.csv`를 조합해 후보 보드를 만든다.
+- GUI의 `/api/holdings`는 `configs/holding_watch.actual.csv`와 로컬 추세/랭킹/가격 파일을 조합해 보유종목 방어 보드를 만든다.
+- `POST /api/holdings`는 사용자가 GUI에서 입력한 `entry_price`와 `quantity`를 `configs/holding_watch.actual.csv`에 저장하는 로컬 입력 저장 기능이다. 이 API는 broker/order API가 아니며 항상 `order_status=NO_ORDER`를 반환해야 한다.
+- `configs/holding_watch.actual.csv`는 사용자가 제공한 보유종목 매수가 감시 입력이다. 수량이 없으면 종목별 손익률만 계산하고, `/api/holdings.summary`는 수량 누락을 표시하며 총 평가액/총 손익 계산에서 제외한다.
+- Holding defense summary fields such as `highest_priority_action`, `risk_review_count`, and `next_operator_step` are review labels only, not sell/order instructions.
+- GUI 분석 실행은 기본적으로 최신 가격 갱신을 요청하도록 되어 있다. 외부 가격 갱신이 부담되면 화면의 `최신 가격 갱신`을 끄거나 API에서 `cache_market_data=true`를 사용한다.
+- `/api/analyze` must honor `refresh_market_data=false` as cached/local analysis. `cache_market_data=true` remains an explicit override that also disables refresh.
+- `/api/analyze/jobs` runs analysis in a background job and `/api/analyze/jobs/{job_id}` polls progress so the GUI does not look stuck on long runs. Job responses must keep `order_status=NO_ORDER` and `broker_order_requested=NO`; cached requests must continue to avoid external price refresh. If `stock` is provided, the job must use `analysis_mode=QUICK_STOCK` and must not start bulk latest-price refresh.
+- GUI와 API는 항상 `order_status=NO_ORDER`, `broker_order_requested=NO`를 유지해야 한다. 후보 보드, 진입 범위, 손절 규칙 표시는 주문 허가가 아니다.
 
 ## Common Failure Points
 

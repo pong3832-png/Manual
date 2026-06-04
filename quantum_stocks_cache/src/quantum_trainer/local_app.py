@@ -23,7 +23,7 @@ def run_form_analysis(
     dry_run: bool = False,
 ) -> TodayAnalysisOutput:
     stock = str(form.get("stock", "")).strip() or None
-    refresh_market_data = str(form.get("refresh_market_data", "")).lower() in {"on", "true", "1", "yes"}
+    refresh_market_data = str(form.get("refresh_market_data", "on")).lower() in {"on", "true", "1", "yes"}
     return run_today_analysis(
         project_root=Path(project_root),
         stock=stock,
@@ -64,7 +64,8 @@ def render_home(result: TodayAnalysisOutput | None = None, error: str | None = N
             '<button type="submit">오늘 분석 실행</button>',
             "</div>",
             '<label class="check-row">',
-            '<input name="refresh_market_data" type="checkbox">',
+            '<input name="refresh_market_data" type="hidden" value="off">',
+            '<input name="refresh_market_data" type="checkbox" checked>',
             "<span>최신 가격 갱신</span>",
             "</label>",
             "</form>",

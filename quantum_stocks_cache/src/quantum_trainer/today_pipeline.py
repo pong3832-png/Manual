@@ -3,6 +3,7 @@ from __future__ import annotations
 import subprocess
 import sys
 from dataclasses import dataclass
+from datetime import date
 from pathlib import Path
 from typing import Callable, Sequence
 
@@ -100,8 +101,10 @@ def run_today_pipeline(
             executed.append(step.name)
 
     summary = {
+        "analysis_date": date.today().isoformat(),
         "step_count": len(steps),
         "executed_count": len(executed),
+        "market_data_refresh": "YES" if refresh_market_data else "NO",
         "external_api_requested": "YES" if any(step.external_api for step in steps) else "NO",
         "symbol_intake_requested": "YES"
         if _symbol_requested(resolved_add_code, resolved_add_symbol, add_symbols_csv)
@@ -212,6 +215,11 @@ def build_today_pipeline_steps(
         )
 
     company_research_csv = reports_dir / "company_research" / "company_research.csv"
+    event_catalysts_csv = project_root / "configs" / "event_catalysts.actual.csv"
+    event_catalysts_report_csv = reports_dir / "event_catalysts" / "event_catalysts.csv"
+    universe_stock_analysis_csv = reports_dir / "universe_stock_analysis" / "universe_stock_analysis.csv"
+    trend_forecast_csv = reports_dir / "trend_forecast" / "trend_forecast.csv"
+    market_regime_csv = reports_dir / "market_regime" / "market_regime.csv"
     research_filter_csv = reports_dir / "research_filter" / "research_filter.csv"
     candidate_briefs_csv = reports_dir / "candidate_briefs" / "candidate_briefs.csv"
     investment_checklist_csv = reports_dir / "investment_checklist" / "investment_checklist.csv"
@@ -223,6 +231,11 @@ def build_today_pipeline_steps(
     manual_review_proposal_csv = reports_dir / "decision_gate" / "manual_review_proposal.csv"
     decision_gate_csv = reports_dir / "decision_gate" / "decision_gate.csv"
     actual_manual_review_csv = project_root / "configs" / "manual_review.actual.csv"
+    pre_buy_decision_csv = reports_dir / "pre_buy_decision" / "pre_buy_decision.csv"
+    event_adjusted_ranking_csv = reports_dir / "event_adjusted_ranking" / "event_adjusted_ranking.csv"
+    entry_signal_watch_csv = reports_dir / "entry_signal_watch" / "entry_signal_watch.csv"
+    market_recovery_watch_csv = reports_dir / "market_recovery_watch" / "market_recovery_watch.csv"
+    sector_rotation_watch_csv = reports_dir / "sector_rotation_watch" / "sector_rotation_watch.csv"
 
     steps.append(
         PipelineStep(
@@ -262,6 +275,72 @@ def build_today_pipeline_steps(
                 str(scripts / "run_universe_stock_analysis.py"),
                 "--company-research-csv",
                 str(company_research_csv),
+                "--output-dir",
+                str(reports_dir),
+            ],
+        )
+    )
+
+    steps.append(
+        PipelineStep(
+            name="trend_forecast",
+            command=[
+                py,
+                str(scripts / "run_trend_forecast.py"),
+                "--prices-csv",
+                str(project_root / "data" / "prices.csv"),
+                "--company-research-csv",
+                str(company_research_csv),
+                "--output-dir",
+                str(reports_dir),
+            ],
+        )
+    )
+
+    steps.append(
+        PipelineStep(
+            name="market_regime",
+            command=[
+                py,
+                str(scripts / "run_market_regime.py"),
+                "--trend-forecast-csv",
+                str(trend_forecast_csv),
+                "--output-dir",
+                str(reports_dir),
+            ],
+        )
+    )
+
+    steps.append(
+        PipelineStep(
+            name="event_catalysts",
+            command=[
+                py,
+                str(scripts / "run_event_catalysts.py"),
+                "--event-csv",
+                str(event_catalysts_csv),
+                "--company-research-csv",
+                str(company_research_csv),
+                "--output-dir",
+                str(reports_dir),
+            ],
+        )
+    )
+
+    steps.append(
+        PipelineStep(
+            name="event_adjusted_ranking",
+            command=[
+                py,
+                str(scripts / "run_event_adjusted_ranking.py"),
+                "--universe-csv",
+                str(universe_stock_analysis_csv),
+                "--event-csv",
+                str(event_catalysts_report_csv),
+                "--trend-forecast-csv",
+                str(trend_forecast_csv),
+                "--market-regime-csv",
+                str(market_regime_csv),
                 "--output-dir",
                 str(reports_dir),
             ],
@@ -365,6 +444,19 @@ def build_today_pipeline_steps(
                     str(reports_dir),
                     "--max-memos",
                     "1",
+                ],
+            ),
+            PipelineStep(
+                name="valuation_data_quality",
+                command=[
+                    py,
+                    str(scripts / "run_valuation_data_quality.py"),
+                    "--company-research-csv",
+                    str(company_research_csv),
+                    "--investment-memo-csv",
+                    str(investment_memo_csv),
+                    "--output-dir",
+                    str(reports_dir),
                 ],
             ),
         ]
@@ -484,6 +576,78 @@ def build_today_pipeline_steps(
                 str(manual_review_proposal_csv),
                 "--capital-plan-dir",
                 str(reports_dir / "decision_gate"),
+                "--trend-forecast-csv",
+                str(trend_forecast_csv),
+                "--market-regime-csv",
+                str(market_regime_csv),
+                "--output-dir",
+                str(reports_dir),
+            ],
+        )
+    )
+
+    steps.append(
+        PipelineStep(
+            name="entry_signal_watch",
+            command=[
+                py,
+                str(scripts / "run_entry_signal_watch.py"),
+                "--event-adjusted-ranking-csv",
+                str(event_adjusted_ranking_csv),
+                "--pre-buy-decision-csv",
+                str(pre_buy_decision_csv),
+                "--trend-forecast-csv",
+                str(trend_forecast_csv),
+                "--output-dir",
+                str(reports_dir),
+            ],
+        )
+    )
+
+    steps.append(
+        PipelineStep(
+            name="market_recovery_watch",
+            command=[
+                py,
+                str(scripts / "run_market_recovery_watch.py"),
+                "--market-regime-csv",
+                str(market_regime_csv),
+                "--entry-signal-watch-csv",
+                str(entry_signal_watch_csv),
+                "--output-dir",
+                str(reports_dir),
+            ],
+        )
+    )
+
+    steps.append(
+        PipelineStep(
+            name="sector_rotation_watch",
+            command=[
+                py,
+                str(scripts / "run_sector_rotation_watch.py"),
+                "--market-recovery-watch-csv",
+                str(market_recovery_watch_csv),
+                "--trend-forecast-csv",
+                str(trend_forecast_csv),
+                "--output-dir",
+                str(reports_dir),
+            ],
+        )
+    )
+
+    steps.append(
+        PipelineStep(
+            name="tactical_watchlist",
+            command=[
+                py,
+                str(scripts / "run_tactical_watchlist.py"),
+                "--event-adjusted-ranking-csv",
+                str(event_adjusted_ranking_csv),
+                "--entry-signal-watch-csv",
+                str(entry_signal_watch_csv),
+                "--sector-rotation-watch-csv",
+                str(sector_rotation_watch_csv),
                 "--output-dir",
                 str(reports_dir),
             ],

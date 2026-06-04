@@ -24,7 +24,7 @@ def parse_args() -> argparse.Namespace:
         "stock",
         nargs="?",
         default=None,
-        help="선택 입력. 종목명, 별칭, 6자리 코드, 또는 005930.KS 형식 심볼.",
+        help="선택 입력. 종목명, 별칭, 6자리 코드, 또는 005930.KS 형식.",
     )
     parser.add_argument(
         "--dry-run",
@@ -35,9 +35,15 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--refresh-market-data",
         "--latest-price",
-        "--최신가격",
+        "--latest",
         action="store_true",
-        help="최신 가격을 외부에서 갱신합니다. 이 옵션은 외부 데이터 호출을 합니다.",
+        help="최신 가격을 먼저 갱신합니다. 이제 --cached-market-data가 없으면 기본값입니다.",
+    )
+    parser.add_argument(
+        "--cached-market-data",
+        "--cached",
+        action="store_true",
+        help="외부 시세 공급자를 호출하지 않고 기존 data/prices.csv만 사용합니다.",
     )
     return parser.parse_args()
 
@@ -48,7 +54,7 @@ def main() -> int:
         output = run_today_analysis(
             project_root=PROJECT_ROOT,
             stock=args.stock,
-            refresh_market_data=args.refresh_market_data,
+            refresh_market_data=args.refresh_market_data or not args.cached_market_data,
             dry_run=args.dry_run,
         )
         for line in output.lines:

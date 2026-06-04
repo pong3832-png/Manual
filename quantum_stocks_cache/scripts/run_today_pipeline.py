@@ -53,7 +53,12 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--refresh-market-data",
         action="store_true",
-        help="Fetch latest prices first. This calls an external market data provider.",
+        help="Fetch latest prices first. This is now the default unless --cached-market-data is set.",
+    )
+    parser.add_argument(
+        "--cached-market-data",
+        action="store_true",
+        help="Use existing data/prices.csv without calling the external market data provider.",
     )
     parser.add_argument(
         "--strict-persistence",
@@ -131,7 +136,7 @@ def main() -> int:
             shares_csv=Path(args.shares_csv) if args.shares_csv else None,
             reports_dir=Path(args.reports_dir),
             manual_review_csv=Path(args.manual_review_csv) if args.manual_review_csv else None,
-            refresh_market_data=args.refresh_market_data,
+            refresh_market_data=args.refresh_market_data or not args.cached_market_data,
             include_building_focus=not args.strict_persistence,
             add_stock=args.add_stock,
             add_code=args.add_code,
@@ -149,6 +154,8 @@ def main() -> int:
             marker = "EXTERNAL_API" if step.external_api else "LOCAL"
             print(f"[{marker}] {step.name}: {' '.join(step.command)}")
         print(f"executed_count={output.summary['executed_count']}")
+        print(f"analysis_date={output.summary['analysis_date']}")
+        print(f"market_data_refresh={output.summary['market_data_refresh']}")
         print(f"external_api_requested={output.summary['external_api_requested']}")
         print(f"symbol_intake_requested={output.summary['symbol_intake_requested']}")
         print(f"dashboard={output.summary['dashboard_path']}")

@@ -277,3 +277,179 @@ def test_manual_review_draft_keeps_filing_unknown_when_summary_has_hold_review()
         row = output.report.iloc[0]
         assert row["filing_review"] == "UNKNOWN"
         assert "filing risk summary has hold-review opinion" in row["review_notes"]
+
+
+def test_manual_review_draft_keeps_premium_valuation_unknown_with_explicit_reason() -> None:
+    module = importlib.import_module("quantum_trainer.manual_review_draft")
+
+    with TemporaryDirectory(dir=PROJECT_ROOT) as tmp_dir:
+        root = Path(tmp_dir)
+        memo_csv = root / "investment_memo.csv"
+        checklist_csv = root / "investment_checklist.csv"
+        research_csv = root / "company_research.csv"
+        filing_dir = root / "filing_review"
+        output_dir = root / "reports"
+        filing_dir.mkdir()
+
+        pd.DataFrame(
+            [
+                {
+                    "symbol": "183300.KQ",
+                    "company_name": "Komico",
+                    "sector": "Equipment",
+                    "memo_status": "THESIS_REVIEW",
+                    "order_status": "NO_ORDER",
+                    "core_thesis": "Komico remains the strongest research candidate.",
+                    "evidence": "conviction_score=74.83; PER=40.08; PBR=4.75",
+                    "risks": "premium valuation and semiconductor cycle risk",
+                    "manual_checks": "valuation premium 확인",
+                    "loss_defense": "TODAY_FOCUS exit",
+                    "next_action": "wait for pullback",
+                }
+            ]
+        ).to_csv(memo_csv, index=False)
+        pd.DataFrame(
+            [
+                {
+                    "symbol": "183300.KQ",
+                    "checklist_status": "READY_FOR_MANUAL_REVIEW",
+                    "automatic_blockers": "없음",
+                    "manual_checklist": "높은 PER/PBR 확인",
+                }
+            ]
+        ).to_csv(checklist_csv, index=False)
+        pd.DataFrame(
+            [
+                {
+                    "symbol": "183300.KQ",
+                    "research_score": 69.0,
+                    "research_view": "RESEARCH_CANDIDATE",
+                    "decision": "BUY_READY",
+                    "fundamental_view": "FUNDAMENTAL_NEUTRAL",
+                    "expected_20d_return": 0.2,
+                    "upside_probability": 0.99,
+                    "return_20d": 0.21,
+                    "ma20_gap": 0.11,
+                    "drawdown_20d": -0.09,
+                    "per": 40.08,
+                    "pbr": 4.75,
+                    "debt_ratio": 2.145,
+                }
+            ]
+        ).to_csv(research_csv, index=False)
+        pd.DataFrame(
+            [
+                {
+                    "symbol": "183300.KQ",
+                    "risk_id": "regulatory_accounting_litigation_overhang",
+                    "risk_title": "Regulatory/accounting litigation overhang",
+                    "source_checks": "manual_resolution",
+                    "evidence_count": 0,
+                    "key_evidence": "HOLD_REVIEW resolved as keyword-evidence gap",
+                    "fatal_risk": "NO",
+                    "gate_opinion": "PASS_CANDIDATE_WITH_MONITORING",
+                    "monitoring_rule": "audit opinion, restatement, sanction, litigation",
+                }
+            ]
+        ).to_csv(filing_dir / "filing_risk_summary_183300.csv", index=False)
+
+        output = module.run_manual_review_draft(
+            investment_memo_csv=memo_csv,
+            investment_checklist_csv=checklist_csv,
+            company_research_csv=research_csv,
+            filing_risk_dir=filing_dir,
+            output_dir=output_dir,
+        )
+
+        row = output.report.iloc[0]
+        assert row["valuation_review"] == "UNKNOWN"
+        assert "valuation premium: PER=40.08, PBR=4.75" in row["review_notes"]
+
+
+def test_manual_review_draft_uses_memo_valuation_when_research_metrics_are_blank() -> None:
+    module = importlib.import_module("quantum_trainer.manual_review_draft")
+
+    with TemporaryDirectory(dir=PROJECT_ROOT) as tmp_dir:
+        root = Path(tmp_dir)
+        memo_csv = root / "investment_memo.csv"
+        checklist_csv = root / "investment_checklist.csv"
+        research_csv = root / "company_research.csv"
+        filing_dir = root / "filing_review"
+        output_dir = root / "reports"
+        filing_dir.mkdir()
+
+        pd.DataFrame(
+            [
+                {
+                    "symbol": "183300.KQ",
+                    "company_name": "Komico",
+                    "sector": "Equipment",
+                    "memo_status": "THESIS_REVIEW",
+                    "order_status": "NO_ORDER",
+                    "core_thesis": "Komico remains a WAIT candidate.",
+                    "evidence": "PER=40.08; PBR=4.75; ROE=19.69%; total_liabilities_to_equity=214.5%",
+                    "risks": "premium valuation requires review",
+                    "manual_checks": "valuation premium 확인",
+                    "loss_defense": "TODAY_FOCUS exit",
+                    "next_action": "wait for pullback",
+                }
+            ]
+        ).to_csv(memo_csv, index=False)
+        pd.DataFrame(
+            [
+                {
+                    "symbol": "183300.KQ",
+                    "checklist_status": "READY_FOR_MANUAL_REVIEW",
+                    "automatic_blockers": "없음",
+                    "manual_checklist": "높은 PER/PBR 확인",
+                }
+            ]
+        ).to_csv(checklist_csv, index=False)
+        pd.DataFrame(
+            [
+                {
+                    "symbol": "183300.KQ",
+                    "research_score": 69.0,
+                    "research_view": "RESEARCH_CANDIDATE",
+                    "decision": "BUY_READY",
+                    "fundamental_view": "FUNDAMENTAL_NEUTRAL",
+                    "expected_20d_return": 0.2,
+                    "upside_probability": 0.99,
+                    "return_20d": 0.21,
+                    "ma20_gap": 0.11,
+                    "drawdown_20d": -0.09,
+                    "per": "",
+                    "pbr": "",
+                    "debt_ratio": "",
+                }
+            ]
+        ).to_csv(research_csv, index=False)
+        pd.DataFrame(
+            [
+                {
+                    "symbol": "183300.KQ",
+                    "risk_id": "regulatory_accounting_litigation_overhang",
+                    "risk_title": "Regulatory/accounting litigation overhang",
+                    "source_checks": "manual_resolution",
+                    "evidence_count": 0,
+                    "key_evidence": "HOLD_REVIEW resolved as keyword-evidence gap",
+                    "fatal_risk": "NO",
+                    "gate_opinion": "PASS_CANDIDATE_WITH_MONITORING",
+                    "monitoring_rule": "audit opinion, restatement, sanction, litigation",
+                }
+            ]
+        ).to_csv(filing_dir / "filing_risk_summary_183300.csv", index=False)
+
+        output = module.run_manual_review_draft(
+            investment_memo_csv=memo_csv,
+            investment_checklist_csv=checklist_csv,
+            company_research_csv=research_csv,
+            filing_risk_dir=filing_dir,
+            output_dir=output_dir,
+        )
+
+        row = output.report.iloc[0]
+        assert row["valuation_review"] == "UNKNOWN"
+        assert "PER=40.08" in row["review_notes"]
+        assert "PBR=4.75" in row["review_notes"]
+        assert "valuation premium: PER=40.08, PBR=4.75" in row["review_notes"]

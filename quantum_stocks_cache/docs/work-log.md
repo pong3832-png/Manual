@@ -1,5 +1,418 @@
 # Work Log
 
+## 2026-06-04 - GUI Light Operator Theme
+
+- Converted the React GUI from the dark terminal palette to a light operator-console palette after user preference feedback.
+- Changed:
+  - `web/src/styles.css`
+  - `docs/work-log.md`
+- Behavior:
+  - Preserves the fixed top bar, left analysis panel, main canvas, fixed status footer, dense candidate/holding boards, and `NO_ORDER` safety visual.
+  - Uses light neutral surfaces with cyan/green/yellow/red/purple/gold accents for status and decision signals.
+- Verification:
+  - `npm.cmd run build` in `web/` -> passed.
+- Safety:
+  - No broker/order action, external API refresh, OpenDART call, scheduler change, deletion, deployment, or manual actual config write.
+
+## 2026-06-04 - Terminal UIUX Docx-Informed Redesign
+
+- Applied the local `docs/QSP_Terminal_UIUX_기획서_v1.0.docx` direction to the FastAPI + React GUI without adding execution features.
+- Changed:
+  - `src/quantum_trainer/web_api.py`
+  - `web/src/main.jsx`
+  - `web/src/styles.css`
+  - `tests/test_web_api.py`
+- Behavior:
+  - Background analyze jobs now expose `stage`, `stage_text`, `elapsed_seconds`, and top-level `external_api_requested` for terminal-style progress display.
+  - React layout now uses a terminal-style fixed top bar, left analysis panel, main canvas, and fixed status footer.
+  - CSS was rebuilt around dark terminal design tokens from the docx: deep background, surface panels, cyan/green/yellow/red/purple/gold status accents, and monospace numeric presentation.
+  - Existing Control Tower, Decision Card, candidate board, and holding defense board remain review-only with `NO_ORDER`.
+- Verification:
+  - `.\.venv\Scripts\python.exe -m pytest .\tests\test_web_api.py -q` -> `12 passed`.
+  - `npm.cmd run build` in `web/` -> passed.
+- Safety:
+  - No broker/order action, external API refresh, OpenDART call, scheduler change, deletion, deployment, or manual actual config write.
+
+## 2026-06-04 - GUI Control Tower And Decision Cards
+
+- Added hedge-fund-style operator summaries to the local FastAPI + React GUI while keeping the app review-only.
+- Changed:
+  - `src/quantum_trainer/web_api.py`
+  - `web/src/main.jsx`
+  - `web/src/styles.css`
+  - `tests/test_web_api.py`
+- Behavior:
+  - `/api/candidates` now includes a `control_tower` summary with market entry policy, cached data status, candidate counts, and `NO_ORDER` safety flags.
+  - Candidate rows now include `decision_summary` with review label, watch price range, risk line, market gate, and chase-risk context.
+  - `/api/holdings` now includes a portfolio defense `control_tower`; holding rows include review-only `decision_summary` fields.
+  - React UI now shows an operator control tower, one-line decision card, progress elapsed time, and richer candidate/holding cards.
+- Verification:
+  - `.\.venv\Scripts\python.exe -m pytest .\tests\test_web_api.py -q` -> `12 passed`.
+  - `npm.cmd run build` in `web/` -> passed.
+- Safety:
+  - No broker/order action, external API refresh, OpenDART call, scheduler change, deletion, deployment, or manual actual config write.
+
+## 2026-06-04 - GUI Quick Stock Analysis
+
+- Tuned GUI background analysis so a user-entered stock no longer waits on the full 2,657-symbol daily pipeline.
+- Changed:
+  - `src/quantum_trainer/web_api.py`
+  - `src/quantum_trainer/today_command.py`
+  - `src/quantum_trainer/symbol_analysis.py`
+  - `tests/test_web_api.py`
+  - `tests/test_symbol_analysis.py`
+  - `AGENTS.md`
+- Behavior:
+  - `/api/analyze/jobs` with `stock` now uses `analysis_mode=QUICK_STOCK`.
+  - Quick stock jobs force `refresh_market_data=false`, use cached `data/prices.csv`, run local `symbol_analysis`, and refresh the dashboard.
+  - `symbol_analysis` now runs company research against a one-symbol universe and writes its intermediate research output under `reports/symbol_analysis/`, avoiding full-universe recomputation.
+- Verification:
+  - `.\.venv\Scripts\python.exe -m pytest .\tests\test_web_api.py .\tests\test_symbol_analysis.py .\tests\test_today_command.py -q` -> `16 passed`.
+  - `.\.venv\Scripts\python.exe -m py_compile .\src\quantum_trainer\today_command.py .\src\quantum_trainer\web_api.py .\src\quantum_trainer\symbol_analysis.py` -> passed.
+  - Restarted local GUI server at `http://127.0.0.1:8766`; dry-run `005930` job returned `DONE`, `analysis_mode=QUICK_STOCK`, `external_api_requested=NO`, `order_status=NO_ORDER`.
+- Safety:
+  - Stopped stale `update_market_data.py` processes left by the previous long GUI run after approval.
+  - No broker/order action, OpenDART call, scheduler change, deletion, git action, or manual actual config write.
+
+## 2026-06-02 - Live Refresh Default For Daily Analysis
+
+- Updated user-facing daily analysis so each normal run starts with latest market data refresh by default after the user's 2026-06-02 approval.
+- Changed:
+  - `src/quantum_trainer/today_command.py`
+  - `src/quantum_trainer/today_pipeline.py`
+  - `src/quantum_trainer/web_api.py`
+  - `src/quantum_trainer/local_app.py`
+  - `scripts/today.py`
+  - `scripts/run_today_pipeline.py`
+  - `web/src/main.jsx`
+- New opt-out path:
+  - CLI: `--cached-market-data`
+  - API: `cache_market_data=true`
+  - local app: uncheck `최신 가격 갱신`
+- Safety:
+  - Still no broker/order execution; every analysis keeps `order_status=NO_ORDER`.
+  - No actual market refresh was executed in this change; only dry-run/compile/test verification should be used unless the user asks to run the live refresh.
+
+## 2026-06-02 - Tactical Watchlist
+
+- Added a local tactical watchlist so the operator can see one "what to check first today" board instead of reading event ranking, entry triggers, and sector rotation separately.
+- New files:
+  - `src/quantum_trainer/tactical_watchlist.py`
+  - `scripts/run_tactical_watchlist.py`
+  - `tests/test_tactical_watchlist.py`
+- Changed:
+  - `today_pipeline.py` now runs `tactical_watchlist` after `sector_rotation_watch` and before order sizing.
+  - `dashboard.py` now shows `오늘 전술 관찰 우선순위` and links to `../tactical_watchlist/tactical_watchlist.md`.
+  - `AGENTS.md` documents that tactical statuses are review priorities only, not order permission.
+- Local generation result:
+  - `reports/tactical_watchlist/tactical_watchlist.csv|md`
+  - `row_count=30`
+  - `ready_manual_review_count=0`
+  - `sector_recovery_watch_count=16`
+  - `market_defensive_wait_count=14`
+  - `overheated_wait_count=0`
+  - `external_api_requested=NO`
+  - `order_status=NO_ORDER`
+- Current interpretation:
+  - The program now separates "sector recovery watch" names from broad defensive waits, while keeping Komico and all other rows blocked from actual orders.
+- Safety:
+  - No external API, OpenDART, price refresh, broker/order action, scheduler, deletion, or `configs/manual_review.actual.csv` write.
+
+## 2026-06-02 - Local GUI Candidate Board
+
+- Added a local candidate board API:
+  - `src/quantum_trainer/web_api.py`
+  - Endpoint: `GET /api/candidates`
+  - Inputs: `reports/tactical_watchlist/tactical_watchlist.csv`, `reports/pre_buy_decision/pre_buy_decision.csv`, `reports/market_regime/market_regime.csv`, `data/prices.csv`
+  - Output includes market gate, latest price date, candidate watch status, entry range, blockers, and `NO_ORDER` safety flags.
+- Expanded the React GUI:
+  - `web/src/main.jsx`
+  - `web/src/styles.css`
+  - New `오늘 후보 보드` view shows current candidates, market posture, chase risk, entry range, and readiness blockers.
+  - Candidate board refreshes after running analysis.
+- Added API coverage:
+  - `tests/test_web_api.py` now verifies `/api/candidates` combines tactical watchlist, pre-buy decision, and market regime while preserving `order_status=NO_ORDER`.
+- Verification:
+  - `.\.venv\Scripts\python.exe -m py_compile .\src\quantum_trainer\web_api.py` -> passed.
+  - `.\.venv\Scripts\python.exe -m pytest .\tests\test_web_api.py -q` -> `5 passed`.
+  - `npm.cmd run build` in `web/` -> passed.
+  - `curl.exe http://127.0.0.1:8766/api/candidates?limit=3` -> `as_of=2026-06-02`, market `RISK_OFF/DEFENSIVE`, `order_status=NO_ORDER`.
+- Local GUI:
+  - Running at `http://127.0.0.1:8766/` with PID `2396`.
+- Safety:
+  - Local report read only.
+  - No external API, OpenDART, price refresh, broker/order action, scheduler, deletion, or `configs/manual_review.actual.csv` write.
+
+## 2026-06-02 - Local GUI Holding Defense Board
+
+- Added a user-provided holding watch input:
+  - `configs/holding_watch.actual.csv`
+  - Rows: GST `083450.KQ` at `48200`, 현대로템 `064350.KS` at `197000`, LS `006260.KS` at `423500`
+  - Quantity is blank; use it for entry-price risk watch only, not full trade-journal PnL.
+- Added a holding defense API:
+  - `GET /api/holdings`
+  - Reads `configs/holding_watch.actual.csv`, `reports/trend_forecast/trend_forecast.csv`, `reports/event_adjusted_ranking/event_adjusted_ranking.csv`, and `data/prices.csv`.
+  - Returns latest price, unrealized return, 7% risk stop, 10% hard stop, trend labels, and review-only action status.
+- Expanded the React GUI:
+  - New `보유종목 방어 보드` above the candidate board.
+  - Shows 매수가, 현재가, 손익률, stop levels, trend status, and `SELL_REVIEW`/`REDUCE_REVIEW`/`HOLD_*` labels.
+- Verification:
+  - `.\.venv\Scripts\python.exe -m py_compile .\src\quantum_trainer\web_api.py` -> passed.
+  - `.\.venv\Scripts\python.exe -m pytest .\tests\test_web_api.py -q` -> `6 passed`.
+  - `npm.cmd run build` in `web/` -> passed.
+  - `curl.exe http://127.0.0.1:8766/api/holdings` -> `as_of=2026-06-02`, GST `HOLD_DEFENSIVE`, 현대로템 `REDUCE_REVIEW`, LS `HOLD_DEFENSIVE`, `order_status=NO_ORDER`.
+- Local GUI:
+  - Running at `http://127.0.0.1:8766/` with PID `27936`.
+- Safety:
+  - No broker/order action. All holding actions are review labels only.
+  - No external API, OpenDART, price refresh, scheduler, deletion, or `configs/manual_review.actual.csv` write.
+
+## 2026-06-02 - Holding Portfolio Defense Summary
+
+- Extended `/api/holdings` with a review-only portfolio summary:
+  - `holding_count`
+  - `quantity_known_count`
+  - `quantity_missing_count`
+  - `risk_review_count`
+  - known-position cost basis, market value, unrealized PnL, and return
+  - `highest_priority_action`
+  - `next_operator_step`
+- Quantity handling:
+  - Blank or zero quantity stays `quantity_known=false`.
+  - Total valuation/PnL only uses rows with positive quantity.
+  - Current actual holding watch file still has blank quantities, so portfolio totals stay locked until the user provides share counts.
+- GUI change:
+  - `보유종목 방어 보드` now shows summary KPI rows above individual holdings.
+  - Individual holding cards now show whether quantity is entered.
+- Verification:
+  - `.\.venv\Scripts\python.exe -m py_compile .\src\quantum_trainer\web_api.py` -> passed.
+  - `.\.venv\Scripts\python.exe -m pytest .\tests\test_web_api.py -q` -> `6 passed`.
+  - `npm.cmd run build` in `web/` -> passed.
+  - `curl.exe http://127.0.0.1:8766/api/holdings` -> `holding_count=3`, `quantity_known_count=0`, `quantity_missing_count=3`, `highest_priority_action=REDUCE_REVIEW`, `order_status=NO_ORDER`.
+- Local GUI:
+  - Running at `http://127.0.0.1:8766/` with PID `23420`.
+- Safety:
+  - No broker/order action. All holding actions are review labels only.
+  - No external API, OpenDART, price refresh, scheduler, deletion, or `configs/manual_review.actual.csv` write.
+
+## 2026-06-02 - GUI Holding Quantity Save
+
+- Added local GUI/API support for user-entered holding quantities:
+  - `POST /api/holdings`
+  - Writes user-submitted `symbol`, `company_name`, `entry_price`, `quantity`, and `notes` to `configs/holding_watch.actual.csv`.
+  - Returns refreshed `/api/holdings` payload with `order_status=NO_ORDER`.
+- GUI change:
+  - `보유종목 방어 보드` cards now include editable `매수가` and `수량` inputs.
+  - Added `수량 저장` button.
+  - Saving refreshes portfolio totals and keeps order flags disabled.
+- Verification:
+  - `.\.venv\Scripts\python.exe -m py_compile .\src\quantum_trainer\web_api.py` -> passed.
+  - `.\.venv\Scripts\python.exe -m pytest .\tests\test_web_api.py -q` -> `7 passed`.
+  - `npm.cmd run build` in `web/` -> passed.
+  - `curl.exe http://127.0.0.1:8766/api/holdings` -> existing actual input preserved, `quantity_known_count=0`, `quantity_missing_count=3`, `order_status=NO_ORDER`.
+- Local GUI:
+  - Running at `http://127.0.0.1:8766/` with PID `30456`.
+- Safety:
+  - No actual holding quantity was guessed or written during implementation.
+  - No broker/order action, external API, OpenDART, price refresh, scheduler, deletion, or `configs/manual_review.actual.csv` write.
+
+## 2026-06-02 - GUI Analyze Refresh Flag Fix
+
+- Fixed a GUI/API mismatch that could leave the user seeing only `실행 중`:
+  - Frontend sent `refresh_market_data=false` when the user unchecked `최신 가격 갱신`.
+  - Backend previously ignored that flag unless `cache_market_data=true` was also present.
+- Changed:
+  - `src/quantum_trainer/web_api.py` now computes `refresh_market_data = request.refresh_market_data and not request.cache_market_data`.
+  - `web/src/main.jsx` now sends both `refresh_market_data` and `cache_market_data=!refreshMarketData`.
+  - `tests/test_web_api.py` covers `refresh_market_data=false`.
+- Verification:
+  - `.\.venv\Scripts\python.exe -m py_compile .\src\quantum_trainer\web_api.py` -> passed.
+  - `.\.venv\Scripts\python.exe -m pytest .\tests\test_web_api.py -q` -> `8 passed`.
+  - `npm.cmd run build` in `web/` -> passed.
+  - Local GUI restarted at `http://127.0.0.1:8766/` with PID `25232`.
+  - `curl.exe http://127.0.0.1:8766/health` -> `{"status":"OK"}`.
+- User operation note:
+  - Refresh the browser.
+  - For a quick local run, uncheck `최신 가격 갱신` before pressing `오늘 분석`.
+  - If `최신 가격 갱신` is checked, full-universe price refresh can take several minutes.
+- Safety:
+  - No actual report regeneration, price refresh, broker/order action, external API, OpenDART, scheduler, deletion, or `configs/manual_review.actual.csv` write.
+
+## 2026-06-02 - Sector Rotation Watch
+
+- Added a local sector rotation watch report so the system can show which sectors are leading, recovering early, overextended, or still defensive before reviewing individual stocks.
+- New files:
+  - `src/quantum_trainer/sector_rotation_watch.py`
+  - `scripts/run_sector_rotation_watch.py`
+  - `tests/test_sector_rotation_watch.py`
+- Changed:
+  - `today_pipeline.py` now runs `sector_rotation_watch` after `market_recovery_watch` and before order sizing.
+  - `dashboard.py` now shows `섹터 로테이션 감시` and links to `../sector_rotation_watch/sector_rotation_watch.md`.
+  - `AGENTS.md` documents that sector rotation labels are watch states only, not order permission.
+- Local generation result:
+  - `reports/sector_rotation_watch/sector_rotation_watch.csv|md`
+  - `row_count=161`
+  - `leader_count=3`
+  - `early_rotation_count=17`
+  - `defensive_wait_count=121`
+  - `external_api_requested=NO`
+  - `order_status=NO_ORDER`
+- Current interpretation:
+  - The market is still broadly defensive, but the dashboard can now separate early/leading sectors from defensive sectors before individual candidate review.
+- Safety:
+  - No external API, OpenDART, price refresh, broker/order action, scheduler, deletion, or `configs/manual_review.actual.csv` write.
+
+## 2026-06-02 - Market Recovery Watch
+
+- Added a local market recovery watch report so market/sector blockers have explicit unlock conditions instead of a generic wait state.
+- New files:
+  - `src/quantum_trainer/market_recovery_watch.py`
+  - `scripts/run_market_recovery_watch.py`
+  - `tests/test_market_recovery_watch.py`
+- Changed:
+  - `today_pipeline.py` now runs `market_recovery_watch` after `entry_signal_watch` and before order sizing.
+  - `dashboard.py` now shows `시장 회복 감시` and links to `../market_recovery_watch/market_recovery_watch.md`.
+  - `AGENTS.md` documents that recovery labels are monitoring states only, not order permission.
+- Local generation result:
+  - `reports/market_recovery_watch/market_recovery_watch.csv|md`
+  - `row_count=162`
+  - `breadth_wait_count=122`
+  - `overheat_wait_count=1`
+  - `confirmed_count=3`
+  - `external_api_requested=NO`
+  - `order_status=NO_ORDER`
+- Current interpretation:
+  - The main blocker remains market breadth recovery. Top watch candidates should not be reviewed for entry until whole-market/sector breadth improves or specific sector conditions clear.
+- Safety:
+  - No external API, OpenDART, price refresh, broker/order action, scheduler, deletion, or `configs/manual_review.actual.csv` write.
+
+## 2026-06-02 - Valuation Data Quality Report
+
+- Added a local valuation data-quality report so blank `company_research.csv` PER/PBR fields are surfaced instead of silently treated as usable valuation data.
+- New files:
+  - `src/quantum_trainer/valuation_data_quality.py`
+  - `scripts/run_valuation_data_quality.py`
+  - `tests/test_valuation_data_quality.py`
+- Changed:
+  - `src/quantum_trainer/today_pipeline.py` now runs `valuation_data_quality` after `investment_memo` and before manual gate drafting.
+  - `tests/test_today_pipeline.py` covers the new local-only pipeline step.
+- Result:
+  - Generated `reports/valuation_data_quality/valuation_data_quality.csv|md`.
+  - Current report: `row_count=2657`, `fallback_count=1`, `missing_count=2625`, `external_api_requested=NO`, `order_status=NO_ORDER`.
+  - Komico is `INVESTMENT_MEMO_FALLBACK`, `RESEARCH_VALUATION_BLANK`, PER 40.08, PBR 4.75, `PREMIUM_REVIEW_REQUIRED`, `valuation_review_candidate=UNKNOWN`.
+- Verification:
+  - `.\.venv\Scripts\python.exe -m pytest .\tests\test_valuation_data_quality.py .\tests\test_today_pipeline.py .\tests\test_manual_review_draft.py .\tests\test_dashboard.py -q` -> `20 passed`.
+  - `.\.venv\Scripts\python.exe -m py_compile .\src\quantum_trainer\valuation_data_quality.py .\scripts\run_valuation_data_quality.py .\src\quantum_trainer\today_pipeline.py` -> passed.
+
+## 2026-06-02 - External Data Approval Signal
+
+- Tightened the one-command today analysis safety output.
+- Changed:
+  - `src/quantum_trainer/today_command.py`
+  - `tests/test_today_command.py`
+- Result:
+  - When `refresh_market_data=True`, output now includes `외부 데이터 승인 필요: YES`.
+  - Default local analysis still keeps `external_api_requested=NO` and `주문 실행: 안함`.
+- Verification:
+  - `.\.venv\Scripts\python.exe -m pytest .\tests\test_today_command.py .\tests\test_today_pipeline.py .\tests\test_web_api.py .\tests\test_dashboard.py -q` -> `18 passed`.
+  - `.\.venv\Scripts\python.exe -m py_compile .\src\quantum_trainer\today_command.py .\src\quantum_trainer\today_pipeline.py .\src\quantum_trainer\web_api.py .\src\quantum_trainer\dashboard.py` -> passed.
+
+## 2026-06-02 - Daily Operating Checklist
+
+- Added `docs/daily-operating-checklist.md` as the one-page daily operating order: startup checks, safety rails, Komico state, manual gates, peer comparison, local report regeneration, verification, and stop conditions.
+- No code, external API, market-data refresh, manual actual config write, order execution, git action, deletion, deployment, or scheduler change was performed.
+
+## 2026-06-02 - Stale Evidence Regression Hardening
+
+- Added regression coverage so resolved filing HOLD_REVIEW evidence is shown as non-fatal manual resolution instead of a stale blocker.
+- Added premium valuation coverage so manual review draft/proposal preserves Komico memo PER/PBR fallback when `company_research.csv` has blank valuation fields.
+- Changed:
+  - `src/quantum_trainer/pre_buy_decision.py`
+  - `src/quantum_trainer/manual_review_draft.py`
+  - `tests/test_pre_buy_decision.py`
+  - `tests/test_manual_review_draft.py`
+- Regenerated local reports only: manual review draft/proposal, pre-buy decision, and dashboard.
+- Result:
+  - Komico manual proposal remains `INCOMPLETE_DRAFT`, `valuation_review=UNKNOWN`, `actual_config_written=NO`.
+  - Komico pre-buy decision remains `WAIT / NO_ORDER`.
+  - Dashboard remains `top_symbol=183300.KQ`, `order_status=NO_ORDER`.
+- Verification:
+  - `.\.venv\Scripts\python.exe -m pytest .\tests\test_pre_buy_decision.py .\tests\test_manual_review_draft.py .\tests\test_dashboard.py -q` -> `13 passed`.
+  - `.\.venv\Scripts\python.exe -m py_compile .\src\quantum_trainer\pre_buy_decision.py .\src\quantum_trainer\manual_review_draft.py` -> passed.
+
+## 2026-06-02 - Unicorn-Grade Operating Checklist
+
+- Added `docs/superpowers/plans/2026-06-02-unicorn-grade-operating-system.md` to pin the priority board, safety contract, Komico evidence closure, manual gates, peer comparison, dashboard/pre-buy regeneration, and daily operating cadence.
+- No code, config, external API, market-data refresh, order execution, git action, or manual actual config write was performed.
+
+## 2026-06-02 - Komico Filing, Valuation, Thesis Review
+
+- Scope stayed inside `quantum_stocks_cache`; no external API, OpenDART fetch, market-data refresh, order execution, deployment, deletion, or scheduler change was run.
+- Confirmed Komico `Regulatory/accounting litigation overhang` was a keyword-evidence gap, not an identified fatal regulatory/accounting/litigation issue. Filing proposal now remains `PASS` candidate with monitoring.
+- Regenerated manual review proposal and pre-buy decision reports only; `actual_config_written=NO`, `configs/manual_review.actual.csv` was not edited, and every output keeps `order_status=NO_ORDER`.
+- Updated `reports/investment_thesis/investment_thesis_183300.md` and added `reports/investment_thesis/top_candidate_filing_comparison_2026-06-02.md`.
+- Current Komico view: 1순위 유지, PER 40.08 / PBR 4.75 / ROE 19.69% / total liabilities-equity about 214.5%, `valuation_review=UNKNOWN`, final decision `WAIT / NO_ORDER`.
+- Peer filing view: 네오티스 PASS 후보, 셀레믹스/펩트론 HOLD_REVIEW 유지, all fatal risk counts 0.
+- Verification:
+  - `.\.venv\Scripts\python.exe .\scripts\run_manual_review_proposal.py` -> `actual_config_written=NO`.
+  - `.\.venv\Scripts\python.exe .\scripts\run_pre_buy_decision.py` -> Komico `WAIT / NO_ORDER`.
+  - `.\.venv\Scripts\python.exe .\scripts\run_dashboard.py --reports-dir .\reports` -> `top_symbol=183300.KQ`, `order_status=NO_ORDER`.
+
+## 2026-06-01 - Event-Adjusted Final Watch Ranking
+
+- Added a local final watch ranking that combines full-universe quant output with manually entered event catalysts and chase-risk flags.
+- New files:
+  - `src/quantum_trainer/event_adjusted_ranking.py`
+  - `scripts/run_event_adjusted_ranking.py`
+  - `tests/test_event_adjusted_ranking.py`
+- Changed:
+  - `src/quantum_trainer/today_pipeline.py` now runs `event_adjusted_ranking` immediately after `event_catalysts`.
+  - `src/quantum_trainer/dashboard.py` now shows `이벤트 조정 최종 감시 랭킹`; dashboard display prioritizes event-tagged names while keeping all rows `NO_ORDER`.
+  - `tests/test_today_pipeline.py` and `tests/test_dashboard.py` cover the new pipeline step and dashboard section.
+  - `AGENTS.md` documents that event-adjusted rankings are local watchlist labels only and do not authorize orders or manual gate writes.
+- Result:
+  - `reports/event_adjusted_ranking/event_adjusted_ranking.csv|md` generated `row_count=2657`, `ready_count=12`, `pullback_count=18`, `external_api_requested=NO`.
+  - Dashboard still reports top symbol `183300.KQ` 코미코, `decision_gate_status=WAITING_MANUAL_EVIDENCE`, `order_status=NO_ORDER`.
+  - Dashboard event-adjusted section now surfaces LG, 코미코, LG씨엔에스, NAVER, 삼성전자, 현대차, SK하이닉스, LG전자 ahead of no-event quant names.
+- Verification:
+  - `.\.venv\Scripts\python.exe -m pytest .\tests\test_event_catalysts.py .\tests\test_event_adjusted_ranking.py .\tests\test_today_pipeline.py .\tests\test_dashboard.py -q` -> `17 passed`.
+  - `.\.venv\Scripts\python.exe -m py_compile .\src\quantum_trainer\event_catalysts.py .\scripts\run_event_catalysts.py .\src\quantum_trainer\event_adjusted_ranking.py .\scripts\run_event_adjusted_ranking.py .\src\quantum_trainer\dashboard.py .\src\quantum_trainer\today_pipeline.py` -> passed.
+  - `.\.venv\Scripts\python.exe .\scripts\run_event_adjusted_ranking.py` -> generated reports with `external_api_requested=NO`.
+  - `.\.venv\Scripts\python.exe .\scripts\run_dashboard.py --reports-dir .\reports` -> regenerated dashboard, `order_status=NO_ORDER`.
+- Next:
+  - Komico filing: open only `reports/filing_review/filing_risk_summary_183300.md` plus the minimum source scan/report files needed; decide whether `Regulatory/accounting litigation overhang` is real risk, keyword-only hold, or fatal issue.
+  - Komico valuation: first use local `configs/fundamentals.actual.csv`, `configs/shares_outstanding.actual.csv`, `data/prices.csv`, and generated reports. If PER/PBR/ROE/debt ratio inputs are still missing, request approval before OpenDART/market-data refresh.
+  - Komico thesis: draft `reports/investment_thesis/investment_thesis_183300.md` with BUY_READY / WAIT / REJECT conclusion; current expected conclusion remains `WAIT / NO_ORDER` until filing and valuation gates are resolved.
+  - Peer filing checks: for 네오티스 `085910.KQ`, 셀레믹스 `331920.KQ`, 펩트론 `087010.KQ`, request approval before any OpenDART list/document calls; summarize 5 key risks each and compare against Komico.
+  - Manual gates: prepare only proposal/report updates for the 6 review gates. Do not edit `configs/manual_review.actual.csv` without explicit user confirmation.
+  - Dashboard/pre-buy: keep event/quant labels separated from actual buy permission; regenerate dashboard and pre-buy decision after evidence updates, still `NO_ORDER`.
+
+## 2026-06-01 - Local Event Catalyst Layer
+
+- Added a local-only news/event catalyst layer so event-driven names such as NAVER/LG are visible separately from pure quant ranking.
+- New files:
+  - `src/quantum_trainer/event_catalysts.py`
+  - `scripts/run_event_catalysts.py`
+  - `tests/test_event_catalysts.py`
+  - `configs/event_catalysts.example.csv`
+- Changed:
+  - `src/quantum_trainer/today_pipeline.py` now runs `event_catalysts` after `universe_stock_analysis`.
+  - `src/quantum_trainer/dashboard.py` now shows `뉴스/이벤트 촉매`, event counts, chase-risk labels, and keeps every row `NO_ORDER`.
+  - `tests/test_today_pipeline.py` and `tests/test_dashboard.py` cover the new step and dashboard board.
+  - `configs/event_catalysts.actual.csv` was created locally for the 2026-06-01 Jensen Huang Korea event watch; this file is local manual input and may be ignored by git.
+- Result:
+  - `reports/event_catalysts/event_catalysts.md` generated 8 local event rows.
+  - Current event output: NAVER is `EVENT_FOCUS`; LG, Samsung Electronics, LG CNS, LG Electronics, SK hynix, and Hyundai Motor are `WAIT_PULLBACK_EVENT` due chase risk; Komico is `EVENT_WATCH`.
+  - Dashboard regenerated with top symbol still `183300.KQ` 코미코, final status still `WAIT / NO_ORDER`.
+- Verification:
+  - `.\.venv\Scripts\python.exe -m pytest .\tests\test_event_catalysts.py .\tests\test_today_pipeline.py .\tests\test_dashboard.py -q` -> `15 passed`.
+  - `.\.venv\Scripts\python.exe -m py_compile .\src\quantum_trainer\event_catalysts.py .\scripts\run_event_catalysts.py .\src\quantum_trainer\dashboard.py .\src\quantum_trainer\today_pipeline.py` -> passed.
+  - `.\.venv\Scripts\python.exe .\scripts\run_event_catalysts.py --as-of 2026-06-01` -> `event_count=8`, `external_api_requested=NO`.
+  - `.\.venv\Scripts\python.exe .\scripts\run_dashboard.py --reports-dir .\reports` -> dashboard regenerated, `order_status=NO_ORDER`.
+- Next:
+  - Add an event-adjusted ranking report that combines quant score, catalyst score, chase risk, and entry-price rules into one final watchlist.
+  - If using live news later, require explicit approval before any crawler/API path.
+
 ## 2026-05-29 - Full KOSPI/KOSDAQ Universe Activated
 
 - Installed and pinned `pykrx`, but direct pykrx/KRX calls returned empty/JSON errors in this environment, so the active full universe was built from the KRX KIND listed-corporation download instead.
@@ -1505,3 +1918,139 @@
   - Do not write `PASS` into `configs/manual_review.actual.csv` without final user confirmation.
   - Do not treat `CORE_FOCUS`, `BUY_READY`, nonzero order sizing, or `PERSISTENT_FOCUS` as buy permission.
   - Do not run bulk price/OpenDART/API refresh without explicit approval.
+
+## 2026-06-02 - Local Trend Forecast Engine
+
+- Added local-only trend forecast report to move beyond single-stock review:
+  - Module: `src/quantum_trainer/trend_forecast.py`
+  - CLI: `scripts/run_trend_forecast.py`
+  - Report: `reports/trend_forecast/trend_forecast.csv|md`
+- The report reads cached `data/prices.csv` only and classifies every company research symbol by:
+  - 5D/20D/60D returns
+  - MA20/MA60 alignment
+  - 20D volatility
+  - 60D max drawdown
+  - `trend_regime`, `forecast_bias`, `chase_risk`, `trend_score`
+- Integrated `trend_forecast` into `today_pipeline.py` after `universe_stock_analysis` and before event catalyst ranking.
+- Dashboard now shows a `가격 흐름 예측` board and links to `../trend_forecast/trend_forecast.md`.
+- Local generation result:
+  - `row_count=2657`
+  - `bullish_count=76`
+  - `watch_pullback_count=98`
+  - `bearish_count=1675`
+  - `insufficient_count=101`
+  - `external_api_requested=NO`
+  - `order_status=NO_ORDER`
+- Safety:
+  - No OpenDART call.
+  - No price refresh.
+  - No order placement.
+  - No `configs/manual_review.actual.csv` write.
+
+## 2026-06-02 - Trend Gate Applied To Buy Decisions
+
+- Applied `reports/trend_forecast/trend_forecast.csv` to downstream decisions:
+  - `pre_buy_decision` now keeps a candidate at `WAIT` when trend forecast says `WATCH_PULLBACK` or `chase_risk=HIGH`.
+  - `event_adjusted_ranking` now treats `WATCH_PULLBACK` or `chase_risk=HIGH` as chase risk, changing `READY_REVIEW` to `WAIT_PULLBACK`.
+  - `today_pipeline.py` passes `--trend-forecast-csv` to both downstream scripts.
+- Regenerated local reports:
+  - `reports/event_adjusted_ranking/event_adjusted_ranking.csv|md`
+  - `reports/pre_buy_decision/pre_buy_decision.csv|md`
+  - `reports/dashboard/index.html`
+- Current 코미코 downstream state:
+  - Trend forecast: `UPTREND / WATCH_PULLBACK / HIGH`
+  - Event-adjusted ranking: `WAIT_PULLBACK / NO_ORDER`
+  - Pre-buy decision: `WAIT / NO_ORDER`
+  - Blocker added: `trend forecast wait pullback`
+- Safety:
+  - No OpenDART call.
+  - No price refresh.
+  - No order placement.
+  - No `configs/manual_review.actual.csv` write.
+
+## 2026-06-02 - Market Regime And Sector Breadth
+
+- Added local market/sector breadth report:
+  - Module: `src/quantum_trainer/market_regime.py`
+  - CLI: `scripts/run_market_regime.py`
+  - Report: `reports/market_regime/market_regime.csv|md`
+- The report aggregates `trend_forecast.csv` into:
+  - whole-market row: `scope=MARKET`, `sector=ALL`
+  - sector rows: `scope=SECTOR`
+  - counts/ratios for `BULLISH`, `WATCH_PULLBACK`, `WATCH_REBOUND`, `BEARISH`, and high chase risk
+  - `regime_status` and `risk_posture`
+- Integrated into `today_pipeline.py` after `trend_forecast` and before event catalyst/ranking.
+- Dashboard now shows `시장/섹터 흐름` and links to `../market_regime/market_regime.md`.
+- Local generation result:
+  - `row_count=162`
+  - `risk_on_count=3`
+  - `extended_uptrend_count=1`
+  - `risk_off_count=122`
+  - `external_api_requested=NO`
+  - `order_status=NO_ORDER`
+- Safety:
+  - No OpenDART call.
+  - No price refresh.
+  - No order placement.
+  - No `configs/manual_review.actual.csv` write.
+
+## 2026-06-02 - Market Regime Gate Applied
+
+- Applied `reports/market_regime/market_regime.csv` to downstream entry decisions.
+- Changed:
+  - `src/quantum_trainer/pre_buy_decision.py` now keeps candidates at `WAIT` when the whole market or candidate sector is `RISK_OFF`, `EXTENDED_UPTREND`, `RECOVERY_WATCH`, or data-required.
+  - `src/quantum_trainer/event_adjusted_ranking.py` now downgrades `BUY_READY` rows to `MARKET_WAIT` when market/sector posture blocks new entries.
+  - `scripts/run_pre_buy_decision.py`, `scripts/run_event_adjusted_ranking.py`, and `today_pipeline.py` pass `--market-regime-csv`.
+  - `dashboard.py` renders `MARKET_WAIT` as `시장/섹터 대기`.
+- Local regeneration result:
+  - Event-adjusted ranking: `ready_count=0`, `pullback_count=0`, `market_wait_count=30`, `external_api_requested=NO`.
+  - Pre-buy decision: 코미코 remains `WAIT / NO_ORDER` with blockers `manual gate not ready; trend forecast wait pullback; market regime defensive`.
+  - Dashboard regenerated with top symbol `183300.KQ`, `order_status=NO_ORDER`.
+- Verification:
+  - `.\.venv\Scripts\python.exe -m pytest .\tests\test_pre_buy_decision.py .\tests\test_event_adjusted_ranking.py .\tests\test_today_pipeline.py .\tests\test_dashboard.py -q` -> `24 passed`.
+- Safety:
+  - No external API, OpenDART, price refresh, broker/order action, scheduler, deletion, or `configs/manual_review.actual.csv` write.
+
+## 2026-06-02 - Entry Signal Watch Triggers
+
+- Added a local wait-trigger report so the system explains what must change before a blocked candidate should be reviewed again.
+- New files:
+  - `src/quantum_trainer/entry_signal_watch.py`
+  - `scripts/run_entry_signal_watch.py`
+  - `tests/test_entry_signal_watch.py`
+- Changed:
+  - `today_pipeline.py` now runs `entry_signal_watch` after `pre_buy_decision` and before order sizing/scenarios.
+  - `dashboard.py` now shows `진입 트리거 감시` and links to `../entry_signal_watch/entry_signal_watch.md`.
+  - `AGENTS.md` documents that trigger labels are monitoring states only and not order permission.
+- Local generation result:
+  - `reports/entry_signal_watch/entry_signal_watch.csv|md`
+  - `row_count=30`
+  - `market_wait_count=30`
+  - `pullback_wait_count=0`
+  - `event_only_count=0`
+  - `external_api_requested=NO`
+  - `order_status=NO_ORDER`
+- Verification:
+  - `.\.venv\Scripts\python.exe -m pytest .\tests\test_entry_signal_watch.py .\tests\test_today_pipeline.py .\tests\test_dashboard.py -q` -> `14 passed`.
+  - `.\.venv\Scripts\python.exe -m py_compile .\src\quantum_trainer\entry_signal_watch.py .\scripts\run_entry_signal_watch.py .\src\quantum_trainer\today_pipeline.py .\src\quantum_trainer\dashboard.py` -> passed.
+- Safety:
+  - No external API, OpenDART, price refresh, broker/order action, scheduler, deletion, or `configs/manual_review.actual.csv` write.
+
+## 2026-06-02 - GUI Background Analyze Jobs
+
+- Changed:
+  - `src/quantum_trainer/web_api.py` exposes `POST /api/analyze/jobs` and `GET /api/analyze/jobs/{job_id}` for background analysis.
+  - `web/src/main.jsx` creates an analyze job, polls `QUEUED/RUNNING/DONE/ERROR`, and refreshes status/candidates/holdings after completion.
+  - `web/src/styles.css` adds progress notice styling.
+  - `AGENTS.md` documents that job responses must stay `order_status=NO_ORDER`, `broker_order_requested=NO`, and cached jobs must avoid external price refresh.
+- Verification:
+  - `.\.venv\Scripts\python.exe -m py_compile .\src\quantum_trainer\web_api.py` -> passed.
+  - `.\.venv\Scripts\python.exe -m pytest .\tests\test_web_api.py -q` -> `9 passed`.
+  - `npm.cmd run build` from `web/` -> passed.
+  - Local GUI restarted at `http://127.0.0.1:8766` with PID `9600`; `/health` returned `OK`, `/api/status` returned `NO_ORDER`.
+- Next:
+  - Re-test the GUI analysis button in the browser and confirm the progress notice advances instead of staying on `RUNNING`.
+  - If still stuck, inspect `/api/analyze/jobs/{job_id}` response and server process/logs before changing pipeline logic.
+  - Continue GUI productization: clearer live progress, job history/log preview, and daily analysis usability.
+- Safety:
+  - No external API/OpenDART call, price refresh, broker/order action, scheduler registration, deletion, or `configs/manual_review.actual.csv` write.

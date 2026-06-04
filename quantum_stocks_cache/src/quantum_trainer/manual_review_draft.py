@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -209,6 +210,7 @@ def _review_notes(
     filing_note: str,
     capital_note: str,
 ) -> str:
+    per, pbr = _valuation_metrics(memo, research)
     parts = [
         filing_note,
         capital_note,
@@ -217,12 +219,40 @@ def _review_notes(
         f"research_score={_number(research.get('research_score')):.2f}",
         f"expected_20d_return={_number(research.get('expected_20d_return')):.3f}",
         f"upside_probability={_number(research.get('upside_probability')):.3f}",
-        f"PER={_number(research.get('per')):.2f}",
-        f"PBR={_number(research.get('pbr')):.2f}",
+        f"PER={per:.2f}",
+        f"PBR={pbr:.2f}",
+        _valuation_note(per, pbr),
         f"loss_defense={memo.get('loss_defense', '')}",
         "capital_plan requires final human confirmation",
     ]
     return "; ".join(str(part) for part in parts if str(part).strip())
+
+
+def _valuation_metrics(memo: dict[str, object], research: pd.Series) -> tuple[float, float]:
+    per = _number(research.get("per"))
+    pbr = _number(research.get("pbr"))
+    if per <= 0.0:
+        per = _number_from_memo(memo, "PER")
+    if pbr <= 0.0:
+        pbr = _number_from_memo(memo, "PBR")
+    return per, pbr
+
+
+def _number_from_memo(memo: dict[str, object], label: str) -> float:
+    haystack = "; ".join(
+        str(memo.get(field, ""))
+        for field in ("core_thesis", "evidence", "risks", "manual_checks", "next_action")
+    )
+    match = re.search(rf"\b{re.escape(label)}\s*=\s*([0-9]+(?:\.[0-9]+)?)", haystack, flags=re.IGNORECASE)
+    if not match:
+        return 0.0
+    return _number(match.group(1))
+
+
+def _valuation_note(per: float, pbr: float) -> str:
+    if per >= 35.0 or pbr >= 3.0:
+        return f"valuation premium: PER={per:.2f}, PBR={pbr:.2f}"
+    return ""
 
 
 def _render_markdown(report: pd.DataFrame) -> str:

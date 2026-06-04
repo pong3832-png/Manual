@@ -32,6 +32,10 @@ def test_today_pipeline_rebuilds_candidate_reports_and_dashboard_without_market_
             "universe_coverage",
             "company_research",
             "universe_stock_analysis",
+            "trend_forecast",
+            "market_regime",
+            "event_catalysts",
+            "event_adjusted_ranking",
             "research_filter",
             "candidate_briefs",
             "investment_checklist",
@@ -39,12 +43,17 @@ def test_today_pipeline_rebuilds_candidate_reports_and_dashboard_without_market_
             "conviction_score",
             "profit_focus",
             "investment_memo",
+            "valuation_data_quality",
             "capital_plan_review",
             "manual_review_draft",
             "manual_review_proposal",
             "manual_review_apply_plan",
             "decision_gate",
             "pre_buy_decision",
+            "entry_signal_watch",
+            "market_recovery_watch",
+            "sector_rotation_watch",
+            "tactical_watchlist",
             "order_sizer",
             "capital_scenarios",
             "investment_tracking",
@@ -56,6 +65,13 @@ def test_today_pipeline_rebuilds_candidate_reports_and_dashboard_without_market_
         assert any("run_universe_coverage.py" in step.command[1] for step in output.steps)
         assert any("run_company_research.py" in step.command[1] for step in output.steps)
         assert any("run_universe_stock_analysis.py" in step.command[1] for step in output.steps)
+        assert any("run_trend_forecast.py" in step.command[1] for step in output.steps)
+        assert any("run_market_regime.py" in step.command[1] for step in output.steps)
+        assert any("run_event_catalysts.py" in step.command[1] for step in output.steps)
+        assert any("run_event_adjusted_ranking.py" in step.command[1] for step in output.steps)
+        event_adjusted = next(step for step in output.steps if step.name == "event_adjusted_ranking")
+        assert "--trend-forecast-csv" in event_adjusted.command
+        assert "--market-regime-csv" in event_adjusted.command
         assert any("run_capital_plan_review.py" in step.command[1] for step in output.steps)
         assert any("run_manual_review_draft.py" in step.command[1] for step in output.steps)
         assert any("run_manual_review_proposal.py" in step.command[1] for step in output.steps)
@@ -63,10 +79,32 @@ def test_today_pipeline_rebuilds_candidate_reports_and_dashboard_without_market_
         assert any("--actual-output-csv" in step.command for step in output.steps)
         assert any("--manual-proposal-csv" in step.command for step in output.steps)
         assert any("--capital-plan-dir" in step.command for step in output.steps)
+        pre_buy = next(step for step in output.steps if step.name == "pre_buy_decision")
+        assert "--trend-forecast-csv" in pre_buy.command
+        assert "--market-regime-csv" in pre_buy.command
+        entry_signal = next(step for step in output.steps if step.name == "entry_signal_watch")
+        assert entry_signal.command[1].endswith("run_entry_signal_watch.py")
+        assert "--event-adjusted-ranking-csv" in entry_signal.command
+        assert "--pre-buy-decision-csv" in entry_signal.command
+        assert "--trend-forecast-csv" in entry_signal.command
+        recovery_watch = next(step for step in output.steps if step.name == "market_recovery_watch")
+        assert recovery_watch.command[1].endswith("run_market_recovery_watch.py")
+        assert "--market-regime-csv" in recovery_watch.command
+        assert "--entry-signal-watch-csv" in recovery_watch.command
+        sector_rotation = next(step for step in output.steps if step.name == "sector_rotation_watch")
+        assert sector_rotation.command[1].endswith("run_sector_rotation_watch.py")
+        assert "--market-recovery-watch-csv" in sector_rotation.command
+        assert "--trend-forecast-csv" in sector_rotation.command
+        tactical_watchlist = next(step for step in output.steps if step.name == "tactical_watchlist")
+        assert tactical_watchlist.command[1].endswith("run_tactical_watchlist.py")
+        assert "--event-adjusted-ranking-csv" in tactical_watchlist.command
+        assert "--entry-signal-watch-csv" in tactical_watchlist.command
+        assert "--sector-rotation-watch-csv" in tactical_watchlist.command
         assert any("run_order_sizer.py" in step.command[1] for step in output.steps)
         assert any("run_capital_scenarios.py" in step.command[1] for step in output.steps)
         assert any("run_investment_tracking.py" in step.command[1] for step in output.steps)
         assert any("run_operating_status.py" in step.command[1] for step in output.steps)
+        assert any("run_valuation_data_quality.py" in step.command[1] for step in output.steps)
         assert any("--fundamentals-csv" in step.command for step in output.steps)
         assert any("--include-building-focus" in step.command for step in output.steps)
         assert output.steps[-1].command[1].endswith("run_dashboard.py")
@@ -241,6 +279,13 @@ def test_today_pipeline_reapplies_valuation_after_market_refresh_when_shares_exi
             "universe_coverage",
             "company_research",
         ]
+        assert step_names[4:9] == [
+            "universe_stock_analysis",
+            "trend_forecast",
+            "market_regime",
+            "event_catalysts",
+            "event_adjusted_ranking",
+        ]
         valuation_step = output.steps[1]
         assert valuation_step.external_api is False
         assert valuation_step.command[1].endswith("apply_valuation_metrics.py")
@@ -271,7 +316,7 @@ def test_today_pipeline_adds_local_filing_risk_summary_when_scan_exists() -> Non
         assert "filing_risk_summary_028260" in step_names
         assert step_names.index("filing_risk_summary_028260") < step_names.index("dashboard")
         assert step_names.index("filing_risk_summary_028260") < step_names.index("manual_review_draft")
-        assert step_names.index("pre_buy_decision") < step_names.index("order_sizer") < step_names.index("capital_scenarios") < step_names.index("investment_tracking") < step_names.index("operating_status") < step_names.index("dashboard")
+        assert step_names.index("pre_buy_decision") < step_names.index("entry_signal_watch") < step_names.index("market_recovery_watch") < step_names.index("sector_rotation_watch") < step_names.index("tactical_watchlist") < step_names.index("order_sizer") < step_names.index("capital_scenarios") < step_names.index("investment_tracking") < step_names.index("operating_status") < step_names.index("dashboard")
         risk_step = output.steps[step_names.index("filing_risk_summary_028260")]
         assert risk_step.external_api is False
         assert risk_step.command[1].endswith("run_filing_risk_summary.py")
