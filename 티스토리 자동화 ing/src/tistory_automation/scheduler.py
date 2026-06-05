@@ -94,6 +94,8 @@ def parse_args():
         default=True,
         help="예약 작업을 임시저장 모드로 등록",
     )
+    parser.add_argument("--daily-posts", type=int, default=5)
+    parser.add_argument("--coupang-posts", type=int, default=5)
     return parser.parse_args()
 
 
@@ -139,7 +141,16 @@ def candidate_minutes_for_date(target_date):
     return minutes
 
 
-def resolve_target_date(mode):
+def _validate_post_counts(daily_posts, coupang_posts):
+    if daily_posts < 0 or coupang_posts < 0:
+        raise RuntimeError("daily_posts/coupang_posts must be zero or greater.")
+    total_posts = daily_posts + coupang_posts
+    if total_posts < 1:
+        raise RuntimeError("At least one scheduled post is required.")
+    return total_posts
+
+
+def resolve_target_date(mode, total_posts=10):
     today = datetime.now().date()
     tomorrow = today + timedelta(days=1)
 
@@ -147,14 +158,15 @@ def resolve_target_date(mode):
         return today
     if mode == "tomorrow":
         return tomorrow
-    if len(candidate_minutes_for_date(today)) >= 10:
+    if len(candidate_minutes_for_date(today)) >= total_posts:
         return today
     return tomorrow
 
 
-def build_schedule_items(target_date):
+def build_schedule_items(target_date, daily_posts=5, coupang_posts=5):
+    total_posts = _validate_post_counts(daily_posts, coupang_posts)
     candidate_minutes = candidate_minutes_for_date(target_date)
-    if len(candidate_minutes) < 10:
+    if len(candidate_minutes) < total_posts:
         raise RuntimeError(
             f"{target_date.isoformat()}에는 예약 가능한 시간이 부족합니다. "
             "더 이른 시간에 등록하거나 내일 날짜로 등록하세요."
@@ -162,17 +174,16 @@ def build_schedule_items(target_date):
 
     random_minutes = []
     for _ in range(2000):
-        temp = sorted(random.sample(candidate_minutes, 10))
-        if all(temp[i+1] - temp[i] >= 15 for i in range(9)):
+        temp = sorted(random.sample(candidate_minutes, total_posts))
+        if total_posts == 1 or all(temp[i+1] - temp[i] >= 15 for i in range(total_posts - 1)):
             random_minutes = temp
             break
     if not random_minutes:
-        random_minutes = sorted(random.sample(candidate_minutes, 10))
+        random_minutes = sorted(random.sample(candidate_minutes, total_posts))
     # Keep scheduled task arguments ASCII. Korean arguments can render badly in
     # Task Scheduler/PowerShell windows on some Windows code pages.
-    post_types = ["coupang", "daily"] * 5
-    if random.choice([True, False]):
-        post_types = ["daily", "coupang"] * 5
+    post_types = (["daily"] * daily_posts) + (["coupang"] * coupang_posts)
+    random.shuffle(post_types)
 
     items = []
     for index, (minutes, post_type) in enumerate(zip(random_minutes, post_types), start=1):
@@ -249,7 +260,12 @@ def register_post_tasks(items, target_date, draft=True):
         )
 
 
-def register_refresh_task(refresh_time, draft=True):
+def delete_stale_post_tasks(active_count):
+    for index in range(active_count + 1, 31):
+        delete_task_if_exists(f"{TASK_PREFIX}_{index:02d}")
+
+
+def register_refresh_task(refresh_time, draft=True, daily_posts=5, coupang_posts=5):
     username = getpass.getuser()
     wrapper_path = os.path.join(HELPER_DIR, "run_refresh_schedule.ps1")
     delete_task_if_exists(REFRESH_TASK_NAME)
@@ -263,6 +279,7 @@ def register_refresh_task(refresh_time, draft=True):
             (
                 f'powershell.exe -NoProfile -ExecutionPolicy Bypass '
                 f'-File "{wrapper_path}" -RefreshTime "{refresh_time}"'
+                f' -DailyPosts {daily_posts} -CoupangPosts {coupang_posts}'
                 + " -Draft"
             ),
             "/SC",
@@ -292,16 +309,27 @@ def print_schedule(items, target_date, schedule_path, draft=True):
 
 def main():
     args = parse_args()
+    total_posts = _validate_post_counts(args.daily_posts, args.coupang_posts)
     os.makedirs(LOCK_DIR, exist_ok=True)
     schedule_lock = FileLock(SCHEDULE_REGISTER_LOCK_PATH, timeout=600)
     print(f"[schedule-lock] 등록 락 확인 중: {SCHEDULE_REGISTER_LOCK_PATH}")
     schedule_lock.acquire()
     print("[schedule-lock] 등록 락 획득")
     try:
-        target_date = resolve_target_date(args.target_date)
-        items = build_schedule_items(target_date)
+        target_date = resolve_target_date(args.target_date, total_posts=total_posts)
+        items = build_schedule_items(
+            target_date,
+            daily_posts=args.daily_posts,
+            coupang_posts=args.coupang_posts,
+        )
         register_post_tasks(items, target_date, draft=args.draft)
-        register_refresh_task(args.refresh_time, draft=args.draft)
+        delete_stale_post_tasks(len(items))
+        register_refresh_task(
+            args.refresh_time,
+            draft=args.draft,
+            daily_posts=args.daily_posts,
+            coupang_posts=args.coupang_posts,
+        )
         schedule_path = save_schedule_file(items, target_date)
         print_schedule(items, target_date, schedule_path, draft=args.draft)
     finally:

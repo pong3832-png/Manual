@@ -1,5 +1,129 @@
 # Work Log
 
+## 2026-06-05 - 티스토리 글쓰기 진입 ESC 정리 보강
+
+### 오늘 변경
+- `src/tistory_automation/main.py`: 티스토리 글쓰기 화면 진입 직후 작성 중이던 글 이어쓰기 팝업을 닫기 위해 ESC를 보내는 기존 처리를 0.7초 대기에서 2초 대기로 변경.
+- `golf/main_golf.py`: `main.py`와 동일하게 글쓰기 화면 진입 직후 2초 대기 후 ESC 1회를 보내는 팝업 정리 함수를 추가하고, `jxbooklove` 글쓰기 URL 진입/복귀 지점마다 호출하도록 연결.
+- `src/tistory_automation/main.py`, `golf/main_golf.py`: 예약 실행에서는 ChatGPT 글 생성/쿠팡 API 조회 전에 티스토리 저장 세션으로 글쓰기 화면 진입이 가능한지 사전 확인하도록 변경. 저장 세션이 로그인 화면으로 떨어지면 글 생성을 시작하지 않고 즉시 중단.
+- `src/tistory_automation/main.py`: 수동 로그인 후 티스토리 홈/관리 화면에 머무는 경우 링크 클릭을 기다리지 않고 `daniever2217` 글쓰기 URL로 직접 재진입하도록 보강. `--tistory-login-only` 안내도 “로그인만 완료 후 엔터”로 변경.
+- `golf/main_golf.py`: `--tistory-login-only` 안내를 “로그인만 완료 후 엔터”로 변경. 글쓰기 화면은 자동화가 `jxbooklove` URL로 직접 확인.
+- `src/tistory_automation/main.py`, `golf/main_golf.py`: 글쓰기 진입 중 뜨는 티스토리 알림은 모르는 문구라도 기본적으로 취소 처리하도록 변경. 작성 중이던 글/임시글을 이어서 여는 방향으로 흐르지 않게 함.
+- `src/tistory_automation/main.py`, `golf/main_golf.py`: 티스토리 세션 저장 실패 시 방금 로그인한 Chrome 프로필을 다시 삭제하지 않도록 변경. 감지 실패가 로그인 세션 삭제로 이어지는 반복을 방지.
+- `src/tistory_automation/main.py`: 글쓰기 진입 URL을 `https://daniever2217.tistory.com/manage/newpost/`로 고정.
+- `golf/main_golf.py`: 글쓰기 진입 URL을 `https://jxbooklove.tistory.com/manage/newpost/`로 고정.
+- `src/tistory_automation/main.py`, `golf/main_golf.py`: `--tistory-login-only`가 시작할 때 기존 티스토리 세션 폴더를 무조건 초기화하던 동작 제거. 저장된 세션이 있으면 그대로 보존하고 `/manage/newpost/` 진입을 확인하도록 변경.
+- `tests/test_tistory_session_login_flow.py`, `tests/test_main_golf_runtime_guards.py`: 글쓰기 URL에서 2초 대기 후 ESC 1회가 전송되는지 확인하는 회귀 테스트 추가.
+- `tests/test_tistory_session_login_flow.py`, `tests/test_main_golf_runtime_guards.py`: scheduled 실행이 티스토리 세션 사전검사를 ChatGPT 드라이버 생성보다 먼저 수행하는지 확인하는 회귀 테스트 추가.
+- `tests/test_tistory_session_login_flow.py`, `tests/test_main_golf_runtime_guards.py`: 수동 로그인 후 티스토리 홈에 떨어져도 대상 블로그 글쓰기 URL로 직접 이동하는 회귀 테스트 추가.
+- `tests/test_tistory_session_login_flow.py`, `tests/test_main_golf_runtime_guards.py`: 글쓰기 진입 알림이 기본 취소 처리되는지 확인하는 회귀 테스트 추가.
+- `tests/test_tistory_session_login_flow.py`, `tests/test_main_golf_runtime_guards.py`: main/golf 글쓰기 URL이 쿼리 없는 직접 URL인지 확인하는 회귀 테스트 추가.
+- `tests/test_tistory_session_login_flow.py`, `tests/test_main_golf_runtime_guards.py`: 티스토리 로그인 저장 모드가 기존 세션 폴더를 삭제하지 않는지 확인하는 회귀 테스트 추가.
+
+### 운영 메모
+- 목적은 티스토리 에디터 첫 진입 때 뜨는 “전에 작성하던 글을 이어서 작성”류 팝업이 제목/본문 입력을 막는 상황을 자동으로 정리하는 것.
+- 최신 실패 로그 기준 반복 원인은 팝업이 아니라 저장 티스토리 세션이 카카오 로그인 화면으로 이동하는 상태였음. 이 경우 ESC로 해결되지 않으므로 `--tistory-login-only` 세션 재저장이 먼저 필요.
+- `--tistory-login-only`가 기존 세션을 삭제하던 구조도 확인되어 제거함. 앞으로 로그인 저장 모드는 기존 `runtime/sessions/tistory*` 프로필을 보존한 채 `/manage/newpost/` 진입만 확인한다.
+
+### 검증
+- `.venv\Scripts\python.exe -m unittest tests.test_tistory_session_login_flow` 통과.
+- `.venv\Scripts\python.exe -m unittest tests.test_main_golf_runtime_guards` 통과.
+- `.venv\Scripts\python.exe -X utf8 -m py_compile .\src\tistory_automation\main.py` 통과.
+- `.venv\Scripts\python.exe -X utf8 -m py_compile .\golf\main_golf.py` 통과.
+- `rg "manage/newpost/\?type=post|returnURL=%2Fmanage|기존 티스토리 세션 폴더를 초기화"` 결과 없음.
+
+### 다음 세션
+- 먼저 글 생성 없이 main 사전검사만 실행: `.\.venv\Scripts\python.exe -X utf8 -c "from tistory_automation import main; main._ensure_tistory_saved_session_ready_for_scheduled_run()"`.
+- 사전검사가 `https://daniever2217.tistory.com/manage/newpost/` 글쓰기 화면까지 통과하면 `main.py --post-type daily --scheduled --draft` 1건만 실행해 임시저장 확인.
+- main 1건 성공 후 `golf/main_golf.py --post-type golf --draft` 1건을 실행한다. 공개 발행은 하지 않는다.
+
+## 2026-06-05 - main_golf.py 티스토리 세션 분리
+
+### 오늘 변경
+- `golf/main_golf.py`: 골프 자동화가 `runtime/sessions/tistory_golf`를 사용하도록 변경. `main.py`의 `daniever2217` 티스토리 세션(`runtime/sessions/tistory`)과 `main_golf.py`의 `jxbooklove` 티스토리 세션이 같은 Chrome 프로필을 공유하던 충돌 가능성을 제거.
+- `tests/test_main_golf_runtime_guards.py`: 골프 자동화의 티스토리 세션 폴더가 `tistory_golf`인지 확인하는 회귀 테스트 추가.
+
+### 운영 메모
+- 11:25 daily 예약 실행은 ChatGPT 생성까지 완료했지만, 티스토리 단계에서 `티스토리 저장 세션이 로그인 화면으로 이동했습니다` 오류로 중단됨. 현재 daily 예약은 `--tistory-login-only`로 `main.py` 세션을 다시 저장하기 전까지 같은 방식으로 실패할 수 있음.
+- 골프 재실행 전에는 새 골프 세션 폴더에 로그인 세션이 없으므로 `.\.venv\Scripts\python.exe -X utf8 .\golf\main_golf.py --tistory-login-only`를 먼저 실행해 `jxbooklove` 글쓰기 화면 기준 세션을 저장해야 함.
+- daily 예약을 살리려면 별도로 `.\.venv\Scripts\python.exe -X utf8 -m tistory_automation.main --tistory-login-only`로 `daniever2217` 글쓰기 화면 기준 세션을 다시 저장해야 함.
+
+### 검증
+- `.venv\Scripts\python.exe -m unittest tests.test_main_golf_runtime_guards` 통과.
+- `.venv\Scripts\python.exe -X utf8 -m py_compile .\golf\main_golf.py` 통과.
+
+## 2026-06-05 - 티스토리 자동화 ing 스케줄러 daily 전용 전환
+
+### 오늘 변경
+- `src/tistory_automation/scheduler.py`: `--daily-posts`, `--coupang-posts` 옵션을 추가하고 스케줄 개수를 동적으로 생성하도록 변경. 기존 잔여 작업 방지를 위해 현재 개수 이후 `TistoryChatGPTAutoPost_13..30` 정리 로직 추가.
+- `scripts/scheduled/run_refresh_schedule.ps1`: 매일 재등록 작업이 `DailyPosts`/`CoupangPosts` 값을 받아 다시 `scheduler.py`에 전달하도록 변경.
+- 사용자 요청으로 `daily 12개`, `coupang 0개`, `--draft` 기준 Windows 작업 스케줄러 재등록.
+
+### 등록 결과
+- 2026-06-05 임시저장 예약: 11:25, 12:13, 12:46, 13:42, 14:14, 14:46, 15:30, 16:05, 16:33, 17:36, 20:19, 21:19.
+- `TistoryChatGPTAutoPost_RefreshDaily`: 2026-06-06 00:05부터 매일 `-DailyPosts 12 -CoupangPosts 0 -Draft`로 재등록.
+
+### 검증
+- `.venv\Scripts\python.exe -m unittest tests.test_scheduler_config` 통과.
+- `.venv\Scripts\python.exe -m py_compile src\tistory_automation\scheduler.py` 통과.
+- `.venv\Scripts\python.exe -m unittest tests.test_tistory_session_login_flow tests.test_scheduler_config` 통과.
+- `schtasks /Query`로 `TistoryChatGPTAutoPost_01`, `_11`, `_12`, `TistoryChatGPTAutoPost_RefreshDaily` Ready 상태와 다음 실행 시간 확인.
+
+## 2026-06-05 - main_golf.py 골프 본문 검증 오탐 보정
+
+### 오늘 변경
+- `golf/main_golf.py`: 골프 본문 검증에서 `확정 가격`을 단순 금지어로 처리하지 않고, `확정 가격이 아니라 예상 범위/확인 필요` 같은 안전 고지 문맥은 허용하도록 보정.
+- `tests/test_main_golf_runtime_guards.py`: 안전 고지 문맥은 통과하고 `확정 가격: 7500000VND` 같은 단정 문맥은 차단하는 회귀 테스트 추가.
+
+### 운영 메모
+- 10:43 수동 `main_golf.py --post-type golf --draft` 실행은 본문 1차 생성 뒤 `확정 가격` 오탐으로 재작성에 들어갔고, 재작성 응답 대기에서 산출물 저장 없이 멈춤. 사용자 승인 후 PID 17712와 연결 chromedriver PID 8060 종료.
+- 이번 실패는 티스토리 단계 전이라 `generated_results_golf/body.html`, `title_candidates.txt`, `hashtags.txt`는 07:20 이전 산출물이 남아 있다. 재시도는 새 골프 생성부터 다시 실행한다.
+
+### 검증
+- `.venv\Scripts\python.exe -m unittest tests.test_main_golf_runtime_guards` 통과.
+- `.venv\Scripts\python.exe -X utf8 -m py_compile .\golf\main_golf.py` 통과.
+
+## 2026-06-05 - 티스토리 자동화 ing
+
+### 오늘 변경
+
+- 현재 상태 확인: `AGENTS.md`, `docs/work-log.md`, `git status --short -- "티스토리 자동화 ing"`만 먼저 확인.
+- `golf/main_golf.py`: 건강식품 쿠팡 글 API 보강 중 쿠팡 API 시간당 사용 횟수 제한 메시지가 나오면 추가 조회를 중단하고 명확한 RuntimeError로 올리도록 보강.
+- `tests/test_main_golf_runtime_guards.py`: health API 제한 예외가 발생하면 다음 후보 조회로 넘어가지 않고 즉시 중단하는 회귀 테스트 추가.
+
+### 검증
+
+- `.venv\Scripts\python.exe -m unittest tests.test_main_golf_runtime_guards.MainGolfHealthProductSelectionTests.test_health_api_rate_limit_failure_raises_clear_stop_message` 실패 확인 후 구현.
+- `.venv\Scripts\python.exe -m unittest tests.test_tistory_session_login_flow` 통과.
+- `.venv\Scripts\python.exe -m unittest tests.test_main_golf_runtime_guards` 통과.
+- `.venv\Scripts\python.exe -m py_compile src\tistory_automation\main.py` 통과.
+- `.venv\Scripts\python.exe -m py_compile golf\main_golf.py` 통과.
+
+### 다음 세션
+
+- 티스토리 예약 실행 재개 전 `--tistory-login-only`로 티스토리 세션을 다시 저장한다.
+- 쿠팡 API 시간당 제한이 풀린 뒤 `main.py` coupang과 `main_golf.py` health 로그에서 제한 감지 시 추가 조회가 반복되지 않는지 확인한다.
+
+## 2026-06-01 - 티스토리 자동화 ing
+
+### 오늘 변경
+
+- 최신 예약 로그 점검: `daily`와 `golf`는 ChatGPT 생성 후 티스토리 저장 세션이 로그인 화면으로 이동해 중단됨. `--tistory-login-only`로 세션 재저장이 필요.
+- 최신 `coupang` 예약 로그에서 쿠팡 API 시간당 사용 횟수 초과 후 후보/보강 키워드 조회가 계속 반복되는 문제 확인.
+- `src/tistory_automation/main.py`: 쿠팡 API 시간당 사용 횟수 제한 메시지를 감지하면 추가 API 조회를 즉시 중단하도록 보강.
+- `tests/test_tistory_session_login_flow.py`: 시간당 제한 예외가 첫 후보에서 발생하면 다음 후보와 보강 후보를 조회하지 않는 회귀 테스트 추가.
+
+### 검증
+
+- `.venv\Scripts\python.exe -m unittest tests.test_tistory_session_login_flow.CoupangApiProductSelectionTests.test_api_rate_limit_failure_stops_lookup_immediately` 통과.
+- `.venv\Scripts\python.exe -m unittest tests.test_tistory_session_login_flow` 통과.
+- `.venv\Scripts\python.exe -m py_compile src\tistory_automation\main.py` 통과.
+
+### 다음 세션
+
+- 티스토리 예약 실행 재개 전 `--tistory-login-only`로 티스토리 세션을 다시 저장한다.
+- 쿠팡 API 시간당 제한이 풀린 뒤 다음 `coupang` 예약 로그에서 제한 감지 시 추가 조회가 반복되지 않는지 확인한다.
+
 ## 2026-05-29 - 티스토리 자동화 ing
 
 ### 오늘 변경

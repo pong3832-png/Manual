@@ -316,6 +316,8 @@ Git 작업 주의:
 - `skssj2628.py`는 네이버 에디터 인용구 툴바(`button[data-name="quotation"]`)를 의도적으로 사용해 인용구 2~6만 선택한다. 기본 인용구 `default`를 다시 넣지 말고, 빈 `[인용구]`는 툴바를 열기 전에 건너뛰어야 한다.
 - `skssj2628.py` 일상글은 넓은 일기형 주제 대신 세부 검색 의도형 주제를 유지한다. 주제별 핵심 원리, 정확한 용어, 확인 순서, 실천 포인트, FAQ, 사실 확인 주의사항을 보존하고, 정책/요금/날씨 수치는 공식 확인 없이 단정하지 않는다.
 - `제미나이웹.py`의 인용구 로직은 `skssj2628.py`와 다를 수 있다. 인용구 스타일을 맞출 때는 먼저 실제 `insert_quotation()` 구현을 확인하고, 두 파일을 동일하다고 가정하지 않는다.
+- `제미나이웹.py`의 `skssj2627` 일상글은 현재 애드포스트 중심 운영이다. 자동 회전 주제는 `월세·이사·통신·공과금` 생활비/계약 체크형을 유지하고, 보험·자동차·렌탈 축이나 쿠팡 자동 스케줄은 성과 기준 합의 전 재도입하지 않는다.
+- `네이버 자동화 ing/네이버 블로그 글쓰기/스케줄러.py`는 Windows 작업 `NaverBlogAutoPost_*`와 `NaverBlogAutoPost_RefreshDaily`를 관리한다. 현재 기준은 `일상` 3건/일, `쿠팡` 0건이며 재등록 시 과거 10건 작업 중 남은 4~10번을 정리한다. 등록/삭제/변경은 사용자 명시 승인 후 진행한다.
 - `네이버 자동화 ing/네이버 블로그 글쓰기/skssj2629/skssj2629.py`는 네이버 쇼핑커넥트 `skssj2629` 전용 발행 파일이다. 기본 CSV는 `skssj2629/skssj2629_naver.csv`이고, 수동 발행 실행은 사용자 명시 승인 후 진행한다.
 - `skssj2629.py`의 일상/광고 프롬프트는 "성분·소재·동선까지 따지는 청담 사는 자녀 둔 어머니" 컨셉을 유지한다. 전문용어는 쉬운 말로 풀고, `~하더라고요`, `~거든요`, `~잖아요` 같은 자연스러운 블로그 말투를 섞는다.
 - `skssj2629.py`의 일상/광고 본문은 너무 짧게 끊지 않고 일반 본문 줄을 40자 안팎으로 나누는 모바일형 흐름을 유지한다. URL, 해시태그, 네이버 입력 마커는 줄바꿈 보정에서 원형을 보존하고, 상품명 텍스트는 임의 변경하지 않는다.
@@ -333,6 +335,9 @@ Git 작업 주의:
 - `티스토리 자동화 ing/src/tistory_automation/main.py`는 쿠팡/일상 전용이다. 골프, 골프여행, 골프백, 라운딩, 그린피, 캐디 등 골프 주제는 `티스토리 자동화 ing/golf/main_golf.py`와 `G스케줄러`에서만 생성한다. daily 프롬프트에 골프 축을 다시 넣지 않는다.
 - `티스토리 자동화 ing/src/tistory_automation/main.py`와 `golf/main_golf.py`는 일상/쿠팡/골프/health 모두 이미지 확보 후 첫 본문 프롬프트 전송 전에 10초 대기하고, 본문 프롬프트 전송 후 ChatGPT 스트리밍 중지 문구가 사라지면 3초 더 기다린 뒤 새로고침 1회로 안정화한다. 본문 프롬프트를 보내기 전에 새로고침하거나 같은 프롬프트를 자동 재전송하지 않는다.
 - `티스토리 자동화 ing/src/tistory_automation/main.py` 예약 로그에서 STEP 3 제목/해시태그 추출이 `응답 0자`로 멈추면 티스토리 임시저장 문제가 아니라 ChatGPT 응답 DOM 텍스트 추출 문제일 수 있다. 먼저 `_wait_for_text()`와 최신 non-empty 응답 후보 추출 로직, `runtime/logs/scheduled/*.log`를 확인한다.
+- `티스토리 자동화 ing/src/tistory_automation/main.py`의 티스토리 글쓰기 URL은 `https://daniever2217.tistory.com/manage/newpost/`, `golf/main_golf.py`는 `https://jxbooklove.tistory.com/manage/newpost/`로 직접 진입한다. `?type=post&returnURL=...` 형태를 다시 넣지 않는다.
+- `--tistory-login-only`는 기존 `runtime/sessions/tistory` 또는 `runtime/sessions/tistory_golf` 프로필을 보존한 채 글쓰기 진입만 확인해야 한다. 세션 폴더 초기화/삭제는 사용자 명시 승인 없이는 하지 않는다.
+- 티스토리 예약 실행은 ChatGPT 글 생성이나 쿠팡 API 조회 전에 저장 세션으로 `/manage/newpost/` 글쓰기 진입을 사전 확인한다. `auth/login?redirectUrl=...`로 이동하면 URL 문제가 아니라 해당 Chrome 프로필의 로그인 쿠키 문제로 보고 `.session_ready`, `Default/Network/Cookies`, 최신 `runtime/logs/scheduled*.log`를 먼저 확인한다.
 - 티스토리 기존 글과 향후 글 전체에 공통 광고를 넣을 때는 자동화 본문 HTML보다 티스토리 스킨 편집을 우선한다. `camp-platform/public/HTML편집.txt`는 스킨 편집용 보관본이며, 로컬 `public` 폴더에 두는 것만으로 실제 티스토리에 적용되지 않는다.
 - 티스토리 본문 중간 AdSense 삽입은 `#article-view` 로드 후 JS가 `.tistory-mid-adsense`를 추가하는 방식이다. 공개 글 확인은 `페이지 소스 보기`보다 DevTools Elements에서 `.tistory-mid-adsense` 또는 해당 `data-ad-slot`을 검색한다.
 - AdSense `ca-pub-*` 값은 공개 소스에 노출될 수 있는 게시자 ID지만 문서/답변/로그에는 원문 전체를 남기지 않는다. 필요하면 `.env` 값으로 치환하거나 마스킹해서 다룬다.

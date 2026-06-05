@@ -1,6 +1,10 @@
 param(
     [string]$RefreshTime = "00:05",
 
+    [int]$DailyPosts = 5,
+
+    [int]$CoupangPosts = 5,
+
     [switch]$Draft
 )
 
@@ -26,6 +30,8 @@ function Write-Log {
 Write-Log "[refresh] Python=$Python"
 Write-Log "[refresh] SchedulerPy=$SchedulerPy"
 Write-Log "[refresh] RefreshTime=$RefreshTime"
+Write-Log "[refresh] DailyPosts=$DailyPosts"
+Write-Log "[refresh] CoupangPosts=$CoupangPosts"
 Write-Log "[refresh] Mode=draft"
 
 if (!(Test-Path $Python)) {
@@ -45,7 +51,13 @@ $env:PYTHONUTF8 = "1"
 
 Write-Log "[refresh] scheduler.py 실행 시작"
 
-$SchedulerArgs = @($SchedulerPy, "--target-date", "auto", "--refresh-time", $RefreshTime)
+$SchedulerArgs = @(
+    $SchedulerPy,
+    "--target-date", "auto",
+    "--refresh-time", $RefreshTime,
+    "--daily-posts", $DailyPosts,
+    "--coupang-posts", $CoupangPosts
+)
 $SchedulerArgs += "--draft"
 
 & $Python @SchedulerArgs 2>&1 | Tee-Object -FilePath $LogPath -Append

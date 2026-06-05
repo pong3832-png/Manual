@@ -117,7 +117,7 @@ SCRIPTS_DIR          = PROJECT_ROOT / "scripts"
 RUNTIME_DIR          = PROJECT_ROOT / "runtime"
 LOG_DIR              = RUNTIME_DIR / "logs"
 CHATGPT_SESSION_DIR  = RUNTIME_DIR / "sessions" / "chatgpt"
-TISTORY_SESSION_DIR  = RUNTIME_DIR / "sessions" / "tistory"
+TISTORY_SESSION_DIR  = RUNTIME_DIR / "sessions" / "tistory_golf"
 RUNTIME_SESSION_ROOT = RUNTIME_DIR / ".tmp" / "chrome-runtime-sessions"
 PRODUCT_DB_PATH      = DATA_DIR / "products" / "products_db_category.csv"
 HEALTH_PRODUCT_DB_DEFAULT_PATH = DATA_DIR / "products" / "건강식품_db.csv"
@@ -197,7 +197,7 @@ TISTORY_LOGIN_ID_XPATH         = '//*[@id="loginId--1"]'
 TISTORY_PASSWORD_XPATH         = '//*[@id="password--2"]'
 TISTORY_LOGIN_SUBMIT_XPATH     = '//button[@type="submit" and contains(@class, "submit")]'
 TISTORY_NEW_POST_LINK_XPATH    = '//a[contains(@href, "jxbooklove.tistory.com/manage/newpost")]'
-TISTORY_NEW_POST_URL           = "https://jxbooklove.tistory.com/manage/newpost/?type=post&returnURL=%2Fmanage%2Fposts%2F"
+TISTORY_NEW_POST_URL           = "https://jxbooklove.tistory.com/manage/newpost/"
 TISTORY_SAVED_SESSION_RECOVERY_SECONDS = 30
 TISTORY_EDITOR_MODE_BTN_XPATH  = '//*[@id="editor-mode-layer-btn-open"]'
 TISTORY_EDITOR_HTML_XPATH      = '//*[@id="editor-mode-html-text"]'
@@ -763,10 +763,9 @@ def _handle_tistory_editor_alert(driver: webdriver.Chrome, timeout: int = 2) -> 
         text = alert.text or ""
         if "저장된 글" in text or "이어서 작성" in text:
             print("[Tistory] 저장된 글 이어쓰기 알림 감지 - 새 글 작성을 위해 취소합니다.")
-            alert.dismiss()
         else:
-            print(f"[Tistory] 알림 감지 - 확인 처리합니다: {text}")
-            alert.accept()
+            print(f"[Tistory] 글쓰기 진입 알림 감지 - 새 글 작성을 위해 취소합니다: {text}")
+        alert.dismiss()
         random_sleep(0.5, 1.0)
     except TimeoutException:
         pass
@@ -774,22 +773,45 @@ def _handle_tistory_editor_alert(driver: webdriver.Chrome, timeout: int = 2) -> 
         print(f"[Tistory] 알림 처리 중 경고: {exc}")
 
 
+def _dismiss_tistory_continue_draft_popup_with_escape(driver: webdriver.Chrome, timeout: int = 2) -> bool:
+    started_at = time.time()
+    try:
+        while time.time() - started_at < timeout:
+            current_url = driver.current_url or ""
+            if "manage/newpost" in current_url or driver.find_elements(By.XPATH, TISTORY_TITLE_XPATH):
+                break
+            time.sleep(0.2)
+        else:
+            return False
+
+        already_sent = driver.execute_script("return window.__tistoryInitialEditorEscSent === true;")
+        if already_sent:
+            return False
+        driver.execute_script("window.__tistoryInitialEditorEscSent = true;")
+
+        print("[Tistory] 글쓰기 진입 직후 2초 대기 후 팝업 정리용 ESC를 1회 전송합니다.")
+        time.sleep(2.0)
+        ActionChains(driver).send_keys(Keys.ESCAPE).perform()
+        random_sleep(0.5, 1.0)
+        return True
+    except TimeoutException:
+        return False
+    except Exception as exc:
+        print(f"[Tistory] 작성하던 글 팝업 ESC 처리 중 경고: {exc}")
+        return False
+
+
 def _save_tistory_session_once(attempt: int) -> None:
     print(f"\n[로그인 저장 모드] Tistory 세션 저장 경로: {TISTORY_SESSION_DIR}")
     print(f"[Tistory] 세션 저장 시도 {attempt}/2")
-    print("기존 티스토리 세션 폴더를 초기화한 뒤 다시 저장합니다.")
-    _reset_browser_session_dir(TISTORY_SESSION_DIR)
-    if TISTORY_SESSION_MARKER.exists():
-        try:
-            TISTORY_SESSION_MARKER.unlink()
-        except OSError:
-            pass
+    print("기존 티스토리 세션 폴더를 보존한 채 글쓰기 화면 진입을 확인합니다.")
 
-    print("브라우저가 열리면 Tistory(카카오) 로그인 후 글쓰기 화면까지 연 다음 엔터를 누르세요.\n")
+    print("브라우저가 열리면 Tistory(카카오) 로그인만 완료한 뒤 엔터를 누르세요.")
+    print("글쓰기 화면 진입은 자동화가 직접 확인합니다.\n")
     driver = create_driver(save_session=True, session_dir=TISTORY_SESSION_DIR)
     try:
         driver.get(TISTORY_NEW_POST_URL)
-        input("→ Tistory 로그인 및 글쓰기 화면 진입 확인 후 엔터를 누르세요...")
+        input("→ Tistory 로그인 완료 후 엔터를 누르세요...")
         print("[검증 중] 저장한 티스토리 세션으로 글쓰기 화면 진입을 다시 확인합니다...")
         login_and_open_tistory_editor(driver)
         TISTORY_SESSION_MARKER.write_text(
@@ -816,13 +838,7 @@ def save_tistory_session() -> None:
         except Exception as exc:
             last_error = exc
             print(f"[경고] 티스토리 세션 저장 실패: {exc}")
-            print("[경고] 티스토리 세션 폴더를 삭제하고 다시 시도합니다.")
-            _reset_browser_session_dir(TISTORY_SESSION_DIR)
-            if TISTORY_SESSION_MARKER.exists():
-                try:
-                    TISTORY_SESSION_MARKER.unlink()
-                except OSError:
-                    pass
+            print("[경고] 로그인 프로필은 보존합니다. 브라우저에서 로그인 상태를 확인한 뒤 다시 시도하세요.")
     raise RuntimeError(f"티스토리 세션 저장에 두 번 실패했습니다: {last_error}")
 
 
@@ -3666,6 +3682,18 @@ def _choose_health_products(
     return selected_seed, selected_enriched
 
 
+def _is_coupang_api_rate_limit_error(exc: Exception) -> bool:
+    message = str(exc)
+    rate_limit_markers = (
+        "시간당 사용 횟수",
+        "사용 횟수",
+        "too many requests",
+        "rate limit",
+    )
+    normalized = message.lower()
+    return any(marker in normalized for marker in rate_limit_markers)
+
+
 def prepare_health_coupang_products(count: int = 3) -> tuple[Path, list[dict], list[dict]]:
     if not COUPANG_API_ENABLED:
         raise RuntimeError("건강식품 쿠팡 글은 쿠팡 API 사용이 필요합니다. COUPANG_API_ENABLED=1로 설정하세요.")
@@ -3687,17 +3715,24 @@ def prepare_health_coupang_products(count: int = 3) -> tuple[Path, list[dict], l
             break
         batch_seed_products = seed_products[batch_start:batch_start + batch_size]
         excluded_url_keys = set(used_keys) | set(seen_keys)
-        enriched_products = enrich_products_with_coupang_links(
-            batch_seed_products,
-            api_enabled=COUPANG_API_ENABLED,
-            access_key=COUPANG_ACCESS_KEY or "",
-            secret_key=COUPANG_SECRET_KEY or "",
-            sub_id=COUPANG_SUB_ID,
-            fallback_to_similar=True,
-            require_api_product=True,
-            excluded_url_keys=excluded_url_keys,
-            url_key_func=_coupang_url_key,
-        )
+        try:
+            enriched_products = enrich_products_with_coupang_links(
+                batch_seed_products,
+                api_enabled=COUPANG_API_ENABLED,
+                access_key=COUPANG_ACCESS_KEY or "",
+                secret_key=COUPANG_SECRET_KEY or "",
+                sub_id=COUPANG_SUB_ID,
+                fallback_to_similar=True,
+                require_api_product=True,
+                excluded_url_keys=excluded_url_keys,
+                url_key_func=_coupang_url_key,
+            )
+        except Exception as exc:
+            if _is_coupang_api_rate_limit_error(exc):
+                raise RuntimeError(
+                    "쿠팡 API 시간당 사용 횟수 제한이 감지되어 추가 API 조회를 중단합니다."
+                ) from exc
+            raise
         batch_selected_seed, batch_selected_enriched = _choose_health_products(
             batch_seed_products,
             enriched_products,
@@ -6370,7 +6405,6 @@ def validate_golf_generated_content(html_body: str, title_text: str = "") -> Non
         "공식 3대 골프장",
         "무조건 국내 최고",
         "누구나 예약 가능",
-        "확정 가격",
         "::contentReference",
         "oaicite",
         "contentReference",
@@ -6386,6 +6420,11 @@ def validate_golf_generated_content(html_body: str, title_text: str = "") -> Non
     ]
     target = f"{title_text}\n{html_body}"
     detected = [phrase for phrase in banned_phrases if phrase in target]
+    for match in re.finditer(r"확정\s*가격", target):
+        context = target[match.start():match.end() + 50]
+        if any(marker in context for marker in ("아니", "예상", "범위", "변동", "확인", "보지 말")):
+            continue
+        detected.append("확정 가격")
     if detected:
         raise ValueError(
             "골프 생성 결과에 위험 표현이 감지되어 발행을 중단합니다: "
@@ -6758,6 +6797,7 @@ def login_and_open_tistory_editor(driver: webdriver.Chrome, allow_manual_login: 
     driver.get(target_url)
     random_sleep(1.0, 2.0)
     _handle_tistory_editor_alert(driver)
+    _dismiss_tistory_continue_draft_popup_with_escape(driver)
 
     def _is_editor_ready() -> bool:
         try:
@@ -6794,6 +6834,7 @@ def login_and_open_tistory_editor(driver: webdriver.Chrome, allow_manual_login: 
                 driver.get(target_url)
                 random_sleep(0.8, 1.4)
                 _handle_tistory_editor_alert(driver)
+                _dismiss_tistory_continue_draft_popup_with_escape(driver)
                 if _is_editor_ready():
                     return True
             time.sleep(2)
@@ -6850,6 +6891,7 @@ def login_and_open_tistory_editor(driver: webdriver.Chrome, allow_manual_login: 
                     driver.get(target_url)
                     random_sleep(1.2, 2.0)
                     _handle_tistory_editor_alert(driver)
+                    _dismiss_tistory_continue_draft_popup_with_escape(driver)
                     if _is_editor_ready():
                         break
 
@@ -6865,14 +6907,17 @@ def login_and_open_tistory_editor(driver: webdriver.Chrome, allow_manual_login: 
         driver.get(target_url)
         random_sleep(1.2, 2.0)
         _handle_tistory_editor_alert(driver)
+        _dismiss_tistory_continue_draft_popup_with_escape(driver)
 
     # 마지막으로 한 번 더 직접 진입
     if not _is_editor_ready():
         driver.get(target_url)
         random_sleep(1.2, 2.0)
         _handle_tistory_editor_alert(driver)
+        _dismiss_tistory_continue_draft_popup_with_escape(driver)
 
     _handle_tistory_editor_alert(driver)
+    _dismiss_tistory_continue_draft_popup_with_escape(driver)
     WebDriverWait(driver, 25).until(
         EC.presence_of_element_located((By.XPATH, TISTORY_TITLE_XPATH))
     )
@@ -6884,6 +6929,22 @@ def login_and_open_tistory_editor(driver: webdriver.Chrome, allow_manual_login: 
         )
 
     print("[Tistory] jxbooklove 글쓰기 화면 진입 완료")
+
+
+def _ensure_tistory_saved_session_ready_for_scheduled_run() -> None:
+    if not _has_saved_tistory_session():
+        raise RuntimeError(
+            "티스토리 저장 세션이 없거나 검증되지 않았습니다. "
+            "--tistory-login-only로 티스토리 세션을 다시 저장하세요."
+        )
+
+    print("\n[Tistory] 예약 실행 전 저장 세션 글쓰기 진입 사전 확인 중...")
+    driver = create_driver(save_session=False, session_dir=TISTORY_SESSION_DIR)
+    try:
+        login_and_open_tistory_editor(driver, allow_manual_login=False)
+        print("[Tistory] 예약 실행 전 글쓰기 화면 사전 확인 완료")
+    finally:
+        quit_driver(driver, keep_browser=False)
 
 
 
@@ -6948,6 +7009,9 @@ def run_full_flow(
             "저장된 로그인 세션이 없습니다.\\n"
             "먼저 python 챗지피티웹.py --login 을 실행해 세션을 저장하세요."
         )
+
+    if not keep_browser_on_error:
+        _ensure_tistory_saved_session_ready_for_scheduled_run()
 
     selected_products: list[dict] = []
     product_db_path: Path | None = None
