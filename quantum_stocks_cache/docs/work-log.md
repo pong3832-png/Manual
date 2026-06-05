@@ -1,5 +1,176 @@
 # Work Log
 
+## 2026-06-05 - Documentation Handoff Cleanup
+
+- Cleaned the active handoff guidance used by future CLI sessions.
+- Changed `AGENTS.md`:
+  - Replaced stale May handoff values such as old sample tickers and a fixed historical run id with current start rules.
+  - Marked old work-log/dashboard/ranking/candidate values as snapshots unless latest local evidence is re-opened.
+  - Pointed the next development stream to `compliance_pretrade_gate` and `CLI_NEXT_SESSION_PROMPT.md`.
+  - Clarified that the listed test table is representative and recent tests should be checked from `tests/test_*` as needed.
+- Updated `CLI_NEXT_SESSION_PROMPT.md`:
+  - Filled the `오늘 작업 목표` bracket with the next P0 build plan for `compliance_pretrade_gate`.
+  - Included required local files, output reports, TDD cases, no-order safety flags, and blocked operations.
+- Cleaned this work log:
+  - Old "Next Session Start" / "Next Session Handoff" sections are preserved as archived historical snapshots, not current instructions.
+- Verification:
+  - `rg` confirmed `compliance_pretrade_gate`, `READY_FOR_HUMAN_REVIEW`, `NO_ORDER`, archived handoff labels, and current handoff guidance.
+  - `git diff --check -- .\CLI_NEXT_SESSION_PROMPT.md .\AGENTS.md .\docs\work-log.md` passed, with only existing LF/CRLF warnings from Git.
+- Next:
+  - Start next session from `CLI_NEXT_SESSION_PROMPT.md`.
+  - Implement `compliance_pretrade_gate` with TDD, local files only, and keep every output `external_api_requested=NO`, `order_status=NO_ORDER`, `broker_order_requested=NO`.
+- Safety:
+  - Documentation-only change.
+  - No external API, OpenDART call, price refresh, broker/order action, scheduler change, deletion, deployment, git action, or `configs/manual_review.actual.csv` write.
+
+## 2026-06-05 - Institutional Program Stack
+
+- Added a local hedge-fund/quant-platform capability map:
+  - `configs/institutional_program_stack.seed.csv`
+  - `src/quantum_trainer/institutional_program_stack.py`
+  - `scripts/run_institutional_program_stack.py`
+  - `tests/test_institutional_program_stack.py`
+- Public capability examples reviewed:
+  - Bloomberg Terminal for data/research terminal workflow.
+  - BlackRock Aladdin for portfolio/risk platform workflow.
+  - MSCI Barra/RiskMetrics for factor risk and portfolio risk workflow.
+  - QuantConnect LEAN and Microsoft Qlib for backtesting/AI quant research workflow.
+  - MLflow Model Registry for model lineage/versioning workflow.
+  - SS&C Eze, FlexTRADER, and Enfusion for OMS/EMS/portfolio workbench workflow.
+- Behavior:
+  - Maps public capability categories to local review-only implementation candidates.
+  - Writes `reports/institutional_program_stack/institutional_program_stack.csv|md` and summary CSV.
+  - Keeps `external_api_requested=NO`, `order_status=NO_ORDER`, and `broker_order_requested=NO`.
+- First local run:
+  - `row_count=13`
+  - `p0_count=5`
+  - `p1_count=6`
+  - `p2_count=2`
+  - P0 next modules: `compliance_pretrade_gate`, `factor_risk_exposure`, `model_registry_audit`, `tca_slippage_guard`, `institutional_control_tower`.
+- Verification:
+  - `.\.venv\Scripts\python.exe -m pytest .\tests\test_institutional_program_stack.py -q` -> `4 passed`.
+  - `.\.venv\Scripts\python.exe .\scripts\run_institutional_program_stack.py` -> generated reports, `external_api_requested=NO`, `order_status=NO_ORDER`.
+- Safety:
+  - Public products/frameworks are used only as capability references.
+  - No proprietary system cloning, broker/order action, external API refresh, OpenDART call, dependency install, scheduler change, deletion, deployment, git action, or `configs/manual_review.actual.csv` write.
+
+## 2026-06-05 - Panic Rebound Signal
+
+- Added a local close-price panic/rebound watch program:
+  - `src/quantum_trainer/panic_rebound_signal.py`
+  - `scripts/run_panic_rebound_signal.py`
+  - `tests/test_panic_rebound_signal.py`
+- Behavior:
+  - Reads cached `data/prices.csv` and local `reports/company_research/company_research.csv`.
+  - Detects sharp drawdown, rebound from 20-day low, MA10/MA20 reclaim, reversal confirmation, and chase risk.
+  - Writes `reports/panic_rebound_signal/panic_rebound_signal.csv|md`.
+  - Labels rows as `READY_REBOUND_REVIEW`, `WAIT_CONFIRMATION`, `CHASE_RISK`, `LOW_PRIORITY`, or `INSUFFICIENT_DATA`.
+  - Keeps `external_api_requested=NO`, `order_status=NO_ORDER`, and `broker_order_requested=NO`.
+- First local run:
+  - `row_count=2657`
+  - `ready_rebound_review_count=35`
+  - `wait_confirmation_count=2207`
+  - `chase_risk_count=31`
+  - `insufficient_count=101`
+  - Top ready examples include `001510.KS` SK증권, `015260.KS` 에이엔피, `023530.KS` 롯데쇼핑, `031980.KQ` 피에스케이홀딩스, `084370.KQ` 유진테크.
+- Verification:
+  - `.\.venv\Scripts\python.exe -m pytest .\tests\test_panic_rebound_signal.py -q` -> `2 passed`.
+  - `.\.venv\Scripts\python.exe -m py_compile .\src\quantum_trainer\panic_rebound_signal.py .\scripts\run_panic_rebound_signal.py` -> passed.
+  - `.\.venv\Scripts\python.exe .\scripts\run_panic_rebound_signal.py` -> generated reports, `external_api_requested=NO`, `order_status=NO_ORDER`.
+- Safety:
+  - `READY_REBOUND_REVIEW` is a watch label only, not a buy signal.
+  - No broker/order action, external API refresh, OpenDART call, ML dependency install, scheduler change, deletion, deployment, git action, or `configs/manual_review.actual.csv` write.
+
+## 2026-06-05 - Strategy Research Backlog
+
+- Added a local public-research-to-feature backlog:
+  - `configs/strategy_research_backlog.seed.csv`
+  - `src/quantum_trainer/strategy_research_backlog.py`
+  - `scripts/run_strategy_research_backlog.py`
+  - `tests/test_strategy_research_backlog.py`
+- Behavior:
+  - Translates papers/books into feature candidates, required local inputs, blocked external inputs, validation gates, promotion rules, Korea-market notes, and next steps.
+  - Ranks backlog rows by priority and implementation status.
+  - Writes `reports/strategy_research_backlog/strategy_research_backlog.csv|md` and summary CSV.
+  - Keeps `external_api_requested=NO`, `order_status=NO_ORDER`, and `broker_order_requested=NO`.
+- First local run:
+  - `row_count=15`
+  - `p0_count=6`
+  - `p1_count=5`
+  - `p2_count=4`
+  - Top P0 themes: Korea momentum/liquidity, Korea multi-factor, Korea pricing factors, Piotroski F-score, profitability quality, accrual quality.
+- Verification:
+  - `.\.venv\Scripts\python.exe -m pytest .\tests\test_strategy_research_backlog.py -q` -> `4 passed`.
+  - `.\.venv\Scripts\python.exe .\scripts\run_strategy_research_backlog.py` -> generated backlog reports, `external_api_requested=NO`, `order_status=NO_ORDER`.
+- Safety:
+  - No broker/order action, external API refresh, OpenDART call, ML dependency install, scheduler change, deletion, deployment, git action, or `configs/manual_review.actual.csv` write.
+
+## 2026-06-05 - Public Quant Learning Feedback Loop
+
+- Added a local learning-feedback layer for alpha predictions:
+  - `src/quantum_trainer/learning_feedback.py`
+  - `scripts/run_learning_feedback.py`
+  - `tests/test_learning_feedback.py`
+  - `docs/strategy-learning-system.md`
+- Behavior:
+  - Appends timestamped prediction snapshots from `reports/alpha/buy_timing_report.csv`.
+  - Compares matured snapshots with cached `data/prices.csv` after the configured forward horizon.
+  - Writes realized forecast error, MAE/RMSE/bias, directional accuracy, and model action guidance under `reports/learning_feedback/`.
+  - Keeps `external_api_requested=NO`, `order_status=NO_ORDER`, and `broker_order_requested=NO`.
+- Public research boundary:
+  - Documented that only public papers, public filings, public statements, cached prices, and user-approved public data refreshes may be used.
+  - Private hedge-fund models, leaked research, inside information, non-public order flow, credentials, and broker-confidential logic remain prohibited.
+- First local run:
+  - `as_of=2026-06-05`
+  - `snapshot_count=2`
+  - `realized_count=0`
+  - `pending_count=2`
+  - `learning_action=WAIT_FOR_MORE_REALIZED_SAMPLES`
+- Verification:
+  - `.\.venv\Scripts\python.exe -m pytest .\tests\test_learning_feedback.py .\tests\test_alpha_forecast.py -q` -> `11 passed`.
+  - `.\.venv\Scripts\python.exe -m py_compile .\src\quantum_trainer\learning_feedback.py .\scripts\run_learning_feedback.py` -> passed.
+- Safety:
+  - No broker/order action, external API refresh, OpenDART call, scheduler change, deletion, deployment, git action, or `configs/manual_review.actual.csv` write.
+
+## 2026-06-05 - Today Market Refresh And Candidate Start
+
+- Ran the approved `.\.venv\Scripts\python.exe .\scripts\today.py` daily pipeline with latest price refresh.
+- Result:
+  - Price cache refreshed through `2026-06-05`.
+  - Market regime remains `RISK_OFF / DEFENSIVE`.
+  - Operating status remains `NOT_DONE`, `WAIT`, `NO_ORDER`.
+  - Today's operating top candidate changed to `085910.KQ` 네오티스, not Komico.
+  - Profit focus top 3: 네오티스, 코리아써키트, 오스템.
+  - Main blockers: manual gate not ready and market regime defensive.
+- Safety:
+  - No broker/order action, scheduler change, deletion, deployment, or `configs/manual_review.actual.csv` write.
+  - Generated order candidates remain review-only / no real order.
+
+## 2026-06-05 - Stale Research Snapshot Rule
+
+- Added an `AGENTS.md` operating rule for investment analysis:
+  - Old thesis, dashboard, ranking, work-log, and candidate notes are snapshots, not current truth.
+  - Each session must re-check latest local report dates, cached price date, ranking rows, gate rows, and filing/valuation evidence before carrying forward old conclusions.
+  - If a touched report has stale price/rank/gate/filing/valuation data, update it to the latest local evidence or mark `UNKNOWN` / `DATA_REQUIRED`.
+  - Do not keep analyzing a previous top candidate just because it was top in an older run.
+- Safety:
+  - No external API, OpenDART call, price refresh, dashboard/pre-buy regeneration, broker/order action, scheduler change, deletion, deployment, or `configs/manual_review.actual.csv` write.
+
+## 2026-06-05 - Komico Thesis And Manual Gate Review
+
+- Updated `reports/investment_thesis/investment_thesis_183300.md` from local-only evidence.
+- Result:
+  - Filing `HOLD_REVIEW` cause is treated as a keyword-gap hold: `Regulatory/accounting litigation overhang` has evidence 0, source reports 0, fatal risk 0.
+  - Komico filing gate is a `PASS` candidate only; no actual manual config was written.
+  - Valuation remains `UNKNOWN` because `configs/fundamentals.actual.csv` and `configs/shares_outstanding.actual.csv` have no Komico row.
+  - Current conclusion stays `WAIT / NO_ORDER` due to valuation gap, premium fallback metrics, chase risk, and market/sector `RISK_OFF`.
+  - Peer filing summaries for Neotis, Selemix, and Peptron were reviewed from existing local files only.
+- Verification:
+  - `rg "작성일: 2026-06-05|결론: WAIT / NO_ORDER|filing_review=PASS 후보|valuation_review=UNKNOWN|MARKET_WAIT|NO_ORDER" .\reports\investment_thesis\investment_thesis_183300.md` -> expected lines found.
+  - `git diff --check -- "quantum_stocks_cache/reports/investment_thesis/investment_thesis_183300.md"` -> passed.
+- Safety:
+  - No external API, OpenDART call, price refresh, dashboard/pre-buy regeneration, broker/order action, scheduler change, deletion, deployment, or `configs/manual_review.actual.csv` write.
+
 ## 2026-06-04 - GUI Light Operator Theme
 
 - Converted the React GUI from the dark terminal palette to a light operator-console palette after user preference feedback.
@@ -1694,7 +1865,7 @@
   - 실제 가격 업데이트: `market_data.py`, `scripts/update_market_data.py`
   - Institutional Control Plane: `data_quality.py`, `pretrade.py`, `model_registry.py`, `research_ledger.py`, `investment_committee.py`, `institutional_trainer.py`
   - Alpha Forecast / Buy Timing: `features.py`, `alpha_forecast.py`, `buy_timing.py`, `scripts_api.py`, `scripts/run_alpha_research.py`
-- 실제 데이터:
+- 당시 실제 데이터 스냅샷:
   - `data/prices.csv` 생성
   - 대상 종목: `000660.KS`, `005380.KS`
   - 마지막 확인일: `2026-05-26`
@@ -1721,94 +1892,11 @@
   - `order_sizer.py`를 추가해 target weight를 실제 주문 수량 후보로 변환하되, broker execution은 별도 승인 전까지 금지.
   - KOSPI benchmark(`^KS11`)와 OHLCV/volume feature 확장 검토.
 
-### Next Session Start
+### Archived Next Session Start
 
-다음 CLI 세션에서 사용자가 오늘 작업 목표를 다시 주면 아래 순서로 바로 이어간다.
-
-1. 작업 범위 확인:
-   - `cd "C:\Users\itwill\자동화 공부\quantum_stocks_cache"`
-   - 이 폴더 밖은 수정하지 않는다.
-   - 먼저 `AGENTS.md`, `docs/work-log.md`, `configs/portfolio.yaml`을 읽는다.
-
-2. 현재 상태 재검증:
-   - `.\.venv\Scripts\python.exe -m pytest .\tests -v`
-   - `.\.venv\Scripts\python.exe -m compileall .\src .\scripts`
-   - 실패하면 새 기능 전에 실패 원인부터 고친다.
-
-3. 실제 운영 상태 확인:
-   - `configs/portfolio.yaml`의 `current_weights`가 실제 보유 비중인지 사용자에게 확인한다.
-   - `data/prices.csv`의 최신일을 확인한다.
-   - 외부 API 호출 승인이 있으면 `update_market_data.py`를 실행하고, 없으면 `--skip-market-data-update`로 캐시 데이터만 쓴다.
-
-4. 현재 기준 실행 루틴:
-   - `.\.venv\Scripts\python.exe .\scripts\run_institutional_trainer.py --config .\configs\portfolio.yaml --skip-market-data-update`
-   - `.\.venv\Scripts\python.exe .\scripts\run_alpha_research.py --config .\configs\portfolio.yaml`
-   - 결과 파일:
-     - `reports/runs/<latest_run_id>/investment_committee_report.md`
-     - `reports/runs/<latest_run_id>/pretrade_checked_trade_plan.csv`
-     - `reports/alpha/buy_timing_report.csv`
-     - `ledger/research_ledger.csv`
-
-5. 우선 구현 후보 1: `current_weights` 입력/검증 workflow
-   - 목적: 실제 보유 비중과 config 불일치로 trade plan이 왜곡되는 문제 방지.
-   - 예상 파일:
-     - `src/quantum_trainer/portfolio_state.py`
-     - `scripts/update_current_weights.py`
-     - `tests/test_portfolio_state.py`
-   - 동작:
-     - 사용자가 현재 보유 비중 CSV를 넣으면 `configs/portfolio.yaml`의 `current_weights`와 비교.
-     - 차이가 크면 경고 리포트 생성.
-     - 자동 덮어쓰기는 사용자 승인 후에만 수행.
-
-6. 우선 구현 후보 2: Alpha forecast를 IC report에 통합
-   - 목적: institutional report 하나에서 risk/pretrade/alpha 판단을 함께 확인.
-   - 예상 파일:
-     - `src/quantum_trainer/institutional_trainer.py`
-     - `src/quantum_trainer/investment_committee.py`
-     - `tests/test_institutional_control_plane.py`
-   - 동작:
-     - `reports/alpha/buy_timing_report.csv` 또는 직접 `run_alpha_research()` 결과를 읽는다.
-     - IC report에 `expected_20d_return`, `upside_probability`, `buy_timing_score`, `decision` 섹션 추가.
-     - `BUY_READY`라도 `Pre-Trade: BLOCK`이면 주문 가능으로 표시하지 않는다.
-
-7. 우선 구현 후보 3: `order_sizer.py`
-   - 목적: target weight를 실제 주문 수량 후보로 변환.
-   - 예상 파일:
-     - `src/quantum_trainer/order_sizer.py`
-     - `scripts/run_order_sizer.py`
-     - `tests/test_order_sizer.py`
-   - 입력:
-     - 총 운용자금
-     - 현재 가격
-     - `pretrade_checked_trade_plan.csv`
-   - 출력:
-     - `reports/orders/YYYY-MM-DD_order_candidates.csv`
-   - 주의:
-     - 실제 주문 실행은 절대 하지 않는다.
-     - broker API 연동은 별도 승인 전까지 금지.
-
-8. 우선 구현 후보 4: OHLCV + KOSPI benchmark 확장
-   - 목적: alpha feature 품질 개선.
-   - 예상 파일:
-     - `src/quantum_trainer/market_data.py`
-     - `src/quantum_trainer/features.py`
-     - `tests/test_market_data.py`
-     - `tests/test_alpha_forecast.py`
-   - 추가 후보 feature:
-     - `volume_20d_zscore`
-     - `high_low_range_20d`
-     - `kospi_relative_strength_20d`
-     - `benchmark_drawdown_20d`
-   - 주의:
-     - yfinance 데이터 구조가 MultiIndex라 close-only 로직이 깨질 수 있다.
-     - 기존 `data/prices.csv` 포맷과 호환성을 유지하거나 새 파일명을 분리한다.
-
-9. 구현 원칙:
-   - TDD로 진행한다. 실패 테스트를 먼저 만들고 실패를 확인한 뒤 구현한다.
-   - `position = signal.shift(1)` 원칙은 유지한다.
-   - `expected_20d_return`은 예측값이며 확정 수익률처럼 표현하지 않는다.
-   - `Pre-Trade: BLOCK`이면 주문 후보도 “차단/분할 필요”로 표시한다.
-   - 의미 있는 변경 후 `docs/work-log.md`와 필요 시 `AGENTS.md`를 갱신한다.
+- This 2026-05 handoff is superseded by the current `AGENTS.md` Handoff Notes and `CLI_NEXT_SESSION_PROMPT.md`.
+- Historical candidate modules and run commands in this block are preserved only as context, not as current priorities.
+- Current sessions must re-check latest local evidence and should not carry forward old run ids, candidate rankings, or test counts from this archived note.
 ## 2026-05-28 - Dashboard Korean Quant Trainer UI
 
 - Reworked `src/quantum_trainer/dashboard.py` from a developer-style English dashboard into a Korean first-screen quant trainer view.
@@ -1896,28 +1984,13 @@
   - Human review should decide whether the `HOLD_REVIEW` row is a true issue or a conservative keyword gap.
   - Do not apply `configs/manual_review.actual.csv` PASS values until the user explicitly confirms final manual review.
 
-## 2026-05-29 - Next Session Handoff
+## 2026-05-29 - Archived Handoff Snapshot
 
-- Current top candidate: `183300.KQ` 코미코.
-- Current final status: `WAIT / NO_ORDER`.
-- Current blockers:
-  - `filing_review=UNKNOWN` because `filing_risk_summary_183300.csv` contains `gate_opinion=HOLD_REVIEW`.
-  - `valuation_review=UNKNOWN` because 코미코 PER/PBR inputs are still `0.00`.
-  - manual actual config has not been applied.
-- Key files to open next:
-  - `reports/filing_review/filing_risk_summary_183300.md`
-  - `reports/decision_gate/manual_review_draft.csv`
-  - `reports/pre_buy_decision/pre_buy_decision.csv`
-  - `reports/dashboard/index.html`
-- Recommended next work:
-  1. Decide whether 코미코 `Regulatory/accounting litigation overhang` is a real issue or only a conservative keyword-gap hold.
-  2. Fill 코미코 valuation inputs: PER, PBR, ROE, debt ratio, market cap.
-  3. Write one-page 코미코 investment thesis after filing + valuation checks.
-  4. Run the same OpenDART risk summary for next top candidates only after explicit approval.
-- Do not:
-  - Do not write `PASS` into `configs/manual_review.actual.csv` without final user confirmation.
-  - Do not treat `CORE_FOCUS`, `BUY_READY`, nonzero order sizing, or `PERSISTENT_FOCUS` as buy permission.
-  - Do not run bulk price/OpenDART/API refresh without explicit approval.
+- Archived 2026-05 snapshot. It is no longer the active next-session instruction.
+- At that time, `183300.KQ` 코미코 was the top candidate and remained `WAIT / NO_ORDER` due to filing, valuation, and manual-review blockers.
+- Later sessions added stale-snapshot rules, refreshed the market through 2026-06-05, and moved the next development stream toward institutional safety tooling.
+- Current sessions must not assume 코미코 is still the top candidate without re-checking the latest local reports and cached price date.
+- The safety constraints remain valid: do not write `configs/manual_review.actual.csv`, do not treat any watch label as buy permission, and do not run bulk price/OpenDART/API refresh without explicit approval.
 
 ## 2026-06-02 - Local Trend Forecast Engine
 

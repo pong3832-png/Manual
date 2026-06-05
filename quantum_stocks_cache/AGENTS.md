@@ -12,6 +12,17 @@
 - Full-universe coverage may report `PRICE_COVERAGE_PARTIAL` when only a tiny fraction of symbols is unavailable from the provider. Treat it as usable for ranking, not as order permission.
 - `load_price_csv(..., drop_incomplete=False)` is for sparse full-universe research data. Keep default strict loading for backtest/trading-style flows unless a research workflow explicitly needs sparse histories.
 - Enhanced time-series features such as market-relative strength, trend quality, volatility regime, and breakout gap are evaluation-only until walk-forward comparison shows improvement.
+- `scripts/run_learning_feedback.py` is local-only. It appends alpha prediction snapshots and evaluates realized forecast error from cached `data/prices.csv`; it must keep `external_api_requested=NO`, `order_status=NO_ORDER`, and `broker_order_requested=NO`.
+- Learning feedback is model diagnostics, not buy permission. Do not auto-promote a feature set, overwrite production thresholds, or change `configs/manual_review.actual.csv` from one feedback run; require walk-forward evidence and explicit user confirmation before applying model/policy changes.
+- Strategy research may use public papers, public filings, public financial statements, cached prices, and user-approved public data refreshes only. Do not use or request private hedge-fund models, leaked research, inside information, non-public order flow, credentials, or broker-confidential logic.
+- `configs/strategy_research_backlog.seed.csv` is the public-research-to-feature backlog seed. It is a planning input, not a model policy or buy list.
+- `scripts/run_strategy_research_backlog.py` is local-only. It reads the strategy backlog seed and writes `reports/strategy_research_backlog/`; it must keep `external_api_requested=NO`, `order_status=NO_ORDER`, and `broker_order_requested=NO`.
+- A strategy backlog item becomes implementation work only after explicit user direction. Do not fetch data, install ML libraries, alter model thresholds, or add order execution from a backlog row without separate approval.
+- `scripts/run_panic_rebound_signal.py` is local-only. It reads cached close prices and company research, writes `reports/panic_rebound_signal/`, and must keep `external_api_requested=NO`, `order_status=NO_ORDER`, and `broker_order_requested=NO`.
+- Panic rebound statuses such as `READY_REBOUND_REVIEW`, `WAIT_CONFIRMATION`, and `CHASE_RISK` are watch labels only. They do not override market/sector gates, filing review, valuation review, manual review, or `NO_ORDER`.
+- `configs/institutional_program_stack.seed.csv` maps public hedge-fund/quant-platform capability categories to local implementation candidates. It is a planning input, not a vendor clone, model policy, or order list.
+- `scripts/run_institutional_program_stack.py` is local-only. It writes `reports/institutional_program_stack/` and must keep `external_api_requested=NO`, `order_status=NO_ORDER`, and `broker_order_requested=NO`.
+- Institutional program stack rows may reference public vendors or open-source frameworks only as capability examples. Do not copy proprietary systems, request private hedge-fund logic, add broker routing, install external dependencies, or fetch external data from a stack row without separate explicit approval.
 - `company_research` may mark a strong but recently stretched candidate as `WAIT_PULLBACK`. Treat it as a chase-buy warning, not as a clean first-entry signal.
 - `scripts/build_research_universe.py` accepts repeated `--source-csv` arguments and optional `--limit`.
 - `scripts/add_research_symbol.py` adds or updates one company in `configs/research_universe.actual.csv` without rebuilding the whole universe.
@@ -78,6 +89,9 @@
 - `scripts/run_sector_rotation_watch.py` is local-only. It ranks sector recovery/rotation states under `reports/sector_rotation_watch/`; labels such as `RECOVERY_LEADER`, `EARLY_ROTATION`, `SELECTIVE_ROTATION`, `OVERHEATED_WAIT`, and `DEFENSIVE_WAIT` are sector watch states only and must remain `NO_ORDER`.
 - `scripts/run_tactical_watchlist.py` is local-only. It combines final ranking, entry triggers, and sector rotation into `reports/tactical_watchlist/`; tactical labels such as `READY_MANUAL_REVIEW`, `SECTOR_RECOVERY_WATCH`, `PULLBACK_WATCH`, `MARKET_DEFENSIVE_WAIT`, and `OVERHEATED_WAIT` are today's review priorities only and must remain `NO_ORDER`.
 - Dashboard event-adjusted display may prioritize event-tagged rows ahead of no-event quant names. For raw ranking, check `reports/event_adjusted_ranking/event_adjusted_ranking.csv` fields `rank_bucket` and `final_rank_score`; still treat every row as `NO_ORDER`.
+- Old thesis, dashboard, work-log, ranking, and candidate notes are snapshots, not current truth. At the start of each investment-analysis session, after reading `AGENTS.md`, `docs/work-log.md`, and current `git status`, re-check the latest relevant local report dates, cached price date, ranking rows, gate rows, and filing/valuation evidence before carrying forward any old conclusion.
+- If a report being edited contains stale price, rank, gate, filing, or valuation values, update the report to the latest local evidence opened for that task. If the latest local evidence is missing or stale, mark the field `UNKNOWN` or `DATA_REQUIRED` and ask for approval before OpenDART, price refresh, or other external data calls.
+- Do not keep analyzing a previous top candidate just because it was top in an older run. Re-rank or compare against the latest local evidence first; a stale `BUY_READY`, `CORE_FOCUS`, `WAIT_PULLBACK`, or event label is not a current buy candidate.
 - `scripts/run_operating_status.py` is local-only. It reads the final local reports and writes `reports/operating_status/operating_status.csv|md` with `completion_status=DONE` or `NOT_DONE`.
 - Operating status is the explicit "끝/아직 끝 아님" report. Even when it says `DONE`, it must keep `order_status=NO_ORDER` and `broker_order_requested=NO`; broker orders remain manual and outside this repo.
 - `scripts/run_decision_gate.py` is local-only. It reads `reports/investment_memo/investment_memo.csv` plus an optional manual review CSV and writes `reports/decision_gate/`.
@@ -607,7 +621,7 @@ Get-ChildItem -Recurse -File -Name -Exclude *.pyc
 
 ## Testing Notes
 
-현재 테스트 파일:
+대표 테스트 파일:
 
 | 파일 | 커버 범위 |
 |---|---|
@@ -621,6 +635,8 @@ Get-ChildItem -Recurse -File -Name -Exclude *.pyc
 | `tests/test_config_io.py` | config/path/CSV/report IO |
 | `tests/test_operating_status.py` | final DONE/NOT_DONE local operating status |
 
+위 표는 오래된 핵심 테스트 목록이다. 최근 추가 기능 테스트는 `tests/test_*`에서 직접 확인하고, 새 기능을 만들 때는 해당 기능 전용 테스트만 먼저 실행한 뒤 필요하면 관련 테스트를 넓힌다.
+
 기능 변경 시 TDD 순서:
 
 1. 실패하는 테스트 추가
@@ -631,26 +647,32 @@ Get-ChildItem -Recurse -File -Name -Exclude *.pyc
 
 ## Handoff Notes
 
-다음 CLI 세션에서 먼저 확인할 파일:
+다음 CLI 세션의 시작 기준:
 
-1. `AGENTS.md`
-2. `docs/work-log.md`
-3. `README.md`
-4. `configs/portfolio.yaml`
-5. `src/quantum_trainer/config.py`
-6. `src/quantum_trainer/institutional_trainer.py`
-7. `src/quantum_trainer/alpha_forecast.py`
-8. `src/quantum_trainer/buy_timing.py`
-9. `reports/runs/`의 최신 run 폴더
-10. `reports/alpha/buy_timing_report.csv`
-11. `ledger/research_ledger.csv`
-12. `docs/superpowers/specs/`
-13. `docs/superpowers/plans/`
+1. 항상 `AGENTS.md`, `docs/work-log.md`, `git status --short -- .`만 먼저 확인한다.
+2. 사용자가 지정한 오늘 목표에 필요한 파일만 연다. 전체 폴더 재분석은 하지 않는다.
+3. 오래된 work-log, thesis, dashboard, ranking, candidate note, run id, top candidate 값은 현재 사실이 아니라 과거 스냅샷으로 취급한다.
+4. 현재 후보/가격/시장/게이트 판단은 최신 로컬 리포트 날짜와 `data/prices.csv` 최신일을 확인한 뒤에만 말한다.
+5. 외부 API, OpenDART, 가격 갱신, ML 라이브러리 설치, 주문/브로커 기능, 스케줄러 변경은 사용자 명시 승인 전에는 실행하지 않는다.
 
-최근 확인된 실제 실행 상태:
+현재 이어갈 우선 개발 축:
 
-- 실제 가격 캐시: `data/prices.csv`
-- 대상 종목: `000660.KS`, `005380.KS`
-- Institutional run 예시: `reports/runs/2026-05-26-174953/`
-- Alpha report: `reports/alpha/buy_timing_report.csv`
-- 마지막 전체 검증 시점에는 `pytest` 31개가 통과했고 `compileall`도 통과했다. 다음 세션에서는 현재 상태를 다시 실행해 확인한다.
+- 최근 `institutional_program_stack` 기준 다음 P0 구현 후보는 `compliance_pretrade_gate`이다.
+- 목적은 매수 허가가 아니라 시장/공시/밸류에이션/수동심사/전술감시/주문상태 차단 조건을 한 장으로 합치는 최종 사전 안전 게이트다.
+- 다음 세션의 구체 작업 목표는 `CLI_NEXT_SESSION_PROMPT.md`의 `오늘 작업 목표` 블록을 우선 확인한다. 이 파일은 git ignore 대상일 수 있으므로 필요하면 `Test-Path`와 `Get-Content`로 직접 확인한다.
+
+자주 확인하는 최신 로컬 리포트 후보:
+
+- `reports/institutional_program_stack/institutional_program_stack.md`
+- `reports/pre_buy_decision/pre_buy_decision.csv`
+- `reports/decision_gate/decision_gate.csv`
+- `reports/market_regime/market_regime.csv`
+- `reports/tactical_watchlist/tactical_watchlist.csv`
+- `reports/panic_rebound_signal/panic_rebound_signal.csv`
+- `reports/learning_feedback/learning_feedback_summary.csv`
+
+검증 기준:
+
+- 문서만 바꾼 경우에는 `git diff --check -- <changed-files>`와 필요한 `rg` 확인으로 충분하다.
+- 코드 변경이면 해당 기능 테스트, 관련 테스트, `py_compile` 또는 `compileall`을 실행한다.
+- 모든 리포트/CLI/API 출력은 계속 `external_api_requested=NO`, `order_status=NO_ORDER`, `broker_order_requested=NO`를 유지한다.
