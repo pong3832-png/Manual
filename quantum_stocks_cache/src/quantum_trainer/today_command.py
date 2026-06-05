@@ -5,6 +5,9 @@ from datetime import date
 from pathlib import Path
 
 from quantum_trainer.dashboard import run_dashboard
+from quantum_trainer.config import load_runtime_config
+from quantum_trainer.io import load_price_csv
+from quantum_trainer.market_data import fetch_market_prices, write_price_cache
 from quantum_trainer.symbol_analysis import run_symbol_analysis
 from quantum_trainer.symbol_input import resolve_stock_input
 from quantum_trainer.today_pipeline import CommandRunner, PipelineStep, TodayPipelineOutput, run_today_pipeline
@@ -94,7 +97,11 @@ def run_quick_stock_analysis(
     ]
     executed: list[str] = []
     symbol_status = "DRY_RUN"
+    refresh_status = "NO"
     if not dry_run:
+        if refresh_market_data:
+            _refresh_single_symbol_price_cache(root=root, symbol=resolved.symbol)
+            refresh_status = "YES"
         symbol_output = run_symbol_analysis(
             config_path=config_path,
             universe_csv=universe_csv,
@@ -118,9 +125,10 @@ def run_quick_stock_analysis(
             "analysis_mode": "QUICK_STOCK",
             "step_count": len(steps),
             "executed_count": len(executed),
-            "market_data_refresh": "NO",
-            "external_api_requested": "NO",
+            "market_data_refresh": "YES" if refresh_market_data else "NO",
+            "external_api_requested": "YES" if refresh_market_data else "NO",
             "symbol_intake_requested": "YES",
+            "single_symbol_refresh": refresh_status,
             "symbol_analysis_status": symbol_status,
             "dashboard_path": str(dashboard_path),
         },
@@ -129,6 +137,21 @@ def run_quick_stock_analysis(
         pipeline=pipeline,
         lines=_format_lines(stock=stock_text, dry_run=dry_run, pipeline=pipeline),
     )
+
+
+def _refresh_single_symbol_price_cache(root: Path, symbol: str) -> None:
+    config_path = root / "configs" / "portfolio.yaml"
+    runtime_config = load_runtime_config(config_path)
+    fresh = fetch_market_prices([symbol], config=runtime_config.market_data)
+    try:
+        existing = load_price_csv(runtime_config.prices_csv, drop_incomplete=False)
+    except FileNotFoundError:
+        merged = fresh
+    else:
+        remaining = existing.drop(columns=[symbol], errors="ignore")
+        columns = list(remaining.columns) + [symbol]
+        merged = remaining.join(fresh[[symbol]], how="outer").sort_index().reindex(columns=columns)
+    write_price_cache(merged, runtime_config.prices_csv)
 
 
 def _format_lines(

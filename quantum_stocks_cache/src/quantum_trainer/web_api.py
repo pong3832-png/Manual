@@ -15,6 +15,7 @@ from fastapi.testclient import TestClient
 from pydantic import BaseModel
 
 from quantum_trainer.symbol_input import search_stock_inputs
+from quantum_trainer.symbol_input import resolve_stock_input
 from quantum_trainer.today_command import TodayAnalysisOutput, run_quick_stock_analysis, run_today_analysis
 
 
@@ -42,6 +43,15 @@ class HoldingInput(BaseModel):
     company_name: str | None = None
     entry_price: float = 0.0
     quantity: float | None = None
+    notes: str | None = None
+
+
+class TradeInput(BaseModel):
+    stock: str
+    side: str
+    price: float
+    quantity: float
+    trade_date: str | None = None
     notes: str | None = None
 
 
@@ -76,6 +86,14 @@ def create_app(
     def api_holdings() -> dict[str, Any]:
         return build_holdings_payload(root)
 
+    @app.get("/api/symbol-analysis")
+    def api_symbol_analysis(stock: str = "") -> dict[str, Any]:
+        return build_symbol_analysis_payload(root, stock=stock)
+
+    @app.get("/api/stock-detail")
+    def api_stock_detail(stock: str = "") -> dict[str, Any]:
+        return build_stock_detail_payload(root, stock=stock)
+
     @app.post("/api/holdings")
     def api_update_holdings(request: HoldingsUpdateRequest) -> dict[str, Any]:
         try:
@@ -83,6 +101,16 @@ def create_app(
         except ValueError as exc:
             raise HTTPException(status_code=400, detail=str(exc)) from exc
         return build_holdings_payload(root)
+
+    @app.post("/api/trades")
+    def api_record_trade(request: TradeInput) -> dict[str, Any]:
+        try:
+            record_manual_trade(root, request)
+        except ValueError as exc:
+            raise HTTPException(status_code=400, detail=str(exc)) from exc
+        payload = build_holdings_payload(root)
+        payload["trade_recorded"] = "YES"
+        return payload
 
     @app.get("/api/search")
     def api_search(q: str = "") -> dict[str, Any]:
@@ -130,7 +158,7 @@ def create_app(
         job_id = uuid.uuid4().hex
         stock = request.stock.strip() if request.stock else None
         use_quick_stock = bool(stock)
-        refresh_market_data = False if use_quick_stock else bool(request.refresh_market_data) and not request.cache_market_data
+        refresh_market_data = bool(request.refresh_market_data) and not request.cache_market_data
         selected_runner = quick_analysis_runner if use_quick_stock else analysis_runner
         job = {
             "job_id": job_id,
@@ -376,6 +404,206 @@ def build_holdings_payload(project_root: Path | str) -> dict[str, Any]:
     }
 
 
+def build_symbol_analysis_payload(project_root: Path | str, stock: str = "") -> dict[str, Any]:
+    root = Path(project_root).resolve()
+    stock_text = _text(stock, "")
+    if not stock_text:
+        row = _latest_symbol_analysis_row(root)
+        requested = {}
+    else:
+        resolved = resolve_stock_input(stock_text, universe_csv=root / "configs" / "research_universe.actual.csv")
+        requested = {
+            "raw_input": stock_text,
+            "symbol": resolved.symbol,
+            "code": resolved.code,
+            "company_name": resolved.company_name,
+            "market": resolved.market,
+            "sector": resolved.sector,
+            "source": resolved.source,
+        }
+        row = _symbol_analysis_row(root, resolved.symbol)
+
+    if row:
+        analysis = _symbol_analysis_payload_from_row(row)
+        found = True
+    else:
+        analysis = {}
+        found = False
+
+    return {
+        "requested": requested,
+        "found": found,
+        "analysis": analysis,
+        "order_status": "NO_ORDER",
+        "broker_order_requested": "NO",
+        "external_api_requested": "NO",
+    }
+
+
+def build_stock_detail_payload(project_root: Path | str, stock: str = "") -> dict[str, Any]:
+    root = Path(project_root).resolve()
+    stock_text = _text(stock, "")
+    if not stock_text:
+        raise HTTPException(status_code=400, detail="stock is required")
+
+    resolved = resolve_stock_input(stock_text, universe_csv=root / "configs" / "research_universe.actual.csv")
+    symbol = resolved.symbol
+    code = resolved.code or _stock_code("", symbol)
+    reports = root / "reports"
+    trend = _rows_by_symbol(_read_csv(reports / "trend_forecast" / "trend_forecast.csv")).get(symbol, {})
+    event = _rows_by_symbol(_read_csv(reports / "event_adjusted_ranking" / "event_adjusted_ranking.csv")).get(symbol, {})
+    tactical = _rows_by_symbol(_read_csv(reports / "tactical_watchlist" / "tactical_watchlist.csv")).get(symbol, {})
+    pre_buy = _rows_by_symbol(_read_csv(reports / "pre_buy_decision" / "pre_buy_decision.csv")).get(symbol, {})
+    symbol_analysis = _symbol_analysis_row(root, symbol)
+    resolved_name = _text(resolved.company_name, "")
+    if resolved_name == symbol or resolved_name == stock_text:
+        resolved_name = ""
+    company_name = (
+        resolved_name
+        or _company_name(trend.get("company_name"))
+        or _company_name(event.get("company_name"))
+        or _company_name(tactical.get("company_name"))
+        or _company_name(symbol_analysis.get("company_name"))
+        or symbol
+    )
+    sector = _text(resolved.sector, _text(trend.get("sector"), _text(event.get("sector"), "")))
+    latest_price = float(
+        _number(trend.get("latest_price"))
+        or _number(event.get("latest_price"))
+        or _latest_prices(root / "data" / "prices.csv", [symbol]).get(symbol)
+    )
+    latest_price_date = _text(
+        trend.get("latest_price_date"),
+        _text(symbol_analysis.get("latest_price_date"), _latest_price_date(root / "data" / "prices.csv")),
+    )
+    detail_status = "READY" if any([trend, event, tactical, pre_buy, symbol_analysis, latest_price > 0]) else "DATA_REQUIRED"
+
+    return {
+        "requested": {
+            "raw_input": stock_text,
+            "symbol": symbol,
+            "code": code,
+            "company_name": company_name,
+            "market": resolved.market,
+            "sector": sector,
+            "source": resolved.source,
+        },
+        "found": detail_status == "READY",
+        "detail_status": detail_status,
+        "profile": {
+            "symbol": symbol,
+            "code": code,
+            "company_name": _company_name(company_name),
+            "market": resolved.market,
+            "sector": sector,
+            "latest_price": latest_price,
+            "latest_price_date": latest_price_date,
+        },
+        "quant": _stock_quant_detail(trend, event, tactical, pre_buy, symbol_analysis),
+        "investor_flow": _stock_investor_flow(root, symbol=symbol, code=code),
+        "order_status": "NO_ORDER",
+        "broker_order_requested": "NO",
+        "external_api_requested": "NO",
+    }
+
+
+def _stock_quant_detail(
+    trend: dict[str, Any],
+    event: dict[str, Any],
+    tactical: dict[str, Any],
+    pre_buy: dict[str, Any],
+    symbol_analysis: dict[str, Any],
+) -> dict[str, Any]:
+    decision_summary = _candidate_decision_summary(tactical, pre_buy) if tactical or pre_buy else {}
+    return {
+        "analysis_status": _text(symbol_analysis.get("analysis_status"), "UNKNOWN"),
+        "price_data_status": _text(symbol_analysis.get("price_data_status"), "UNKNOWN"),
+        "price_rows": int(_number(symbol_analysis.get("price_rows"))),
+        "research_score": float(_number(symbol_analysis.get("research_score")) or _number(trend.get("research_score"))),
+        "research_view": _text(symbol_analysis.get("research_view"), "UNKNOWN"),
+        "decision": _text(pre_buy.get("decision_status"), _text(symbol_analysis.get("decision"), "UNKNOWN")),
+        "tactical_status": _text(tactical.get("tactical_status"), "UNKNOWN"),
+        "tactical_priority": int(_number(tactical.get("tactical_priority"))),
+        "priority_score": float(_number(tactical.get("priority_score"))),
+        "final_watch_status": _text(event.get("final_watch_status"), _text(tactical.get("final_watch_status"), "UNKNOWN")),
+        "final_rank_score": float(_number(event.get("final_rank_score")) or _number(tactical.get("final_rank_score"))),
+        "entry_watch_status": _text(tactical.get("entry_watch_status"), "UNKNOWN"),
+        "trend_regime": _text(trend.get("trend_regime"), "UNKNOWN"),
+        "forecast_bias": _text(trend.get("forecast_bias"), "UNKNOWN"),
+        "trend_score": float(_number(trend.get("trend_score"))),
+        "return_5d": float(_number(trend.get("return_5d"))),
+        "return_20d": float(_number(trend.get("return_20d"))),
+        "return_60d": float(_number(trend.get("return_60d"))),
+        "ma20_position": float(_number(trend.get("ma20_position"))),
+        "ma60_position": float(_number(trend.get("ma60_position"))),
+        "expected_20d_return": float(_number(event.get("expected_20d_return"))),
+        "upside_probability": float(_number(event.get("upside_probability"))),
+        "entry_price_low": float(_number(pre_buy.get("entry_price_low"))),
+        "entry_price_high": float(_number(pre_buy.get("entry_price_high"))),
+        "readiness_blockers": _text(pre_buy.get("readiness_blockers"), ""),
+        "buy_reasons": _text(pre_buy.get("buy_reasons"), ""),
+        "buy_ban_reasons": _text(pre_buy.get("buy_ban_reasons"), ""),
+        "stop_loss_rule": _text(pre_buy.get("stop_loss_rule"), ""),
+        "key_reason": _text(tactical.get("key_reason"), _text(event.get("action_summary"), "")),
+        "operator_action": _text(tactical.get("operator_action"), ""),
+        "decision_summary": decision_summary,
+        "order_status": "NO_ORDER",
+        "broker_order_requested": "NO",
+    }
+
+
+def _stock_investor_flow(root: Path, symbol: str, code: str) -> dict[str, Any]:
+    directory = root / "reports" / "investor_flow"
+    candidates = [
+        directory / f"investor_flow_{code}.csv",
+        directory / f"investor_flow_{symbol.replace('.', '_')}.csv",
+        directory / "investor_flow.csv",
+    ]
+    frame = pd.DataFrame()
+    for path in candidates:
+        frame = _read_csv(path)
+        if frame.empty:
+            continue
+        if "symbol" in frame.columns:
+            frame = frame.loc[frame["symbol"].astype(str) == symbol]
+        elif "code" in frame.columns:
+            frame = frame.loc[frame["code"].astype(str).str.zfill(6) == code]
+        if not frame.empty:
+            break
+
+    if frame.empty:
+        return {
+            "data_status": "DATA_REQUIRED",
+            "summary": "기관/외국인 수급 캐시가 없습니다. pykrx 등 외부 데이터 조회는 별도 승인 후 갱신해야 합니다.",
+            "recent": [],
+            "order_status": "NO_ORDER",
+            "external_api_requested": "NO",
+            "broker_order_requested": "NO",
+        }
+
+    records = frame.tail(10).to_dict(orient="records")
+    recent = [
+        {
+            "date": _text(row.get("date"), _text(row.get("날짜"), "")),
+            "institution": float(_number(row.get("institution")) or _number(row.get("기관"))),
+            "foreign": float(_number(row.get("foreign")) or _number(row.get("외국인"))),
+            "individual": float(_number(row.get("individual")) or _number(row.get("개인"))),
+            "broker": _text(row.get("broker"), _text(row.get("거래원"), "")),
+        }
+        for row in records
+    ]
+    institution_total = sum(float(_number(row.get("institution"))) for row in recent)
+    foreign_total = sum(float(_number(row.get("foreign"))) for row in recent)
+    return {
+        "data_status": "CACHED_LOCAL",
+        "summary": f"최근 {len(recent)}개 로컬 수급 행: 기관 {institution_total:,.0f}, 외국인 {foreign_total:,.0f}",
+        "recent": recent,
+        "order_status": "NO_ORDER",
+        "external_api_requested": "NO",
+        "broker_order_requested": "NO",
+    }
+
+
 def write_holding_watch(project_root: Path | str, holdings: list[HoldingInput]) -> None:
     root = Path(project_root).resolve()
     path = root / "configs" / "holding_watch.actual.csv"
@@ -408,6 +636,192 @@ def write_holding_watch(project_root: Path | str, holdings: list[HoldingInput]) 
         path,
         index=False,
     )
+
+
+def record_manual_trade(project_root: Path | str, trade: TradeInput) -> None:
+    root = Path(project_root).resolve()
+    side = _text(trade.side, "").upper()
+    if side not in {"BUY", "SELL"}:
+        raise ValueError("side must be BUY or SELL")
+    price = float(_number(trade.price))
+    quantity = float(_number(trade.quantity))
+    if price <= 0:
+        raise ValueError("price must be positive")
+    if quantity <= 0:
+        raise ValueError("quantity must be positive")
+
+    resolved = resolve_stock_input(trade.stock, universe_csv=root / "configs" / "research_universe.actual.csv")
+    trade_date = _text(trade.trade_date, "") or datetime.now().strftime("%Y-%m-%d")
+    _apply_trade_to_holding_watch(
+        root=root,
+        symbol=resolved.symbol,
+        company_name=resolved.company_name,
+        side=side,
+        price=price,
+        quantity=quantity,
+        notes=f"manual {side.lower()} recorded on {trade_date}",
+    )
+    _append_trade_event(
+        root=root,
+        row={
+            "trade_date": trade_date,
+            "symbol": resolved.symbol,
+            "company_name": resolved.company_name,
+            "side": side,
+            "price": price,
+            "quantity": quantity,
+            "notes": _text(trade.notes, ""),
+            "order_status": "NO_ORDER",
+            "broker_order_requested": "NO",
+        },
+    )
+
+
+def _append_trade_event(root: Path, row: dict[str, Any]) -> None:
+    path = root / "configs" / "trade_events.actual.csv"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    columns = [
+        "trade_date",
+        "symbol",
+        "company_name",
+        "side",
+        "price",
+        "quantity",
+        "notes",
+        "order_status",
+        "broker_order_requested",
+    ]
+    frame = pd.DataFrame([row], columns=columns)
+    frame.to_csv(path, mode="a", header=not path.exists(), index=False, encoding="utf-8-sig")
+
+
+def _apply_trade_to_holding_watch(
+    root: Path,
+    symbol: str,
+    company_name: str,
+    side: str,
+    price: float,
+    quantity: float,
+    notes: str,
+) -> None:
+    path = root / "configs" / "holding_watch.actual.csv"
+    columns = ["symbol", "company_name", "entry_price", "quantity", "notes"]
+    frame = _read_csv(path)
+    if frame.empty:
+        frame = pd.DataFrame(columns=columns)
+    for column in columns:
+        if column not in frame.columns:
+            frame[column] = ""
+
+    matches = frame.index[frame["symbol"].astype(str) == symbol].tolist()
+    if matches:
+        idx = matches[0]
+        old_price = float(_number(frame.at[idx, "entry_price"]))
+        old_quantity = float(_number(frame.at[idx, "quantity"]))
+    else:
+        idx = None
+        old_price = 0.0
+        old_quantity = 0.0
+
+    if side == "BUY":
+        new_quantity = old_quantity + quantity
+        new_price = ((old_price * old_quantity) + (price * quantity)) / new_quantity
+    else:
+        if old_quantity <= 0:
+            raise ValueError(f"cannot sell {symbol}: no holding quantity recorded")
+        if quantity > old_quantity:
+            raise ValueError(f"cannot sell {symbol}: sell quantity exceeds holding quantity")
+        new_quantity = old_quantity - quantity
+        new_price = old_price
+
+    if idx is None:
+        frame = pd.concat(
+            [
+                frame,
+                pd.DataFrame(
+                    [
+                        {
+                            "symbol": symbol,
+                            "company_name": company_name,
+                            "entry_price": new_price,
+                            "quantity": new_quantity,
+                            "notes": notes,
+                        }
+                    ]
+                ),
+            ],
+            ignore_index=True,
+        )
+    elif new_quantity <= 0:
+        frame = frame.drop(index=idx)
+    else:
+        frame.at[idx, "company_name"] = company_name or frame.at[idx, "company_name"]
+        frame.at[idx, "entry_price"] = new_price
+        frame.at[idx, "quantity"] = new_quantity
+        frame.at[idx, "notes"] = notes
+
+    frame.loc[:, columns].to_csv(path, index=False, encoding="utf-8-sig")
+
+
+def _symbol_analysis_row(root: Path, symbol: str) -> dict[str, Any]:
+    path = root / "reports" / "symbol_analysis" / f"symbol_analysis_{symbol.replace('.', '_')}.csv"
+    frame = _read_csv(path)
+    if frame.empty:
+        return {}
+    return frame.iloc[0].to_dict()
+
+
+def _latest_symbol_analysis_row(root: Path) -> dict[str, Any]:
+    directory = root / "reports" / "symbol_analysis"
+    if not directory.exists():
+        return {}
+    paths = [path for path in directory.glob("symbol_analysis_*.csv") if path.is_file()]
+    if not paths:
+        return {}
+    latest = max(paths, key=lambda path: path.stat().st_mtime)
+    frame = _read_csv(latest)
+    if frame.empty:
+        return {}
+    return frame.iloc[0].to_dict()
+
+
+def _symbol_analysis_payload_from_row(row: dict[str, Any]) -> dict[str, Any]:
+    symbol = _text(row.get("symbol"), "")
+    return {
+        "symbol": symbol,
+        "company_name": _company_name(row.get("company_name")),
+        "sector": _text(row.get("sector"), ""),
+        "market": _text(row.get("market"), ""),
+        "code": _stock_code(row.get("code"), symbol),
+        "analysis_status": _text(row.get("analysis_status"), "UNKNOWN"),
+        "local_pipeline_ready": _text(row.get("local_pipeline_ready"), "NO"),
+        "price_data_status": _text(row.get("price_data_status"), "UNKNOWN"),
+        "price_rows": int(_number(row.get("price_rows"))),
+        "min_samples_required": int(_number(row.get("min_samples_required"))),
+        "blocking_reason": _text(row.get("blocking_reason"), ""),
+        "company_research_rank": _text(row.get("company_research_rank"), ""),
+        "latest_price": float(_number(row.get("latest_price"))),
+        "latest_price_date": _text(row.get("latest_price_date"), ""),
+        "research_score": float(_number(row.get("research_score"))),
+        "research_view": _text(row.get("research_view"), "UNKNOWN"),
+        "decision": _text(row.get("decision"), "UNKNOWN"),
+        "why_summary": _text(row.get("why_summary"), ""),
+        "company_research_csv": _text(row.get("company_research_csv"), ""),
+        "company_research_md": _text(row.get("company_research_md"), ""),
+        "next_step": _text(row.get("next_step"), ""),
+        "order_status": "NO_ORDER",
+        "external_api_requested": "NO",
+        "broker_order_requested": "NO",
+    }
+
+
+def _stock_code(value: object, symbol: str) -> str:
+    text = _text(value, "")
+    if text and text.isdigit():
+        return text.zfill(6)
+    if symbol and "." in symbol:
+        return symbol.split(".", maxsplit=1)[0].zfill(6)
+    return text
 
 
 def _market_summary(frame: pd.DataFrame) -> dict[str, Any]:

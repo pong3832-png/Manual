@@ -33,6 +33,11 @@ def run_company_research(
 ) -> CompanyResearchOutput:
     runtime_config = load_runtime_config(config_path)
     prices = load_price_csv(runtime_config.prices_csv, drop_incomplete=False)
+    universe = _load_research_universe(universe_csv, prices.columns)
+    available_symbols = [symbol for symbol in universe["symbol"].astype(str).tolist() if symbol in prices.columns]
+    if not available_symbols:
+        raise ValueError("No universe symbols have cached price columns.")
+    prices = prices.loc[:, available_symbols].copy()
     latest_price_date = prices.index.max().date().isoformat()
     latest_prices = prices.tail(1).T.reset_index()
     latest_prices.columns = ["symbol", "latest_price"]
@@ -43,7 +48,6 @@ def run_company_research(
     )
     timing = score_buy_timing(forecast).reset_index()
     features = _latest_features(prices)
-    universe = _load_research_universe(universe_csv, prices.columns)
 
     report = (
         universe.merge(timing, on="symbol", how="left")

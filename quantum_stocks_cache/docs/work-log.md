@@ -1,5 +1,73 @@
 # Work Log
 
+## 2026-06-05 - GUI Launcher Check
+
+- Follow-up fix:
+  - Added `/api/symbol-analysis?stock=...` so the GUI can fetch the exact searched symbol's local analysis report instead of only refreshing the broad "today candidates" board.
+  - React now shows a separate `검색 종목 분석` panel after selecting/running a stock search.
+  - The panel shows symbol, market, sector, analysis status, price data status, latest price/date, research score, decision, and blocker/next-step.
+  - `scripts/run_web_app.py` now avoids raw `print()` when stdout is unavailable, so `pythonw.exe` launcher execution is safer.
+  - `start_gui.cmd` now opens a visible `cmd` server window instead of a hidden background process, because hidden process launch did not reliably keep the FastAPI server alive in this Windows session.
+  - Current server was restarted in a visible console window and is listening on `127.0.0.1:8766`.
+- Extra verification:
+  - `.\.venv\Scripts\python.exe -m pytest .\tests\test_web_api.py .\tests\test_local_app.py -v` -> `16 passed`.
+  - `.\.venv\Scripts\python.exe -m py_compile .\src\quantum_trainer\web_api.py .\scripts\run_web_app.py` -> passed.
+  - `npm.cmd run build` in `web/` -> passed.
+  - Temporary port `8776` check confirmed `005930` quick stock analysis writes and returns the requested symbol result with `order_status=NO_ORDER`.
+  - `http://127.0.0.1:8766/health` -> `OK`.
+  - `http://127.0.0.1:8766/api/symbol-analysis?stock=005930` returned `005930.KS` 삼성전자 with `order_status=NO_ORDER`.
+- Search-result data fix:
+  - Fixed `symbol_analysis` to read `data/prices.csv` with `drop_incomplete=False`, so a full-universe sparse cache no longer collapses a searched stock to the tiny set of dates common to all symbols.
+  - Fixed `company_research` to filter price calculations to the requested universe symbols before alpha/features, making one-symbol GUI analysis complete quickly.
+  - GUI quick stock jobs now honor the `최신 가격 갱신` checkbox for single-symbol refresh instead of forcing cache-only mode.
+  - Re-ran cached LG전자 (`066570.KS`) quick analysis; it now returns `analysis_status=ANALYSIS_READY`, `price_rows=589`, `latest_price_date=2026-06-05`, `research_score=42.83910567568748`, `research_view=WAIT_PULLBACK`, `order_status=NO_ORDER`.
+- Extra verification for search-result fix:
+  - `.\.venv\Scripts\python.exe -m pytest .\tests\test_company_research.py .\tests\test_symbol_analysis.py .\tests\test_web_api.py -v` -> `22 passed`.
+  - `.\.venv\Scripts\python.exe -m pytest .\tests\test_symbol_analysis.py .\tests\test_web_api.py .\tests\test_today_command.py -v` -> `20 passed`.
+  - `.\.venv\Scripts\python.exe -m py_compile .\src\quantum_trainer\company_research.py .\src\quantum_trainer\symbol_analysis.py .\src\quantum_trainer\today_command.py .\src\quantum_trainer\web_api.py` -> passed.
+- Live candidate UX:
+  - React GUI now starts one background latest-candidate refresh when the app opens.
+  - The top bar shows `최신 후보 자동 갱신 중` while the full latest-price candidate job is running.
+  - When the job completes, status, candidate board, and holdings refresh automatically.
+  - This remains review-only: `order_status=NO_ORDER`, `broker_order_requested=NO`.
+  - Note: "실시간" means provider-updated/latest available market data through yfinance, not exchange-direct tick-by-tick real-time data.
+  - Verification: `npm.cmd run build` in `web/` -> passed; live server served `assets/index-DmrpNJRh.js`; `/health` -> `OK`.
+- Manual trade reflection:
+  - Added `POST /api/trades` for user-entered executed trades only.
+  - Trade input fields: `stock`, `side=BUY|SELL`, `price`, `quantity`, optional date/notes.
+  - Each entry appends to `configs/trade_events.actual.csv` with `order_status=NO_ORDER` and `broker_order_requested=NO`.
+  - The same entry updates `configs/holding_watch.actual.csv`:
+    - BUY increases quantity and recalculates weighted-average entry price.
+    - SELL reduces quantity and removes the row when quantity reaches zero.
+    - SELL is rejected if quantity exceeds recorded holding quantity.
+  - React GUI now has a `체결 반영` row in the holdings board for manual buy/sell reflection.
+  - Verification:
+    - `.\.venv\Scripts\python.exe -m pytest .\tests\test_web_api.py -v` -> `14 passed`.
+    - `.\.venv\Scripts\python.exe -m py_compile .\src\quantum_trainer\web_api.py` -> passed.
+    - `npm.cmd run build` in `web/` -> passed; live server served `assets/index-BiHVwY8O.js` and `assets/index-DaIdek_h.css`.
+  - Safety: no broker API, no automatic order, no external trade execution.
+- Quant buy-rank list UI:
+  - Added a first-screen `실시간 퀀트 랭킹 / 매수 검토 등수` board above search results and holdings.
+  - Uses the existing `/api/candidates` payload, ranked by current candidate order, showing rank, company, symbol, sector, score, review label, latest price, gate status, and reason.
+  - Top 1-3 rows get distinct visual emphasis while all rows remain review-only.
+  - Verification: `npm.cmd run build` in `web/` -> passed; live server served `assets/index-D9xMTdlJ.js` and `assets/index-CpobievE.css`.
+  - Safety: label is "매수 검토 등수"; `order_status=NO_ORDER` remains visible and no broker/order path was added.
+- Confirmed the FastAPI + React GUI is the active user-facing app for `quantum_stocks_cache`.
+- Added `start_gui.cmd` for Windows:
+  - Double-click opens `http://127.0.0.1:8766`.
+  - If the local server is already listening, it only opens the browser.
+  - If the server is not listening, it starts `scripts/run_web_app.py` with the local `.venv` in the background, then opens the browser.
+  - If `web/dist` is missing but `web/node_modules` exists, it builds the React app first.
+- Updated `README.md` easy usage instructions with the one-click launcher.
+- Current local GUI check:
+  - Existing server is listening on `127.0.0.1:8766` with `/health` returning `OK`.
+  - `/api/status` returned `latest_price_date=2026-06-05`, top candidate `085910.KQ` 네오티스, `order_status=NO_ORDER`.
+- Verification:
+  - `npm.cmd run build` in `web/` -> passed.
+  - `.\.venv\Scripts\python.exe -m pytest .\tests\test_web_api.py .\tests\test_local_app.py -v` -> `15 passed`.
+- Safety:
+  - No external price refresh, OpenDART call, broker/order action, scheduler change, deletion, git action, or manual actual config write.
+
 ## 2026-06-05 - Documentation Handoff Cleanup
 
 - Cleaned the active handoff guidance used by future CLI sessions.
@@ -2127,3 +2195,20 @@
   - Continue GUI productization: clearer live progress, job history/log preview, and daily analysis usability.
 - Safety:
   - No external API/OpenDART call, price refresh, broker/order action, scheduler registration, deletion, or `configs/manual_review.actual.csv` write.
+
+## 2026-06-05 - GUI Portfolio Return And Clickable Stock Detail
+
+- Changed:
+  - `src/quantum_trainer/web_api.py` adds read-only `GET /api/stock-detail?stock=...`.
+  - Stock detail combines local cached price, trend forecast, event-adjusted ranking, tactical watchlist, pre-buy decision, and symbol analysis into one payload.
+  - Investor/foreign/institution flow is displayed from local `reports/investor_flow/*.csv` when present; otherwise it returns `DATA_REQUIRED` and does not call external data.
+  - `web/src/main.jsx` shows total portfolio return in the holding summary and opens a detailed stock panel when a rank row or candidate card is clicked.
+  - `web/src/styles.css` adds rank-row click states and the detailed stock/investor-flow panel.
+- Verification:
+  - `.\.venv\Scripts\python.exe -m py_compile .\src\quantum_trainer\web_api.py` -> passed.
+  - `.\.venv\Scripts\python.exe -m pytest .\tests\test_web_api.py -v` -> `16 passed`.
+  - `npm.cmd run build` from `web/` -> passed.
+  - Local GUI restarted at `http://127.0.0.1:8766` with PID `17536`; `/health` returned `OK`.
+  - `GET /api/stock-detail?stock=066570.KS` returned LG전자 detail with `detail_status=READY`, `external_api_requested=NO`, `order_status=NO_ORDER`; investor flow returned `DATA_REQUIRED` because no local flow cache exists.
+- Safety:
+  - No broker/order execution, no external pykrx/OpenDART/price-refresh call, no scheduler action, no deletion, and no manual review config write.

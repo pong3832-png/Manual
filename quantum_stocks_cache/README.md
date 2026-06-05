@@ -6,6 +6,14 @@ Local-only Phase 2 quant trainer for Dynamic Trend Following.
 
 새 앱 화면은 FastAPI + React 버전입니다.
 
+Windows에서 바로 열려면 이 파일을 더블클릭합니다.
+
+```text
+start_gui.cmd
+```
+
+이미 `127.0.0.1:8766` 서버가 떠 있으면 브라우저만 열고, 서버가 없으면 로컬 앱을 백그라운드로 띄운 뒤 브라우저를 엽니다.
+
 ```powershell
 cd .\web
 npm.cmd install

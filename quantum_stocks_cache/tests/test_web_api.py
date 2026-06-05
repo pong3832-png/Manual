@@ -214,7 +214,7 @@ def test_fastapi_analyze_job_with_stock_uses_quick_local_runner() -> None:
             class _Pipeline:
                 summary = {
                     "analysis_mode": "QUICK_STOCK",
-                    "external_api_requested": "NO",
+                    "external_api_requested": "YES" if refresh_market_data else "NO",
                     "dashboard_path": str(root / "reports" / "dashboard" / "index.html"),
                 }
 
@@ -247,11 +247,11 @@ def test_fastapi_analyze_job_with_stock_uses_quick_local_runner() -> None:
         assert body["stage"] == "DONE"
         assert body["stage_text"]
         assert body["elapsed_seconds"] >= 0
-        assert body["external_api_requested"] == "NO"
+        assert body["external_api_requested"] == "YES"
         assert body["summary"]["analysis_mode"] == "QUICK_STOCK"
-        assert body["summary"]["external_api_requested"] == "NO"
+        assert body["summary"]["external_api_requested"] == "YES"
         assert body["order_status"] == "NO_ORDER"
-        assert quick_calls == [("005930", False, False)]
+        assert quick_calls == [("005930", True, False)]
         assert full_calls == []
 
 
@@ -430,6 +430,196 @@ def test_holdings_endpoint_updates_local_quantity_without_order_action() -> None
         assert "083450.KQ,GST,48200.0,2.0,updated quantity" in (
             root / "configs" / "holding_watch.actual.csv"
         ).read_text(encoding="utf-8")
+
+
+def test_trade_endpoint_records_manual_buy_and_sell_into_holdings() -> None:
+    module = importlib.import_module("quantum_trainer.web_api")
+
+    with TemporaryDirectory(dir=PROJECT_ROOT) as tmp_dir:
+        root = Path(tmp_dir)
+        _write_minimal_reports(root)
+
+        app = module.create_app(project_root=root)
+        client = module.TestClient(app)
+        buy = client.post(
+            "/api/trades",
+            json={
+                "stock": "083450.KQ",
+                "side": "BUY",
+                "price": 50000,
+                "quantity": 2,
+                "trade_date": "2026-06-05",
+                "notes": "manual buy",
+            },
+        )
+
+        assert buy.status_code == 200
+        buy_body = buy.json()
+        assert buy_body["trade_recorded"] == "YES"
+        assert buy_body["order_status"] == "NO_ORDER"
+        holding = buy_body["holdings"][0]
+        assert holding["symbol"] == "083450.KQ"
+        assert holding["quantity"] == 2
+        assert round(holding["entry_price"], 2) == 50000
+
+        sell = client.post(
+            "/api/trades",
+            json={
+                "stock": "083450.KQ",
+                "side": "SELL",
+                "price": 51000,
+                "quantity": 1,
+                "trade_date": "2026-06-06",
+                "notes": "manual partial sell",
+            },
+        )
+
+        assert sell.status_code == 200
+        sell_body = sell.json()
+        assert sell_body["order_status"] == "NO_ORDER"
+        holding = sell_body["holdings"][0]
+        assert holding["quantity"] == 1
+        assert round(holding["entry_price"], 2) == 50000
+        events = (root / "configs" / "trade_events.actual.csv").read_text(encoding="utf-8-sig")
+        assert "BUY" in events
+        assert "SELL" in events
+        assert "NO_ORDER" in events
+
+
+def test_symbol_analysis_endpoint_returns_requested_stock_result_only() -> None:
+    module = importlib.import_module("quantum_trainer.web_api")
+
+    with TemporaryDirectory(dir=PROJECT_ROOT) as tmp_dir:
+        root = Path(tmp_dir)
+        _write_minimal_reports(root)
+        symbol_dir = root / "reports" / "symbol_analysis"
+        symbol_dir.mkdir(parents=True, exist_ok=True)
+        pd.DataFrame(
+            [
+                {
+                    "symbol": "005930.KS",
+                    "company_name": "Samsung Electronics",
+                    "sector": "Semiconductors",
+                    "market": "KOSPI",
+                    "code": "005930",
+                    "universe_action": "EXISTING",
+                    "analysis_status": "ANALYSIS_READY",
+                    "local_pipeline_ready": "YES",
+                    "price_data_status": "READY",
+                    "price_rows": 250,
+                    "min_samples_required": 80,
+                    "blocking_reason": "",
+                    "company_research_rank": "1",
+                    "latest_price": 73500,
+                    "latest_price_date": "2026-05-28",
+                    "research_score": 63.4,
+                    "research_view": "RESEARCH_CANDIDATE",
+                    "decision": "WAIT",
+                    "why_summary": "single requested stock analysis",
+                    "company_research_csv": "",
+                    "company_research_md": "",
+                    "order_status": "NO_ORDER",
+                    "external_api_requested": "NO",
+                    "broker_order_requested": "NO",
+                    "next_step": "review company_research and today dashboard",
+                }
+            ]
+        ).to_csv(symbol_dir / "symbol_analysis_005930_KS.csv", index=False)
+        pd.DataFrame(
+            [
+                {
+                    "symbol": "003550.KS",
+                    "company_name": "LG Corp",
+                    "sector": "Holding",
+                    "market": "KOSPI",
+                    "code": "003550",
+                    "analysis_status": "DATA_REQUIRED",
+                    "price_data_status": "MISSING",
+                    "order_status": "NO_ORDER",
+                    "external_api_requested": "NO",
+                    "broker_order_requested": "NO",
+                }
+            ]
+        ).to_csv(symbol_dir / "symbol_analysis_003550_KS.csv", index=False)
+
+        app = module.create_app(project_root=root)
+        client = module.TestClient(app)
+        response = client.get("/api/symbol-analysis", params={"stock": "삼성전자"})
+
+        assert response.status_code == 200
+        body = response.json()
+        assert body["requested"]["symbol"] == "005930.KS"
+        assert body["found"] is True
+        assert body["analysis"]["symbol"] == "005930.KS"
+        assert body["analysis"]["code"] == "005930"
+        assert body["analysis"]["company_name"] == "삼성전자"
+        assert body["analysis"]["analysis_status"] == "ANALYSIS_READY"
+        assert body["analysis"]["latest_price"] == 73500
+        assert body["analysis"]["order_status"] == "NO_ORDER"
+        assert body["order_status"] == "NO_ORDER"
+
+
+def test_stock_detail_endpoint_combines_local_quant_and_investor_flow() -> None:
+    module = importlib.import_module("quantum_trainer.web_api")
+
+    with TemporaryDirectory(dir=PROJECT_ROOT) as tmp_dir:
+        root = Path(tmp_dir)
+        _write_minimal_reports(root)
+        investor_dir = root / "reports" / "investor_flow"
+        investor_dir.mkdir(parents=True, exist_ok=True)
+        pd.DataFrame(
+            [
+                {
+                    "date": "2026-05-27",
+                    "symbol": "083450.KQ",
+                    "institution": 1200,
+                    "foreign": -500,
+                    "individual": -700,
+                    "broker": "local-cache",
+                },
+                {
+                    "date": "2026-05-28",
+                    "symbol": "083450.KQ",
+                    "institution": 800,
+                    "foreign": 300,
+                    "individual": -1100,
+                    "broker": "local-cache",
+                },
+            ]
+        ).to_csv(investor_dir / "investor_flow_083450_KQ.csv", index=False)
+
+        app = module.create_app(project_root=root)
+        client = module.TestClient(app)
+        response = client.get("/api/stock-detail", params={"stock": "083450.KQ"})
+
+        assert response.status_code == 200
+        body = response.json()
+        assert body["requested"]["symbol"] == "083450.KQ"
+        assert body["found"] is True
+        assert body["profile"]["company_name"] == "GST"
+        assert body["profile"]["latest_price"] == 44800
+        assert body["quant"]["trend_regime"] == "PULLBACK_UPTREND"
+        assert body["quant"]["final_watch_status"] == "LOW_PRIORITY"
+        assert body["investor_flow"]["data_status"] == "CACHED_LOCAL"
+        assert body["investor_flow"]["recent"][-1]["foreign"] == 300
+        assert body["order_status"] == "NO_ORDER"
+        assert body["external_api_requested"] == "NO"
+        assert body["broker_order_requested"] == "NO"
+
+
+def test_stock_detail_endpoint_marks_missing_investor_flow_as_data_required() -> None:
+    module = importlib.import_module("quantum_trainer.web_api")
+
+    with TemporaryDirectory(dir=PROJECT_ROOT) as tmp_dir:
+        root = Path(tmp_dir)
+        _write_minimal_reports(root)
+
+        payload = module.build_stock_detail_payload(project_root=root, stock="083450.KQ")
+
+        assert payload["found"] is True
+        assert payload["investor_flow"]["data_status"] == "DATA_REQUIRED"
+        assert payload["investor_flow"]["external_api_requested"] == "NO"
+        assert payload["order_status"] == "NO_ORDER"
 
 
 def _write_minimal_reports(root: Path) -> None:

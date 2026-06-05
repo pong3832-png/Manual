@@ -70,7 +70,7 @@ def run_symbol_analysis(
     rank = ""
 
     try:
-        prices = load_price_csv(runtime_config.prices_csv)
+        prices = load_price_csv(runtime_config.prices_csv, drop_incomplete=False)
         if target_symbol not in prices.columns:
             blocking_reason = "missing cached price history; refresh market data with explicit approval or add manual prices"
         else:
@@ -241,7 +241,7 @@ def _batch_price_info(
         for symbol in symbols
     }
     try:
-        prices = load_price_csv(prices_csv)
+        prices = load_price_csv(prices_csv, drop_incomplete=False)
     except FileNotFoundError:
         for symbol in symbols:
             info[symbol]["blocking_reason"] = "price csv missing; refresh market data with explicit approval or add manual prices"

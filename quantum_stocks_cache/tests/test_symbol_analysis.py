@@ -153,6 +153,74 @@ def test_symbol_analysis_runs_company_research_on_single_symbol_universe(monkeyp
         assert seen_symbols == [["006800.KS"]]
 
 
+def test_symbol_analysis_uses_sparse_full_universe_price_cache(monkeypatch) -> None:
+    with TemporaryDirectory(dir=PROJECT_ROOT) as tmp_dir:
+        root = Path(tmp_dir)
+        prices_path = root / "prices.csv"
+        config_path = root / "portfolio.yaml"
+        universe_path = root / "research_universe.actual.csv"
+        dates = pd.date_range("2026-01-01", periods=100, freq="B")
+        prices = pd.DataFrame(
+            {
+                "date": dates,
+                "005930.KS": [70000.0 + i for i in range(100)],
+                "006800.KS": [7500.0 + i for i in range(100)],
+                "099520.KQ": [None] * 89 + [1200.0 + i for i in range(11)],
+            }
+        )
+        prices.to_csv(prices_path, encoding="utf-8-sig", index=False)
+        _write_config(config_path, prices_path)
+        universe_path.write_text(
+            "\n".join(
+                [
+                    "symbol,company_name,sector,market,code",
+                    "005930.KS,Samsung Electronics,Semiconductors,KOSPI,005930",
+                    "006800.KS,Mirae Asset Securities,Securities,KOSPI,006800",
+                ]
+            ),
+            encoding="utf-8",
+        )
+
+        def fake_run_company_research(**kwargs):
+            report = pd.DataFrame(
+                [
+                    {
+                        "symbol": "006800.KS",
+                        "latest_price": 7599.0,
+                        "latest_price_date": "2026-05-20",
+                        "research_score": 55.0,
+                        "research_view": "RESEARCH_CANDIDATE",
+                        "decision": "WAIT",
+                        "why_summary": "sparse cache target analysis",
+                    }
+                ]
+            )
+            csv_path = root / "reports" / "company_research" / "company_research.csv"
+            markdown_path = root / "reports" / "company_research" / "company_research.md"
+            csv_path.parent.mkdir(parents=True, exist_ok=True)
+            csv_path.write_text("symbol\n006800.KS\n", encoding="utf-8")
+            markdown_path.write_text("single symbol", encoding="utf-8")
+            return SimpleNamespace(csv_path=csv_path, markdown_path=markdown_path, report=report)
+
+        monkeypatch.setattr(symbol_analysis_module, "run_company_research", fake_run_company_research)
+
+        output = run_symbol_analysis(
+            config_path=config_path,
+            universe_csv=universe_path,
+            output_dir=root / "reports",
+            code="006800",
+            company_name="Mirae Asset Securities",
+            market="KOSPI",
+            sector="Securities",
+            min_samples=80,
+        )
+
+        row = output.report.iloc[0]
+        assert output.status == "ANALYSIS_READY"
+        assert row["price_data_status"] == "READY"
+        assert row["price_rows"] == 100
+
+
 def test_symbol_analysis_reports_data_required_when_price_cache_is_missing() -> None:
     with TemporaryDirectory(dir=PROJECT_ROOT) as tmp_dir:
         root = Path(tmp_dir)

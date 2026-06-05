@@ -30,15 +30,20 @@ def main() -> int:
 
         app = create_app(PROJECT_ROOT)
         url = f"http://{args.host}:{args.port}"
-        print("퀀트 트레이너 FastAPI + React")
-        print(f"주소: {url}")
-        print("주문 실행: 안함")
+        _safe_print("퀀트 트레이너 FastAPI + React")
+        _safe_print(f"주소: {url}")
+        _safe_print("주문 실행: 안함")
         logger.info("Starting web app at %s", url)
         uvicorn.run(app, host=args.host, port=args.port, log_level="info")
         return 0
     except Exception as exc:
         logger.exception("Web app failed: %s", exc)
         return 1
+
+
+def _safe_print(message: str) -> None:
+    if sys.stdout is not None:
+        print(message)
 
 
 if __name__ == "__main__":

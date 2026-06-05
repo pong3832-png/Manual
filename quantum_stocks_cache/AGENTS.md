@@ -676,3 +676,8 @@ Get-ChildItem -Recurse -File -Name -Exclude *.pyc
 - 문서만 바꾼 경우에는 `git diff --check -- <changed-files>`와 필요한 `rg` 확인으로 충분하다.
 - 코드 변경이면 해당 기능 테스트, 관련 테스트, `py_compile` 또는 `compileall`을 실행한다.
 - 모든 리포트/CLI/API 출력은 계속 `external_api_requested=NO`, `order_status=NO_ORDER`, `broker_order_requested=NO`를 유지한다.
+
+## Local GUI Stock Detail Addendum
+
+- `/api/stock-detail?stock=...` is read-only. It combines local cached price, trend forecast, event-adjusted ranking, tactical watchlist, pre-buy decision, symbol analysis, and optional local investor-flow cache into one stock detail payload.
+- `reports/investor_flow/*.csv` is the only local source for GUI institution/foreign/individual flow display. If missing, `/api/stock-detail` must return `investor_flow.data_status=DATA_REQUIRED` and `external_api_requested=NO`; do not fetch pykrx/KRX/broker data automatically.

@@ -46,6 +46,11 @@ const statusKo = {
   RISK_OFF: '위험 회피',
   DEFENSIVE: '방어',
   NO_HOLDINGS: '보유 없음',
+  ANALYSIS_READY: '분석 가능',
+  RESEARCH_CANDIDATE: '연구 후보',
+  PRICE_DATA_REQUIRED: '가격 데이터 필요',
+  READY: '준비됨',
+  MISSING: '데이터 없음',
   QUEUED: '대기 중',
   RUNNING: '실행 중',
   ERROR: '오류'
@@ -60,20 +65,33 @@ function App() {
   const [status, setStatus] = useState(null);
   const [candidateBoard, setCandidateBoard] = useState(null);
   const [holdingBoard, setHoldingBoard] = useState(null);
+  const [symbolAnalysis, setSymbolAnalysis] = useState(null);
+  const [stockDetail, setStockDetail] = useState(null);
   const [holdingDrafts, setHoldingDrafts] = useState({});
+  const [tradeDraft, setTradeDraft] = useState({
+    stock: '',
+    side: 'BUY',
+    price: '',
+    quantity: '',
+    notes: ''
+  });
   const [stock, setStock] = useState('');
   const [refreshMarketData, setRefreshMarketData] = useState(true);
   const [running, setRunning] = useState(false);
   const [analysisJob, setAnalysisJob] = useState(null);
+  const [autoRefreshStarted, setAutoRefreshStarted] = useState(false);
   const [savingHoldings, setSavingHoldings] = useState(false);
+  const [savingTrade, setSavingTrade] = useState(false);
   const [loadingCandidates, setLoadingCandidates] = useState(false);
   const [loadingHoldings, setLoadingHoldings] = useState(false);
+  const [loadingStockDetail, setLoadingStockDetail] = useState(false);
   const [searching, setSearching] = useState(false);
   const [suggestions, setSuggestions] = useState([]);
   const [selectedCandidate, setSelectedCandidate] = useState(null);
   const [resultLines, setResultLines] = useState([]);
   const [error, setError] = useState('');
   const [holdingSaveMessage, setHoldingSaveMessage] = useState('');
+  const [tradeMessage, setTradeMessage] = useState('');
 
   async function loadStatus() {
     const response = await fetch('/api/status');
@@ -102,6 +120,37 @@ function App() {
       setHoldingDrafts(makeHoldingDrafts(body.holdings || []));
     } finally {
       setLoadingHoldings(false);
+    }
+  }
+
+  async function loadSymbolAnalysis(stockText) {
+    const keyword = stockText?.trim();
+    if (!keyword) {
+      setSymbolAnalysis(null);
+      return null;
+    }
+    const response = await fetch(`/api/symbol-analysis?stock=${encodeURIComponent(keyword)}`);
+    const body = await response.json();
+    if (!response.ok) throw new Error(body.detail || '검색 종목 분석을 불러오지 못했습니다.');
+    setSymbolAnalysis(body);
+    return body;
+  }
+
+  async function loadStockDetail(stockText) {
+    const keyword = stockText?.trim();
+    if (!keyword) {
+      setStockDetail(null);
+      return null;
+    }
+    setLoadingStockDetail(true);
+    try {
+      const response = await fetch(`/api/stock-detail?stock=${encodeURIComponent(keyword)}`);
+      const body = await response.json();
+      if (!response.ok) throw new Error(body.detail || '종목 상세 정보를 불러오지 못했습니다.');
+      setStockDetail(body);
+      return body;
+    } finally {
+      setLoadingStockDetail(false);
     }
   }
 
@@ -134,6 +183,43 @@ function App() {
     }
   }
 
+  async function recordTrade(event) {
+    event.preventDefault();
+    setSavingTrade(true);
+    setError('');
+    setTradeMessage('');
+    try {
+      const response = await fetch('/api/trades', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          stock: tradeDraft.stock.trim(),
+          side: tradeDraft.side,
+          price: numberOrZero(tradeDraft.price),
+          quantity: numberOrZero(tradeDraft.quantity),
+          notes: tradeDraft.notes || ''
+        })
+      });
+      const body = await response.json();
+      if (!response.ok) throw new Error(body.detail || '체결 기록 저장에 실패했습니다.');
+      setHoldingBoard(body);
+      setHoldingDrafts(makeHoldingDrafts(body.holdings || []));
+      setTradeMessage(`${tradeDraft.side === 'BUY' ? '매수' : '매도'} 반영됨`);
+      setTradeDraft((current) => ({ ...current, price: '', quantity: '', notes: '' }));
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setSavingTrade(false);
+    }
+  }
+
+  function updateTradeDraft(field, value) {
+    setTradeDraft((current) => ({
+      ...current,
+      [field]: value
+    }));
+  }
+
   function updateHoldingDraft(symbol, field, value) {
     setHoldingDrafts((current) => ({
       ...current,
@@ -149,6 +235,12 @@ function App() {
     loadCandidates().catch((err) => setError(err.message));
     loadHoldings().catch((err) => setError(err.message));
   }, []);
+
+  useEffect(() => {
+    if (autoRefreshStarted || running) return;
+    setAutoRefreshStarted(true);
+    startAnalysis(null, true).catch((err) => setError(err.message));
+  }, [autoRefreshStarted, running]);
 
   useEffect(() => {
     const keyword = stock.trim();
@@ -179,29 +271,43 @@ function App() {
     setSelectedCandidate(candidate);
     setStock(candidate.company_name);
     setSuggestions([]);
+    loadSymbolAnalysis(candidate.symbol).catch(() => {});
+    loadStockDetail(candidate.symbol).catch((err) => setError(err.message));
+  }
+
+  function openStockDetail(symbol) {
+    if (!symbol) return;
+    setStock(symbol);
+    setSuggestions([]);
+    loadStockDetail(symbol).catch((err) => setError(err.message));
+    loadSymbolAnalysis(symbol).catch(() => {});
   }
 
   async function runAnalysis(event) {
     event.preventDefault();
+    const requestedStock = selectedCandidate?.symbol || stock.trim() || null;
+    await startAnalysis(requestedStock, refreshMarketData);
+  }
+
+  async function startAnalysis(requestedStock, shouldRefreshMarketData) {
     setRunning(true);
     setError('');
     setResultLines([]);
     setAnalysisJob(null);
     try {
-      const requestedStock = selectedCandidate?.symbol || stock.trim() || null;
       const response = await fetch('/api/analyze/jobs', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           stock: requestedStock,
-          refresh_market_data: refreshMarketData,
-          cache_market_data: !refreshMarketData
+          refresh_market_data: shouldRefreshMarketData,
+          cache_market_data: !shouldRefreshMarketData
         })
       });
       const body = await response.json();
       if (!response.ok) throw new Error(body.detail || '분석 작업 생성에 실패했습니다.');
       setAnalysisJob(body);
-      await pollAnalysisJob(body.job_id);
+      await pollAnalysisJob(body.job_id, requestedStock);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -209,7 +315,7 @@ function App() {
     }
   }
 
-  async function pollAnalysisJob(jobId) {
+  async function pollAnalysisJob(jobId, requestedStock) {
     let current = null;
     for (let attempt = 0; attempt < 240; attempt += 1) {
       const response = await fetch(`/api/analyze/jobs/${jobId}`);
@@ -222,6 +328,10 @@ function App() {
         if (body.app_status) setStatus(body.app_status);
         await loadCandidates();
         await loadHoldings();
+        if (requestedStock) {
+          await loadSymbolAnalysis(requestedStock);
+          await loadStockDetail(requestedStock);
+        }
         return body;
       }
       if (body.status === 'ERROR') {
@@ -237,6 +347,10 @@ function App() {
   const tracking = status?.tracking || {};
   const latest = status?.latest_price_date || '-';
   const boardCandidates = candidateBoard?.candidates || [];
+  const searchedAnalysis = symbolAnalysis?.analysis || {};
+  const detailProfile = stockDetail?.profile || {};
+  const detailQuant = stockDetail?.quant || {};
+  const investorFlow = stockDetail?.investor_flow || {};
   const holdings = holdingBoard?.holdings || [];
   const holdingSummary = holdingBoard?.summary || {};
   const market = candidateBoard?.market || {};
@@ -256,7 +370,7 @@ function App() {
       <header className="topbar">
         <div>
           <h1>퀀트 트레이너</h1>
-          <p>오늘 후보와 막힌 이유</p>
+          <p>{running && !analysisJob?.stock ? '최신 후보 자동 갱신 중' : '오늘 후보와 막힌 이유'}</p>
         </div>
         <span className="safe-pill">
           <ShieldCheck size={16} />
@@ -408,6 +522,81 @@ function App() {
         <Metric label="성과 추적" value={ko(tracking.tracking_status)} />
       </section>
 
+      <section className="rank-board">
+        <div className="section-heading">
+          <div>
+            <span className="eyebrow">실시간 퀀트 랭킹</span>
+            <h2>매수 검토 등수</h2>
+          </div>
+          <div className="market-strip">
+            <span>{candidateBoard?.as_of || latest}</span>
+            <span>{ko(candidateBoard?.order_status || 'NO_ORDER')}</span>
+          </div>
+        </div>
+        {loadingCandidates && (
+          <div className="candidate-empty">
+            <RefreshCw size={18} className="spin" />
+            퀀트 랭킹 계산 중
+          </div>
+        )}
+        {!loadingCandidates && boardCandidates.length === 0 && (
+          <div className="candidate-empty">랭킹 데이터 확인 필요</div>
+        )}
+        {!loadingCandidates && boardCandidates.length > 0 && (
+          <div className="rank-list">
+            {boardCandidates.slice(0, 8).map((item, index) => (
+              <RankRow key={item.symbol} item={item} rank={index + 1} onSelect={openStockDetail} />
+            ))}
+          </div>
+        )}
+      </section>
+
+      {(stockDetail || loadingStockDetail) && (
+        <section className="stock-detail-board">
+          <div className="section-heading">
+            <div>
+              <span className="eyebrow">종목 상세 정보</span>
+              <h2>{detailProfile.company_name || stock || '종목 상세'}</h2>
+            </div>
+            <div className="market-strip">
+              <span>{detailProfile.symbol || '-'}</span>
+              <span>{ko(stockDetail?.order_status || 'NO_ORDER')}</span>
+            </div>
+          </div>
+          {loadingStockDetail && (
+            <div className="candidate-empty">
+              <RefreshCw size={18} className="spin" />
+              종목 상세 정보 갱신 중
+            </div>
+          )}
+          {!loadingStockDetail && stockDetail && (
+            <StockDetailCard profile={detailProfile} quant={detailQuant} investorFlow={investorFlow} />
+          )}
+        </section>
+      )}
+
+      {symbolAnalysis && (
+        <section className="symbol-analysis-board">
+          <div className="section-heading">
+            <div>
+              <span className="eyebrow">검색 종목 분석</span>
+              <h2>{searchedAnalysis.company_name || symbolAnalysis.requested?.company_name || stock || '종목 확인'}</h2>
+            </div>
+            <div className="market-strip">
+              <span>{searchedAnalysis.symbol || symbolAnalysis.requested?.symbol || '-'}</span>
+              <span>{ko(searchedAnalysis.order_status || 'NO_ORDER')}</span>
+            </div>
+          </div>
+          {symbolAnalysis.found ? (
+            <SymbolAnalysisCard item={searchedAnalysis} />
+          ) : (
+            <div className="candidate-empty">
+              이 종목 전용 분석 결과가 아직 없습니다. 분석 버튼을 누르면 로컬 캐시 기준으로 생성합니다.
+            </div>
+          )}
+        </section>
+      )}
+
       <section className="holding-board">
         <div className="section-heading">
           <div>
@@ -443,6 +632,7 @@ function App() {
             />
             <HoldingKpi label="총 평가액" value={formatPrice(holdingSummary.known_market_value)} />
             <HoldingKpi label="총 손익" value={formatSignedMoney(holdingSummary.known_unrealized_pnl)} />
+            <HoldingKpi label="전체 수익률" value={formatPercent(holdingSummary.known_unrealized_return)} />
             <HoldingKpi label="방어 우선" value={ko(holdingSummary.highest_priority_action)} />
           </div>
         )}
@@ -456,6 +646,49 @@ function App() {
             </button>
           </div>
         )}
+
+        <form className="trade-entry" onSubmit={recordTrade}>
+          <label>
+            <span>종목</span>
+            <input
+              value={tradeDraft.stock}
+              onChange={(event) => updateTradeDraft('stock', event.target.value)}
+              placeholder="LG전자 또는 066570"
+            />
+          </label>
+          <label>
+            <span>구분</span>
+            <select value={tradeDraft.side} onChange={(event) => updateTradeDraft('side', event.target.value)}>
+              <option value="BUY">매수</option>
+              <option value="SELL">매도</option>
+            </select>
+          </label>
+          <label>
+            <span>체결가</span>
+            <input
+              type="number"
+              min="0"
+              step="1"
+              value={tradeDraft.price}
+              onChange={(event) => updateTradeDraft('price', event.target.value)}
+            />
+          </label>
+          <label>
+            <span>수량</span>
+            <input
+              type="number"
+              min="0"
+              step="1"
+              value={tradeDraft.quantity}
+              onChange={(event) => updateTradeDraft('quantity', event.target.value)}
+            />
+          </label>
+          <button type="submit" disabled={savingTrade}>
+            {savingTrade ? <RefreshCw size={17} className="spin" /> : <Save size={17} />}
+            {savingTrade ? '반영 중' : '체결 반영'}
+          </button>
+          <span className="trade-note">{tradeMessage || '실제 주문 아님 · 입력한 체결만 로컬 반영'}</span>
+        </form>
 
         {!loadingHoldings && holdings.length > 0 && (
           <div className="holding-list">
@@ -502,7 +735,7 @@ function App() {
         {!loadingCandidates && boardCandidates.length > 0 && (
           <div className="candidate-list">
             {boardCandidates.map((item) => (
-              <CandidateCard key={item.symbol} item={item} />
+              <CandidateCard key={item.symbol} item={item} onSelect={openStockDetail} />
             ))}
           </div>
         )}
@@ -588,12 +821,20 @@ function HoldingCard({ item, draft, onDraftChange }) {
   );
 }
 
-function CandidateCard({ item }) {
+function CandidateCard({ item, onSelect }) {
   const summary = item.decision_summary || {};
   const note = item.operator_action || item.key_reason || item.next_check || '수동 검토 대기';
   const blockers = item.readiness_blockers || item.buy_ban_reasons || item.next_check || '게이트 확인 필요';
   return (
-    <article className={item.chase_risk === 'YES' ? 'candidate-card risk' : 'candidate-card'}>
+    <article
+      className={item.chase_risk === 'YES' ? 'candidate-card risk clickable-card' : 'candidate-card clickable-card'}
+      role="button"
+      tabIndex={0}
+      onClick={() => onSelect?.(item.symbol)}
+      onKeyDown={(event) => {
+        if (event.key === 'Enter' || event.key === ' ') onSelect?.(item.symbol);
+      }}
+    >
       <div className="candidate-top">
         <div className="candidate-title">
           <strong>{item.company_name || '-'}</strong>
@@ -613,6 +854,151 @@ function CandidateCard({ item }) {
       <div className="blocker-line">
         {item.decision_status === 'BUY_READY' ? <CheckCircle2 size={16} /> : <ListChecks size={16} />}
         <span>{summary.risk_line || blockers}</span>
+      </div>
+    </article>
+  );
+}
+
+function RankRow({ item, rank, onSelect }) {
+  const summary = item.decision_summary || {};
+  const score = Number(item.priority_score || item.final_rank_score || 0);
+  const label = decisionLabelKo(summary.label) || ko(item.decision_status);
+  const reason = summary.reason || item.operator_action || item.key_reason || item.next_check || '검토 사유 확인 필요';
+  return (
+    <article
+      className={`rank-row rank-${rank <= 3 ? rank : 'base'}`}
+      role="button"
+      tabIndex={0}
+      onClick={() => onSelect?.(item.symbol)}
+      onKeyDown={(event) => {
+        if (event.key === 'Enter' || event.key === ' ') onSelect?.(item.symbol);
+      }}
+    >
+      <div className="rank-number">
+        <span>{rank}</span>
+      </div>
+      <div className="rank-main">
+        <div className="rank-title">
+          <strong>{item.company_name || '-'}</strong>
+          <span>{item.symbol} · {item.sector || '섹터 확인 필요'}</span>
+        </div>
+        <p>{reason}</p>
+      </div>
+      <div className="rank-metrics">
+        <strong>{score.toFixed(1)}</strong>
+        <span>점수</span>
+      </div>
+      <div className="rank-meta">
+        <span className={`status-badge ${statusClass(item.decision_status)}`}>{label}</span>
+        <span>{formatPrice(item.latest_price)}</span>
+        <span>{ko(item.final_watch_status)}</span>
+      </div>
+    </article>
+  );
+}
+
+function SymbolAnalysisCard({ item }) {
+  const ready = item.analysis_status === 'ANALYSIS_READY';
+  const blocker = item.blocking_reason || item.next_step || '수동 검토 필요';
+  return (
+    <article className={`symbol-analysis-card ${ready ? 'ready' : 'risk'}`}>
+      <div className="candidate-top">
+        <div className="candidate-title">
+          <strong>{item.company_name || '-'}</strong>
+          <span>{item.symbol} · {item.market || '-'} · {item.sector || '섹터 확인 필요'}</span>
+        </div>
+        <span className={`status-badge ${ready ? 'ready' : 'wait'}`}>
+          {ko(item.analysis_status)}
+        </span>
+      </div>
+      <div className="holding-summary-grid compact-grid">
+        <HoldingKpi label="현재가" value={formatPrice(item.latest_price)} />
+        <HoldingKpi label="기준일" value={item.latest_price_date || '-'} />
+        <HoldingKpi label="점수" value={item.research_score ? `${Number(item.research_score).toFixed(1)}점` : '-'} />
+        <HoldingKpi label="가격 데이터" value={`${ko(item.price_data_status)} · ${item.price_rows || 0}일`} />
+      </div>
+      <div className="candidate-meta">
+        <span>판단 {ko(item.decision)}</span>
+        <span>관점 {ko(item.research_view)}</span>
+        <span>순위 {item.company_research_rank || '-'}</span>
+        <span>{ko(item.local_pipeline_ready === 'YES' ? 'READY' : 'DATA_REQUIRED')}</span>
+      </div>
+      <p>{item.why_summary || '검색 종목의 로컬 분석 요약을 확인하세요.'}</p>
+      <div className="blocker-line">
+        {ready ? <CheckCircle2 size={16} /> : <ListChecks size={16} />}
+        <span>{blocker}</span>
+      </div>
+    </article>
+  );
+}
+
+function StockDetailCard({ profile, quant, investorFlow }) {
+  const summary = quant.decision_summary || {};
+  const investorRows = investorFlow.recent || [];
+  return (
+    <article className="stock-detail-card">
+      <div className="candidate-top">
+        <div className="candidate-title">
+          <strong>{profile.company_name || '-'}</strong>
+          <span>{profile.symbol || '-'} · {profile.market || '-'} · {profile.sector || '섹터 확인 필요'}</span>
+        </div>
+        <span className={`status-badge ${statusClass(quant.decision)}`}>
+          {ko(quant.decision || 'UNKNOWN')}
+        </span>
+      </div>
+
+      <div className="stock-detail-grid">
+        <HoldingKpi label="현재가" value={formatPrice(profile.latest_price)} />
+        <HoldingKpi label="기준일" value={profile.latest_price_date || '-'} />
+        <HoldingKpi label="퀀트 점수" value={quant.priority_score ? `${Number(quant.priority_score).toFixed(1)}점` : '-'} />
+        <HoldingKpi label="최종 순위점수" value={quant.final_rank_score ? `${Number(quant.final_rank_score).toFixed(1)}점` : '-'} />
+        <HoldingKpi label="20일 수익률" value={formatPercent(quant.return_20d)} />
+        <HoldingKpi label="60일 수익률" value={formatPercent(quant.return_60d)} />
+        <HoldingKpi label="상승 확률" value={formatPercent(quant.upside_probability)} />
+        <HoldingKpi label="예상 20일" value={formatPercent(quant.expected_20d_return)} />
+      </div>
+
+      <div className="candidate-meta">
+        <span>추세 {ko(quant.trend_regime)}</span>
+        <span>전망 {ko(quant.forecast_bias)}</span>
+        <span>감시 {formatRange(summary.watch_price_low || quant.entry_price_low, summary.watch_price_high || quant.entry_price_high)}</span>
+        <span>{ko(quant.final_watch_status)}</span>
+        <span>{ko(quant.entry_watch_status)}</span>
+      </div>
+
+      <div className="detail-columns">
+        <section>
+          <h3>퀀트 판단</h3>
+          <p>{summary.reason || quant.operator_action || quant.key_reason || quant.buy_reasons || '로컬 분석 사유를 확인하세요.'}</p>
+          <div className="blocker-line compact">
+            <ListChecks size={16} />
+            <span>{summary.risk_line || quant.readiness_blockers || quant.buy_ban_reasons || quant.stop_loss_rule || '추가 차단 조건 없음'}</span>
+          </div>
+        </section>
+        <section>
+          <h3>거래원 / 수급</h3>
+          <p>{investorFlow.summary || '기관/외국인 수급 데이터 확인 필요'}</p>
+          {investorRows.length > 0 ? (
+            <div className="flow-table">
+              <div className="flow-row head">
+                <span>일자</span>
+                <span>기관</span>
+                <span>외국인</span>
+                <span>개인</span>
+              </div>
+              {investorRows.slice(-5).reverse().map((row, index) => (
+                <div className="flow-row" key={`${row.date}-${index}`}>
+                  <span>{row.date || '-'}</span>
+                  <span>{formatSignedCompact(row.institution)}</span>
+                  <span>{formatSignedCompact(row.foreign)}</span>
+                  <span>{formatSignedCompact(row.individual)}</span>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="data-required-line">{ko(investorFlow.data_status || 'DATA_REQUIRED')}</div>
+          )}
+        </section>
       </div>
     </article>
   );
@@ -676,6 +1062,13 @@ function formatSignedMoney(value) {
   if (!Number.isFinite(number) || number === 0) return '-';
   const sign = number > 0 ? '+' : '';
   return `${sign}${number.toLocaleString('ko-KR', { maximumFractionDigits: 0 })}원`;
+}
+
+function formatSignedCompact(value) {
+  const number = Number(value);
+  if (!Number.isFinite(number) || number === 0) return '-';
+  const sign = number > 0 ? '+' : '';
+  return `${sign}${number.toLocaleString('ko-KR', { maximumFractionDigits: 0 })}`;
 }
 
 function formatQuantity(value, known) {
