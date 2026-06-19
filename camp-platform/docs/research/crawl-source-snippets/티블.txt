@@ -1,0 +1,606 @@
+티블
+
+로그인 없이 구경 가능
+무한 스크롤로 볼 수 있음
+
+
+전체 url
+https://tble.kr/
+
+방문형 카테고리
+https://tble.kr/category.php?type=l
+
+헤더스
+Request URL
+https://mpc2-prod-29-is5qnl632q-uc.a.run.app/events?cee=no
+Request Method
+POST
+Status Code
+200 OK
+Remote Address
+34.143.78.2:443
+Referrer Policy
+strict-origin-when-cross-origin
+access-control-allow-credentials
+true
+access-control-allow-origin
+https://tble.kr
+alt-svc
+h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+content-length
+0
+content-security-policy
+default-src 'none'
+content-type
+application/json
+date
+Fri, 03 Apr 2026 02:56:20 GMT
+server
+Google Frontend
+vary
+origin
+x-cloud-trace-context
+f480b06544d58006a0409061746e5cf4
+:authority
+mpc2-prod-29-is5qnl632q-uc.a.run.app
+:method
+POST
+:path
+/events?cee=no
+:scheme
+https
+accept
+*/*
+accept-encoding
+gzip, deflate, br, zstd
+accept-language
+ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7
+content-length
+545
+content-type
+text/plain;charset=UTF-8
+origin
+https://tble.kr
+priority
+u=1, i
+referer
+https://tble.kr/
+sec-ch-ua
+"Chromium";v="146", "Not-A.Brand";v="24", "Google Chrome";v="146"
+sec-ch-ua-mobile
+?0
+sec-ch-ua-platform
+"Windows"
+sec-fetch-dest
+empty
+sec-fetch-mode
+cors
+sec-fetch-site
+cross-site
+sec-fetch-storage-access
+active
+user-agent
+Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36
+
+페이로드
+cee
+no
+{event_name: "PageView", fb.dynamic_product_ads: {}, custom_data: {},…}
+custom_data
+: 
+{}
+event_id
+: 
+"ob3_plugin-set_e837a4c69728906143e4ebf9d0cc200173a3c6fa35c881413d3062fd8b64a9e5"
+event_meta_info
+: 
+{,…}
+event_name
+: 
+"PageView"
+fb.advanced_matching
+: 
+{}
+fb.dynamic_product_ads
+: 
+{}
+fb.fbp
+: 
+"fb.1.1775184864412.544373220361292070"
+fb.pixel_id
+: 
+"1714166615288522"
+website_context
+: 
+{location: "https://tble.kr/category.php?type=l", referrer: "https://tble.kr/category.php?type=l",…}
+
+
+배송형 카테고리
+https://tble.kr/category.php?type=p
+
+헤더스
+Request URL
+https://mpc2-prod-29-is5qnl632q-uc.a.run.app/events?cee=no
+Request Method
+POST
+Status Code
+200 OK
+Remote Address
+34.143.78.2:443
+Referrer Policy
+strict-origin-when-cross-origin
+access-control-allow-credentials
+true
+access-control-allow-origin
+https://tble.kr
+alt-svc
+h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+content-length
+0
+content-security-policy
+default-src 'none'
+content-type
+application/json
+date
+Fri, 03 Apr 2026 02:56:41 GMT
+server
+Google Frontend
+vary
+origin
+x-cloud-trace-context
+647e2f24c6b23369f6036c93b35e6e47
+:authority
+mpc2-prod-29-is5qnl632q-uc.a.run.app
+:method
+POST
+:path
+/events?cee=no
+:scheme
+https
+accept
+*/*
+accept-encoding
+gzip, deflate, br, zstd
+accept-language
+ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7
+content-length
+545
+content-type
+text/plain;charset=UTF-8
+origin
+https://tble.kr
+priority
+u=1, i
+referer
+https://tble.kr/
+sec-ch-ua
+"Chromium";v="146", "Not-A.Brand";v="24", "Google Chrome";v="146"
+sec-ch-ua-mobile
+?0
+sec-ch-ua-platform
+"Windows"
+sec-fetch-dest
+empty
+sec-fetch-mode
+cors
+sec-fetch-site
+cross-site
+sec-fetch-storage-access
+active
+user-agent
+Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36
+
+페이로드
+cee
+no
+{event_name: "PageView", fb.dynamic_product_ads: {}, custom_data: {},…}
+custom_data
+: 
+{}
+event_id
+: 
+"ob3_plugin-set_a74527013815e9398b4a19c8ea3507f3b97b0044aa51623cfd493323c2c4744b"
+event_meta_info
+: 
+{,…}
+event_name
+: 
+"PageView"
+fb.advanced_matching
+: 
+{}
+fb.dynamic_product_ads
+: 
+{}
+fb.fbp
+: 
+"fb.1.1775184864412.544373220361292070"
+fb.pixel_id
+: 
+"1714166615288522"
+website_context
+: 
+{location: "https://tble.kr/category.php?type=p", referrer: "https://tble.kr/category.php?type=l",…}
+
+
+기자단 카테고리
+https://tble.kr/category.php?type=r
+
+헤더스
+Request URL
+https://mpc2-prod-29-is5qnl632q-uc.a.run.app/events?cee=no
+Request Method
+POST
+Status Code
+200 OK
+Remote Address
+34.143.79.2:443
+Referrer Policy
+strict-origin-when-cross-origin
+access-control-allow-credentials
+true
+access-control-allow-origin
+https://tble.kr
+alt-svc
+h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+content-length
+0
+content-security-policy
+default-src 'none'
+content-type
+application/json
+date
+Fri, 03 Apr 2026 02:57:13 GMT
+server
+Google Frontend
+vary
+origin
+x-cloud-trace-context
+ab9fa2c5c03084072cccaa1729f7d1bd
+:authority
+mpc2-prod-29-is5qnl632q-uc.a.run.app
+:method
+POST
+:path
+/events?cee=no
+:scheme
+https
+accept
+*/*
+accept-encoding
+gzip, deflate, br, zstd
+accept-language
+ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7
+content-length
+545
+content-type
+text/plain;charset=UTF-8
+origin
+https://tble.kr
+priority
+u=1, i
+referer
+https://tble.kr/
+sec-ch-ua
+"Chromium";v="146", "Not-A.Brand";v="24", "Google Chrome";v="146"
+sec-ch-ua-mobile
+?0
+sec-ch-ua-platform
+"Windows"
+sec-fetch-dest
+empty
+sec-fetch-mode
+cors
+sec-fetch-site
+cross-site
+sec-fetch-storage-access
+active
+user-agent
+Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36
+
+페이로드
+cee
+no
+{event_name: "PageView", fb.dynamic_product_ads: {}, custom_data: {},…}
+custom_data
+: 
+{}
+event_id
+: 
+"ob3_plugin-set_90bb81ed8513ea32116114c5907feb8ace03b0b8feaeb561ba0951698b5f3caa"
+event_meta_info
+: 
+{,…}
+event_name
+: 
+"PageView"
+fb.advanced_matching
+: 
+{}
+fb.dynamic_product_ads
+: 
+{}
+fb.fbp
+: 
+"fb.1.1775184864412.544373220361292070"
+fb.pixel_id
+: 
+"1714166615288522"
+website_context
+: 
+{location: "https://tble.kr/category.php?type=r", referrer: "https://tble.kr/category.php?type=p",…}
+
+
+구매평 카테고리
+https://tble.kr/category.php?type=c
+
+헤더스
+Request URL
+https://mpc2-prod-29-is5qnl632q-uc.a.run.app/events?cee=no
+Request Method
+POST
+Status Code
+200 OK
+Remote Address
+34.143.79.2:443
+Referrer Policy
+strict-origin-when-cross-origin
+access-control-allow-credentials
+true
+access-control-allow-origin
+https://tble.kr
+alt-svc
+h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+content-length
+0
+content-security-policy
+default-src 'none'
+content-type
+application/json
+date
+Fri, 03 Apr 2026 02:57:38 GMT
+server
+Google Frontend
+vary
+origin
+x-cloud-trace-context
+f9ed1f147bcb946ea69bacc0bc817464
+:authority
+mpc2-prod-29-is5qnl632q-uc.a.run.app
+:method
+POST
+:path
+/events?cee=no
+:scheme
+https
+accept
+*/*
+accept-encoding
+gzip, deflate, br, zstd
+accept-language
+ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7
+content-length
+545
+content-type
+text/plain;charset=UTF-8
+origin
+https://tble.kr
+priority
+u=1, i
+referer
+https://tble.kr/
+sec-ch-ua
+"Chromium";v="146", "Not-A.Brand";v="24", "Google Chrome";v="146"
+sec-ch-ua-mobile
+?0
+sec-ch-ua-platform
+"Windows"
+sec-fetch-dest
+empty
+sec-fetch-mode
+cors
+sec-fetch-site
+cross-site
+sec-fetch-storage-access
+active
+user-agent
+Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36
+
+페이로드
+cee
+no
+{event_name: "PageView", fb.dynamic_product_ads: {}, custom_data: {},…}
+custom_data
+: 
+{}
+event_id
+: 
+"ob3_plugin-set_3d1235aaad1c72c63814fe6f6529f4241aef475a2d9274cb953ecfdd14734c01"
+event_meta_info
+: 
+{,…}
+event_name
+: 
+"PageView"
+fb.advanced_matching
+: 
+{}
+fb.dynamic_product_ads
+: 
+{}
+fb.fbp
+: 
+"fb.1.1775184864412.544373220361292070"
+fb.pixel_id
+: 
+"1714166615288522"
+website_context
+: 
+{location: "https://tble.kr/category.php?type=c", referrer: "https://tble.kr/category.php?type=r",…}
+
+
+
+캠페인 세부정보 HTML
+
+남은 기간
+<div class="t1">
+                                       <span class="ps_remain">
+                                                                              4일 남음
+                                                                              </span>
+                                    </div>
+
+SNS정보
+블로그일경우
+<div class="sns_img blog"><img src="/img/sns/sns_blog.png"></div>
+인스타일경우
+<div class="sns_img insta"><img src="/img/sns/sns_insta.png"></div>
+
+캠페인 지역 및 이름
+<div class="t2">[서울 논현] 세르프</div>
+
+캠페인 제공 내역
+<div class="t3">100만원 상당의 세르프 이용권</div>
+
+신청, 모집
+<div class="t4">신청 <strong>125</strong>명 / <span class="lgray">모집 <strong>5</strong>명</span></div>
+
+
+상세페이지 url
+https://tble.kr/view.php?cp_id=406873
+
+상세페이지 헤더스
+Request URL
+https://dapi.kakao.com/v2/local/search/address.json?query=%EA%B2%BD%EA%B8%B0%20%EC%95%88%EC%96%91%EC%8B%9C%20%EB%A7%8C%EC%95%88%EA%B5%AC%20%EC%84%9D%EC%88%98%EB%A1%9C16%EB%B2%88%EA%B8%B8%2068%20&page=1&size=10
+Request Method
+GET
+Status Code
+200 OK
+Remote Address
+121.53.88.94:443
+Referrer Policy
+strict-origin-when-cross-origin
+access-control-allow-headers
+Authorization, KA, Origin, X-Requested-With, Content-Type, Accept
+access-control-allow-methods
+GET, OPTIONS
+access-control-allow-origin
+*
+access-control-max-age
+86400
+content-length
+946
+content-type
+application/json; charset=utf-8
+date
+Fri, 03 Apr 2026 04:08:32 GMT
+x-request-id
+09d7aab00aac28913c11f0594985ca0d
+:authority
+dapi.kakao.com
+:method
+GET
+:path
+/v2/local/search/address.json?query=%EA%B2%BD%EA%B8%B0%20%EC%95%88%EC%96%91%EC%8B%9C%20%EB%A7%8C%EC%95%88%EA%B5%AC%20%EC%84%9D%EC%88%98%EB%A1%9C16%EB%B2%88%EA%B8%B8%2068%20&page=1&size=10
+:scheme
+https
+accept
+*/*
+accept-encoding
+gzip, deflate, br, zstd
+accept-language
+ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7
+authorization
+KakaoAK 6d8f7d63e789a1c9c2e2eb23d40dad9f
+ka
+sdk/4.4.21 os/javascript lang/ko-KR device/Win32 origin/https%3A%2F%2Ftble.kr
+origin
+https://tble.kr
+priority
+u=1, i
+referer
+https://tble.kr/
+sec-ch-ua
+"Chromium";v="146", "Not-A.Brand";v="24", "Google Chrome";v="146"
+sec-ch-ua-mobile
+?0
+sec-ch-ua-platform
+"Windows"
+sec-fetch-dest
+empty
+sec-fetch-mode
+cors
+sec-fetch-site
+cross-site
+user-agent
+Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36
+
+페이로드
+query
+경기 안양시 만안구 석수로16번길 68 
+page
+1
+size
+10
+
+프리뷰
+{,…}
+documents
+: 
+[{address: {address_name: "경기 안양시 만안구 석수동 306-6", b_code: "4117110200", h_code: "4117160000",…},…}]
+meta
+: 
+{is_end: true, pageable_count: 1, total_count: 1}
+is_end
+: 
+true
+pageable_count
+: 
+1
+total_count
+: 
+1
+
+리스폰스
+{
+    "documents": [
+        {
+            "address": {
+                "address_name": "경기 안양시 만안구 석수동 306-6",
+                "b_code": "4117110200",
+                "h_code": "4117160000",
+                "main_address_no": "306",
+                "mountain_yn": "N",
+                "region_1depth_name": "경기",
+                "region_2depth_name": "안양시 만안구",
+                "region_3depth_h_name": "석수2동",
+                "region_3depth_name": "석수동",
+                "sub_address_no": "6",
+                "x": "126.90861565749",
+                "y": "37.4115865504411"
+            },
+            "address_name": "경기 안양시 만안구 석수로16번길 68",
+            "address_type": "ROAD_ADDR",
+            "road_address": {
+                "address_name": "경기 안양시 만안구 석수로16번길 68",
+                "building_name": "",
+                "main_building_no": "68",
+                "region_1depth_name": "경기",
+                "region_2depth_name": "안양시 만안구",
+                "region_3depth_name": "석수동",
+                "road_name": "석수로16번길",
+                "sub_building_no": "",
+                "underground_yn": "N",
+                "x": "126.90861565749",
+                "y": "37.4115865504411",
+                "zone_no": "13969"
+            },
+            "x": "126.90861565749",
+            "y": "37.4115865504411"
+        }
+    ],
+    "meta": {
+        "is_end": true,
+        "pageable_count": 1,
+        "total_count": 1
+    }
+}

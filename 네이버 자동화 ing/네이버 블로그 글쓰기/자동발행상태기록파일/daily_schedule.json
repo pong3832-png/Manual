@@ -1,0 +1,46 @@
+{
+  "generated_at": "2026-06-11 00:05:02",
+  "target_date": "2026-06-11",
+  "items": [
+    {
+      "index": 1,
+      "post_type": "애드포스트",
+      "time": "01:16"
+    },
+    {
+      "index": 2,
+      "post_type": "애드포스트",
+      "time": "01:55"
+    },
+    {
+      "index": 3,
+      "post_type": "네이버메이트",
+      "time": "04:54"
+    },
+    {
+      "index": 4,
+      "post_type": "네이버메이트",
+      "time": "07:12"
+    },
+    {
+      "index": 5,
+      "post_type": "애드포스트",
+      "time": "07:57"
+    },
+    {
+      "index": 6,
+      "post_type": "네이버메이트",
+      "time": "16:15"
+    },
+    {
+      "index": 7,
+      "post_type": "애드포스트",
+      "time": "16:31"
+    },
+    {
+      "index": 8,
+      "post_type": "네이버메이트",
+      "time": "17:27"
+    }
+  ]
+}

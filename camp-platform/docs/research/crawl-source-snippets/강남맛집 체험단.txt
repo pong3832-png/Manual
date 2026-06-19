@@ -1,0 +1,3189 @@
+강남맛집 체험단
+
+로그인없이 구경 가능
+더보기 없이 무한 스크롤
+
+
+전체 url
+https://xn--939au0g4vj8sq.net/
+
+
+지역 카테고리
+https://xn--939au0g4vj8sq.net/cp/?ca=20
+
+헤더스
+Request URL
+https://xn--939au0g4vj8sq.net/theme/go/_list_cmp_tpl.php?ca=20&rpage=7&rpage=7&row_num=28
+Request Method
+GET
+Status Code
+200 OK
+Remote Address
+222.239.248.179:443
+Referrer Policy
+strict-origin-when-cross-origin
+cache-control
+pre-check=0, post-check=0, max-age=0
+connection
+Keep-Alive
+content-length
+24216
+content-type
+text/html; charset=utf-8
+date
+Fri, 03 Apr 2026 02:43:20 GMT
+expires
+0
+keep-alive
+timeout=5, max=94
+last-modified
+Fri, 03 Apr 2026 02:43:20 GMT
+p3p
+CP="ALL CURa ADMa DEVa TAIa OUR BUS IND PHY ONL UNI PUR FIN COM NAV INT DEM CNT STA POL HEA PRE LOC OTC"
+pragma
+no-cache
+server
+Apache
+accept
+text/html, */*; q=0.01
+accept-encoding
+gzip, deflate, br, zstd
+accept-language
+ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7
+connection
+keep-alive
+cookie
+PHPSESSID=aaq4pmk4kirv6rrv52nniks5pf; _ga=GA1.1.1273949238.1775184157; hd_pops_36=1; PHPSESSID=aaq4pmk4kirv6rrv52nniks5pf; hd_pops_17=1; e1192aefb64683cc97abb83c71057733=Y21wVmlldw%3D%3D; _ga_P9XZY1EJZ5=GS2.1.s1775184156$o1$g1$t1775184182$j34$l0$h0
+host
+xn--939au0g4vj8sq.net
+referer
+https://xn--939au0g4vj8sq.net/cp/?ca=20
+sec-ch-ua
+"Chromium";v="146", "Not-A.Brand";v="24", "Google Chrome";v="146"
+sec-ch-ua-mobile
+?0
+sec-ch-ua-platform
+"Windows"
+sec-fetch-dest
+empty
+sec-fetch-mode
+cors
+sec-fetch-site
+same-origin
+user-agent
+Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36
+x-requested-with
+XMLHttpRequest
+
+페이로드
+
+ca
+20
+rpage
+7
+rpage
+7
+row_num
+28
+
+리스폰스
+<li class='list_item ' data-ach='' data-product='2126496' data-no='1'>
+    <div>
+        <div class='imgArea'>
+            <a href='/cp/?id=2126496' ref='nosublink'>
+                <img src='//gangnam-review.net/data/file/cmp/2026/04/02/thumb-cmp_2126496-b35017ed7cc980fd7096525db6fa6733e3e16106_300x300.jpg' class='thumb_img' style='width:100%; height:auto;' alt='캠페인'>
+                <div class='t_cover'></div>
+            </a>
+        </div>
+        <div class='textArea'>
+            <dl>
+                <span class='label'>
+                    <em class='blog'>Blog</em>
+                    <em class='type'>방문형</em>
+                    <span class='dday'>
+                        <em class='day_c'>6일 남음</em>
+                    </span>
+                </span>
+                <dt class='tit'>
+                    <a href='/cp/?id=2126496'>[서울 동대문] 김한솔 헤어아뜰리에</a>
+                </dt>
+                <dd class='sub_tit'>
+                    염색 or 펌(매직종류O) or 클리닉(모발or두피) 중 택1 체험권 <br>자세한 사항은 가이드라인을 확인해주세요!
+                </dd>
+            </dl>
+            <div class='item_detail'>
+                <p class='item_info'>
+                    <span class='numb'>
+                        <b style='color:#000'>신청 0</b>
+                        / 모집 5
+                    </span>
+                </p>
+            </div>
+        </div>
+    </div>
+</li>
+<li class='list_item ' data-ach='' data-product='2126596' data-no='2'>
+    <div>
+        <div class='imgArea'>
+            <a href='/cp/?id=2126596' ref='nosublink'>
+                <img src='//gangnam-review.net/data/file/cmp/2026/04/02/thumb-cmp_2126596-e554adb49bdcb5567ba92d1855b07b4411eae7f1_300x300.jpg' class='thumb_img' style='width:100%; height:auto;' alt='캠페인'>
+                <div class='t_cover'></div>
+            </a>
+        </div>
+        <div class='textArea'>
+            <dl>
+                <span class='label'>
+                    <em class='blog'>Blog</em>
+                    <em class='type'>방문형</em>
+                    <span class='dday'>
+                        <em class='day_c'>6일 남음</em>
+                    </span>
+                </span>
+                <dt class='tit'>
+                    <a href='/cp/?id=2126596'>[충남 태안] 59년왕십리</a>
+                </dt>
+                <dd class='sub_tit'>3만원 (2인기준) 체험권</dd>
+            </dl>
+            <div class='item_detail'>
+                <p class='item_info'>
+                    <span class='numb'>
+                        <b style='color:#000'>신청 1</b>
+                        / 모집 10
+                    </span>
+                </p>
+            </div>
+        </div>
+    </div>
+</li>
+<li class='list_item ' data-ach='' data-product='2126317' data-no='3'>
+    <div>
+        <div class='imgArea'>
+            <a href='/cp/?id=2126317' ref='nosublink'>
+                <img src='//gangnam-review.net/data/file/cmp/2026/04/02/thumb-cmp_2126317-9998e6269bf924f4d62fca7869a36e8a757751aa_300x300.jpg' class='thumb_img' style='width:100%; height:auto;' alt='캠페인'>
+                <div class='t_cover'></div>
+            </a>
+        </div>
+        <div class='textArea'>
+            <dl>
+                <span class='label'>
+                    <em class='blog'>Blog</em>
+                    <em class='type'>방문형</em>
+                    <span class='dday'>
+                        <em class='day_c'>6일 남음</em>
+                    </span>
+                </span>
+                <dt class='tit'>
+                    <a href='/cp/?id=2126317'>[충남 천안] 우아에스떼</a>
+                </dt>
+                <dd class='sub_tit'>퍼스널 스킨케어 or 복부관리 1회 체험권(12만원 상당)</dd>
+            </dl>
+            <div class='item_detail'>
+                <p class='item_info'>
+                    <span class='numb'>
+                        <b style='color:#000'>신청 0</b>
+                        / 모집 10
+                    </span>
+                </p>
+            </div>
+        </div>
+    </div>
+</li>
+<li class='list_item ' data-ach='' data-product='2126001' data-no='4'>
+    <div>
+        <div class='imgArea'>
+            <a href='/cp/?id=2126001' ref='nosublink'>
+                <img src='//gangnam-review.net/data/file/cmp/2026/04/02/thumb-cmp_2126001-3a26dbd6320449ff16b06d900b8afedf9bdb8950_300x300.png' class='thumb_img' style='width:100%; height:auto;' alt='캠페인'>
+                <div class='t_cover'></div>
+            </a>
+        </div>
+        <div class='textArea'>
+            <dl>
+                <span class='label'>
+                    <em class='blog'>Blog</em>
+                    <em class='type'>방문형</em>
+                    <span class='dday'>
+                        <em class='day_c'>6일 남음</em>
+                    </span>
+                </span>
+                <dt class='tit'>
+                    <a href='/cp/?id=2126001'>[경기 김포] 명객양꼬치 구래점</a>
+                </dt>
+                <dd class='sub_tit'>
+                    2인 기준 체험권 <가이드 참고>
+                </dd>
+            </dl>
+            <div class='item_detail'>
+                <p class='item_info'>
+                    <span class='numb'>
+                        <b style='color:#000'>신청 0</b>
+                        / 모집 10
+                    </span>
+                </p>
+            </div>
+        </div>
+    </div>
+</li>
+<li class='list_item ' data-ach='' data-product='2126127' data-no='5'>
+    <div>
+        <div class='imgArea'>
+            <a href='/cp/?id=2126127' ref='nosublink'>
+                <img src='//gangnam-review.net/data/file/cmp/2026/04/02/thumb-cmp_2126127-04d62def4320e4decbe2d5cbf6ed89b664e38690_300x300.jpg' class='thumb_img' style='width:100%; height:auto;' alt='캠페인'>
+                <div class='t_cover'></div>
+            </a>
+        </div>
+        <div class='textArea'>
+            <dl>
+                <span class='label'>
+                    <em class='blog'>Blog</em>
+                    <em class='type'>방문형</em>
+                    <span class='dday'>
+                        <em class='day_c'>6일 남음</em>
+                    </span>
+                </span>
+                <dt class='tit'>
+                    <a href='/cp/?id=2126127'>[충북 청주] 김씨형제</a>
+                </dt>
+                <dd class='sub_tit'>4만원 체험권 (2인 기준)</dd>
+            </dl>
+            <div class='item_detail'>
+                <p class='item_info'>
+                    <span class='numb'>
+                        <b style='color:#000'>신청 3</b>
+                        / 모집 10
+                    </span>
+                </p>
+            </div>
+        </div>
+    </div>
+</li>
+<li class='list_item ' data-ach='' data-product='2126199' data-no='6'>
+    <div>
+        <div class='imgArea'>
+            <a href='/cp/?id=2126199' ref='nosublink'>
+                <img src='//gangnam-review.net/data/file/cmp/2026/04/02/thumb-cmp_2126199-fc1b78a4ef9ac73413f3d84c14b35b83f8760010_300x300.jpg' class='thumb_img' style='width:100%; height:auto;' alt='캠페인'>
+                <div class='t_cover'></div>
+            </a>
+        </div>
+        <div class='textArea'>
+            <dl>
+                <span class='label'>
+                    <em class='blog'>Blog</em>
+                    <em class='type'>방문형</em>
+                    <span class='dday'>
+                        <em class='day_c'>6일 남음</em>
+                    </span>
+                </span>
+                <dt class='tit'>
+                    <a href='/cp/?id=2126199'>[대전 중구] 두찜 대전대흥점</a>
+                </dt>
+                <dd class='sub_tit'>3만원 배민 포장 체험권(2인기준)</dd>
+            </dl>
+            <div class='item_detail'>
+                <p class='item_info'>
+                    <span class='numb'>
+                        <b style='color:#000'>신청 4</b>
+                        / 모집 10
+                    </span>
+                </p>
+            </div>
+        </div>
+    </div>
+</li>
+<li class='list_item ' data-ach='' data-product='2125907' data-no='7'>
+    <div>
+        <div class='imgArea'>
+            <a href='/cp/?id=2125907' ref='nosublink'>
+                <img src='//gangnam-review.net/data/file/cmp/2026/04/02/thumb-cmp_2125907-27e164cf57c72abb21f042cb3adfa4a7fff5abf5_300x300.jpg' class='thumb_img' style='width:100%; height:auto;' alt='캠페인'>
+                <div class='t_cover'></div>
+            </a>
+        </div>
+        <div class='textArea'>
+            <dl>
+                <span class='label'>
+                    <em class='blog'>Blog</em>
+                    <em class='type'>방문형</em>
+                    <span class='dday'>
+                        <em class='day_c'>6일 남음</em>
+                    </span>
+                </span>
+                <dt class='tit'>
+                    <a href='/cp/?id=2125907'>[경기 김포] 단이네일</a>
+                </dt>
+                <dd class='sub_tit'>
+                    샵아트 패디 or 네일 or 문제성 발톱 중 택1 체험권 (1인 기준)<br>
+                    <가이드 참고>
+                </dd>
+            </dl>
+            <div class='item_detail'>
+                <p class='item_info'>
+                    <span class='numb'>
+                        <b style='color:#000'>신청 0</b>
+                        / 모집 10
+                    </span>
+                </p>
+            </div>
+        </div>
+    </div>
+</li>
+<li class='list_item ' data-ach='' data-product='2126002' data-no='8'>
+    <div>
+        <div class='imgArea'>
+            <a href='/cp/?id=2126002' ref='nosublink'>
+                <img src='//gangnam-review.net/data/file/cmp/2026/04/02/thumb-cmp_2126002-638e92d09f666f33ebd9478f8f24ad77586d1ba5_300x300.jpg' class='thumb_img' style='width:100%; height:auto;' alt='캠페인'>
+                <div class='t_cover'></div>
+            </a>
+        </div>
+        <div class='textArea'>
+            <dl>
+                <span class='label'>
+                    <em class='blog'>Blog</em>
+                    <em class='type'>방문형</em>
+                    <span class='dday'>
+                        <em class='day_c'>6일 남음</em>
+                    </span>
+                </span>
+                <dt class='tit'>
+                    <a href='/cp/?id=2126002'>[충남 천안] 르브라이드</a>
+                </dt>
+                <dd class='sub_tit'>촬영드레스 3벌 피팅 체험권 (1인 기준)</dd>
+            </dl>
+            <div class='item_detail'>
+                <p class='item_info'>
+                    <span class='numb'>
+                        <b style='color:#000'>신청 0</b>
+                        / 모집 5
+                    </span>
+                </p>
+            </div>
+        </div>
+    </div>
+</li>
+<li class='list_item ' data-ach='' data-product='2125569' data-no='9'>
+    <div>
+        <div class='imgArea'>
+            <a href='/cp/?id=2125569' ref='nosublink'>
+                <img src='//gangnam-review.net/data/file/cmp/2026/04/02/thumb-cmp_2125569-efdd6b52d968be2bc990eecc9069500357ad494b_300x300.jpg' class='thumb_img' style='width:100%; height:auto;' alt='캠페인'>
+                <div class='t_cover'></div>
+            </a>
+        </div>
+        <div class='textArea'>
+            <dl>
+                <span class='label'>
+                    <em class='blog'>Blog</em>
+                    <em class='type'>방문형</em>
+                    <span class='dday'>
+                        <em class='day_c'>6일 남음</em>
+                    </span>
+                </span>
+                <dt class='tit'>
+                    <a href='/cp/?id=2125569'>[서울 강남] 라인.에이치</a>
+                </dt>
+                <dd class='sub_tit'>
+                    펌 or 염색 중 택1 체험권<br>자세한 상품은 가이드를 참고해 주세요.
+                </dd>
+            </dl>
+            <div class='item_detail'>
+                <p class='item_info'>
+                    <span class='numb'>
+                        <b style='color:#000'>신청 0</b>
+                        / 모집 5
+                    </span>
+                </p>
+            </div>
+        </div>
+    </div>
+</li>
+<li class='list_item ' data-ach='' data-product='2125372' data-no='10'>
+    <div>
+        <div class='imgArea'>
+            <a href='/cp/?id=2125372' ref='nosublink'>
+                <img src='//gangnam-review.net/data/file/cmp/2026/04/02/thumb-cmp_2125372-34b5f73a2709fded34b0b3aad7a4b4f013a6bcec_300x300.png' class='thumb_img' style='width:100%; height:auto;' alt='캠페인'>
+                <div class='t_cover'></div>
+            </a>
+        </div>
+        <div class='textArea'>
+            <dl>
+                <span class='label'>
+                    <em class='blog'>Blog</em>
+                    <em class='type'>방문형</em>
+                    <span class='dday'>
+                        <em class='day_c'>6일 남음</em>
+                    </span>
+                </span>
+                <dt class='tit'>
+                    <a href='/cp/?id=2125372'>[인천 서구] 쭈꾸미당</a>
+                </dt>
+                <dd class='sub_tit'>점심 or 저녁 중 택 1 체험권 (가이드라인 참고)</dd>
+            </dl>
+            <div class='item_detail'>
+                <p class='item_info'>
+                    <span class='numb'>
+                        <b style='color:#000'>신청 2</b>
+                        / 모집 10
+                    </span>
+                </p>
+            </div>
+        </div>
+    </div>
+</li>
+<li class='list_item ' data-ach='' data-product='2125758' data-no='11'>
+    <div>
+        <div class='imgArea'>
+            <a href='/cp/?id=2125758' ref='nosublink'>
+                <img src='//gangnam-review.net/data/file/cmp/2026/04/02/thumb-cmp_2125758-5ba2a8ccfc6ba002be9d69771baf12cc2dd3cd5e_300x300.jpg' class='thumb_img' style='width:100%; height:auto;' alt='캠페인'>
+                <div class='t_cover'></div>
+            </a>
+        </div>
+        <div class='textArea'>
+            <dl>
+                <span class='label'>
+                    <em class='blog'>Blog</em>
+                    <em class='type'>방문형</em>
+                    <span class='dday'>
+                        <em class='day_c'>6일 남음</em>
+                    </span>
+                </span>
+                <dt class='tit'>
+                    <a href='/cp/?id=2125758'>[경기 군포] 맛집 신나는 명태조림</a>
+                </dt>
+                <dd class='sub_tit'>명태조림 小 체험권 (2인 기준)</dd>
+            </dl>
+            <div class='item_detail'>
+                <p class='item_info'>
+                    <span class='numb'>
+                        <b style='color:#000'>신청 1</b>
+                        / 모집 10
+                    </span>
+                </p>
+            </div>
+        </div>
+    </div>
+</li>
+<li class='list_item ' data-ach='' data-product='2126016' data-no='12'>
+    <div>
+        <div class='imgArea'>
+            <a href='/cp/?id=2126016' ref='nosublink'>
+                <img src='//gangnam-review.net/data/file/cmp/2026/04/02/thumb-cmp_2126016-9d97a2bdda1edb32bcdc76ea077997750aa41e0e_300x300.jpg' class='thumb_img' style='width:100%; height:auto;' alt='캠페인'>
+                <div class='t_cover'></div>
+            </a>
+        </div>
+        <div class='textArea'>
+            <dl>
+                <span class='label'>
+                    <em class='blog'>Blog</em>
+                    <em class='type'>방문형</em>
+                    <span class='dday'>
+                        <em class='day_c'>6일 남음</em>
+                    </span>
+                </span>
+                <dt class='tit'>
+                    <a href='/cp/?id=2126016'>[서울 강남] 선릉을지순대국 선릉점</a>
+                </dt>
+                <dd class='sub_tit'>정식 체험권 (2인 기준)</dd>
+            </dl>
+            <div class='item_detail'>
+                <p class='item_info'>
+                    <span class='numb'>
+                        <b style='color:#000'>신청 1</b>
+                        / 모집 5
+                    </span>
+                </p>
+            </div>
+        </div>
+    </div>
+</li>
+<li class='list_item ' data-ach='' data-product='2125446' data-no='13'>
+    <div>
+        <div class='imgArea'>
+            <a href='/cp/?id=2125446' ref='nosublink'>
+                <img src='//gangnam-review.net/data/file/cmp/2026/04/02/thumb-cmp_2125446-814d28f553f3b621d9995198dd205415d6604193_300x300.jpg' class='thumb_img' style='width:100%; height:auto;' alt='캠페인'>
+                <div class='t_cover'></div>
+            </a>
+        </div>
+        <div class='textArea'>
+            <dl>
+                <span class='label'>
+                    <em class='blog'>Blog</em>
+                    <em class='type'>방문형</em>
+                    <span class='dday'>
+                        <em class='day_c'>6일 남음</em>
+                    </span>
+                </span>
+                <dt class='tit'>
+                    <a href='/cp/?id=2125446'>[제주 제주] 모리스테이</a>
+                </dt>
+                <dd class='sub_tit'>평일숙박1회(4인기준,20만원 상당) 체험권 체험권</dd>
+            </dl>
+            <div class='item_detail'>
+                <p class='item_info'>
+                    <span class='numb'>
+                        <b style='color:#000'>신청 3</b>
+                        / 모집 10
+                    </span>
+                </p>
+            </div>
+        </div>
+    </div>
+</li>
+<li class='list_item ' data-ach='' data-product='2126268' data-no='14'>
+    <div>
+        <div class='imgArea'>
+            <a href='/cp/?id=2126268' ref='nosublink'>
+                <img src='//gangnam-review.net/data/file/cmp/2026/04/02/thumb-cmp_2126268-d2be732f9d15a5bccf92764faf4e726441abe6b4_300x300.png' class='thumb_img' style='width:100%; height:auto;' alt='캠페인'>
+                <div class='t_cover'></div>
+            </a>
+        </div>
+        <div class='textArea'>
+            <dl>
+                <span class='label'>
+                    <em class='blog'>Blog</em>
+                    <em class='type'>방문형</em>
+                    <span class='dday'>
+                        <em class='day_c'>6일 남음</em>
+                    </span>
+                </span>
+                <dt class='tit'>
+                    <a href='/cp/?id=2126268'>[서울 동작] 서울진바베큐</a>
+                </dt>
+                <dd class='sub_tit'>메뉴 1개 선택 포장 체험권</dd>
+            </dl>
+            <div class='item_detail'>
+                <p class='item_info'>
+                    <span class='numb'>
+                        <b style='color:#000'>신청 3</b>
+                        / 모집 10
+                    </span>
+                </p>
+            </div>
+        </div>
+    </div>
+</li>
+<li class='list_item ' data-ach='' data-product='2126236' data-no='15'>
+    <div>
+        <div class='imgArea'>
+            <a href='/cp/?id=2126236' ref='nosublink'>
+                <img src='//gangnam-review.net/data/file/cmp/2026/04/02/thumb-cmp_2126236-d7d61b28971dbaf488e6418b71df6968621647a0_300x300.jpg' class='thumb_img' style='width:100%; height:auto;' alt='캠페인'>
+                <div class='t_cover'></div>
+            </a>
+        </div>
+        <div class='textArea'>
+            <dl>
+                <span class='label'>
+                    <em class='blog'>Blog</em>
+                    <em class='type'>방문형</em>
+                    <span class='dday'>
+                        <em class='day_c'>6일 남음</em>
+                    </span>
+                </span>
+                <dt class='tit'>
+                    <a href='/cp/?id=2126236'>[전북 전주] 밥통이랑술통이랑 송천점</a>
+                </dt>
+                <dd class='sub_tit'>3만원 체험권 (2인기준)</dd>
+            </dl>
+            <div class='item_detail'>
+                <p class='item_info'>
+                    <span class='numb'>
+                        <b style='color:#000'>신청 1</b>
+                        / 모집 10
+                    </span>
+                </p>
+            </div>
+        </div>
+    </div>
+</li>
+<li class='list_item ' data-ach='' data-product='2126469' data-no='16'>
+    <div>
+        <div class='imgArea'>
+            <a href='/cp/?id=2126469' ref='nosublink'>
+                <img src='//gangnam-review.net/data/file/cmp/2026/04/02/thumb-cmp_2126469-033ed9fc38f626507021440c5c1e957d216d8179_300x300.jpg' class='thumb_img' style='width:100%; height:auto;' alt='캠페인'>
+                <div class='t_cover'></div>
+            </a>
+        </div>
+        <div class='textArea'>
+            <dl>
+                <span class='label'>
+                    <em class='blog'>Blog</em>
+                    <em class='type'>방문형</em>
+                    <span class='dday'>
+                        <em class='day_c'>6일 남음</em>
+                    </span>
+                </span>
+                <dt class='tit'>
+                    <a href='/cp/?id=2126469'>[경기 양평] 양평벌교꼬막</a>
+                </dt>
+                <dd class='sub_tit'>4만원 체험권 (2인 기준)</dd>
+            </dl>
+            <div class='item_detail'>
+                <p class='item_info'>
+                    <span class='numb'>
+                        <b style='color:#000'>신청 0</b>
+                        / 모집 15
+                    </span>
+                </p>
+            </div>
+        </div>
+    </div>
+</li>
+<li class='list_item ' data-ach='' data-product='2126303' data-no='17'>
+    <div>
+        <div class='imgArea'>
+            <a href='/cp/?id=2126303' ref='nosublink'>
+                <img src='//gangnam-review.net/data/file/cmp/2026/04/02/thumb-cmp_2126303-990599f9bc673fddbf3ca15121b3cccd26aad940_300x300.jpg' class='thumb_img' style='width:100%; height:auto;' alt='캠페인'>
+                <div class='t_cover'></div>
+            </a>
+        </div>
+        <div class='textArea'>
+            <dl>
+                <span class='label'>
+                    <em class='blog'>Blog</em>
+                    <em class='type'>방문형</em>
+                    <span class='dday'>
+                        <em class='day_c'>6일 남음</em>
+                    </span>
+                </span>
+                <dt class='tit'>
+                    <a href='/cp/?id=2126303'>[서울 강남] 얀공방 1호점 아우어울</a>
+                </dt>
+                <dd class='sub_tit'>
+                    미니러그 원데이클래스 체험권 (1인기준, 4만원상당)<br>자세한 상품은 가이드를 참고해 주세요.
+                </dd>
+            </dl>
+            <div class='item_detail'>
+                <p class='item_info'>
+                    <span class='numb'>
+                        <b style='color:#000'>신청 4</b>
+                        / 모집 30
+                    </span>
+                </p>
+            </div>
+        </div>
+    </div>
+</li>
+<li class='list_item ' data-ach='' data-product='2125718' data-no='18'>
+    <div>
+        <div class='imgArea'>
+            <a href='/cp/?id=2125718' ref='nosublink'>
+                <img src='//gangnam-review.net/data/file/cmp/2026/04/02/thumb-cmp_2125718-42c070cae3b85795ca5e87bbc47d73556948916f_300x300.jpg' class='thumb_img' style='width:100%; height:auto;' alt='캠페인'>
+                <div class='t_cover'></div>
+            </a>
+        </div>
+        <div class='textArea'>
+            <dl>
+                <span class='label'>
+                    <em class='blog'>Blog</em>
+                    <em class='type'>방문형</em>
+                    <span class='dday'>
+                        <em class='day_c'>6일 남음</em>
+                    </span>
+                </span>
+                <dt class='tit'>
+                    <a href='/cp/?id=2125718'>[경북 구미] 내허쉬찜닭</a>
+                </dt>
+                <dd class='sub_tit'>
+                    선택 메뉴 배민 배달 체험권<br>자세한 메뉴는 가이드라인을 참고해주세요!
+                </dd>
+            </dl>
+            <div class='item_detail'>
+                <p class='item_info'>
+                    <span class='numb'>
+                        <b style='color:#000'>신청 0</b>
+                        / 모집 5
+                    </span>
+                </p>
+            </div>
+        </div>
+    </div>
+</li>
+<li class='list_item ' data-ach='' data-product='2126601' data-no='19'>
+    <div>
+        <div class='imgArea'>
+            <a href='/cp/?id=2126601' ref='nosublink'>
+                <img src='//gangnam-review.net/data/file/cmp/2026/04/02/thumb-cmp_2126601-f55ab708bea7ce90d82248b2b53ebc6a3ee77851_300x300.jpg' class='thumb_img' style='width:100%; height:auto;' alt='캠페인'>
+                <div class='t_cover'></div>
+            </a>
+        </div>
+        <div class='textArea'>
+            <dl>
+                <span class='label'>
+                    <em class='blog'>Blog</em>
+                    <em class='type'>방문형</em>
+                    <span class='dday'>
+                        <em class='day_c'>6일 남음</em>
+                    </span>
+                </span>
+                <dt class='tit'>
+                    <a href='/cp/?id=2126601'>[충북 청주] 대운분식</a>
+                </dt>
+                <dd class='sub_tit'>
+                    2인 기준 체험권<br>자세한 상품은 가이드라인을 참고해주세요!
+                </dd>
+            </dl>
+            <div class='item_detail'>
+                <p class='item_info'>
+                    <span class='numb'>
+                        <b style='color:#000'>신청 0</b>
+                        / 모집 10
+                    </span>
+                </p>
+            </div>
+        </div>
+    </div>
+</li>
+<li class='list_item ' data-ach='' data-product='2126276' data-no='20'>
+    <div>
+        <div class='imgArea'>
+            <a href='/cp/?id=2126276' ref='nosublink'>
+                <img src='//gangnam-review.net/data/file/cmp/2026/04/02/thumb-cmp_2126276-aa2977a4c7a8fcaa956087a319892f86a80f1ba6_300x300.png' class='thumb_img' style='width:100%; height:auto;' alt='캠페인'>
+                <div class='t_cover'></div>
+            </a>
+        </div>
+        <div class='textArea'>
+            <dl>
+                <span class='label'>
+                    <em class='blog'>Blog</em>
+                    <em class='type'>방문형</em>
+                    <span class='dday'>
+                        <em class='day_c'>6일 남음</em>
+                    </span>
+                </span>
+                <dt class='tit'>
+                    <a href='/cp/?id=2126276'>[전북 군산] 소브라운지 내성발톱 무좀발톱 발각질 문제성발</a>
+                </dt>
+                <dd class='sub_tit'>이달의 아트 1회 체험권</dd>
+            </dl>
+            <div class='item_detail'>
+                <p class='item_info'>
+                    <span class='numb'>
+                        <b style='color:#000'>신청 1</b>
+                        / 모집 10
+                    </span>
+                </p>
+            </div>
+        </div>
+    </div>
+</li>
+<li class='list_item ' data-ach='' data-product='2125641' data-no='21'>
+    <div>
+        <div class='imgArea'>
+            <a href='/cp/?id=2125641' ref='nosublink'>
+                <img src='//gangnam-review.net/data/file/cmp/2026/04/02/thumb-cmp_2125641-59234e6de56c213d1b48b45b5646d5ad21b3ecfd_300x300.jpg' class='thumb_img' style='width:100%; height:auto;' alt='캠페인'>
+                <div class='t_cover'></div>
+            </a>
+        </div>
+        <div class='textArea'>
+            <dl>
+                <span class='label'>
+                    <em class='blog'>Blog</em>
+                    <em class='type'>방문형</em>
+                    <span class='dday'>
+                        <em class='day_c'>6일 남음</em>
+                    </span>
+                </span>
+                <dt class='tit'>
+                    <a href='/cp/?id=2125641'>[인천 부평] 달달호두 부평남부점</a>
+                </dt>
+                <dd class='sub_tit'>
+                    랜덤구성20구 + 인절미6구 포장 체험권  <br>반드시 가이드라인을 확인해주세요.
+                </dd>
+            </dl>
+            <div class='item_detail'>
+                <p class='item_info'>
+                    <span class='numb'>
+                        <b style='color:#000'>신청 3</b>
+                        / 모집 10
+                    </span>
+                </p>
+            </div>
+        </div>
+    </div>
+</li>
+<li class='list_item ' data-ach='' data-product='2126254' data-no='22'>
+    <div>
+        <div class='imgArea'>
+            <a href='/cp/?id=2126254' ref='nosublink'>
+                <img src='//gangnam-review.net/data/file/cmp/2026/04/02/thumb-cmp_2126254-79cacf74bd335e9e96451047878fe5f5ee91b71c_300x300.jpg' class='thumb_img' style='width:100%; height:auto;' alt='캠페인'>
+                <div class='t_cover'></div>
+            </a>
+        </div>
+        <div class='textArea'>
+            <dl>
+                <span class='label'>
+                    <em class='blog'>Blog</em>
+                    <em class='type'>방문형</em>
+                    <span class='dday'>
+                        <em class='day_c'>6일 남음</em>
+                    </span>
+                </span>
+                <dt class='tit'>
+                    <a href='/cp/?id=2126254'>[광주 남구] 비숑다움</a>
+                </dt>
+                <dd class='sub_tit'>5만원 체험권</dd>
+            </dl>
+            <div class='item_detail'>
+                <p class='item_info'>
+                    <span class='numb'>
+                        <b style='color:#000'>신청 1</b>
+                        / 모집 3
+                    </span>
+                </p>
+            </div>
+        </div>
+    </div>
+</li>
+<li class='list_item ' data-ach='' data-product='2125312' data-no='23'>
+    <div>
+        <div class='imgArea'>
+            <a href='/cp/?id=2125312' ref='nosublink'>
+                <img src='//gangnam-review.net/data/file/cmp/2026/04/02/thumb-cmp_2125312-c06c7e6cc6679e50cc769141a9a10838b2ac07a9_300x300.jpg' class='thumb_img' style='width:100%; height:auto;' alt='캠페인'>
+                <div class='t_cover'></div>
+            </a>
+        </div>
+        <div class='textArea'>
+            <dl>
+                <span class='label'>
+                    <em class='clip'>Clip</em>
+                    <em class='type'>방문형</em>
+                    <span class='dday'>
+                        <em class='day_c'>6일 남음</em>
+                    </span>
+                </span>
+                <dt class='tit'>
+                    <a href='/cp/?id=2125312'>[경기 화성][클립] 히어리브</a>
+                </dt>
+                <dd class='sub_tit'>음료2잔 + 디저트1개 체험권</dd>
+            </dl>
+            <div class='item_detail'>
+                <p class='item_info'>
+                    <span class='numb'>
+                        <b style='color:#000'>신청 1</b>
+                        / 모집 30
+                    </span>
+                </p>
+            </div>
+        </div>
+    </div>
+</li>
+<li class='list_item ' data-ach='' data-product='2125935' data-no='24'>
+    <div>
+        <div class='imgArea'>
+            <a href='/cp/?id=2125935' ref='nosublink'>
+                <img src='//gangnam-review.net/data/file/cmp/2026/04/02/thumb-cmp_2125935-f925cf85f86e763cd91525b87956db645d5e3a8a_300x300.jpg' class='thumb_img' style='width:100%; height:auto;' alt='캠페인'>
+                <div class='t_cover'></div>
+            </a>
+        </div>
+        <div class='textArea'>
+            <dl>
+                <span class='label'>
+                    <em class='blog'>Blog</em>
+                    <em class='type'>방문형</em>
+                    <span class='dday'>
+                        <em class='day_c'>6일 남음</em>
+                    </span>
+                </span>
+                <dt class='tit'>
+                    <a href='/cp/?id=2125935'>[경기 수원] 속초오징어어시장 수원역점</a>
+                </dt>
+                <dd class='sub_tit'>3만 6천원 상당 속초모듬회 체험권 (2인 기준)</dd>
+            </dl>
+            <div class='item_detail'>
+                <p class='item_info'>
+                    <span class='numb'>
+                        <b style='color:#000'>신청 1</b>
+                        / 모집 2
+                    </span>
+                </p>
+            </div>
+        </div>
+    </div>
+</li>
+<li class='list_item ' data-ach='' data-product='2125435' data-no='25'>
+    <div>
+        <div class='imgArea'>
+            <a href='/cp/?id=2125435' ref='nosublink'>
+                <img src='//gangnam-review.net/data/file/cmp/2026/04/02/thumb-cmp_2125435-e42f198cba3bc118cc391f09956d6ceb802520ec_300x300.jpg' class='thumb_img' style='width:100%; height:auto;' alt='캠페인'>
+                <div class='t_cover'></div>
+            </a>
+        </div>
+        <div class='textArea'>
+            <dl>
+                <span class='label'>
+                    <em class='blog'>Blog</em>
+                    <em class='type'>방문형</em>
+                    <span class='dday'>
+                        <em class='day_c'>6일 남음</em>
+                    </span>
+                </span>
+                <dt class='tit'>
+                    <a href='/cp/?id=2125435'>[서울 강남] 클로이 에스테틱</a>
+                </dt>
+                <dd class='sub_tit'>피부관리 or 바디관리 체험권 (1인 기준)</dd>
+            </dl>
+            <div class='item_detail'>
+                <p class='item_info'>
+                    <span class='numb'>
+                        <b style='color:#000'>신청 4</b>
+                        / 모집 10
+                    </span>
+                </p>
+            </div>
+        </div>
+    </div>
+</li>
+<li class='list_item ' data-ach='' data-product='2125586' data-no='26'>
+    <div>
+        <div class='imgArea'>
+            <a href='/cp/?id=2125586' ref='nosublink'>
+                <img src='//gangnam-review.net/data/file/cmp/2026/04/02/thumb-cmp_2125586-93235e193f0bc537bd0c1cc6e054a224813d32bb_300x300.jpg' class='thumb_img' style='width:100%; height:auto;' alt='캠페인'>
+                <div class='t_cover'></div>
+            </a>
+        </div>
+        <div class='textArea'>
+            <dl>
+                <span class='label'>
+                    <em class='blog'>Blog</em>
+                    <em class='type'>방문형</em>
+                    <span class='dday'>
+                        <em class='day_c'>6일 남음</em>
+                    </span>
+                </span>
+                <dt class='tit'>
+                    <a href='/cp/?id=2125586'>[강원 평창] 광명식당</a>
+                </dt>
+                <dd class='sub_tit'>3만 원 체험권</dd>
+            </dl>
+            <div class='item_detail'>
+                <p class='item_info'>
+                    <span class='numb'>
+                        <b style='color:#000'>신청 0</b>
+                        / 모집 5
+                    </span>
+                </p>
+            </div>
+        </div>
+    </div>
+</li>
+<li class='list_item ' data-ach='' data-product='2125468' data-no='27'>
+    <div>
+        <div class='imgArea'>
+            <a href='/cp/?id=2125468' ref='nosublink'>
+                <img src='//gangnam-review.net/data/file/cmp/2026/04/02/thumb-cmp_2125468-212c393f9cb8a9a57c64b930ec40a8cf4c223586_300x300.png' class='thumb_img' style='width:100%; height:auto;' alt='캠페인'>
+                <div class='t_cover'></div>
+            </a>
+        </div>
+        <div class='textArea'>
+            <dl>
+                <span class='label'>
+                    <em class='blog'>Blog</em>
+                    <em class='type'>방문형</em>
+                    <span class='dday'>
+                        <em class='day_c'>6일 남음</em>
+                    </span>
+                </span>
+                <dt class='tit'>
+                    <a href='/cp/?id=2125468'>[서울 송파] 플로리움</a>
+                </dt>
+                <dd class='sub_tit'>꽃다발 체험권</dd>
+            </dl>
+            <div class='item_detail'>
+                <p class='item_info'>
+                    <span class='numb'>
+                        <b style='color:#000'>신청 4</b>
+                        / 모집 10
+                    </span>
+                </p>
+            </div>
+        </div>
+    </div>
+</li>
+<li class='list_item ' data-ach='' data-product='2126363' data-no='28'>
+    <div>
+        <div class='imgArea'>
+            <a href='/cp/?id=2126363' ref='nosublink'>
+                <img src='//gangnam-review.net/data/file/cmp/2026/04/02/thumb-cmp_2126363-cdf3cc0c05eda4ba43d7bdebac74758a9fb6ddae_300x300.jpg' class='thumb_img' style='width:100%; height:auto;' alt='캠페인'>
+                <div class='t_cover'></div>
+            </a>
+        </div>
+        <div class='textArea'>
+            <dl>
+                <span class='label'>
+                    <em class='blog'>Blog</em>
+                    <em class='type'>방문형</em>
+                    <span class='dday'>
+                        <em class='day_c'>6일 남음</em>
+                    </span>
+                </span>
+                <dt class='tit'>
+                    <a href='/cp/?id=2126363'>[경기 구리] 태리아로마타로</a>
+                </dt>
+                <dd class='sub_tit'>아로마 향수만들기 원데이클래스 + 타로 체험권(1인기준, 10만원상당)</dd>
+            </dl>
+            <div class='item_detail'>
+                <p class='item_info'>
+                    <span class='numb'>
+                        <b style='color:#000'>신청 0</b>
+                        / 모집 10
+                    </span>
+                </p>
+            </div>
+        </div>
+    </div>
+</li>
+
+
+
+제품 카테고리
+https://xn--939au0g4vj8sq.net/cp/?ca=30
+
+헤더스
+Request URL
+https://xn--939au0g4vj8sq.net/theme/go/_list_cmp_tpl.php?ca=30&rpage=5&rpage=5&row_num=28
+Request Method
+GET
+Status Code
+200 OK
+Remote Address
+222.239.248.179:443
+Referrer Policy
+strict-origin-when-cross-origin
+cache-control
+pre-check=0, post-check=0, max-age=0
+connection
+Keep-Alive
+content-length
+0
+content-type
+text/html; charset=utf-8
+date
+Fri, 03 Apr 2026 02:44:24 GMT
+expires
+0
+keep-alive
+timeout=5, max=96
+last-modified
+Fri, 03 Apr 2026 02:44:24 GMT
+p3p
+CP="ALL CURa ADMa DEVa TAIa OUR BUS IND PHY ONL UNI PUR FIN COM NAV INT DEM CNT STA POL HEA PRE LOC OTC"
+pragma
+no-cache
+server
+Apache
+accept
+text/html, */*; q=0.01
+accept-encoding
+gzip, deflate, br, zstd
+accept-language
+ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7
+connection
+keep-alive
+cookie
+PHPSESSID=aaq4pmk4kirv6rrv52nniks5pf; _ga=GA1.1.1273949238.1775184157; hd_pops_36=1; PHPSESSID=aaq4pmk4kirv6rrv52nniks5pf; hd_pops_17=1; e1192aefb64683cc97abb83c71057733=Y21wVmlldw%3D%3D; _ga_P9XZY1EJZ5=GS2.1.s1775184156$o1$g1$t1775184250$j60$l0$h0
+host
+xn--939au0g4vj8sq.net
+referer
+https://xn--939au0g4vj8sq.net/cp/?ca=30
+sec-ch-ua
+"Chromium";v="146", "Not-A.Brand";v="24", "Google Chrome";v="146"
+sec-ch-ua-mobile
+?0
+sec-ch-ua-platform
+"Windows"
+sec-fetch-dest
+empty
+sec-fetch-mode
+cors
+sec-fetch-site
+same-origin
+user-agent
+Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36
+x-requested-with
+XMLHttpRequest
+
+페이로드
+ca
+30
+rpage
+5
+rpage
+5
+row_num
+28
+
+리스폰스
+<li class='list_item ' data-ach='' data-product='2120630' data-no='1'>
+    <div>
+        <div class='imgArea'>
+            <a href='/cp/?id=2120630' ref='nosublink'>
+                <img src='//gangnam-review.net/data/file/cmp/2026/03/30/thumb-cmp_2120630-be0beb1d4879c378d89eb5ccf0f5908ba5a21de2_300x300.png' class='thumb_img' style='width:100%; height:auto;' alt='캠페인'>
+                <div class='t_cover'></div>
+            </a>
+        </div>
+        <div class='textArea'>
+            <dl>
+                <span class='label'>
+                    <em class='blog'>Blog</em>
+                    <em class='type'>배송형</em>
+                    <span class='dday'>
+                        <em class='day_c'>3일 남음</em>
+                    </span>
+                </span>
+                <dt class='tit'>
+                    <a href='/cp/?id=2120630'>유리숨</a>
+                </dt>
+                <dd class='sub_tit'>
+                    3만원체험권 <br>가이드라인을 참고해주세요!
+                </dd>
+            </dl>
+            <div class='item_detail'>
+                <p class='item_info'>
+                    <span class='numb'>
+                        <b style='color:#000'>신청 16</b>
+                        / 모집 3
+                    </span>
+                </p>
+            </div>
+        </div>
+    </div>
+</li>
+<li class='list_item ' data-ach='' data-product='2120575' data-no='2'>
+    <div>
+        <div class='imgArea'>
+            <a href='/cp/?id=2120575' ref='nosublink'>
+                <img src='//gangnam-review.net/data/file/cmp/2026/03/30/thumb-1028325342_ZxOHIFwR_0346a2bbd399057f21c94d936b036926a7f721d2_300x300.jpg' class='thumb_img' style='width:100%; height:auto;' alt='캠페인'>
+                <div class='t_cover'></div>
+            </a>
+        </div>
+        <div class='textArea'>
+            <dl>
+                <span class='label'>
+                    <em class='blog'>Blog</em>
+                    <em class='type'>배송형</em>
+                    <span class='dday'>
+                        <em class='day_c'>3일 남음</em>
+                    </span>
+                </span>
+                <dt class='tit'>
+                    <a href='/cp/?id=2120575'>nuitlit</a>
+                </dt>
+                <dd class='sub_tit'>뉴이릿 레오파드 숄더백 호피 에코백 체험권</dd>
+            </dl>
+            <div class='item_detail'>
+                <p class='item_info'>
+                    <span class='numb'>
+                        <b style='color:#000'>신청 93</b>
+                        / 모집 2
+                    </span>
+                </p>
+            </div>
+        </div>
+    </div>
+</li>
+<li class='list_item ' data-ach='' data-product='2120579' data-no='3'>
+    <div>
+        <div class='imgArea'>
+            <a href='/cp/?id=2120579' ref='nosublink'>
+                <img src='//gangnam-review.net/data/file/cmp/2026/03/30/thumb-cmp_2120579-37a332206f24b3dfe2844de4a202b2cc6c7a6481_300x300.png' class='thumb_img' style='width:100%; height:auto;' alt='캠페인'>
+                <div class='t_cover'></div>
+            </a>
+        </div>
+        <div class='textArea'>
+            <dl>
+                <span class='label'>
+                    <em class='blog'>Blog</em>
+                    <em class='type'>배송형</em>
+                    <span class='dday'>
+                        <em class='day_c'>3일 남음</em>
+                    </span>
+                </span>
+                <dt class='tit'>
+                    <a href='/cp/?id=2120579'>카라멜로디</a>
+                </dt>
+                <dd class='sub_tit'>
+                    스토어 내 3만원 체험권 <br>반드시 가이드 라인을 확인해주세요.
+                </dd>
+            </dl>
+            <div class='item_detail'>
+                <p class='item_info'>
+                    <span class='numb'>
+                        <b style='color:#000'>신청 46</b>
+                        / 모집 5
+                    </span>
+                </p>
+            </div>
+        </div>
+    </div>
+</li>
+<li class='list_item ' data-ach='' data-product='2120622' data-no='4'>
+    <div>
+        <div class='imgArea'>
+            <a href='/cp/?id=2120622' ref='nosublink'>
+                <img src='//gangnam-review.net/data/file/cmp/2026/03/30/thumb-1028325342_eVvntHQg_fb484a026d9a9fead24652c6b4ee16e707615d98_300x300.png' class='thumb_img' style='width:100%; height:auto;' alt='캠페인'>
+                <div class='t_cover'></div>
+            </a>
+        </div>
+        <div class='textArea'>
+            <dl>
+                <span class='label'>
+                    <em class='blog'>Blog</em>
+                    <em class='type'>배송형</em>
+                    <span class='dday'>
+                        <em class='day_c'>3일 남음</em>
+                    </span>
+                </span>
+                <dt class='tit'>
+                    <a href='/cp/?id=2120622'>[페이백] 메종키토</a>
+                </dt>
+                <dd class='sub_tit'>메종키토 제로고추장 체험권</dd>
+            </dl>
+            <div class='item_detail'>
+                <p class='item_info'>
+                    <span class='numb'>
+                        <b style='color:#000'>신청 61</b>
+                        / 모집 10
+                    </span>
+                </p>
+            </div>
+        </div>
+    </div>
+</li>
+<li class='list_item ' data-ach='' data-product='2121036' data-no='5'>
+    <div>
+        <div class='imgArea'>
+            <a href='/cp/?id=2121036' ref='nosublink'>
+                <img src='//gangnam-review.net/data/file/cmp/2026/03/30/thumb-cmp_2121036-78dc56c4c9ea1348e74fbae074911e8f40d9783a_300x300.jpg' class='thumb_img' style='width:100%; height:auto;' alt='캠페인'>
+                <div class='t_cover'></div>
+            </a>
+        </div>
+        <div class='textArea'>
+            <dl>
+                <span class='label'>
+                    <em class='blog'>Blog</em>
+                    <em class='type'>배송형</em>
+                    <span class='dday'>
+                        <em class='day_c'>2일 남음</em>
+                    </span>
+                </span>
+                <dt class='tit'>
+                    <a href='/cp/?id=2121036'>송해븐</a>
+                </dt>
+                <dd class='sub_tit'>
+                    건강빵 4종 배송 체험권 <br>자세한 상품은 가이드를 참고해 주세요.
+                </dd>
+            </dl>
+            <div class='item_detail'>
+                <p class='item_info'>
+                    <span class='numb'>
+                        <b style='color:#000'>신청 671</b>
+                        / 모집 100
+                    </span>
+                </p>
+            </div>
+        </div>
+    </div>
+</li>
+<li class='list_item ' data-ach='' data-product='2119306' data-no='6'>
+    <div>
+        <div class='imgArea'>
+            <a href='/cp/?id=2119306' ref='nosublink'>
+                <img src='//gangnam-review.net/data/file/cmp/2026/03/27/thumb-cmp_2119306-b1603ba76af1fcdb79aaf706459643231e5c839c_300x300.jpg' class='thumb_img' style='width:100%; height:auto;' alt='캠페인'>
+                <div class='t_cover'></div>
+            </a>
+        </div>
+        <div class='textArea'>
+            <dl>
+                <span class='label'>
+                    <em class='blog'>Blog</em>
+                    <em class='type'>배송형</em>
+                    <span class='dday'>
+                        <em class='day_c'>2일 남음</em>
+                    </span>
+                </span>
+                <dt class='tit'>
+                    <a href='/cp/?id=2119306'>천안전자담배마트</a>
+                </dt>
+                <dd class='sub_tit'>
+                    입호흡 프리미엄 액상 랜덤 2병 배송 체험권<br>반드시 가이드라인을 확인해주세요.
+                </dd>
+            </dl>
+            <div class='item_detail'>
+                <p class='item_info'>
+                    <span class='numb'>
+                        <b style='color:#000'>신청 8</b>
+                        / 모집 30
+                    </span>
+                </p>
+            </div>
+        </div>
+    </div>
+</li>
+<li class='list_item ' data-ach='' data-product='2119589' data-no='7'>
+    <div>
+        <div class='imgArea'>
+            <a href='/cp/?id=2119589' ref='nosublink'>
+                <img src='//gangnam-review.net/data/file/cmp/2026/03/27/thumb-cmp_2119589-ce1994323154b761287e59ebd502277335d9ad91_300x300.png' class='thumb_img' style='width:100%; height:auto;' alt='캠페인'>
+                <div class='t_cover'></div>
+            </a>
+        </div>
+        <div class='textArea'>
+            <dl>
+                <span class='label'>
+                    <em class='blog'>Blog</em>
+                    <em class='type'>배송형</em>
+                    <span class='dday'>
+                        <em class='day_c'>2일 남음</em>
+                    </span>
+                </span>
+                <dt class='tit'>
+                    <a href='/cp/?id=2119589'>잘신고</a>
+                </dt>
+                <dd class='sub_tit'>명품 운동화 염색 or 세탁 배송 체험권: 자세한 상품은 가이드를 참고해 주세요.</dd>
+            </dl>
+            <div class='item_detail'>
+                <p class='item_info'>
+                    <span class='numb'>
+                        <b style='color:#000'>신청 3</b>
+                        / 모집 50
+                    </span>
+                </p>
+            </div>
+        </div>
+    </div>
+</li>
+<li class='list_item ' data-ach='' data-product='2117914' data-no='8'>
+    <div>
+        <div class='imgArea'>
+            <a href='/cp/?id=2117914' ref='nosublink'>
+                <img src='//gangnam-review.net/data/file/cmp/2026/03/27/thumb-cmp_2117914-17eddf04ff154d8be4c18b1860834db8c638517a_300x300.png' class='thumb_img' style='width:100%; height:auto;' alt='캠페인'>
+                <div class='t_cover'></div>
+            </a>
+        </div>
+        <div class='textArea'>
+            <dl>
+                <span class='label'>
+                    <em class='blog'>Blog</em>
+                    <em class='type'>배송형</em>
+                    <span class='dday'>
+                        <em class='day_c'>2일 남음</em>
+                    </span>
+                </span>
+                <dt class='tit'>
+                    <a href='/cp/?id=2117914'>홀릭전자담배 논현초점</a>
+                </dt>
+                <dd class='sub_tit'>
+                    전자담배 액상(30ML) 1개 배송 체험권 <br>자세한 내용은 가이드라인 참고해주세요!
+                </dd>
+            </dl>
+            <div class='item_detail'>
+                <p class='item_info'>
+                    <span class='numb'>
+                        <b style='color:#000'>신청 6</b>
+                        / 모집 30
+                    </span>
+                </p>
+            </div>
+        </div>
+    </div>
+</li>
+<li class='list_item ' data-ach='' data-product='2117897' data-no='9'>
+    <div>
+        <div class='imgArea'>
+            <a href='/cp/?id=2117897' ref='nosublink'>
+                <img src='//gangnam-review.net/data/file/cmp/2026/03/27/thumb-1028325342_cB8MX3go_30938062758cb38a66b822cac588fde48f9b115f_300x300.png' class='thumb_img' style='width:100%; height:auto;' alt='캠페인'>
+                <div class='t_cover'></div>
+            </a>
+        </div>
+        <div class='textArea'>
+            <dl>
+                <span class='label'>
+                    <em class='blog'>Blog</em>
+                    <em class='type'>배송형</em>
+                    <span class='dday'>
+                        <em class='day_c'>2일 남음</em>
+                    </span>
+                </span>
+                <dt class='tit'>
+                    <a href='/cp/?id=2117897'>[페이백] 뉴트리쎈</a>
+                </dt>
+                <dd class='sub_tit'>우리바이오 관절엔 소연골 콘드로이친 2개월분 체험권</dd>
+            </dl>
+            <div class='item_detail'>
+                <p class='item_info'>
+                    <span class='numb'>
+                        <b style='color:#000'>신청 22</b>
+                        / 모집 10
+                    </span>
+                </p>
+            </div>
+        </div>
+    </div>
+</li>
+<li class='list_item ' data-ach='' data-product='2117889' data-no='10'>
+    <div>
+        <div class='imgArea'>
+            <a href='/cp/?id=2117889' ref='nosublink'>
+                <img src='//gangnam-review.net/data/file/cmp/2026/03/27/thumb-1028325342_DmYOipyH_68b24b2066facc276ffbeb3d61d99c73b7dcdc70_300x300.jpg' class='thumb_img' style='width:100%; height:auto;' alt='캠페인'>
+                <div class='t_cover'></div>
+            </a>
+        </div>
+        <div class='textArea'>
+            <dl>
+                <span class='label'>
+                    <em class='blog'>Blog</em>
+                    <em class='type'>배송형</em>
+                    <span class='dday'>
+                        <em class='day_c'>2일 남음</em>
+                    </span>
+                </span>
+                <dt class='tit'>
+                    <a href='/cp/?id=2117889'>leejo.s 리조스</a>
+                </dt>
+                <dd class='sub_tit'>리조스 프리미엄 코튼 베개커버 1개 체험권</dd>
+            </dl>
+            <div class='item_detail'>
+                <p class='item_info'>
+                    <span class='numb'>
+                        <b style='color:#000'>신청 51</b>
+                        / 모집 10
+                    </span>
+                </p>
+            </div>
+        </div>
+    </div>
+</li>
+<li class='list_item ' data-ach='' data-product='2117923' data-no='11'>
+    <div>
+        <div class='imgArea'>
+            <a href='/cp/?id=2117923' ref='nosublink'>
+                <img src='//gangnam-review.net/data/file/cmp/2026/03/27/thumb-cmp_2117923-48d230e95998b36837cd77a146b4c1ead40e5440_300x300.jpg' class='thumb_img' style='width:100%; height:auto;' alt='캠페인'>
+                <div class='t_cover'></div>
+            </a>
+        </div>
+        <div class='textArea'>
+            <dl>
+                <span class='label'>
+                    <em class='blog'>Blog</em>
+                    <em class='type'>배송형</em>
+                    <span class='dday'>
+                        <em class='day_c'>2일 남음</em>
+                    </span>
+                </span>
+                <dt class='tit'>
+                    <a href='/cp/?id=2117923'>홀릭 여의도점</a>
+                </dt>
+                <dd class='sub_tit'>
+                    전자담배 액상(30ML) 1개 배송 체험권 <br>자세한 내용은 가이드라인 참고해주세요!
+                </dd>
+            </dl>
+            <div class='item_detail'>
+                <p class='item_info'>
+                    <span class='numb'>
+                        <b style='color:#000'>신청 4</b>
+                        / 모집 30
+                    </span>
+                </p>
+            </div>
+        </div>
+    </div>
+</li>
+<li class='list_item ' data-ach='' data-product='2117902' data-no='12'>
+    <div>
+        <div class='imgArea'>
+            <a href='/cp/?id=2117902' ref='nosublink'>
+                <img src='//gangnam-review.net/data/file/cmp/2026/03/27/thumb-1028325342_Uw6Df50x_da88bc18d570c3e9d453d059fb70f2830c674063_300x300.jpg' class='thumb_img' style='width:100%; height:auto;' alt='캠페인'>
+                <div class='t_cover'></div>
+            </a>
+        </div>
+        <div class='textArea'>
+            <dl>
+                <span class='label'>
+                    <em class='blog'>Blog</em>
+                    <em class='type'>배송형</em>
+                    <span class='dday'>
+                        <em class='day_c'>2일 남음</em>
+                    </span>
+                </span>
+                <dt class='tit'>
+                    <a href='/cp/?id=2117902'>[페이백] 한담몰</a>
+                </dt>
+                <dd class='sub_tit'>한담 새우젓 1kg 체험권</dd>
+            </dl>
+            <div class='item_detail'>
+                <p class='item_info'>
+                    <span class='numb'>
+                        <b style='color:#000'>신청 51</b>
+                        / 모집 20
+                    </span>
+                </p>
+            </div>
+        </div>
+    </div>
+</li>
+<li class='list_item ' data-ach='' data-product='2118158' data-no='13'>
+    <div>
+        <div class='imgArea'>
+            <a href='/cp/?id=2118158' ref='nosublink'>
+                <img src='//gangnam-review.net/data/file/cmp/2026/03/27/thumb-cmp_2118158-cd544546729fea0d2b15b04134e6c02ccc16746f_300x300.png' class='thumb_img' style='width:100%; height:auto;' alt='캠페인'>
+                <div class='t_cover'></div>
+            </a>
+        </div>
+        <div class='textArea'>
+            <dl>
+                <span class='label'>
+                    <em class='blog'>Blog</em>
+                    <em class='type'>배송형</em>
+                    <span class='dday'>
+                        <em class='day_c'>2일 남음</em>
+                    </span>
+                </span>
+                <dt class='tit'>
+                    <a href='/cp/?id=2118158'>비벨르룸</a>
+                </dt>
+                <dd class='sub_tit'>
+                    3만원 금액 체험권 <br>반드시 가이드라인을 확인해주세요.
+                </dd>
+            </dl>
+            <div class='item_detail'>
+                <p class='item_info'>
+                    <span class='numb'>
+                        <b style='color:#000'>신청 79</b>
+                        / 모집 1
+                    </span>
+                </p>
+            </div>
+        </div>
+    </div>
+</li>
+<li class='list_item ' data-ach='' data-product='2119346' data-no='14'>
+    <div>
+        <div class='imgArea'>
+            <a href='/cp/?id=2119346' ref='nosublink'>
+                <img src='//gangnam-review.net/data/file/cmp/2026/03/27/thumb-cmp_2119346-994821fad4998d4dd8c304e2cceb27b524e67fe4_300x300.jpg' class='thumb_img' style='width:100%; height:auto;' alt='캠페인'>
+                <div class='t_cover'></div>
+            </a>
+        </div>
+        <div class='textArea'>
+            <dl>
+                <span class='label'>
+                    <em class='blog'>Blog</em>
+                    <em class='type'>배송형</em>
+                    <span class='dday'>
+                        <em class='day_c'>2일 남음</em>
+                    </span>
+                </span>
+                <dt class='tit'>
+                    <a href='/cp/?id=2119346'>대전전자담배TOP</a>
+                </dt>
+                <dd class='sub_tit'>
+                    입호흡 프리미엄 액상 랜덤 2병 배송 체험권<br>반드시 가이드라인을 확인해주세요.
+                </dd>
+            </dl>
+            <div class='item_detail'>
+                <p class='item_info'>
+                    <span class='numb'>
+                        <b style='color:#000'>신청 6</b>
+                        / 모집 30
+                    </span>
+                </p>
+            </div>
+        </div>
+    </div>
+</li>
+<li class='list_item ' data-ach='' data-product='2117892' data-no='15'>
+    <div>
+        <div class='imgArea'>
+            <a href='/cp/?id=2117892' ref='nosublink'>
+                <img src='//gangnam-review.net/data/file/cmp/2026/03/27/thumb-cmp_2117892-b7387568a50358baf2736862c3063532cc1f8c91_300x300.jpg' class='thumb_img' style='width:100%; height:auto;' alt='캠페인'>
+                <div class='t_cover'></div>
+            </a>
+        </div>
+        <div class='textArea'>
+            <dl>
+                <span class='label'>
+                    <em class='blog'>Blog</em>
+                    <em class='type'>배송형</em>
+                    <span class='dday'>
+                        <em class='day_c'>2일 남음</em>
+                    </span>
+                </span>
+                <dt class='tit'>
+                    <a href='/cp/?id=2117892'>노을토퍼</a>
+                </dt>
+                <dd class='sub_tit'>
+                    토퍼 스토어 내 금액 체험권 <BR>자세한 내용은 가이드라인을 참고해 주세요.
+                </dd>
+            </dl>
+            <div class='item_detail'>
+                <p class='item_info'>
+                    <span class='numb'>
+                        <b style='color:#000'>신청 15</b>
+                        / 모집 1
+                    </span>
+                </p>
+            </div>
+        </div>
+    </div>
+</li>
+<li class='list_item ' data-ach='' data-product='2117894' data-no='16'>
+    <div>
+        <div class='imgArea'>
+            <a href='/cp/?id=2117894' ref='nosublink'>
+                <img src='//gangnam-review.net/data/file/cmp/2026/03/27/thumb-1028325342_rSXGKd73_1ded83ed716627c67ff11afeb5dec5825e838efe_300x300.jpg' class='thumb_img' style='width:100%; height:auto;' alt='캠페인'>
+                <div class='t_cover'></div>
+            </a>
+        </div>
+        <div class='textArea'>
+            <dl>
+                <span class='label'>
+                    <em class='blog'>Blog</em>
+                    <em class='type'>배송형</em>
+                    <span class='dday'>
+                        <em class='day_c'>2일 남음</em>
+                    </span>
+                </span>
+                <dt class='tit'>
+                    <a href='/cp/?id=2117894'>[페이백] 위드어스</a>
+                </dt>
+                <dd class='sub_tit'>몽글 멀티 이유식 실리콘 큐브 세트 (6구+12구) 체험권</dd>
+            </dl>
+            <div class='item_detail'>
+                <p class='item_info'>
+                    <span class='numb'>
+                        <b style='color:#000'>신청 62</b>
+                        / 모집 20
+                    </span>
+                </p>
+            </div>
+        </div>
+    </div>
+</li>
+<li class='list_item ' data-ach='' data-product='2117901' data-no='17'>
+    <div>
+        <div class='imgArea'>
+            <a href='/cp/?id=2117901' ref='nosublink'>
+                <img src='//gangnam-review.net/data/file/cmp/2026/03/27/thumb-1028325342_1RiI2vHy_b45eb0f911326c9eec9981b16427253e981f3c84_300x300.jpg' class='thumb_img' style='width:100%; height:auto;' alt='캠페인'>
+                <div class='t_cover'></div>
+            </a>
+        </div>
+        <div class='textArea'>
+            <dl>
+                <span class='label'>
+                    <em class='blog'>Blog</em>
+                    <em class='type'>배송형</em>
+                    <span class='dday'>
+                        <em class='day_c'>2일 남음</em>
+                    </span>
+                </span>
+                <dt class='tit'>
+                    <a href='/cp/?id=2117901'>[페이백]루나 플레이스</a>
+                </dt>
+                <dd class='sub_tit'>어린이집  아크릴 네임택 키링 체험권</dd>
+            </dl>
+            <div class='item_detail'>
+                <p class='item_info'>
+                    <span class='numb'>
+                        <b style='color:#000'>신청 11</b>
+                        / 모집 10
+                    </span>
+                </p>
+            </div>
+        </div>
+    </div>
+</li>
+<li class='list_item ' data-ach='' data-product='2117712' data-no='18'>
+    <div>
+        <div class='imgArea'>
+            <a href='/cp/?id=2117712' ref='nosublink'>
+                <img src='//gangnam-review.net/data/file/cmp/2026/03/27/thumb-cmp_2117712-2f56c35b68967fe2ebcfccf8525336695286290a_300x300.jpg' class='thumb_img' style='width:100%; height:auto;' alt='캠페인'>
+                <div class='t_cover'></div>
+            </a>
+        </div>
+        <div class='textArea'>
+            <dl>
+                <span class='label'>
+                    <em class='blog'>Blog</em>
+                    <em class='type'>배송형</em>
+                    <span class='dday'>
+                        <em class='day_c'>2일 남음</em>
+                    </span>
+                </span>
+                <dt class='tit'>
+                    <a href='/cp/?id=2117712'>투데이즈 스튜디오</a>
+                </dt>
+                <dd class='sub_tit'>
+                    화이트톤의 본식스냅 라센필름그라피  체험권 <br>자세한 내용은 가이드라인 참고해주세요!
+                </dd>
+            </dl>
+            <div class='item_detail'>
+                <p class='item_info'>
+                    <span class='numb'>
+                        <b style='color:#000'>신청 0</b>
+                        / 모집 13
+                    </span>
+                </p>
+            </div>
+        </div>
+    </div>
+</li>
+<li class='list_item ' data-ach='' data-product='2117899' data-no='19'>
+    <div>
+        <div class='imgArea'>
+            <a href='/cp/?id=2117899' ref='nosublink'>
+                <img src='//gangnam-review.net/data/file/cmp/2026/03/27/thumb-cmp_2117899-7166a53caa27d3f0136d9f5d358eb61edd996ccf_300x300.jpg' class='thumb_img' style='width:100%; height:auto;' alt='캠페인'>
+                <div class='t_cover'></div>
+            </a>
+        </div>
+        <div class='textArea'>
+            <dl>
+                <span class='label'>
+                    <em class='blog'>Blog</em>
+                    <em class='type'>배송형</em>
+                    <span class='dday'>
+                        <em class='day_c'>2일 남음</em>
+                    </span>
+                </span>
+                <dt class='tit'>
+                    <a href='/cp/?id=2117899'>HAMCHOROM</a>
+                </dt>
+                <dd class='sub_tit'>웨딩 쥬얼리 스토어 3만원 체험권</dd>
+            </dl>
+            <div class='item_detail'>
+                <p class='item_info'>
+                    <span class='numb'>
+                        <b style='color:#000'>신청 14</b>
+                        / 모집 10
+                    </span>
+                </p>
+            </div>
+        </div>
+    </div>
+</li>
+<li class='list_item ' data-ach='' data-product='2120619' data-no='20'>
+    <div>
+        <div class='imgArea'>
+            <a href='/cp/?id=2120619' ref='nosublink'>
+                <img src='//gangnam-review.net/data/file/cmp/2026/03/30/thumb-1028325342_MBeVmcO7_8c63e47556768492f2055d56a50a06e1cf83296b_300x300.jpg' class='thumb_img' style='width:100%; height:auto;' alt='캠페인'>
+                <div class='t_cover'></div>
+            </a>
+        </div>
+        <div class='textArea'>
+            <dl>
+                <span class='label'>
+                    <em class='blog'>Blog</em>
+                    <em class='type'>배송형</em>
+                    <span class='dday'>
+                        <em class='day_c'>2일 남음</em>
+                    </span>
+                </span>
+                <dt class='tit'>
+                    <a href='/cp/?id=2120619'>Ellure</a>
+                </dt>
+                <dd class='sub_tit'>약산성 두피케어 샴푸바 2개 체험권</dd>
+            </dl>
+            <div class='item_detail'>
+                <p class='item_info'>
+                    <span class='numb'>
+                        <b style='color:#000'>신청 28</b>
+                        / 모집 30
+                    </span>
+                </p>
+            </div>
+        </div>
+    </div>
+</li>
+<li class='list_item ' data-ach='' data-product='2117891' data-no='21'>
+    <div>
+        <div class='imgArea'>
+            <a href='/cp/?id=2117891' ref='nosublink'>
+                <img src='//gangnam-review.net/data/file/cmp/2026/03/27/thumb-cmp_2117891-a3ee89a5401ea46c978c485311fc1174ff7b28e3_300x300.png' class='thumb_img' style='width:100%; height:auto;' alt='캠페인'>
+                <div class='t_cover'></div>
+            </a>
+        </div>
+        <div class='textArea'>
+            <dl>
+                <span class='label'>
+                    <em class='blog'>Blog</em>
+                    <em class='type'>배송형</em>
+                    <span class='dday'>
+                        <em class='day_c'>2일 남음</em>
+                    </span>
+                </span>
+                <dt class='tit'>
+                    <a href='/cp/?id=2117891'>해돋이양봉</a>
+                </dt>
+                <dd class='sub_tit'>해돋이양봉 3종 스틱꿀 선물세트 체험권</dd>
+            </dl>
+            <div class='item_detail'>
+                <p class='item_info'>
+                    <span class='numb'>
+                        <b style='color:#000'>신청 83</b>
+                        / 모집 5
+                    </span>
+                </p>
+            </div>
+        </div>
+    </div>
+</li>
+<li class='list_item ' data-ach='' data-product='2117900' data-no='22'>
+    <div>
+        <div class='imgArea'>
+            <a href='/cp/?id=2117900' ref='nosublink'>
+                <img src='//gangnam-review.net/data/file/cmp/2026/03/27/thumb-1028325342_6DKQu7Pc_eb84d83c8f8b725bdad01c56bc6c6d2862eb6543_300x300.jpg' class='thumb_img' style='width:100%; height:auto;' alt='캠페인'>
+                <div class='t_cover'></div>
+            </a>
+        </div>
+        <div class='textArea'>
+            <dl>
+                <span class='label'>
+                    <em class='blog'>Blog</em>
+                    <em class='type'>배송형</em>
+                    <span class='dday'>
+                        <em class='day_c'>2일 남음</em>
+                    </span>
+                </span>
+                <dt class='tit'>
+                    <a href='/cp/?id=2117900'>아요삐</a>
+                </dt>
+                <dd class='sub_tit'>아요삐 강아지 대형견 체크 데님 조끼 레이스 스커트 체험권</dd>
+            </dl>
+            <div class='item_detail'>
+                <p class='item_info'>
+                    <span class='numb'>
+                        <b style='color:#000'>신청 9</b>
+                        / 모집 13
+                    </span>
+                </p>
+            </div>
+        </div>
+    </div>
+</li>
+<li class='list_item ' data-ach='' data-product='2118418' data-no='23'>
+    <div>
+        <div class='imgArea'>
+            <a href='/cp/?id=2118418' ref='nosublink'>
+                <img src='//gangnam-review.net/data/file/cmp/2026/03/27/thumb-cmp_2118418-9a89d7d069baf15ea2a5c2396c7aa86b1f9dd086_300x300.png' class='thumb_img' style='width:100%; height:auto;' alt='캠페인'>
+                <div class='t_cover'></div>
+            </a>
+        </div>
+        <div class='textArea'>
+            <dl>
+                <span class='label'>
+                    <em class='blog'>Blog</em>
+                    <em class='type'>배송형</em>
+                    <span class='dday'>
+                        <em class='day_c'>2일 남음</em>
+                    </span>
+                </span>
+                <dt class='tit'>
+                    <a href='/cp/?id=2118418'>월하신궁</a>
+                </dt>
+                <dd class='sub_tit'>전화 점사 or 방문 점사 체험권</dd>
+            </dl>
+            <div class='item_detail'>
+                <p class='item_info'>
+                    <span class='numb'>
+                        <b style='color:#000'>신청 17</b>
+                        / 모집 5
+                    </span>
+                </p>
+            </div>
+        </div>
+    </div>
+</li>
+<li class='list_item ' data-ach='' data-product='2117890' data-no='24'>
+    <div>
+        <div class='imgArea'>
+            <a href='/cp/?id=2117890' ref='nosublink'>
+                <img src='//gangnam-review.net/data/file/cmp/2026/03/27/thumb-1028325342_8qWU5RKC_1f9d3fe91526c2fa541a8e7210eb8f99421bf922_300x300.png' class='thumb_img' style='width:100%; height:auto;' alt='캠페인'>
+                <div class='t_cover'></div>
+            </a>
+        </div>
+        <div class='textArea'>
+            <dl>
+                <span class='label'>
+                    <em class='blog'>Blog</em>
+                    <em class='type'>배송형</em>
+                    <span class='dday'>
+                        <em class='day_c'>2일 남음</em>
+                    </span>
+                </span>
+                <dt class='tit'>
+                    <a href='/cp/?id=2117890'>최곡</a>
+                </dt>
+                <dd class='sub_tit'>국산 유기농 하이아미 쌀 2kg 체험권</dd>
+            </dl>
+            <div class='item_detail'>
+                <p class='item_info'>
+                    <span class='numb'>
+                        <b style='color:#000'>신청 113</b>
+                        / 모집 5
+                    </span>
+                </p>
+            </div>
+        </div>
+    </div>
+</li>
+<li class='list_item ' data-ach='' data-product='2117896' data-no='25'>
+    <div>
+        <div class='imgArea'>
+            <a href='/cp/?id=2117896' ref='nosublink'>
+                <img src='//gangnam-review.net/data/file/cmp/2026/03/27/thumb-cmp_2117896-a0430d2310d93c9c28a97d712c879a7ac1fc9172_300x300.png' class='thumb_img' style='width:100%; height:auto;' alt='캠페인'>
+                <div class='t_cover'></div>
+            </a>
+        </div>
+        <div class='textArea'>
+            <dl>
+                <span class='label'>
+                    <em class='blog'>Blog</em>
+                    <em class='type'>배송형</em>
+                    <span class='dday'>
+                        <em class='day_c'>2일 남음</em>
+                    </span>
+                </span>
+                <dt class='tit'>
+                    <a href='/cp/?id=2117896'>소소뜨개</a>
+                </dt>
+                <dd class='sub_tit'>3만원 체험권</dd>
+            </dl>
+            <div class='item_detail'>
+                <p class='item_info'>
+                    <span class='numb'>
+                        <b style='color:#000'>신청 40</b>
+                        / 모집 3
+                    </span>
+                </p>
+            </div>
+        </div>
+    </div>
+</li>
+<li class='list_item ' data-ach='' data-product='2118341' data-no='26'>
+    <div>
+        <div class='imgArea'>
+            <a href='/cp/?id=2118341' ref='nosublink'>
+                <img src='//gangnam-review.net/data/file/cmp/2026/03/27/thumb-cmp_2118341-1a9622dccea78d7e8df4549d99c5fcc445fa48f2_300x300.jpg' class='thumb_img' style='width:100%; height:auto;' alt='캠페인'>
+                <div class='t_cover'></div>
+            </a>
+        </div>
+        <div class='textArea'>
+            <dl>
+                <span class='label'>
+                    <em class='blog'>Blog</em>
+                    <em class='type'>배송형</em>
+                    <span class='dday'>
+                        <em class='day_c'>2일 남음</em>
+                    </span>
+                </span>
+                <dt class='tit'>
+                    <a href='/cp/?id=2118341'>함평떡집</a>
+                </dt>
+                <dd class='sub_tit'>
+                    떡 1박스 체험권(10개 / 배송체험) <br>(쑥설기 + 쑥인절미+ 영양떡 + 약밥 + 모시송편) + 랜덤떡
+                </dd>
+            </dl>
+            <div class='item_detail'>
+                <p class='item_info'>
+                    <span class='numb'>
+                        <b style='color:#000'>신청 257</b>
+                        / 모집 2
+                    </span>
+                </p>
+            </div>
+        </div>
+    </div>
+</li>
+<li class='list_item ' data-ach='' data-product='2117898' data-no='27'>
+    <div>
+        <div class='imgArea'>
+            <a href='/cp/?id=2117898' ref='nosublink'>
+                <img src='//gangnam-review.net/data/file/cmp/2026/03/27/thumb-1028325342_n3e4PaSV_c61dae62363f5226ee436f05663458cc3cf50c13_300x300.jpg' class='thumb_img' style='width:100%; height:auto;' alt='캠페인'>
+                <div class='t_cover'></div>
+            </a>
+        </div>
+        <div class='textArea'>
+            <dl>
+                <span class='label'>
+                    <em class='blog'>Blog</em>
+                    <em class='type'>배송형</em>
+                    <span class='dday'>
+                        <em class='day_c'>2일 남음</em>
+                    </span>
+                </span>
+                <dt class='tit'>
+                    <a href='/cp/?id=2117898'>철구네반찬</a>
+                </dt>
+                <dd class='sub_tit'>철구네반찬 전라도 파김치 1kg 체험권</dd>
+            </dl>
+            <div class='item_detail'>
+                <p class='item_info'>
+                    <span class='numb'>
+                        <b style='color:#000'>신청 231</b>
+                        / 모집 5
+                    </span>
+                </p>
+            </div>
+        </div>
+    </div>
+</li>
+<li class='list_item ' data-ach='' data-product='2117893' data-no='28'>
+    <div>
+        <div class='imgArea'>
+            <a href='/cp/?id=2117893' ref='nosublink'>
+                <img src='//gangnam-review.net/data/file/cmp/2026/03/27/thumb-1028325342_uzXcDH9T_7fd3cf7206aa4789fd1c560953c27a9eb60b5bc4_300x300.png' class='thumb_img' style='width:100%; height:auto;' alt='캠페인'>
+                <div class='t_cover'></div>
+            </a>
+        </div>
+        <div class='textArea'>
+            <dl>
+                <span class='label'>
+                    <em class='blog'>Blog</em>
+                    <em class='type'>배송형</em>
+                    <span class='dday'>
+                        <em class='day_c'>2일 남음</em>
+                    </span>
+                </span>
+                <dt class='tit'>
+                    <a href='/cp/?id=2117893'>밀양 터줏대감</a>
+                </dt>
+                <dd class='sub_tit'>
+                    터줏대감 오리 주물럭 밀키트 유황오리 불고기<br>캠핑음식 고추장 양념 오리고기 930g 체험권
+                </dd>
+            </dl>
+            <div class='item_detail'>
+                <p class='item_info'>
+                    <span class='numb'>
+                        <b style='color:#000'>신청 264</b>
+                        / 모집 3
+                    </span>
+                </p>
+            </div>
+        </div>
+    </div>
+</li>
+
+
+캠페인 상세정보 HTML
+
+SNS 중 어떤 SNS인지 및 방문형, 배송형 같은 카테고리 
+<span class="label"><em class="blog">Blog</em><em class="type">배송형</em><span class="dday"><em class="day_c">2일 남음</em></span></span>
+
+캠페인 남은 기간
+<span class="dday"><em class="day_c">2일 남음</em></span>
+
+캠페인 이름
+<dt class="tit"><a href="/cp/?id=2117890">최곡</a></dt>
+
+캠페인 제공 내역
+<dd class="sub_tit">국산 유기농 하이아미 쌀 2kg 체험권</dd>
+
+신청, 모집
+<span class="numb"><b style="color:#000">신청 113</b> / 모집 5</span>
+
+
+클립 카테고리
+https://xn--939au0g4vj8sq.net/cp/?ch=clip
+
+헤더스
+Request URL
+https://xn--939au0g4vj8sq.net/index_banner.php?bn_type=head
+Request Method
+GET
+Status Code
+200 OK
+Remote Address
+222.239.248.179:443
+Referrer Policy
+strict-origin-when-cross-origin
+access-control-allow-origin
+*
+cache-control
+pre-check=0, post-check=0, max-age=0
+connection
+Keep-Alive
+content-length
+742
+content-type
+application/json
+date
+Fri, 03 Apr 2026 02:47:00 GMT
+expires
+0
+keep-alive
+timeout=5, max=98
+last-modified
+Fri, 03 Apr 2026 02:47:00 GMT
+p3p
+CP="ALL CURa ADMa DEVa TAIa OUR BUS IND PHY ONL UNI PUR FIN COM NAV INT DEM CNT STA POL HEA PRE LOC OTC"
+pragma
+no-cache
+server
+Apache
+accept
+*/*
+accept-encoding
+gzip, deflate, br, zstd
+accept-language
+ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7
+connection
+keep-alive
+cookie
+PHPSESSID=aaq4pmk4kirv6rrv52nniks5pf; _ga=GA1.1.1273949238.1775184157; hd_pops_36=1; PHPSESSID=aaq4pmk4kirv6rrv52nniks5pf; hd_pops_17=1; e1192aefb64683cc97abb83c71057733=Y21wVmlldw%3D%3D; _ga_P9XZY1EJZ5=GS2.1.s1775184156$o1$g1$t1775184420$j34$l0$h0
+host
+xn--939au0g4vj8sq.net
+if-modified-since
+Fri, 03 Apr 2026 02:46:35 GMT
+referer
+https://xn--939au0g4vj8sq.net/cp/?ch=clip
+sec-ch-ua
+"Chromium";v="146", "Not-A.Brand";v="24", "Google Chrome";v="146"
+sec-ch-ua-mobile
+?0
+sec-ch-ua-platform
+"Windows"
+sec-fetch-dest
+empty
+sec-fetch-mode
+cors
+sec-fetch-site
+same-origin
+user-agent
+Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36
+x-requested-with
+XMLHttpRequest
+
+페이로드
+bn_type
+head
+
+프리뷰
+{count: 2, items: [{,…}, {,…}]}
+count
+: 
+2
+items
+: 
+[{,…}, {,…}]
+0
+: 
+{,…}
+1
+: 
+{,…}
+
+리스폰스
+{
+    "count": 2,
+    "items": [
+        {
+            "img": "\/\/gangnam-review.net\/data\/file\/banner\/1988277710__98e2c17e096ba12d9e24f7c75e6ebfe96f85b011.jpg",
+            "m_img": "\/\/gangnam-review.net\/data\/file\/banner\/1988277710__1c5f96628304ed33366564cffa39e987db816576.jpg",
+            "subject": "\ud5e4\ub4dc\ubc30\ub108",
+            "content": "",
+            "backgroundColor": "",
+            "href": "https:\/\/xn--939au0g4vj8sq.net\/business\/"
+        },
+        {
+            "img": "\/\/gangnam-review.net\/data\/file\/banner\/1988277710__422a30d3862b46cf291285936d31999d0e0be10f.jpg",
+            "m_img": "\/\/gangnam-review.net\/data\/file\/banner\/1988277710__5c7f62ca3b486d24c5af6b3db22a8b14eaf1bc9d.jpg",
+            "subject": "\ud5e4\ub4dc\ubc30\ub108",
+            "content": "",
+            "backgroundColor": "",
+            "href": "https:\/\/xn--939au0g4vj8sq.net\/bbs\/board.php?bo_table=notice&wr_id=46"
+        }
+    ]
+}
+
+
+기자단 카테고리
+https://xn--939au0g4vj8sq.net/cp/?ca=40
+
+헤더스
+Request URL
+https://xn--939au0g4vj8sq.net/theme/go/_list_cmp_tpl.php?ca=40&rpage=1&rpage=1&row_num=28
+Request Method
+GET
+Status Code
+200 OK
+Remote Address
+222.239.248.179:443
+Referrer Policy
+strict-origin-when-cross-origin
+cache-control
+pre-check=0, post-check=0, max-age=0
+connection
+Keep-Alive
+content-length
+13611
+content-type
+text/html; charset=utf-8
+date
+Fri, 03 Apr 2026 02:47:51 GMT
+expires
+0
+keep-alive
+timeout=5, max=100
+last-modified
+Fri, 03 Apr 2026 02:47:51 GMT
+p3p
+CP="ALL CURa ADMa DEVa TAIa OUR BUS IND PHY ONL UNI PUR FIN COM NAV INT DEM CNT STA POL HEA PRE LOC OTC"
+pragma
+no-cache
+server
+Apache
+accept
+text/html, */*; q=0.01
+accept-encoding
+gzip, deflate, br, zstd
+accept-language
+ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7
+connection
+keep-alive
+cookie
+PHPSESSID=aaq4pmk4kirv6rrv52nniks5pf; _ga=GA1.1.1273949238.1775184157; hd_pops_36=1; PHPSESSID=aaq4pmk4kirv6rrv52nniks5pf; hd_pops_17=1; e1192aefb64683cc97abb83c71057733=Y21wVmlldw%3D%3D; _ga_P9XZY1EJZ5=GS2.1.s1775184156$o1$g1$t1775184458$j60$l0$h0
+host
+xn--939au0g4vj8sq.net
+referer
+https://xn--939au0g4vj8sq.net/cp/?ca=40
+sec-ch-ua
+"Chromium";v="146", "Not-A.Brand";v="24", "Google Chrome";v="146"
+sec-ch-ua-mobile
+?0
+sec-ch-ua-platform
+"Windows"
+sec-fetch-dest
+empty
+sec-fetch-mode
+cors
+sec-fetch-site
+same-origin
+user-agent
+Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36
+x-requested-with
+XMLHttpRequest
+
+페이로드
+
+ca
+40
+rpage
+1
+rpage
+1
+row_num
+28
+
+리스폰스
+<li class='list_item ' data-ach='' data-product='2121106' data-no='1'>
+    <div>
+        <div class='imgArea'>
+            <a href='/cp/?id=2121106' ref='nosublink'>
+                <img src='//gangnam-review.net/data/file/cmp/2026/03/30/thumb-cmp_2121106-105f99284cf40b76564d6f9e597cae083a2d481f_300x300.jpg' class='thumb_img' style='width:100%; height:auto;' alt='캠페인'>
+                <div class='t_cover'></div>
+            </a>
+        </div>
+        <div class='textArea'>
+            <dl>
+                <span class='label'>
+                    <em class='blog'>Blog</em>
+                    <em class='type'>기자단</em>
+                    <span class='dday'>
+                        <em class='day_c'>3일 남음</em>
+                    </span>
+                    <em class='point'>7,000 P</em>
+                </span>
+                <dt class='tit'>
+                    <a href='/cp/?id=2121106'>[기자단] 고석정어부네</a>
+                </dt>
+                <dd class='sub_tit'>포인트 지급</dd>
+            </dl>
+            <div class='item_detail'>
+                <p class='item_info'>
+                    <span class='numb'>
+                        <b style='color:#000'>신청 207</b>
+                        / 모집 10
+                    </span>
+                </p>
+            </div>
+        </div>
+    </div>
+</li>
+<li class='list_item ' data-ach='' data-product='2121354' data-no='2'>
+    <div>
+        <div class='imgArea'>
+            <a href='/cp/?id=2121354' ref='nosublink'>
+                <img src='//gangnam-review.net/data/file/cmp/2026/03/30/thumb-cmp_2121354-8222bf2ae4b23167c5f203d7bb15d6d277fe5f0d_300x300.jpg' class='thumb_img' style='width:100%; height:auto;' alt='캠페인'>
+                <div class='t_cover'></div>
+            </a>
+        </div>
+        <div class='textArea'>
+            <dl>
+                <span class='label'>
+                    <em class='blog'>Blog</em>
+                    <em class='type'>기자단</em>
+                    <span class='dday'>
+                        <em class='day_c'>3일 남음</em>
+                    </span>
+                    <em class='point'>7,000 P</em>
+                </span>
+                <dt class='tit'>
+                    <a href='/cp/?id=2121354'>[기자단] 연주암 대구</a>
+                </dt>
+                <dd class='sub_tit'>포인트 지급</dd>
+            </dl>
+            <div class='item_detail'>
+                <p class='item_info'>
+                    <span class='numb'>
+                        <b style='color:#000'>신청 92</b>
+                        / 모집 10
+                    </span>
+                </p>
+            </div>
+        </div>
+    </div>
+</li>
+<li class='list_item ' data-ach='' data-product='2121203' data-no='3'>
+    <div>
+        <div class='imgArea'>
+            <a href='/cp/?id=2121203' ref='nosublink'>
+                <img src='//gangnam-review.net/data/file/cmp/2026/03/30/thumb-cmp_2121203-fea59acd074b0620a859e539b8d6120fa03edfe6_300x300.jpg' class='thumb_img' style='width:100%; height:auto;' alt='캠페인'>
+                <div class='t_cover'></div>
+            </a>
+        </div>
+        <div class='textArea'>
+            <dl>
+                <span class='label'>
+                    <em class='blog'>Blog</em>
+                    <em class='type'>기자단</em>
+                    <span class='dday'>
+                        <em class='day_c'>3일 남음</em>
+                    </span>
+                    <em class='point'>7,000 P</em>
+                </span>
+                <dt class='tit'>
+                    <a href='/cp/?id=2121203'>[기자단] 쭈꾸미명가</a>
+                </dt>
+                <dd class='sub_tit'>포인트 지급</dd>
+            </dl>
+            <div class='item_detail'>
+                <p class='item_info'>
+                    <span class='numb'>
+                        <b style='color:#000'>신청 226</b>
+                        / 모집 3
+                    </span>
+                </p>
+            </div>
+        </div>
+    </div>
+</li>
+<li class='list_item ' data-ach='' data-product='2120100' data-no='4'>
+    <div>
+        <div class='imgArea'>
+            <a href='/cp/?id=2120100' ref='nosublink'>
+                <img src='//gangnam-review.net/data/file/cmp/2026/03/30/thumb-cmp_2120100-771c8c2c97da372b6f357a3ec85df76498e59740_300x300.jpg' class='thumb_img' style='width:100%; height:auto;' alt='캠페인'>
+                <div class='t_cover'></div>
+            </a>
+        </div>
+        <div class='textArea'>
+            <dl>
+                <span class='label'>
+                    <em class='blog'>Blog</em>
+                    <em class='type'>기자단</em>
+                    <span class='dday'>
+                        <em class='day_c'>3일 남음</em>
+                    </span>
+                    <em class='point'>7,000 P</em>
+                </span>
+                <dt class='tit'>
+                    <a href='/cp/?id=2120100'>[기자단] 감포생아구</a>
+                </dt>
+                <dd class='sub_tit'>포인트 지급</dd>
+            </dl>
+            <div class='item_detail'>
+                <p class='item_info'>
+                    <span class='numb'>
+                        <b style='color:#000'>신청 225</b>
+                        / 모집 5
+                    </span>
+                </p>
+            </div>
+        </div>
+    </div>
+</li>
+<li class='list_item ' data-ach='' data-product='2120790' data-no='5'>
+    <div>
+        <div class='imgArea'>
+            <a href='/cp/?id=2120790' ref='nosublink'>
+                <img src='//gangnam-review.net/data/file/cmp/2026/03/30/thumb-cmp_2120790-d907e2c1d06cf08907472a0d8d7fb003b9459906_300x300.png' class='thumb_img' style='width:100%; height:auto;' alt='캠페인'>
+                <div class='t_cover'></div>
+            </a>
+        </div>
+        <div class='textArea'>
+            <dl>
+                <span class='label'>
+                    <em class='blog'>Blog</em>
+                    <em class='type'>기자단</em>
+                    <span class='dday'>
+                        <em class='day_c'>3일 남음</em>
+                    </span>
+                    <em class='point'>7,000 P</em>
+                </span>
+                <dt class='tit'>
+                    <a href='/cp/?id=2120790'>[기자단] 연화신당(남수동)</a>
+                </dt>
+                <dd class='sub_tit'>포인트 지급</dd>
+            </dl>
+            <div class='item_detail'>
+                <p class='item_info'>
+                    <span class='numb'>
+                        <b style='color:#000'>신청 97</b>
+                        / 모집 3
+                    </span>
+                </p>
+            </div>
+        </div>
+    </div>
+</li>
+<li class='list_item ' data-ach='' data-product='2121441' data-no='6'>
+    <div>
+        <div class='imgArea'>
+            <a href='/cp/?id=2121441' ref='nosublink'>
+                <img src='//gangnam-review.net/data/file/cmp/2026/03/30/thumb-cmp_2121441-87d8e632d2c2395f9c315d3899de0d4c3dbf2847_300x300.jpg' class='thumb_img' style='width:100%; height:auto;' alt='캠페인'>
+                <div class='t_cover'></div>
+            </a>
+        </div>
+        <div class='textArea'>
+            <dl>
+                <span class='label'>
+                    <em class='blog'>Blog</em>
+                    <em class='type'>기자단</em>
+                    <span class='dday'>
+                        <em class='day_c'>3일 남음</em>
+                    </span>
+                    <em class='point'>7,000 P</em>
+                </span>
+                <dt class='tit'>
+                    <a href='/cp/?id=2121441'>[기자단] 화암사정산도령</a>
+                </dt>
+                <dd class='sub_tit'>포인트 지급</dd>
+            </dl>
+            <div class='item_detail'>
+                <p class='item_info'>
+                    <span class='numb'>
+                        <b style='color:#000'>신청 93</b>
+                        / 모집 10
+                    </span>
+                </p>
+            </div>
+        </div>
+    </div>
+</li>
+<li class='list_item ' data-ach='' data-product='2121204' data-no='7'>
+    <div>
+        <div class='imgArea'>
+            <a href='/cp/?id=2121204' ref='nosublink'>
+                <img src='//gangnam-review.net/data/file/cmp/2026/03/30/thumb-cmp_2121204-c5589c0fedeb6d2ab49ed46f6775e36fd1ba8c48_300x300.jpg' class='thumb_img' style='width:100%; height:auto;' alt='캠페인'>
+                <div class='t_cover'></div>
+            </a>
+        </div>
+        <div class='textArea'>
+            <dl>
+                <span class='label'>
+                    <em class='blog'>Blog</em>
+                    <em class='type'>기자단</em>
+                    <span class='dday'>
+                        <em class='day_c'>3일 남음</em>
+                    </span>
+                    <em class='point'>6,000 P</em>
+                </span>
+                <dt class='tit'>
+                    <a href='/cp/?id=2121204'>[기자단] 모두스가발</a>
+                </dt>
+                <dd class='sub_tit'>포인트 지급</dd>
+            </dl>
+            <div class='item_detail'>
+                <p class='item_info'>
+                    <span class='numb'>
+                        <b style='color:#000'>신청 133</b>
+                        / 모집 2
+                    </span>
+                </p>
+            </div>
+        </div>
+    </div>
+</li>
+<li class='list_item ' data-ach='' data-product='2118217' data-no='8'>
+    <div>
+        <div class='imgArea'>
+            <a href='/cp/?id=2118217' ref='nosublink'>
+                <img src='//gangnam-review.net/data/file/cmp/2026/03/27/thumb-cmp_2118217-bcbab9042ff99e7e900351ef78d7db239a894932_300x300.jpg' class='thumb_img' style='width:100%; height:auto;' alt='캠페인'>
+                <div class='t_cover'></div>
+            </a>
+        </div>
+        <div class='textArea'>
+            <dl>
+                <span class='label'>
+                    <em class='blog'>Blog</em>
+                    <em class='type'>기자단</em>
+                    <span class='dday'>
+                        <em class='day_c'>2일 남음</em>
+                    </span>
+                    <em class='point'>7,000 P</em>
+                </span>
+                <dt class='tit'>
+                    <a href='/cp/?id=2118217'>[기자단] 바이브로스</a>
+                </dt>
+                <dd class='sub_tit'>포인트 지급</dd>
+            </dl>
+            <div class='item_detail'>
+                <p class='item_info'>
+                    <span class='numb'>
+                        <b style='color:#000'>신청 164</b>
+                        / 모집 2
+                    </span>
+                </p>
+            </div>
+        </div>
+    </div>
+</li>
+<li class='list_item ' data-ach='' data-product='2119025' data-no='9'>
+    <div>
+        <div class='imgArea'>
+            <a href='/cp/?id=2119025' ref='nosublink'>
+                <img src='//gangnam-review.net/data/file/cmp/2026/03/27/thumb-cmp_2119025-9cac2bc1ce1631853dde53831e1b5ceb27966020_300x300.jpg' class='thumb_img' style='width:100%; height:auto;' alt='캠페인'>
+                <div class='t_cover'></div>
+            </a>
+        </div>
+        <div class='textArea'>
+            <dl>
+                <span class='label'>
+                    <em class='blog'>Blog</em>
+                    <em class='type'>기자단</em>
+                    <span class='dday'>
+                        <em class='day_c'>2일 남음</em>
+                    </span>
+                    <em class='point'>7,000 P</em>
+                </span>
+                <dt class='tit'>
+                    <a href='/cp/?id=2119025'>[기자단] 보섬가</a>
+                </dt>
+                <dd class='sub_tit'>포인트 지급</dd>
+            </dl>
+            <div class='item_detail'>
+                <p class='item_info'>
+                    <span class='numb'>
+                        <b style='color:#000'>신청 215</b>
+                        / 모집 2
+                    </span>
+                </p>
+            </div>
+        </div>
+    </div>
+</li>
+<li class='list_item ' data-ach='' data-product='2119399' data-no='10'>
+    <div>
+        <div class='imgArea'>
+            <a href='/cp/?id=2119399' ref='nosublink'>
+                <img src='//gangnam-review.net/data/file/cmp/2026/03/27/thumb-cmp_2119399-c4ed443a0d4532d81e4577bc054b6aadae2c9153_300x300.jpg' class='thumb_img' style='width:100%; height:auto;' alt='캠페인'>
+                <div class='t_cover'></div>
+            </a>
+        </div>
+        <div class='textArea'>
+            <dl>
+                <span class='label'>
+                    <em class='blog'>Blog</em>
+                    <em class='type'>기자단</em>
+                    <span class='dday'>
+                        <em class='day_c'>2일 남음</em>
+                    </span>
+                    <em class='point'>5,000 P</em>
+                </span>
+                <dt class='tit'>
+                    <a href='/cp/?id=2119399'>[기자단] 대발이 운전면허</a>
+                </dt>
+                <dd class='sub_tit'>포인트 지급</dd>
+            </dl>
+            <div class='item_detail'>
+                <p class='item_info'>
+                    <span class='numb'>
+                        <b style='color:#000'>신청 170</b>
+                        / 모집 5
+                    </span>
+                </p>
+            </div>
+        </div>
+    </div>
+</li>
+<li class='list_item ' data-ach='' data-product='2119444' data-no='11'>
+    <div>
+        <div class='imgArea'>
+            <a href='/cp/?id=2119444' ref='nosublink'>
+                <img src='//gangnam-review.net/data/file/cmp/2026/03/27/thumb-cmp_2119444-f0354134fc2d8e2ea6a5a89c1591662ff5c4721a_300x300.jpg' class='thumb_img' style='width:100%; height:auto;' alt='캠페인'>
+                <div class='t_cover'></div>
+            </a>
+        </div>
+        <div class='textArea'>
+            <dl>
+                <span class='label'>
+                    <em class='blog'>Blog</em>
+                    <em class='type'>기자단</em>
+                    <span class='dday'>
+                        <em class='day_c'>2일 남음</em>
+                    </span>
+                    <em class='point'>7,000 P</em>
+                </span>
+                <dt class='tit'>
+                    <a href='/cp/?id=2119444'>[기자단] 화씨2192 남여주 2호점</a>
+                </dt>
+                <dd class='sub_tit'>포인트 지급</dd>
+            </dl>
+            <div class='item_detail'>
+                <p class='item_info'>
+                    <span class='numb'>
+                        <b style='color:#000'>신청 221</b>
+                        / 모집 2
+                    </span>
+                </p>
+            </div>
+        </div>
+    </div>
+</li>
+<li class='list_item ' data-ach='' data-product='2118993' data-no='12'>
+    <div>
+        <div class='imgArea'>
+            <a href='/cp/?id=2118993' ref='nosublink'>
+                <img src='//gangnam-review.net/data/file/cmp/2026/03/27/thumb-cmp_2118993-45b2fac2ee08053d48e1b4de193b63b1df749ae1_300x300.jpg' class='thumb_img' style='width:100%; height:auto;' alt='캠페인'>
+                <div class='t_cover'></div>
+            </a>
+        </div>
+        <div class='textArea'>
+            <dl>
+                <span class='label'>
+                    <em class='blog'>Blog</em>
+                    <em class='type'>기자단</em>
+                    <span class='dday'>
+                        <em class='day_c'>2일 남음</em>
+                    </span>
+                    <em class='point'>7,000 P</em>
+                </span>
+                <dt class='tit'>
+                    <a href='/cp/?id=2118993'>[기자단] 스탠다드보청기 의정부센터</a>
+                </dt>
+                <dd class='sub_tit'>포인트 지급</dd>
+            </dl>
+            <div class='item_detail'>
+                <p class='item_info'>
+                    <span class='numb'>
+                        <b style='color:#000'>신청 177</b>
+                        / 모집 50
+                    </span>
+                </p>
+            </div>
+        </div>
+    </div>
+</li>
+<li class='list_item ' data-ach='' data-product='2118976' data-no='13'>
+    <div>
+        <div class='imgArea'>
+            <a href='/cp/?id=2118976' ref='nosublink'>
+                <img src='//gangnam-review.net/data/file/cmp/2026/03/27/thumb-cmp_2118976-da5a16e57e9462029e6c95852aa0f0895bd39426_300x300.jpg' class='thumb_img' style='width:100%; height:auto;' alt='캠페인'>
+                <div class='t_cover'></div>
+            </a>
+        </div>
+        <div class='textArea'>
+            <dl>
+                <span class='label'>
+                    <em class='blog'>Blog</em>
+                    <em class='type'>기자단</em>
+                    <span class='dday'>
+                        <em class='day_c'>2일 남음</em>
+                    </span>
+                    <em class='point'>5,000 P</em>
+                </span>
+                <dt class='tit'>
+                    <a href='/cp/?id=2118976'>[기자단]사임당주간보호센터</a>
+                </dt>
+                <dd class='sub_tit'>포인트 지급</dd>
+            </dl>
+            <div class='item_detail'>
+                <p class='item_info'>
+                    <span class='numb'>
+                        <b style='color:#000'>신청 141</b>
+                        / 모집 10
+                    </span>
+                </p>
+            </div>
+        </div>
+    </div>
+</li>
+<li class='list_item ' data-ach='' data-product='2118136' data-no='14'>
+    <div>
+        <div class='imgArea'>
+            <a href='/cp/?id=2118136' ref='nosublink'>
+                <img src='//gangnam-review.net/data/file/cmp/2026/03/27/thumb-cmp_2118136-3bbb1087f7754bb7db95a92fa60c3ca4a47067ff_300x300.png' class='thumb_img' style='width:100%; height:auto;' alt='캠페인'>
+                <div class='t_cover'></div>
+            </a>
+        </div>
+        <div class='textArea'>
+            <dl>
+                <span class='label'>
+                    <em class='blog'>Blog</em>
+                    <em class='type'>기자단</em>
+                    <span class='dday'>
+                        <em class='day_c'>2일 남음</em>
+                    </span>
+                    <em class='point'>5,000 P</em>
+                </span>
+                <dt class='tit'>
+                    <a href='/cp/?id=2118136'>[기자단] 박진우보청기윤소희청각재활센터 광주점</a>
+                </dt>
+                <dd class='sub_tit'>포인트 지급</dd>
+            </dl>
+            <div class='item_detail'>
+                <p class='item_info'>
+                    <span class='numb'>
+                        <b style='color:#000'>신청 148</b>
+                        / 모집 15
+                    </span>
+                </p>
+            </div>
+        </div>
+    </div>
+</li>
+<li class='list_item ' data-ach='' data-product='2118350' data-no='15'>
+    <div>
+        <div class='imgArea'>
+            <a href='/cp/?id=2118350' ref='nosublink'>
+                <img src='//gangnam-review.net/data/file/cmp/2026/03/27/thumb-cmp_2118350-0d651f810993756815635e9c6265f9983e7c3093_300x300.jpg' class='thumb_img' style='width:100%; height:auto;' alt='캠페인'>
+                <div class='t_cover'></div>
+            </a>
+        </div>
+        <div class='textArea'>
+            <dl>
+                <span class='label'>
+                    <em class='blog'>Blog</em>
+                    <em class='type'>기자단</em>
+                    <span class='dday'>
+                        <em class='day_c'>2일 남음</em>
+                    </span>
+                    <em class='point'>7,000 P</em>
+                </span>
+                <dt class='tit'>
+                    <a href='/cp/?id=2118350'>[기자단] 나드리김밥 함양점</a>
+                </dt>
+                <dd class='sub_tit'>포인트 지급</dd>
+            </dl>
+            <div class='item_detail'>
+                <p class='item_info'>
+                    <span class='numb'>
+                        <b style='color:#000'>신청 245</b>
+                        / 모집 5
+                    </span>
+                </p>
+            </div>
+        </div>
+    </div>
+</li>
+<li class='list_item ' data-ach='' data-product='2119538' data-no='16'>
+    <div>
+        <div class='imgArea'>
+            <a href='/cp/?id=2119538' ref='nosublink'>
+                <img src='//gangnam-review.net/data/file/cmp/2026/03/27/thumb-cmp_2119538-0c649b4c02d432c210850a1d4349540657aa7cfd_300x300.jpg' class='thumb_img' style='width:100%; height:auto;' alt='캠페인'>
+                <div class='t_cover'></div>
+            </a>
+        </div>
+        <div class='textArea'>
+            <dl>
+                <span class='label'>
+                    <em class='blog'>Blog</em>
+                    <em class='type'>기자단</em>
+                    <span class='dday'>
+                        <em class='day_c'>2일 남음</em>
+                    </span>
+                    <em class='point'>7,000 P</em>
+                </span>
+                <dt class='tit'>
+                    <a href='/cp/?id=2119538'>[기자단] 불난낙지</a>
+                </dt>
+                <dd class='sub_tit'>포인트 지급 </dd>
+            </dl>
+            <div class='item_detail'>
+                <p class='item_info'>
+                    <span class='numb'>
+                        <b style='color:#000'>신청 260</b>
+                        / 모집 5
+                    </span>
+                </p>
+            </div>
+        </div>
+    </div>
+</li>
+
+
+[ 상세페이지 ]
+
+https://xn--939au0g4vj8sq.net/cp/?id=2126139
+
+지역 및 이름
+<p class="tit">
+					[인천 부평] 앙베어				</p>
+
+상세페이지 카테고리
+<span class="category">
+					<em class="blog">Blog</em>
+										<em class="type">방문형</em>
+														</span>
+
+캠페인 신청 기간
+<li class="on">
+					<dl>
+						<dt>캠페인 신청기간</dt>
+						<dd>
+							04.03 ~ 04.09						</dd>
+					</dl>
+				</li>
+
+캠페인 신청자
+<a id="02">신청자 <em id="ask_count">0</em>/3</a>
+
+
+url
+https://xn--939au0g4vj8sq.net/cp/?id=2125402
+
+지역 및 이름
+<p class="tit">
+					[부산 부산진] 친절한혜자씨 서면점				</p>
+
+제공 내역
+<p class="sub_tit">
+											<a href="https://naver.me/FTMd79xd" alt="업체 홈페이지 링크" target="_blank" style="font-size:15px; color:#000; margin-left:0px;">갑오징어보쌈(2인 기준) 체험권</a>
+										
+										
+				</p>
+
+캠페인 카테고리
+<span class="category">
+					<em class="blog">Blog</em>
+										<em class="type">방문형</em>
+														</span>
+
+신청자 인원
+<li data-tab="request"><a id="02">신청자 <em id="ask_count">0</em>/20</a></li>
+
+
+url
+https://xn--939au0g4vj8sq.net/cp/?id=2126151
+
+지역 및 이름
+<p class="tit">
+					[서울 성동] 값진한우				</p>
+
+제공 내역
+<a href="http://naver.me/x9Zpoiss" alt="업체 홈페이지 링크" target="_blank" style="font-size:15px; color:#000; margin-left:0px;">투뿔 한우 육회 300g 체험권</a>
+
+캠페인 카테고리
+<span class="category">
+					<em class="blog">Blog</em>
+										<em class="type">방문형</em>
+														</span>
+
+신청자 수
+<li data-tab="request"><a id="02">신청자 <em id="ask_count">0</em>/15</a></li>
+
+헤더스
+Request URL
+https://xn--939au0g4vj8sq.net/index_banner.php?bn_type=head
+Request Method
+GET
+Status Code
+200 OK
+Remote Address
+222.239.248.179:443
+Referrer Policy
+strict-origin-when-cross-origin
+access-control-allow-origin
+*
+cache-control
+pre-check=0, post-check=0, max-age=0
+connection
+Keep-Alive
+content-length
+742
+content-type
+application/json
+date
+Fri, 03 Apr 2026 06:24:39 GMT
+expires
+0
+keep-alive
+timeout=5, max=96
+last-modified
+Fri, 03 Apr 2026 06:24:39 GMT
+p3p
+CP="ALL CURa ADMa DEVa TAIa OUR BUS IND PHY ONL UNI PUR FIN COM NAV INT DEM CNT STA POL HEA PRE LOC OTC"
+pragma
+no-cache
+server
+Apache
+accept
+*/*
+accept-encoding
+gzip, deflate, br, zstd
+accept-language
+ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7
+connection
+keep-alive
+cookie
+PHPSESSID=aaq4pmk4kirv6rrv52nniks5pf; _ga=GA1.1.1273949238.1775184157; hd_pops_36=1; PHPSESSID=aaq4pmk4kirv6rrv52nniks5pf; hd_pops_17=1; e1192aefb64683cc97abb83c71057733=Y21wVmlldw%3D%3D; _ga_P9XZY1EJZ5=GS2.1.s1775197321$o2$g1$t1775197478$j60$l0$h0
+host
+xn--939au0g4vj8sq.net
+if-modified-since
+Fri, 03 Apr 2026 06:23:32 GMT
+referer
+https://xn--939au0g4vj8sq.net/cp/?id=2126151
+sec-ch-ua
+"Chromium";v="146", "Not-A.Brand";v="24", "Google Chrome";v="146"
+sec-ch-ua-mobile
+?0
+sec-ch-ua-platform
+"Windows"
+sec-fetch-dest
+empty
+sec-fetch-mode
+cors
+sec-fetch-site
+same-origin
+user-agent
+Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36
+x-requested-with
+XMLHttpRequest
+
+패이로드
+
+bn_type
+head
+
+프리뷰
+{count: 2, items: [{,…}, {,…}]}
+count
+: 
+2
+items
+: 
+[{,…}, {,…}]
+0
+: 
+{,…}
+1
+: 
+{,…}
+
+리스폰스
+{
+    "count": 2,
+    "items": [
+        {
+            "img": "\/\/gangnam-review.net\/data\/file\/banner\/1988277710__98e2c17e096ba12d9e24f7c75e6ebfe96f85b011.jpg",
+            "m_img": "\/\/gangnam-review.net\/data\/file\/banner\/1988277710__1c5f96628304ed33366564cffa39e987db816576.jpg",
+            "subject": "\ud5e4\ub4dc\ubc30\ub108",
+            "content": "",
+            "backgroundColor": "",
+            "href": "https:\/\/xn--939au0g4vj8sq.net\/business\/"
+        },
+        {
+            "img": "\/\/gangnam-review.net\/data\/file\/banner\/1988277710__422a30d3862b46cf291285936d31999d0e0be10f.jpg",
+            "m_img": "\/\/gangnam-review.net\/data\/file\/banner\/1988277710__5c7f62ca3b486d24c5af6b3db22a8b14eaf1bc9d.jpg",
+            "subject": "\ud5e4\ub4dc\ubc30\ub108",
+            "content": "",
+            "backgroundColor": "",
+            "href": "https:\/\/xn--939au0g4vj8sq.net\/bbs\/board.php?bo_table=notice&wr_id=46"
+        }
+    ]
+}
+
+헤더스
+Request URL
+https://maps.apigw.ntruss.com/map-geocode/v2/geocode-js?query=%EC%84%9C%EC%9A%B8%20%EC%84%B1%EB%8F%99%EA%B5%AC%20%EB%A7%88%EC%9E%A5%EB%A1%9C35%EA%B8%B8%2076%20%20(%EB%A7%88%EC%9E%A5%EB%8F%99%2C%20%ED%98%84%EB%8C%80%EC%95%84%ED%8C%8C%ED%8A%B8)%20%EA%B0%92%EC%A7%84%ED%95%9C%EC%9A%B0&X-NCP-APIGW-API-KEY-ID=jjrx790cc4&url=https%3A%2F%2Fxn--939au0g4vj8sq.net%2Fcp%2F%3Fid%3D2126151
+Request Method
+GET
+Status Code
+200 OK
+Remote Address
+110.165.28.14:443
+Referrer Policy
+strict-origin-when-cross-origin
+access-control-allow-origin
+*
+content-type
+application/json
+date
+Fri, 03 Apr 2026 06:24:39 GMT
+referrer-policy
+unsafe-url
+server
+nfront
+x-ncp-apigw-response-origin
+ENDPOINT
+x-ncp-trace-id
+3ep34cpgm2cr334o9iccrjadpg
+:authority
+maps.apigw.ntruss.com
+:method
+GET
+:path
+/map-geocode/v2/geocode-js?query=%EC%84%9C%EC%9A%B8%20%EC%84%B1%EB%8F%99%EA%B5%AC%20%EB%A7%88%EC%9E%A5%EB%A1%9C35%EA%B8%B8%2076%20%20(%EB%A7%88%EC%9E%A5%EB%8F%99%2C%20%ED%98%84%EB%8C%80%EC%95%84%ED%8C%8C%ED%8A%B8)%20%EA%B0%92%EC%A7%84%ED%95%9C%EC%9A%B0&X-NCP-APIGW-API-KEY-ID=jjrx790cc4&url=https%3A%2F%2Fxn--939au0g4vj8sq.net%2Fcp%2F%3Fid%3D2126151
+:scheme
+https
+accept
+*/*
+accept-encoding
+gzip, deflate, br, zstd
+accept-language
+ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7
+content-type
+text/plain
+origin
+https://xn--939au0g4vj8sq.net
+priority
+u=1, i
+referer
+https://xn--939au0g4vj8sq.net/
+sec-ch-ua
+"Chromium";v="146", "Not-A.Brand";v="24", "Google Chrome";v="146"
+sec-ch-ua-mobile
+?0
+sec-ch-ua-platform
+"Windows"
+sec-fetch-dest
+empty
+sec-fetch-mode
+cors
+sec-fetch-site
+cross-site
+user-agent
+Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36
+
+패이로드
+
+query
+%EC%84%9C%EC%9A%B8%20%EC%84%B1%EB%8F%99%EA%B5%AC%20%EB%A7%88%EC%9E%A5%EB%A1%9C35%EA%B8%B8%2076%20%20(%EB%A7%88%EC%9E%A5%EB%8F%99%2C%20%ED%98%84%EB%8C%80%EC%95%84%ED%8C%8C%ED%8A%B8)%20%EA%B0%92%EC%A7%84%ED%95%9C%EC%9A%B0
+X-NCP-APIGW-API-KEY-ID
+jjrx790cc4
+url
+https%3A%2F%2Fxn--939au0g4vj8sq.net%2Fcp%2F%3Fid%3D2126151
+
+프리뷰
+{status: "OK", meta: {totalCount: 1, page: 1, count: 1},…}
+addresses
+: 
+[{roadAddress: "서울특별시 성동구 마장로35길 76 현대아파트", jibunAddress: "서울특별시 성동구 마장동 818 현대아파트",…}]
+errorMessage
+: 
+""
+meta
+: 
+{totalCount: 1, page: 1, count: 1}
+count
+: 
+1
+page
+: 
+1
+totalCount
+: 
+1
+status
+: 
+"OK"
+
+리스폰스
+{
+    "status": "OK",
+    "meta": {
+        "totalCount": 1,
+        "page": 1,
+        "count": 1
+    },
+    "addresses": [
+        {
+            "roadAddress": "서울특별시 성동구 마장로35길 76 현대아파트",
+            "jibunAddress": "서울특별시 성동구 마장동 818 현대아파트",
+            "englishAddress": "76, Majang-ro 35-gil, Seongdong-gu, Seoul, Republic of Korea",
+            "addressElements": [
+                {
+                    "types": [
+                        "SIDO"
+                    ],
+                    "longName": "서울특별시",
+                    "shortName": "서울특별시",
+                    "code": ""
+                },
+                {
+                    "types": [
+                        "SIGUGUN"
+                    ],
+                    "longName": "성동구",
+                    "shortName": "성동구",
+                    "code": ""
+                },
+                {
+                    "types": [
+                        "DONGMYUN"
+                    ],
+                    "longName": "마장동",
+                    "shortName": "마장동",
+                    "code": ""
+                },
+                {
+                    "types": [
+                        "RI"
+                    ],
+                    "longName": "",
+                    "shortName": "",
+                    "code": ""
+                },
+                {
+                    "types": [
+                        "ROAD_NAME"
+                    ],
+                    "longName": "마장로35길",
+                    "shortName": "마장로35길",
+                    "code": ""
+                },
+                {
+                    "types": [
+                        "BUILDING_NUMBER"
+                    ],
+                    "longName": "76",
+                    "shortName": "76",
+                    "code": ""
+                },
+                {
+                    "types": [
+                        "BUILDING_NAME"
+                    ],
+                    "longName": "현대아파트",
+                    "shortName": "현대아파트",
+                    "code": ""
+                },
+                {
+                    "types": [
+                        "LAND_NUMBER"
+                    ],
+                    "longName": "818",
+                    "shortName": "818",
+                    "code": ""
+                },
+                {
+                    "types": [
+                        "POSTAL_CODE"
+                    ],
+                    "longName": "04753",
+                    "shortName": "04753",
+                    "code": ""
+                }
+            ],
+            "x": "127.0420171",
+            "y": "37.5702629",
+            "distance": 0.0
+        }
+    ],
+    "errorMessage": ""
+}
+

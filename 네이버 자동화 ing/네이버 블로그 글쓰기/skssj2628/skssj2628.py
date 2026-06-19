@@ -559,16 +559,146 @@ DAILY_SEARCH_INTENT_BANK = {
     ],
 }
 
-# skssj2628 일상글은 검색자가 바로 해결책을 찾는 세부 생활 문제만 사용한다.
+# skssj2628 일상글은 체험단 플랫폼 유입을 위한 블로그 운영/리뷰 마케팅 정보글을 중심으로 사용한다.
 DAILY_CATEGORY_BANK = [
-    "장마습기",
-    "냉방전기",
-    "여름위생",
-    "자취집관리",
-    "생활정책돈관리",
+    "체험단블로거",
+    "리뷰마케팅사업자",
+    "블로그후기작성",
+    "체험단운영실무",
+    "쇼핑리뷰전환",
 ]
 
 DAILY_SEARCH_INTENT_BANK = {
+    "체험단블로거": [
+        {
+            "search_phrase": "블로그 체험단 선정 잘 되는 신청서",
+            "reader_problem": "체험단을 신청해도 선정이 잘 안 되고 어떤 내용을 써야 할지 막막한 상황",
+            "reader_promise": "신청 동기, 방문 가능 일정, 사진 촬영 계획, 후기 작성 기준을 한 번에 정리하는 방법 안내",
+            "core_explanation": "체험단 신청서는 열심히 쓰는 것보다 광고주가 확인해야 할 정보를 빠르게 보여주는 것이 중요하다. 블로그 주제, 최근 글 품질, 방문 가능 시간, 촬영 가능 포인트가 분명해야 선정 가능성을 판단하기 쉽다.",
+            "specific_terms": ["신청 동기", "방문 가능 일정", "콘텐츠 콘셉트", "촬영 포인트", "후기 작성 기준", "체험단 매칭"],
+            "practical_points": ["내 블로그 주제와 매장 업종이 왜 맞는지 먼저 쓰기", "방문 가능한 날짜와 시간대를 구체적으로 적기", "사진으로 담을 장면을 3가지 정도 미리 제안하기", "후기 작성 가능 날짜와 글 구성 방향을 함께 적기"],
+            "check_sequence": ["최근 블로그 글 3개 품질 확인", "신청하려는 캠페인 조건 확인", "방문 일정과 촬영 가능 시간 정리", "신청서 마지막에 후기 작성 계획 짧게 정리"],
+            "mistakes_to_avoid": ["무조건 열심히 하겠다는 말만 반복하기", "매장 업종과 상관없는 내 일상 이야기만 쓰기", "선정 보장이나 상위노출을 약속하는 표현 쓰기"],
+            "faq_questions": ["초보 블로그도 체험단에 선정될 수 있을까?", "신청서에는 방문 일정과 후기 계획 중 무엇이 더 중요할까?"],
+            "fact_guardrails": ["선정이나 수익을 보장하지 말 것", "특정 플랫폼 정책이나 모집 조건은 캠페인별로 다를 수 있다고 안내"],
+        },
+        {
+            "search_phrase": "블로그 체험단 초보 시작 방법",
+            "reader_problem": "체험단을 해보고 싶지만 어떤 캠페인부터 신청해야 할지 기준이 없는 상황",
+            "reader_promise": "블로그 주제, 방문 동선, 사진 촬영 부담, 후기 작성 시간을 기준으로 첫 캠페인을 고르는 법 정리",
+            "core_explanation": "초보 체험단은 큰 혜택보다 내가 무리 없이 경험하고 기록할 수 있는 캠페인을 고르는 것이 먼저다. 방문 동선과 작성 시간을 무시하면 후기 품질이 떨어지고 다음 신청에도 불리할 수 있다.",
+            "specific_terms": ["캠페인 조건", "방문형 체험단", "배송형 체험단", "후기 마감일", "콘텐츠 품질", "블로그 주제 적합도"],
+            "practical_points": ["처음에는 내 동네 방문형이나 부담 적은 배송형부터 보기", "후기 마감일까지 실제 작성 가능한지 계산하기", "내 블로그 카테고리와 맞는 캠페인을 우선 고르기", "사진을 찍을 수 있는 시간대와 장소를 미리 생각하기"],
+            "check_sequence": ["블로그 주제와 최근 글 확인", "캠페인 조건과 마감일 확인", "방문 또는 촬영 동선 확인", "후기 작성 시간을 캘린더에 먼저 잡기"],
+            "mistakes_to_avoid": ["혜택 금액만 보고 무리하게 신청하기", "후기 마감일을 가볍게 보기", "내 블로그와 전혀 다른 업종만 계속 신청하기"],
+            "faq_questions": ["체험단 초보는 방문형과 배송형 중 무엇이 나을까?", "블로그 글이 몇 개 정도 있어야 신청해볼 만할까?"],
+            "fact_guardrails": ["캠페인별 선정 기준은 다를 수 있음", "플랫폼별 세부 조건을 단정하지 말 것"],
+        },
+    ],
+    "리뷰마케팅사업자": [
+        {
+            "search_phrase": "네이버 플레이스 체험단 모집 준비",
+            "reader_problem": "동네 매장을 운영하면서 체험단을 모집하고 싶은데 무엇부터 준비해야 할지 모르는 상황",
+            "reader_promise": "매장 정보, 제공 메뉴, 방문 시간, 사진 포인트, 후기 가이드까지 모집 전 체크리스트 정리",
+            "core_explanation": "체험단 모집은 단순히 사람을 많이 부르는 일이 아니라 방문자가 어떤 경험을 하고 어떤 정보를 남기게 할지 설계하는 일이다. 네이버 플레이스 정보와 실제 매장 경험이 맞아야 후기 품질도 안정된다.",
+            "specific_terms": ["네이버 플레이스", "방문형 캠페인", "제공 내역", "후기 가이드", "방문 시간대", "리뷰 마케팅"],
+            "practical_points": ["플레이스 주소, 영업시간, 메뉴 정보를 먼저 최신화하기", "제공 메뉴와 추가 비용 여부를 분명히 적기", "사진으로 보여주고 싶은 좌석, 메뉴, 동선을 정리하기", "방문 가능한 시간대와 피해야 할 시간대를 나누기"],
+            "check_sequence": ["플레이스 기본 정보 점검", "제공 내역과 예산 확정", "방문 가능 시간대 정리", "후기에서 꼭 필요한 정보 3가지 작성"],
+            "mistakes_to_avoid": ["제공 조건을 애매하게 적기", "바쁜 시간대에만 방문을 몰리게 하기", "좋은 말만 써달라는 식의 부자연스러운 요청하기"],
+            "faq_questions": ["체험단 모집 전에 네이버 플레이스는 무엇을 고쳐야 할까?", "사장님이 후기 가이드를 어디까지 줘도 괜찮을까?"],
+            "fact_guardrails": ["후기 방향을 강요하거나 허위 후기를 유도하는 표현 금지", "플랫폼과 네이버 정책은 최신 기준 확인 필요"],
+        },
+        {
+            "search_phrase": "동네 매장 체험단 홍보 방법",
+            "reader_problem": "광고비는 부담되지만 블로그 후기와 방문 유입을 늘리고 싶은 소상공인 상황",
+            "reader_promise": "업종, 지역 키워드, 체험 혜택, 후기 품질을 기준으로 현실적인 홍보 순서 정리",
+            "core_explanation": "동네 매장 홍보는 넓은 노출보다 가까운 지역에서 실제 방문 가능성이 있는 사람에게 보여지는 것이 중요하다. 체험단도 지역 키워드와 후기 품질이 맞아야 장기적으로 검색 자산이 된다.",
+            "specific_terms": ["지역 키워드", "방문 전환", "후기 품질", "캠페인 예산", "로컬 마케팅", "콘텐츠 누적"],
+            "practical_points": ["매장 업종과 동네명을 함께 넣은 키워드 정리하기", "한 번에 많은 인원보다 후기 품질을 먼저 보기", "사진이 잘 나오는 메뉴나 공간을 캠페인에 포함하기", "후기 발행 후 플레이스와 블로그 검색 결과를 같이 확인하기"],
+            "check_sequence": ["주력 메뉴와 고객층 정리", "지역 키워드 후보 작성", "체험 제공 범위 결정", "후기 발행 후 검색 노출과 문의 변화 확인"],
+            "mistakes_to_avoid": ["전국 단위 키워드만 노리기", "체험 혜택만 크게 쓰고 매장 장점을 정리하지 않기", "후기 발행 후 결과를 확인하지 않기"],
+            "faq_questions": ["동네 매장은 몇 명부터 체험단을 시작해볼 만할까?", "체험단 후기는 어떤 기준으로 성과를 봐야 할까?"],
+            "fact_guardrails": ["매출 증가를 보장하지 말 것", "광고비와 성과는 업종, 지역, 계정 상태에 따라 달라짐"],
+        },
+    ],
+    "블로그후기작성": [
+        {
+            "search_phrase": "체험단 후기 작성법",
+            "reader_problem": "체험단에 선정됐지만 광고처럼 보이지 않으면서 필요한 정보를 담는 방법이 어려운 상황",
+            "reader_promise": "방문 전 정보, 실제 동선, 사진 순서, 장단점 정리, 마무리 고지까지 후기 구조 안내",
+            "core_explanation": "좋은 체험단 후기는 칭찬을 길게 쓰는 글이 아니라 검색자가 방문 전에 궁금해하는 정보를 정리하는 글이다. 동선, 가격대, 메뉴 선택 기준, 주의점을 자연스럽게 담아야 저장 가치가 생긴다.",
+            "specific_terms": ["방문 동선", "사진 순서", "정보성 후기", "광고 고지", "장단점 정리", "검색 의도"],
+            "practical_points": ["첫 문단에 방문 목적과 상황을 짧게 쓰기", "사진은 외관, 메뉴, 공간, 사용 장면 순서로 배치하기", "좋았던 점과 아쉬울 수 있는 점을 함께 정리하기", "광고 고지는 숨기지 말고 자연스럽게 분리하기"],
+            "check_sequence": ["방문 전 궁금했던 정보 적기", "사진 순서 정리", "본문에 실제 확인 포인트 넣기", "광고 고지와 마무리 확인"],
+            "mistakes_to_avoid": ["맛있어요 좋았어요만 반복하기", "사진만 많고 위치나 이용 기준을 빼기", "광고 고지를 흐리게 쓰기"],
+            "faq_questions": ["체험단 후기는 칭찬만 써야 할까?", "광고 고지는 글 어디에 넣는 게 자연스러울까?"],
+            "fact_guardrails": ["직접 경험하지 않은 내용을 지어내지 말 것", "의무 고지와 플랫폼 조건은 캠페인 기준 확인"],
+        },
+        {
+            "search_phrase": "체험단 사진 잘 찍는 법",
+            "reader_problem": "후기 사진을 찍어야 하는데 어떤 장면을 남겨야 글이 자연스러워질지 모르는 상황",
+            "reader_promise": "대표 사진, 사용 장면, 비교 컷, 공간 컷, 디테일 컷을 기준으로 촬영 순서 정리",
+            "core_explanation": "체험단 사진은 예쁜 한 장보다 글 내용을 설명해주는 여러 장이 더 중요하다. 검색자는 분위기뿐 아니라 크기, 위치, 구성, 사용 방법을 사진으로 확인하고 싶어한다.",
+            "specific_terms": ["대표 사진", "디테일 컷", "사용 장면", "공간 컷", "구성 컷", "썸네일"],
+            "practical_points": ["처음에는 대표 사진으로 쓸 가로형 한 장을 찍기", "제품이나 메뉴의 크기가 보이는 비교 컷 남기기", "실제로 사용하는 손이나 공간을 자연스럽게 넣기", "흔들린 사진은 바로 다시 찍어두기"],
+            "check_sequence": ["대표 컷 촬영", "전체 구성 컷 촬영", "디테일과 사용 장면 촬영", "글 흐름에 맞춰 사진 순서 정리"],
+            "mistakes_to_avoid": ["비슷한 각도의 사진만 여러 장 찍기", "조명 어두운 곳에서 대표 사진을 대충 찍기", "사용 전후나 크기 기준이 보이지 않게 찍기"],
+            "faq_questions": ["체험단 후기 사진은 몇 장 정도가 적당할까?", "썸네일 사진은 어떤 컷을 고르는 게 좋을까?"],
+            "fact_guardrails": ["촬영 품질이 선정이나 수익을 보장한다고 쓰지 말 것"],
+        },
+    ],
+    "체험단운영실무": [
+        {
+            "search_phrase": "체험단 모집 가이드라인 작성법",
+            "reader_problem": "체험단을 모집하려는데 방문 조건과 후기 요청을 어떻게 써야 할지 애매한 상황",
+            "reader_promise": "제공 내역, 방문 조건, 필수 촬영, 후기 마감, 금지 표현을 나누어 가이드라인을 만드는 법 안내",
+            "core_explanation": "체험단 가이드라인은 블로거를 통제하기 위한 문서가 아니라 서로 오해 없이 캠페인을 진행하기 위한 기준표다. 제공 내역과 마감일이 분명해야 불필요한 문의와 분쟁이 줄어든다.",
+            "specific_terms": ["제공 내역", "필수 촬영", "후기 마감", "가이드라인", "캠페인 조건", "금지 표현"],
+            "practical_points": ["제공되는 금액이나 메뉴 범위를 숫자로 분명히 쓰기", "필수 사진은 장면 기준으로 3~5개만 정리하기", "후기 마감일과 수정 요청 가능 범위를 미리 적기", "허위 표현이나 과장 표현 금지를 명확히 넣기"],
+            "check_sequence": ["제공 내역 확정", "방문 가능 일정 정리", "사진과 후기 필수 항목 작성", "금지 표현과 문의 방법 정리"],
+            "mistakes_to_avoid": ["좋게 써주세요처럼 모호하게 요청하기", "제공 범위와 추가 비용을 나중에 설명하기", "필수 조건을 너무 많이 넣어 후기 품질을 떨어뜨리기"],
+            "faq_questions": ["체험단 가이드라인은 자세할수록 좋을까?", "후기 수정 요청은 어디까지 가능할까?"],
+            "fact_guardrails": ["허위 리뷰나 긍정 후기 강요로 읽힐 표현 금지", "플랫폼별 정책 차이는 단정하지 말 것"],
+        },
+        {
+            "search_phrase": "체험단 캠페인 성과 확인",
+            "reader_problem": "체험단을 진행했는데 실제로 도움이 됐는지 무엇을 봐야 할지 모르는 상황",
+            "reader_promise": "발행 여부, 검색 노출, 사진 품질, 문의 변화, 재방문 가능성을 기준으로 성과 확인 순서 정리",
+            "core_explanation": "체험단 성과는 당일 매출만으로 판단하기 어렵다. 후기 콘텐츠가 검색에 남고, 플레이스와 블로그에서 어떤 정보가 보강됐는지 함께 봐야 한다.",
+            "specific_terms": ["검색 노출", "후기 품질", "방문 전환", "콘텐츠 자산", "성과 체크", "재방문 가능성"],
+            "practical_points": ["후기 발행일과 URL을 표로 정리하기", "주요 키워드 검색 결과에서 노출 위치를 확인하기", "사진과 정보 누락 여부를 캠페인별로 체크하기", "문의나 예약 변화는 최소 며칠 단위로 보기"],
+            "check_sequence": ["발행 완료 여부 확인", "검색 노출과 제목 확인", "후기 사진과 정보 품질 확인", "문의와 예약 변화 기록"],
+            "mistakes_to_avoid": ["첫날 매출만 보고 실패라고 단정하기", "후기 URL을 따로 모아두지 않기", "좋아요나 댓글만 성과로 보기"],
+            "faq_questions": ["체험단 성과는 언제부터 확인하는 게 좋을까?", "후기 조회수보다 더 중요한 기준은 뭘까?"],
+            "fact_guardrails": ["매출, 문의, 노출 증가를 보장하지 말 것", "성과 판단 기간은 업종과 지역에 따라 다름"],
+        },
+    ],
+    "쇼핑리뷰전환": [
+        {
+            "search_phrase": "블로그 리뷰 상품 고르는 기준",
+            "reader_problem": "상품 리뷰 글을 쓰고 싶지만 어떤 제품이 검색 유입과 수익화에 맞는지 고르기 어려운 상황",
+            "reader_promise": "검색 의도, 사진 표현력, 사용 장면, 구매 전 고민, 광고 고지를 기준으로 상품을 고르는 법 정리",
+            "core_explanation": "수익형 상품 글은 무조건 인기 상품을 고르는 것보다 독자가 구매 전에 비교하는 지점이 분명한 상품을 고르는 것이 중요하다. 사진으로 설명할 수 있고 사용 상황이 구체적일수록 글이 자연스럽다.",
+            "specific_terms": ["검색 의도", "구매 전 고민", "사용 장면", "상품 리뷰", "광고 고지", "전환 흐름"],
+            "practical_points": ["독자가 구매 전에 검색할 질문을 먼저 적기", "사진으로 설명 가능한 장면이 있는 상품 고르기", "장점보다 비교 기준과 주의점을 먼저 정리하기", "광고 고지와 링크 위치를 본문 흐름 뒤쪽에 두기"],
+            "check_sequence": ["검색 질문 확인", "사진 장면 구상", "비교 기준 정리", "링크와 고지 위치 점검"],
+            "mistakes_to_avoid": ["무조건 추천, 인생템 같은 과장 표현 쓰기", "링크를 글 맨 위에 먼저 넣기", "상품명만 바꾼 비슷한 글을 반복하기"],
+            "faq_questions": ["상품 리뷰 글은 어떤 제품부터 쓰는 게 좋을까?", "광고 링크는 글 어디에 넣는 게 자연스러울까?"],
+            "fact_guardrails": ["수익, 구매 전환, 검색 노출을 보장하지 말 것", "제휴 링크와 광고 고지는 명확히 표시"],
+        },
+        {
+            "search_phrase": "쇼핑커넥트 쿠팡 차이",
+            "reader_problem": "블로그 수익화를 하면서 네이버 쇼핑커넥트와 쿠팡 파트너스 중 무엇을 써야 할지 헷갈리는 상황",
+            "reader_promise": "블로그 계정 성격, 상품군, 검색 의도, 광고 고지, 장기 운영 관점에서 차이 정리",
+            "core_explanation": "제휴 상품 글은 플랫폼 이름보다 블로그 독자가 어떤 정보를 기대하는지가 먼저다. 네이버 안에서 자연스러운 상품 탐색은 쇼핑커넥트가 맞을 수 있고, 구매 의도가 강한 시즌 상품은 쿠팡이 맞을 수 있다.",
+            "specific_terms": ["쇼핑커넥트", "쿠팡 파트너스", "제휴 링크", "광고 고지", "상품형 글", "검색 유입"],
+            "practical_points": ["블로그 주제와 상품군이 맞는지 먼저 보기", "독자가 바로 구매하려는지 비교 정보를 찾는지 나누기", "계정 전체가 광고글처럼 보이지 않게 비율 조정하기", "광고 고지는 플랫폼별 기준에 맞게 명확히 넣기"],
+            "check_sequence": ["블로그 포지션 확인", "상품군과 검색 의도 분류", "제휴 링크 플랫폼 선택", "광고 고지와 링크 위치 점검"],
+            "mistakes_to_avoid": ["수수료만 보고 플랫폼을 고르기", "모든 글을 상품 링크 중심으로 만들기", "광고 고지를 숨기거나 애매하게 쓰기"],
+            "faq_questions": ["네이버 블로그에는 쇼핑커넥트가 더 자연스러울까?", "쿠팡 파트너스는 언제만 쓰는 게 좋을까?"],
+            "fact_guardrails": ["수수료율과 정책은 변동될 수 있으니 단정 금지", "최신 운영 정책 확인 필요"],
+        },
+    ],
     "장마습기": [
         {
             "search_phrase": "장마철 원룸 습기 제거",
@@ -789,6 +919,10 @@ COUPANG_USED_PRODUCTS_FILE = "coupang_used_products.json"
 COUPANG_SELECTION_HISTORY_LIMIT = 6
 COUPANG_API_DOMAIN = "https://api-gateway.coupang.com"
 COUPANG_API_BASE_PATH = "/v2/providers/affiliate_open_api/apis/openapi/v1"
+EXPERIENCE_PLATFORM_NAME = "CheheomMoa"
+EXPERIENCE_PLATFORM_MAIN_URL = "https://camp-platform-liart.vercel.app/"
+EXPERIENCE_PLATFORM_BLOGGER_URL = "https://camp-platform-liart.vercel.app/app?tab=explore"
+EXPERIENCE_PLATFORM_ADVERTISER_URL = ""
 
 COUPANG_GROUP_RULES = [
     ("선풍기", ["선풍기", "써큘레이터", "서큘레이터", "테이블팬", "탁상용", "bldc"]),
@@ -838,6 +972,31 @@ COUPANG_ANGLE_BANK = [
         "cta_text": "가격만 보지 말고 실제 체감 포인트를 같이 보면 판단이 쉬워진다는 흐름",
     },
 ]
+
+
+class CoupangApiCooldownError(RuntimeError):
+    """Coupang API returned a retry-later or rate-limit response."""
+
+
+def is_coupang_api_cooldown_error(error):
+    message = str(error)
+    lower_message = message.lower()
+    korean_indicators = (
+        "시간당 사용 횟수",
+        "다시 시도해 주시기 바랍니다",
+        "파트너스 이용이 제한",
+        "요청 횟수",
+    )
+    english_indicators = (
+        "too many requests",
+        "rate limit",
+        "quota",
+        "429",
+    )
+    return (
+        any(token in message for token in korean_indicators)
+        or any(token in lower_message for token in english_indicators)
+    )
 
 
 def get_daily_category_rotation_path():
@@ -1135,8 +1294,12 @@ def build_daily_topic_context():
         "생활 장면은 가볍게, 실천 팁은 구체적으로 쓰는 글",
         "검색자가 바로 따라 할 수 있는 순서형 글",
     ])
-    intent_candidates = DAILY_SEARCH_INTENT_BANK.get(content_category) or DAILY_SEARCH_INTENT_BANK["계절생활문제"]
+    intent_candidates = DAILY_SEARCH_INTENT_BANK.get(content_category) or DAILY_SEARCH_INTENT_BANK["체험단블로거"]
     daily_intent = random.choice(intent_candidates)
+    platform_main_ready = bool(EXPERIENCE_PLATFORM_MAIN_URL)
+    platform_blogger_ready = bool(EXPERIENCE_PLATFORM_BLOGGER_URL)
+    platform_advertiser_ready = bool(EXPERIENCE_PLATFORM_ADVERTISER_URL)
+    platform_link_ready = platform_main_ready or platform_blogger_ready or platform_advertiser_ready
     return {
         "now_label": f"{now.month}월 {now.day}일 {weekday_name}요일",
         "season": season,
@@ -1165,6 +1328,13 @@ def build_daily_topic_context():
         "photo_style": photo_style,
         "emotion_keyword": emotion_keyword,
         "writing_angle": writing_angle,
+        "platform_name": EXPERIENCE_PLATFORM_NAME or "체험단 플랫폼",
+        "platform_main_url": EXPERIENCE_PLATFORM_MAIN_URL,
+        "platform_blogger_url": EXPERIENCE_PLATFORM_BLOGGER_URL,
+        "platform_advertiser_url": EXPERIENCE_PLATFORM_ADVERTISER_URL,
+        "platform_link_ready": "URL 준비됨" if platform_link_ready else "URL 미설정",
+        "platform_blogger_ready": "블로거 모집 URL 준비됨" if platform_blogger_ready else "블로거 모집 URL 미설정",
+        "platform_advertiser_ready": "사장님 캠페인 등록 URL 준비됨" if platform_advertiser_ready else "사장님 캠페인 등록 URL 미설정",
     }
 
 
@@ -1177,10 +1347,10 @@ def build_daily_post_prompt(daily_context):
     fact_guardrails = format_daily_prompt_items(daily_context.get("fact_guardrails", []))
 
     return f"""
-당신은 네이버에서 오래 활동한 생활 정보형 블로거입니다.
-이번 글은 겉으로는 자연스러운 일상글처럼 읽히지만, 실제로는 검색자가 문제를 해결하고 저장하고 싶어지는 생활 정보글이어야 합니다.
+당신은 네이버에서 오래 활동한 체험단/블로그 운영 정보형 블로거입니다.
+이번 글은 자연스러운 블로그 글처럼 읽히지만, 실제로는 체험단 신청자나 소상공인 광고주가 바로 저장하고 따라 할 수 있는 정보글이어야 합니다.
 무가치한 하루 기록, 감정만 있는 일기, 카페에 갔다 온 이야기로 끝나는 글은 금지입니다.
-주제가 좁을수록 설명도 깊어야 합니다. 겉핥기 팁을 나열하지 말고 원인, 용어, 확인 위치, 행동 순서를 정확하게 풀어주세요.
+주제가 좁을수록 설명도 깊어야 합니다. 겉핥기 팁을 나열하지 말고 신청서, 후기, 사진, 모집 조건, 성과 확인 순서를 정확하게 풀어주세요.
 
 [이번 글 컨텍스트]
 - 날짜 감각: {daily_context['now_label']}
@@ -1202,6 +1372,13 @@ def build_daily_post_prompt(daily_context):
 - 실제 장면: {daily_context['daily_scene']}
 - 감정 톤: {daily_context['emotion_keyword']}
 - 글 전개 방식: {daily_context['writing_angle']}
+- 플랫폼 연결 이름: {daily_context['platform_name']}
+- 플랫폼 URL 상태: {daily_context['platform_link_ready']}
+- 메인 URL: {daily_context['platform_main_url']}
+- 블로거 모집 URL: {daily_context['platform_blogger_url']}
+- 사장님 캠페인 등록 URL: {daily_context['platform_advertiser_url']}
+- 블로거 모집 URL 상태: {daily_context['platform_blogger_ready']}
+- 사장님 캠페인 등록 URL 상태: {daily_context['platform_advertiser_ready']}
 
 [반드시 사용할 정확한 단어]
 {specific_terms}
@@ -1222,15 +1399,25 @@ def build_daily_post_prompt(daily_context):
 {fact_guardrails}
 
 [작성 핵심 원칙]
-- 일상 장면은 도입과 연결에만 사용하고, 본문 중심은 구체적인 원인 설명, 해결책, 판단 기준으로 채우세요.
-- 글 비중은 생활 장면 20%, 실천 정보 80% 정도로 맞추세요.
+- 일상 장면은 도입과 연결에만 사용하고, 본문 중심은 체험단 신청, 후기 작성, 리뷰 마케팅, 캠페인 운영 기준으로 채우세요.
+- 글 비중은 생활 장면 10%, 실천 정보 90% 정도로 맞추세요.
+- 네이버 검색자가 오래 머물고 저장할 만한 글이 되도록 제목, 도입, 소제목, FAQ가 모두 하나의 검색 의도를 향하게 작성하세요.
+- 본문을 쓰기 전에 스스로 이번 글의 검색 의도를 한 줄로 고정하고, 관련 없는 생활 이야기나 넓은 마케팅 일반론으로 새지 마세요.
+- 애드포스트 수익은 클릭 유도가 아니라 검색 유입, 체류 시간, 정보 신뢰도에서 나온다고 보고, 독자가 뒤로가기를 누르지 않도록 초반 5줄 안에 문제와 답의 방향을 분명히 보여주세요.
+- 독자가 저장할 만한 체크리스트, 비교 기준, 실수 방지, 바로 따라 할 순서를 본문 중간에 반드시 넣으세요.
 - 핵심 검색어는 제목 없이도 본문 첫 300자 안에 자연스럽게 1회 넣고, 중간과 마무리에 변형 표현으로 1~2회 더 넣으세요.
-- 핵심 검색어를 넓은 주제로 바꾸지 마세요. 예를 들어 '장마철 원룸 습기 제거'라면 장마 일반론이 아니라 원룸, 벽, 창가, 옷장, 빨래 동선 중심으로 써야 합니다.
+- 핵심 검색어를 넓은 주제로 바꾸지 마세요. 예를 들어 '블로그 체험단 선정 잘 되는 신청서'라면 체험단 일반론이 아니라 신청 동기, 방문 일정, 사진 계획, 후기 마감 중심으로 써야 합니다.
 - 반드시 사용할 정확한 단어는 본문에 자연스럽게 넣고, 처음 나올 때는 쉬운 말로 바로 풀어 설명하세요.
 - 각 소제목 아래에는 왜 그런지, 어디를 확인할지, 오늘 무엇을 할지 3가지가 모두 들어가야 합니다.
 - 독자가 글을 읽고 바로 따라 할 행동을 최소 4개 이상 제시하세요.
 - 추상적인 조언 대신 언제, 어디서, 무엇을, 어떤 순서로 하면 좋은지 구체적으로 쓰세요.
 - '좋습니다', '중요합니다', '관리하세요'로 끝내지 말고 구체적인 기준을 붙이세요.
+- 체험단 선정, 매출 증가, 검색 노출, 수익 증가를 보장하는 문장은 쓰지 마세요.
+- 허위 후기, 긍정 후기 강요, 직접 써보지 않은 경험담, 상위노출 보장처럼 정책상 위험한 표현은 쓰지 마세요.
+- 플랫폼 URL 상태가 URL 미설정이면 실제 링크, 도메인, 가입 유도, 캠페인 등록 유도 문구를 쓰지 말고 정보글로만 마무리하세요.
+- 블로거 모집 URL이 준비된 경우, 블로거/후기 작성/체험단 신청 주제에서는 글 마지막 2~3문장 안에서 블로거 모집 URL을 1회만 자연스럽게 연결하세요.
+- 사장님 캠페인 등록 URL이 미설정이면, 사장님/광고주/매장 운영 주제에서 캠페인 등록 링크나 등록 페이지가 있다고 쓰지 마세요. 필요하면 메인 URL에서 플랫폼 정보를 확인하는 정도로만 1회 연결하세요.
+- 같은 글에서 메인 URL과 블로거 모집 URL을 모두 반복하지 말고, 글 주제에 맞는 링크 1개만 사용하세요.
 - 확인되지 않은 수치를 만들지 마세요. 요금, 정책, 출시일, 금리, 공식 기준은 주어진 내용 안에서만 쓰고 불확실하면 공식 확인이 필요하다고 안내하세요.
 - 본인이 실제로 구매하거나 사용한 것처럼 단정하지 말고, 생활 속에서 확인해볼 기준을 정리하는 톤으로 쓰세요.
 - 네이버에서 검색해 들어온 사람이 빠르게 답을 찾을 수 있도록 소제목처럼 보이는 짧은 문장을 중간중간 넣어주세요.
@@ -1241,14 +1428,15 @@ def build_daily_post_prompt(daily_context):
 - 뉴스/경제/주식이 나오더라도 확인되지 않은 수치, 종목 가격, 속보, 단정적 투자 추천은 꾸며내지 마세요.
 
 [본문 구조]
-- 시작: 독자가 공감할 문제 상황과 오늘의 실제 장면을 짧게 연결
+- 시작: 첫 5줄 안에 핵심 검색어, 독자 문제, 이 글에서 얻을 답의 방향을 자연스럽게 연결
 - 문제 정리: 핵심 원리를 정확한 단어로 설명하고 쉬운 말로 풀기
 - 확인 순서: 어디부터 봐야 하는지 위치와 순서를 구체적으로 안내
 - 기준 제시: 상황별로 확인할 기준을 3가지 이상 구체적으로 정리
+- 저장용 체크리스트: 독자가 나중에 다시 볼 만한 기준을 4개 이상 정리
 - 실천 순서: 오늘 바로 해볼 수 있는 행동을 순서대로 안내
 - 흔한 실수: 독자가 놓치기 쉬운 부분을 짧게 짚기
 - 자주 묻는 질문: 위 질문 2개에 자연스럽게 답하기
-- 마무리: 오늘 내 생활에 적용할 한 줄 기준으로 정리
+- 마무리: 체험단 신청자 또는 광고주가 오늘 확인할 한 줄 기준으로 정리
 
 [출력 규칙]
 - 인사말부터 마무리까지 블로그 본문만 출력
@@ -1275,12 +1463,12 @@ def build_daily_post_prompt(daily_context):
 
 def build_daily_image_prompt(daily_context):
     return (
-        f"{daily_context['photo_style']}, {daily_context['season']} 분위기, "
-        f"{daily_context['weather_key']} 느낌, {daily_context['daily_scene']}, "
-        f"{daily_context['search_phrase']}와 연결되는 생활 문제 해결 장면, "
-        f"{daily_context['seasonal_topic']}를 연상시키는 장면, "
-        "20대 성인 한국인 여자가 반드시 등장하고 자연스러운 표정과 생활감이 보이는 사진, "
-        "인물이 신뢰감을 주되 과하게 모델처럼 연출되지 않은 현실적인 네이버 블로그 사진"
+        f"{daily_context['season']} 분위기의 현실적인 네이버 블로그용 사진, "
+        f"{daily_context['search_phrase']}와 연결되는 체험단 신청서 작성, 후기 초안 정리, "
+        "매장 리뷰 마케팅 계획을 준비하는 책상 장면, "
+        "노트북, 스마트폰, 메모장, 촬영한 음식이나 생활용품 사진이 자연스럽게 보이고, "
+        "성인 한국인 블로거 또는 소상공인이 신뢰감 있게 작업하는 모습, "
+        "브랜드 로고나 읽을 수 있는 화면 텍스트 없이 깔끔하고 현실적인 사진"
     )
 
 
@@ -1409,6 +1597,8 @@ def generate_coupang_deeplink(original_url):
         if data and len(data) > 0:
             return data[0].get("shortenUrl") or original_url
     except Exception as e:
+        if is_coupang_api_cooldown_error(e):
+            raise CoupangApiCooldownError(str(e)) from e
         print(f"   >> [안내] 딥링크 생성 실패: {e}")
     return original_url
 
@@ -1458,7 +1648,12 @@ def select_unused_coupang_product(csv_path):
             continue
             
         if api_enabled:
-            shorten_url = generate_coupang_deeplink(original_url)
+            try:
+                shorten_url = generate_coupang_deeplink(original_url)
+            except CoupangApiCooldownError as e:
+                raise RuntimeError(
+                    f"쿠팡 API 사용 제한으로 딥링크 변환을 중단합니다. {e}"
+                ) from e
             if shorten_url and shorten_url != original_url:
                 selected_row["상품원본URL"] = selected_row.get("상품원본URL") or original_url
                 selected_row["쿠팡링크"] = shorten_url
@@ -2249,9 +2444,10 @@ def generate_content(post_type):
 - 24~42자 안에서 자연스러운 한국어 제목으로 작성
 - 핵심 검색어 또는 핵심 검색어의 자연스러운 변형을 제목 앞쪽에 넣기
 - 문제 상황, 확인 대상, 해결 기대가 같이 보이게 작성
-- 너무 넓은 제목 금지. 생활 습관, 체크포인트 같은 뭉뚱그린 말보다 냄새, 습기, 전기요금, 배수구처럼 검색자가 찾는 대상을 넣기
+- 본문 도입과 FAQ가 같은 검색 의도로 이어질 수 있는 제목으로 작성
+- 너무 넓은 제목 금지. 블로그 운영, 마케팅 같은 뭉뚱그린 말보다 체험단 신청서, 후기 작성, 사진 촬영, 모집 조건, 리뷰 마케팅처럼 검색자가 찾는 대상을 넣기
 - 오늘의 일상, 소소한 하루, 그냥 기록 같은 무가치한 일기형 제목 금지
-- 과장, 낚시, 허위 후기, 직접 써본 것처럼 보이는 표현 금지
+- 과장, 낚시, 허위 후기, 선정 보장, 매출 보장, 직접 써본 것처럼 보이는 표현 금지
 - 따옴표, 괄호, 해시태그, 이모티콘, 영어 금지
 - 제목 1줄만 출력
 
@@ -2266,52 +2462,12 @@ def generate_content(post_type):
             else:
                 blog_title = ""
             if not blog_title:
-                blog_title = f"{daily_context['search_phrase']} 실생활 체크포인트"
+                blog_title = f"{daily_context['search_phrase']} 실전 체크포인트"
 
             img_description = build_daily_image_prompt(daily_context)
             p_name = ""
             post_type = "__daily_done__"
-        if post_type == '일상':
-            prompt = """
-        당신은 20~30대 한국인 블로거입니다. 
-        오늘의 일상, 취미, 산책, 카페 투어, 맛집, 혹은 날씨에 대한 생각 중 하나를 골라 진짜 사람이 쓴 것처럼 자연스러운 일상글을 작성해주세요.
-        단, 봇 탐지를 피하기 위해 인위적인 AI 말투는 완전히 배제하고, 의식의 흐름이나 감정을 잘 담아 구어체와 존댓말을 적절히 섞어주세요. 감탄사나 이모티콘도 중간중간 넣어주세요.
-        인사말부터 마무리까지 블로그 본문 내용만 출력해야 하며, 글자 수가 1000자 이상이 되도록 구체적으로 적어주세요.
-        결과는 반드시 자연스러운 한국어로만 작성하고, 영어 문장이나 영어 제목 후보, 작업 메모 같은 문구는 절대 쓰지 마세요.
-        절대 마크다운 서식('**' 기호 등)을 사용하지 마세요. 번호를 매길 일이 있다면 평범하게 '1. 내용', '2. 내용' 처럼 적어주세요.
-        일반 본문 문장은 한 줄 40자 안팎으로 쓰고, 길어도 45자를 넘기지 마세요.
-        한 문장을 길게 한 문단으로 늘어쓰지 말고, 의미 단위마다 엔터를 눌러 아래 줄로 내려써주세요.
-        긴 문단으로 쭉 나열하지 말고 2~4줄이 하나의 자연스러운 흐름이 되게 작성해주세요.
-        
-        [서식 마커 규칙 - 반드시 지켜줘]
-        - 글의 주요 흐름이 바뀌는 곳(예: 인사→본문, 본문→마무리) 2~3곳에 새 줄로 [구분선] 이라고만 적어줘.
-        - 글 중간에 감성적이거나 인상적인 문장 1~2개를 [인용구]문장내용[/인용구] 형식으로 감싸줘.
-        - 인용구의 문장내용은 반드시 20자 이상 60자 이하의 완성된 한국어 문장이어야 해.
-        - [인용구][/인용구], [인용구] [/인용구], [인용구]문장내용[/인용구]처럼 비어 있거나 예시 문구가 남은 인용구는 절대 출력하지 마.
-        - 쓸 만한 인용 문장이 없으면 인용구를 생략하고, 빈 인용구만 덩그러니 만들지 마.
-        - 위 마커들은 에디터 서식으로 자동 변환되므로 반드시 정확히 적어줘.
-            """
-            
-            # 1단계: 본문 생성 (사고 모델 → 최대 300초 대기)
-            print("   >> 📝 블로그 본문 생성 중 (사고 모델, 최대 5분 대기)...")
-            blog_content = bot.send_prompt(prompt, max_wait=300)
-            if not blog_content:
-                return None, None, None, "", None
-            
-            # 2단계: 제목 생성 (사고 모델 → 최대 180초 대기)
-            print("   >> 📌 제목 생성 중 (사고 모델)...")
-            title_prompt = f"다음 블로그 본문에 어울리는 클릭하고 싶은 블로그 일상글 제목을 핵심만 딱 1줄로 작성해줘. 결과는 반드시 한국어 제목 1줄만 써주고 영어는 절대 쓰지 마. 특수문자나 따옴표 빼고:\n\n{blog_content[:500]}"
-            blog_title = bot.send_prompt(title_prompt, max_wait=180)
-            if blog_title:
-                blog_title = blog_title.replace('"', '').strip().split('\n')[0]
-                if re.search(r"[A-Za-z]{3,}", blog_title):
-                    blog_title = ""
-            else:
-                blog_title = "오늘의 일상 기록"
-            
-            img_description = "20대 성인 한국인 여자가 등장하는 한국의 일상, 카페, 산책, 맛집 등 따뜻한 분위기의 고품질 사진"
-            
-        elif post_type == '쿠팡':
+        if post_type == '쿠팡':
             product_state = select_unused_coupang_product(csv_file_path)
             target = product_state["selected_row"]
             coupang_angle = get_next_coupang_angle(datetime.now())
@@ -3510,12 +3666,12 @@ def _publish_one_post_inner(post_type):
 
 
 # =============================================================
-# 6. 랜덤 스케줄 생성 (하루 10건: 일상 5 + 쿠팡 5)
+# 6. 랜덤 스케줄 생성 (하루 10건: 체험단형 일상 9 + 쿠팡 1)
 # =============================================================
 def generate_daily_schedule():
     """
     하루 24시간을 10개의 랜덤 시간으로 나누고,
-    일상 5건 + 쿠팡 5건을 랜덤으로 섞어 배치
+    체험단형 일상 9건 + 쿠팡 1건을 랜덤으로 섞어 배치
     """
     # 기존 스케줄 전부 제거
     schedule.clear()
@@ -3536,8 +3692,8 @@ def generate_daily_schedule():
     if not random_minutes:
         random_minutes = sorted(random.sample(candidate_minutes, 10))
     
-    # 글 종류 배정: 일상 5 + 쿠팡 5 → 섞기
-    post_types = ['일상'] * 5 + ['쿠팡'] * 5
+    # 글 종류 배정: 체험단형 일상 9 + 쿠팡 1 -> 섞기
+    post_types = ['일상'] * 9 + ['쿠팡'] * 1
     random.shuffle(post_types)
     
     print(f"\n{'='*60}")

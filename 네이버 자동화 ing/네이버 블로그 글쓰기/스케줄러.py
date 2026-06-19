@@ -18,7 +18,7 @@ PEER_SCHEDULE_FILES = [
     os.path.join(BASE_DIR, "skssj2628", "자동발행상태기록파일", "daily_schedule.json"),
 ]
 MIN_CROSS_ACCOUNT_GAP_MINUTES = 30
-POST_TYPES = ["일상"] * 3
+POST_TYPES = ["네이버메이트"] * 4 + ["애드포스트"] * 4
 STALE_TASK_CLEANUP_COUNT = 10
 
 
@@ -261,7 +261,7 @@ def print_schedule(items, target_date, schedule_path):
     print(f"[{target_date.isoformat()}] 작업 스케줄러 등록 결과")
     print("=" * 60)
     for item in items:
-        label = "일상" if item["post_type"] == "일상" else "쿠팡"
+        label = item["post_type"]
         print(f"  {item['index']:2d}. {item['scheduled_at'].strftime('%H:%M')}  ->  {label}")
     print(f"\n>> 스케줄 파일 저장: {schedule_path}")
     print(f">> 매일 재등록 작업: {REFRESH_TASK_NAME}")

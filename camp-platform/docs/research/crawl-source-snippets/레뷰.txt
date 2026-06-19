@@ -1,0 +1,300 @@
+레뷰 
+
+제품 url 
+https://www.revu.net/category/%EC%A0%9C%ED%92%88
+
+헤더스
+Request URL
+https://api.weble.net/users/1427390/starreds-confirm?campaigns=1315590
+Request Method
+GET
+Status Code
+200 OK
+Remote Address
+168.138.218.196:443
+Referrer Policy
+strict-origin-when-cross-origin
+access-control-allow-credentials
+true
+access-control-allow-origin
+https://www.revu.net
+cache-control
+private
+content-type
+application/json
+date
+Fri, 03 Apr 2026 02:04:40 GMT
+:authority
+api.weble.net
+:method
+GET
+:path
+/users/1427390/starreds-confirm?campaigns=1315590
+:scheme
+https
+accept
+application/json, text/plain, */*
+accept-encoding
+gzip, deflate, br, zstd
+accept-language
+ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7
+authorization
+Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXUyJ9.eyJpZCI6MTQyNzM5MCwidXNlcm5hbWUiOiJza3NzajI2MjZAbmF2ZXIuY29tIiwiZXhwIjoxNzc2NDc3ODQ3LCJyZW1lbWJlciI6ZmFsc2UsInN1YiI6MTQyNzM5MCwicm9sZSI6IlVTRVIiLCJpYXQiOiIxNzc1MTgxODQ3In0.Vem82ZQJ9aVflZoQ3LjfBIi6c_PFczVAConpSYMe5r_UziYarY-LTKzedf55KmxlBgXzMOpwUWS7p4J3eA7lpI2DWYTmP-rSIpIcKuH6zww0FlXTysuOSgV42ZCsYJ0KgP-u-js9FJhcdsqfiwQTACzcRcIVco6syXuYlzJXxg6jkg2pNCLNUmRlgv02eK5qWoHVEXvUiZgehYUUOR16Cm-KpvhqOsaiYYKRnwE7m-FHweIh4p6hFGqH8AhREyKFFxWOAC1Eeou98KU5bgpK8cYXrQC_wvKIKAsV1iXUYcZV8r4P-MS2hMaYjhnkBUI_lh4KSg1GY5utuw4s4jDD8jA431VIHygtl51d0zjAYKiB80nKNB-rUMlf2I-SAw-UNbiXUhDxj7BjcBVIp1mQFiN7dosnrec2TwhZlhPY4xCL8GZarsT5bBH46VMFAjl7tIoNK-dP8ctvg_v9VBYYM7hyTne2fG4gq-Hkoy16q8nRLuuuxmGT704AhL4gxG9ijPfZ708jB-ybNuzGm-C37HuYmicBvI0YiA38RRmfxFT7Tiq1gmaLzi6POA7cYS2I-k7SKraAkQvtYeOC9b-1MKu7EmaK-djLJZmJl4syiwoPPTi9bEzFfcGaMUU70AoPFC-5JSbbKXGDkr5rqVS7hZGFeisy5lun8Ws6UCLmWjs
+origin
+https://www.revu.net
+priority
+u=1, i
+referer
+https://www.revu.net/
+sec-ch-ua
+"Chromium";v="146", "Not-A.Brand";v="24", "Google Chrome";v="146"
+sec-ch-ua-mobile
+?0
+sec-ch-ua-platform
+"Windows"
+sec-fetch-dest
+empty
+sec-fetch-mode
+cors
+sec-fetch-site
+cross-site
+sec-fetch-storage-access
+active
+user-agent
+Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36
+
+페이로드
+
+campaigns
+1315590
+
+프리뷰
+{items: []}
+items
+: 
+[]
+
+
+리스폰스
+{"items":[]}
+
+
+
+지역 카테고리
+https://www.revu.net/category/%EC%A7%80%EC%97%AD
+
+헤더스
+Request URL
+https://api.weble.net/users/1427390/starreds-confirm?campaigns=1315519
+Request Method
+GET
+Status Code
+200 OK
+Remote Address
+168.138.218.196:443
+Referrer Policy
+strict-origin-when-cross-origin
+access-control-allow-credentials
+true
+access-control-allow-origin
+https://www.revu.net
+cache-control
+private
+content-type
+application/json
+date
+Fri, 03 Apr 2026 02:05:42 GMT
+:authority
+api.weble.net
+:method
+GET
+:path
+/users/1427390/starreds-confirm?campaigns=1315519
+:scheme
+https
+accept
+application/json, text/plain, */*
+accept-encoding
+gzip, deflate, br, zstd
+accept-language
+ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7
+authorization
+Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXUyJ9.eyJpZCI6MTQyNzM5MCwidXNlcm5hbWUiOiJza3NzajI2MjZAbmF2ZXIuY29tIiwiZXhwIjoxNzc2NDc3OTIxLCJyZW1lbWJlciI6ZmFsc2UsInN1YiI6MTQyNzM5MCwicm9sZSI6IlVTRVIiLCJpYXQiOiIxNzc1MTgxOTIxIn0.FpwUk8yi_RVrjqDKEQWAsDtBx0Nxqc-UcywyjK2--3Y08kRF2kkhAysMI5iFWQoxkcFiLNfRxmRpYpeHh06fZKVShfSoZ4vCw661qsB66yk9sXqDYtMMb2nZ3moSGJQK_1uOc7aoyB4h2VV6UNfxnobNJKbvjt7pu2ipQtAPOuIXmGP4GCYafqmTdp-PpSkO0V43vZyn1jYObR5uL0QTr4i0-FYg8d_6CKAqILGKKlWpBEJF5uj-a1ZxEKsaZgZJmTK7DIKxO2N816JYQueaOjnS-MTq-fYLKDKaaCrtFb14vNDG8TS5-RDCpyxuWZCq-NYVxRG1TsUJD_XR7293YzMQ0-qb0anBiTFCFkdXpSy_PfF8RRxYmhMaE5AlYw46891PTuCbWUDLOLEs0z8J1x5R59-c--hVx3LTKaKWXGnEKrXgszmYEKK4Z4n3z43Al_8ZqETAUD6tj5QtocsA5ImpVpuKMX6Qo0UjyxNyc2I1r-_EaHmMjsaOdPvExcCCsaVpsT8NXz9_ciBkzlmgUPEUxKmbwvC4_JPzVQjQAcDF_2axHoXhlzNr6y_VL3H1I4yiR_6yx6F7vFDQeBpBceLXbjtZmNbYrW4kZ6pDPAm5U-71j6SGizQnA2cgow0u2EffNcw0Kb66qMOK3IuIZjhXNjtdhD6tevYNfXK6hzI
+origin
+https://www.revu.net
+priority
+u=1, i
+referer
+https://www.revu.net/
+sec-ch-ua
+"Chromium";v="146", "Not-A.Brand";v="24", "Google Chrome";v="146"
+sec-ch-ua-mobile
+?0
+sec-ch-ua-platform
+"Windows"
+sec-fetch-dest
+empty
+sec-fetch-mode
+cors
+sec-fetch-site
+cross-site
+sec-fetch-storage-access
+active
+user-agent
+Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36
+
+페이로드
+campaigns
+1315519
+
+프리뷰
+{items: []}
+items
+: 
+[]
+
+리스폰스
+{"items":[]}
+
+
+기자단 카테고리
+https://www.revu.net/category/%EA%B8%B0%EC%9E%90%EB%8B%A8
+
+헤더스
+Request URL
+https://api.weble.net/users/1427390/starreds-confirm?campaigns=1312759
+Request Method
+GET
+Status Code
+200 OK
+Remote Address
+168.138.218.196:443
+Referrer Policy
+strict-origin-when-cross-origin
+access-control-allow-credentials
+true
+access-control-allow-origin
+https://www.revu.net
+cache-control
+private
+content-type
+application/json
+date
+Fri, 03 Apr 2026 02:07:13 GMT
+:authority
+api.weble.net
+:method
+GET
+:path
+/users/1427390/starreds-confirm?campaigns=1312759
+:scheme
+https
+accept
+application/json, text/plain, */*
+accept-encoding
+gzip, deflate, br, zstd
+accept-language
+ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7
+authorization
+Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXUyJ9.eyJpZCI6MTQyNzM5MCwidXNlcm5hbWUiOiJza3NzajI2MjZAbmF2ZXIuY29tIiwiZXhwIjoxNzc2NDc4MDE2LCJyZW1lbWJlciI6ZmFsc2UsInN1YiI6MTQyNzM5MCwicm9sZSI6IlVTRVIiLCJpYXQiOiIxNzc1MTgyMDE2In0.IjNEOHU7YJcyHKc9CUNP7lzgj4raA8eW3W_z3v8YCTssPas1coSWkHfixZxDsKnhnc4plNuDAYSJZNC_olA6v5U8LrK-uA5cdn0j5_4Hchwvf1h8V46FlHObQj4f7M_wKYAixU46F6EhFMPwJqNsIq4aee5OwSBlyhfNjkMlWzaqOhMdVszeI_7sVHmZbuE4vzi_wMWUQk1kBmq_UJDM3fFINLc-hf403Uw0r6k0Vd7I7t7W1HpNieYS8jdswD8kjETncNT_myJ1NmyM8om3s3VYxgu5MbZ-JGv6pc5PXXzPLHBqaWQsXT6PqjsGJqisldgnkZx5voa8x5NWlL1dEiDfLn9Aj9kjlFwSsQWzt0uSVNCcHNofIYVDcoxkXYgdLvG5qZJ8TEuRicV_MIb3nuvc9Epr3cpJ5353gj2_eRDlBq6vVIgonwDfgT4gO4jOvO0BR2wzhXDO933aUCd3MnTyu4gpmSpT96Zu_UbKkFsFXwvlYHdxZBcrb71tvgS19fFbw4guOv8dbzIcO34hNR84v0QQMKTZXfMKAcXSNeKGxbomPpTcFXvOU1f-WWa8X8FePbP2phGNRFwC8T8zybqeWW1X8KwV_sn7H5fKnCvSYuAWnEuCVFS7TVX124s2SK3bpuGIRfW6KoPv4ACKGPH7CilFM7bSZNYS2BhDNU4
+origin
+https://www.revu.net
+priority
+u=1, i
+referer
+https://www.revu.net/
+sec-ch-ua
+"Chromium";v="146", "Not-A.Brand";v="24", "Google Chrome";v="146"
+sec-ch-ua-mobile
+?0
+sec-ch-ua-platform
+"Windows"
+sec-fetch-dest
+empty
+sec-fetch-mode
+cors
+sec-fetch-site
+cross-site
+sec-fetch-storage-access
+active
+user-agent
+Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36
+
+페이로드
+campaigns
+1312759
+
+프리뷰
+{items: []}
+items
+: 
+[]
+
+리스폰스
+{"items":[]}
+
+
+
+세부 카테고리 HTML
+<div class="line-category" ng-class="{ 'is-shorten':  $ctrl.isPremier}">
+                <!-- ngIf: $ctrl.subCategories.items.length > 1 && !$ctrl.isPremier && $ctrl.category != '기자단' --><ul ng-if="$ctrl.subCategories.items.length &gt; 1 &amp;&amp; !$ctrl.isPremier &amp;&amp; $ctrl.category != '기자단'" class="ng-scope">
+                    <!-- ngRepeat: row in $ctrl.subCategories.items --><li ng-repeat="row in $ctrl.subCategories.items" class="ng-scope">
+                        <a ng-href="/category/지역" ng-class="{'on': $ctrl.routeDepth2 == row.name}" class="ng-binding on" href="/category/지역">전체</a>
+                    </li><!-- end ngRepeat: row in $ctrl.subCategories.items --><li ng-repeat="row in $ctrl.subCategories.items" class="ng-scope">
+                        <a ng-href="/category/지역/맛집" ng-class="{'on': $ctrl.routeDepth2 == row.name}" class="ng-binding" href="/category/지역/맛집">맛집</a>
+                    </li><!-- end ngRepeat: row in $ctrl.subCategories.items --><li ng-repeat="row in $ctrl.subCategories.items" class="ng-scope">
+                        <a ng-href="/category/지역/뷰티" ng-class="{'on': $ctrl.routeDepth2 == row.name}" class="ng-binding" href="/category/지역/뷰티">뷰티</a>
+                    </li><!-- end ngRepeat: row in $ctrl.subCategories.items --><li ng-repeat="row in $ctrl.subCategories.items" class="ng-scope">
+                        <a ng-href="/category/지역/숙박" ng-class="{'on': $ctrl.routeDepth2 == row.name}" class="ng-binding" href="/category/지역/숙박">숙박</a>
+                    </li><!-- end ngRepeat: row in $ctrl.subCategories.items --><li ng-repeat="row in $ctrl.subCategories.items" class="ng-scope">
+                        <a ng-href="/category/지역/문화" ng-class="{'on': $ctrl.routeDepth2 == row.name}" class="ng-binding" href="/category/지역/문화">문화</a>
+                    </li><!-- end ngRepeat: row in $ctrl.subCategories.items --><li ng-repeat="row in $ctrl.subCategories.items" class="ng-scope">
+                        <a ng-href="/category/지역/배달" ng-class="{'on': $ctrl.routeDepth2 == row.name}" class="ng-binding" href="/category/지역/배달">배달</a>
+                    </li><!-- end ngRepeat: row in $ctrl.subCategories.items --><li ng-repeat="row in $ctrl.subCategories.items" class="ng-scope">
+                        <a ng-href="/category/지역/테이크아웃" ng-class="{'on': $ctrl.routeDepth2 == row.name}" class="ng-binding" href="/category/지역/테이크아웃">테이크아웃</a>
+                    </li><!-- end ngRepeat: row in $ctrl.subCategories.items --><li ng-repeat="row in $ctrl.subCategories.items" class="ng-scope">
+                        <a ng-href="/category/지역/기타" ng-class="{'on': $ctrl.routeDepth2 == row.name}" class="ng-binding" href="/category/지역/기타">기타</a>
+                    </li><!-- end ngRepeat: row in $ctrl.subCategories.items -->
+                    <!-- ngRepeat: empty in $ctrl.subEmptyCategoryForLayout() -->
+                </ul><!-- end ngIf: $ctrl.subCategories.items.length > 1 && !$ctrl.isPremier && $ctrl.category != '기자단' -->
+                <!-- ngIf: $ctrl.isPremier && !$root.$isMobile -->
+                <!-- ngIf: $ctrl.isPremier && $root.$isMobile -->
+                 <!-- ngIf: $ctrl.renderList && !$ctrl.isPremier --><campaign-filter ng-if="$ctrl.renderList &amp;&amp; !$ctrl.isPremier" type="campaign" media="$ctrl.media" sort="" category="지역" is-premier="$ctrl.isPremier" use-preferred-media="true" class="ng-scope ng-isolate-scope"><div class="sort-tab category">
+    <!-- pc media filter: buttons -->
+<!--    <div class="button-inline" ng-if="!$ctrl.isPremier">-->
+<!--        <button ng-repeat="media in $ctrl.filters.media"-->
+<!--                ng-click="$ctrl.linkUseMedia(media.value)"-->
+<!--                ng-hide="$ctrl.isPremier || media.value === 'all' || $root.$isMobile"-->
+<!--                ng-class="{'on': $ctrl.checkMediaSelect(media.value)}">{{ media.title }}</button>-->
+<!--    </div>-->
+
+    <!-- mobile media filter: one button -->
+    <!-- ngIf: !$ctrl.isPremier --><button ng-if="!$ctrl.isPremier" class="has-dropdown ng-scope" ng-class="{'on': $ctrl.showChannel}" ng-click="$ctrl.showChannel = !$ctrl.showChannel; $ctrl.showSort = false;" ng-hide="$ctrl.isPremier">
+
+        <!-- ngRepeat: media in $ctrl.filters.media --><!-- ngIf: $ctrl.checkMediaSelect(media.value) && $ctrl.media.length < 4 --><!-- end ngRepeat: media in $ctrl.filters.media --><!-- ngIf: $ctrl.checkMediaSelect(media.value) && $ctrl.media.length < 4 --><!-- end ngRepeat: media in $ctrl.filters.media --><!-- ngIf: $ctrl.checkMediaSelect(media.value) && $ctrl.media.length < 4 --><!-- end ngRepeat: media in $ctrl.filters.media --><!-- ngIf: $ctrl.checkMediaSelect(media.value) && $ctrl.media.length < 4 --><!-- end ngRepeat: media in $ctrl.filters.media -->
+        <!-- ngIf: $ctrl.media.length > 3 --><span class="dropdown-title ng-scope" ng-if="$ctrl.media.length &gt; 3">미디어 전체<span class="separate">·</span></span><!-- end ngIf: $ctrl.media.length > 3 -->
+
+        <i></i>
+    </button><!-- end ngIf: !$ctrl.isPremier -->
+
+    <!-- mobile media filter: list -->
+    <!-- ngIf: $ctrl.showChannel -->
+
+    <!-- pc & mobile sort filter: button -->
+    <button class="has-dropdown" ng-class="{'on': $ctrl.showSort}" ng-click="$ctrl.showSort = !$ctrl.showSort; $ctrl.showChannel = false;">
+        <!-- ngRepeat: sort in $ctrl.filters.sort --><!-- ngIf: sort.value == $ctrl.sort || (sort.value == 'latest' && !$ctrl.sort) --><span ng-repeat="sort in $ctrl.filters.sort" ng-if="sort.value == $ctrl.sort || (sort.value == 'latest' &amp;&amp; !$ctrl.sort)" class="ng-binding ng-scope">
+            최신순</span><!-- end ngIf: sort.value == $ctrl.sort || (sort.value == 'latest' && !$ctrl.sort) --><!-- end ngRepeat: sort in $ctrl.filters.sort --><!-- ngIf: sort.value == $ctrl.sort || (sort.value == 'latest' && !$ctrl.sort) --><!-- end ngRepeat: sort in $ctrl.filters.sort --><!-- ngIf: sort.value == $ctrl.sort || (sort.value == 'latest' && !$ctrl.sort) --><!-- end ngRepeat: sort in $ctrl.filters.sort -->
+        <i></i>
+    </button>
+
+    <!-- pc & mobile sort filter: list -->
+    <!-- ngIf: $ctrl.showSort -->
+
+    <!-- pc tooltip -->
+    <!-- ngIf: $ctrl.showTooltip -->
+</div>
+</campaign-filter><!-- end ngIf: $ctrl.renderList && !$ctrl.isPremier -->
+
+                <div class="clear-both"></div>
+            </div>
+

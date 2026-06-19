@@ -267,9 +267,17 @@ def get_naver_write_url(naver_id):
     return f"https://blog.naver.com/{naver_id}?Redirect=Write"
 
 
+POST_TYPE_DAILY = "일상"
+POST_TYPE_MATE = "네이버메이트"
+POST_TYPE_ADPOST = "애드포스트"
+POST_TYPE_COUPANG = "쿠팡"
+POST_TYPE_CHOICES = [POST_TYPE_DAILY, POST_TYPE_MATE, POST_TYPE_ADPOST, POST_TYPE_COUPANG]
+INFO_POST_TYPES = (POST_TYPE_DAILY, POST_TYPE_MATE, POST_TYPE_ADPOST)
+
+
 def parse_args():
     parser = argparse.ArgumentParser(description="네이버 블로그 자동 글쓰기")
-    parser.add_argument("--post-type", choices=["일상", "쿠팡"], help="한 번 실행 시 발행할 글 종류")
+    parser.add_argument("--post-type", choices=POST_TYPE_CHOICES, help="한 번 실행 시 발행할 글 종류")
     parser.add_argument("--naver-id", help="네이버 로그인 ID")
     parser.add_argument("--naver-password", help="네이버 로그인 비밀번호")
     parser.add_argument("--csv-path", help="쿠팡 상품 CSV 경로")
@@ -315,8 +323,14 @@ v_passwd = ""
 csv_file_path = resolve_default_csv_path()
 
 # 오늘 발행 카운터
-daily_stats = {"일상": 0, "쿠팡": 0, "에러": 0}
+daily_stats = {post_type: 0 for post_type in POST_TYPE_CHOICES}
+daily_stats["에러"] = 0
 KOREAN_WEEKDAY_NAMES = ["월", "화", "수", "목", "금", "토", "일"]
+
+
+def format_daily_stats_summary():
+    ordered_keys = [POST_TYPE_MATE, POST_TYPE_ADPOST, POST_TYPE_DAILY, POST_TYPE_COUPANG, "에러"]
+    return ", ".join([f"{key} {daily_stats.get(key, 0)}건" for key in ordered_keys])
 
 SEASONAL_TOPIC_BANK = {
     "봄": [
@@ -480,6 +494,122 @@ DAILY_SEARCH_INTENT_BANK = {
             "faq_questions": ["전기요금 자동이체 변경 전 무엇을 준비해야 할까?", "이사할 때 공과금 정산은 어떤 순서로 볼까?"],
             "related_keywords": ["전기요금", "자동이체", "공과금", "이사 정산", "고객번호"],
             "image_scene": "전기요금 고지서와 스마트폰 자동이체 화면을 확인하는 책상 장면",
+        },
+    ],
+}
+
+MATE_CATEGORY_BANK = [
+    "네이버메이트기초",
+    "AI브리핑인용구조",
+    "주제전문성운영",
+    "콘텐츠개선점검",
+]
+
+MATE_SEARCH_INTENT_BANK = {
+    "네이버메이트기초": [
+        {
+            "search_phrase": "네이버 메이트 뜻과 AI 브리핑 인용 기준",
+            "reader_problem": "네이버 메이트가 시작됐다는 소식은 봤지만 어떤 창작자가 조명되고 블로그 글을 어떻게 바꿔야 할지 모르는 상황",
+            "reader_promise": "공개된 네이버 발표 기준으로 네이버 메이트, AI 브리핑 인용수, 창작자 전문성, 글 구조를 나눠 정리",
+            "practical_points": ["네이버 메이트는 AI 브리핑 인용수 기반의 창작자 조명 프로그램이라는 점을 먼저 설명하기", "내부 알고리즘 가중치는 공개되지 않았으므로 보장 표현을 피하기", "실제 경험과 인사이트가 드러나는 글이 왜 중요해졌는지 연결하기", "블로그 글은 정의, 확인 기준, 예시, FAQ 순서로 답변성을 높이기"],
+            "mistakes_to_avoid": ["AI에 인용된다고 단정하거나 특정 횟수를 보장하기", "네이버 메이트를 단순 이벤트나 수익 지원금 이야기로만 쓰기"],
+            "faq_questions": ["네이버 메이트는 어떤 창작자를 대상으로 할까?", "AI 브리핑에 인용되려면 글에서 무엇이 분명해야 할까?"],
+            "related_keywords": ["네이버 메이트", "AI 브리핑", "인용수", "창작자", "네이버 블로그"],
+            "image_scene": "노트북에서 검색 결과와 블로그 초안을 비교하며 메모하는 현실적인 책상 장면",
+        },
+    ],
+    "AI브리핑인용구조": [
+        {
+            "search_phrase": "AI 브리핑에 인용되기 쉬운 블로그 글 구조",
+            "reader_problem": "글을 길게 쓰고 있는데도 검색 요약이나 출처로 쓰일 만한 핵심 문장이 잘 보이지 않는 상황",
+            "reader_promise": "답변형 첫 문장, 근거 구분, 절차형 목록, 비교 기준, FAQ를 넣어 인용 가능성을 높이는 구조 정리",
+            "practical_points": ["섹션마다 한 문장으로 바로 가져갈 수 있는 답을 먼저 두기", "경험담과 일반 기준을 문단에서 분리해 신뢰도를 높이기", "검색자가 다음 행동을 할 수 있게 확인 순서와 체크리스트를 제공하기", "질문형 소제목과 FAQ로 후속 질문까지 대응하기"],
+            "mistakes_to_avoid": ["도입부를 감정 일기로 길게 끌기", "근거 없는 예측을 확정된 알고리즘처럼 쓰기"],
+            "faq_questions": ["AI 브리핑용 글은 첫 문단을 어떻게 써야 할까?", "FAQ가 인용 가능성에 왜 도움이 될까?"],
+            "related_keywords": ["AI 브리핑", "블로그 글 구조", "질문형 콘텐츠", "검색 의도", "FAQ"],
+            "image_scene": "블로그 글 구조를 노트에 정의, 기준, 예시, FAQ로 나누어 적는 장면",
+        },
+    ],
+    "주제전문성운영": [
+        {
+            "search_phrase": "네이버 메이트 주제 전문성 블로그 운영법",
+            "reader_problem": "여러 주제를 섞어 쓰다 보니 어떤 분야의 전문 창작자로 보일지 흐려지는 상황",
+            "reader_promise": "주제 축, 반복 질문, 경험 데이터, 문서 연결, 카테고리 정리를 통해 전문성을 쌓는 운영법 정리",
+            "practical_points": ["하나의 큰 주제 안에서 반복 검색되는 세부 질문을 먼저 모으기", "비슷한 글을 반복하지 말고 확인 기준을 단계별로 확장하기", "글마다 실제 장면, 체크 순서, 실패 사례를 남겨 경험성을 보강하기", "카테고리와 제목에서 블로그의 중심 주제가 한눈에 보이게 하기"],
+            "mistakes_to_avoid": ["유행 키워드만 따라가며 주제 축을 매번 바꾸기", "전문성 대신 일반론과 문장량만 늘리기"],
+            "faq_questions": ["네이버 메이트를 노리려면 주제를 좁히는 게 좋을까?", "비슷한 글을 계속 쓰면 중복으로 보이지 않을까?"],
+            "related_keywords": ["네이버 메이트", "주제 전문성", "블로그 운영", "검색 의도", "콘텐츠 전략"],
+            "image_scene": "화이트보드에 블로그 카테고리와 세부 검색 질문을 연결해 정리하는 장면",
+        },
+    ],
+    "콘텐츠개선점검": [
+        {
+            "search_phrase": "네이버 메이트 인용수 높이는 글 점검표",
+            "reader_problem": "기존 글을 고치고 싶은데 무엇을 추가해야 AI 검색에서 쓸 만한 출처로 보일지 막막한 상황",
+            "reader_promise": "제목, 첫 문단, 근거, 사례, 목록, FAQ, 최신성 표시를 기준으로 기존 글을 점검하는 방법 정리",
+            "practical_points": ["첫 문단에 검색자가 원하는 결론과 범위를 명확히 쓰기", "확인한 사실과 개인 의견을 분리해 문장 신뢰도를 높이기", "오래된 글은 날짜 기준과 변동 가능성을 표시하기", "마지막에는 저장 가능한 체크리스트와 FAQ를 남기기"],
+            "mistakes_to_avoid": ["본문을 전부 새로 쓰기보다 제목만 바꾸기", "AI 인용을 노린다며 키워드만 반복하기"],
+            "faq_questions": ["기존 블로그 글은 어디부터 고치면 좋을까?", "최신 정보가 바뀔 수 있는 글은 어떻게 써야 할까?"],
+            "related_keywords": ["네이버 메이트", "인용수", "글 점검표", "블로그 리라이팅", "AI 검색"],
+            "image_scene": "기존 블로그 글을 출력해 제목, 첫 문단, FAQ 항목에 표시하는 장면",
+        },
+    ],
+}
+
+ADPOST_CATEGORY_BANK = [
+    "수익하락점검",
+    "주제선정전략",
+    "본문체류구조",
+    "운영리포트개선",
+]
+
+ADPOST_SEARCH_INTENT_BANK = {
+    "수익하락점검": [
+        {
+            "search_phrase": "애드포스트 수익 줄었을 때 확인할 것",
+            "reader_problem": "방문자는 크게 줄지 않은 것 같은데 애드포스트 수익이 갑자기 떨어져 원인을 어디서 봐야 할지 모르는 상황",
+            "reader_promise": "방문자 수, 모바일 체류, 본문 깊이, 주제 단가, 광고 위치 체감, 계절성을 순서대로 점검",
+            "practical_points": ["방문자 수보다 모바일 유입과 본문 체류 흐름을 먼저 비교하기", "최근 7일과 30일의 주제 비중이 바뀌었는지 확인하기", "글 하단까지 읽히는 FAQ와 체크리스트가 남아 있는지 보기", "수익 보장보다 원인 후보를 나눠 재작성 우선순위를 정하기"],
+            "mistakes_to_avoid": ["수익이 줄었다고 무조건 광고 배치만 탓하기", "클릭을 직접 유도하는 위험한 문장을 넣기"],
+            "faq_questions": ["방문자가 비슷한데 애드포스트 수익이 줄 수 있을까?", "수익 하락 글은 무엇부터 고쳐야 할까?"],
+            "related_keywords": ["애드포스트", "수익 하락", "블로그 수익", "체류시간", "본문 구성"],
+            "image_scene": "노트북 통계 화면 옆에 방문자, 주제, 체류 항목을 메모하는 장면",
+        },
+    ],
+    "주제선정전략": [
+        {
+            "search_phrase": "애드포스트 수익형 블로그 주제 고르는 법",
+            "reader_problem": "조회수는 나와도 애드포스트 수익으로 잘 이어지지 않는 주제와 오래 읽히는 주제를 구분하지 못하는 상황",
+            "reader_promise": "검색 의도, 체류 가능성, 반복 수요, 정보 깊이, 광고 친화성을 기준으로 주제 선정법 정리",
+            "practical_points": ["단순 이슈보다 독자가 비교하고 확인해야 하는 주제를 고르기", "첫 문단에서 끝나는 주제가 아니라 중반 이후 정보가 남는 주제를 우선하기", "월세, 통신, 관리비처럼 반복 검색되는 생활 문제를 세부 질문으로 쪼개기", "수익 단가를 단정하지 말고 읽는 흐름과 문서 품질을 먼저 점검하기"],
+            "mistakes_to_avoid": ["조회수만 보고 주제를 고르기", "광고 클릭을 노골적으로 유도하는 제목을 쓰기"],
+            "faq_questions": ["애드포스트용 주제는 조회수만 보면 될까?", "정보글과 일상글은 어떤 비율이 좋을까?"],
+            "related_keywords": ["애드포스트", "블로그 주제", "수익형 블로그", "검색 의도", "정보글"],
+            "image_scene": "블로그 주제 후보를 조회, 체류, 반복수요 기준으로 나눠 적는 장면",
+        },
+    ],
+    "본문체류구조": [
+        {
+            "search_phrase": "애드포스트 본문 체류시간 늘리는 글 구조",
+            "reader_problem": "도입부에서 결론을 다 말해버려 독자가 바로 나가고 본문 중간과 하단까지 읽히지 않는 상황",
+            "reader_promise": "도입, 중반 확인 기준, 하단 정리표, FAQ를 나눠 오래 읽히는 본문 구조 정리",
+            "practical_points": ["첫 5줄에는 결론 전체가 아니라 판단 기준 1개만 먼저 보여주기", "중반에는 실제로 열어볼 서류, 화면, 체크 항목을 넣기", "하단에는 단순 인사 대신 상황별 표와 FAQ를 남기기", "문단 길이를 모바일에서 읽기 쉬운 호흡으로 조정하기"],
+            "mistakes_to_avoid": ["중요한 정보를 모두 위에 몰아넣기", "하단을 감사 인사와 반복 요약으로만 채우기"],
+            "faq_questions": ["애드포스트 글은 왜 하단까지 읽히게 써야 할까?", "본문 중간에는 어떤 정보를 넣는 게 좋을까?"],
+            "related_keywords": ["애드포스트", "체류시간", "본문 구조", "모바일 블로그", "FAQ"],
+            "image_scene": "모바일 화면 흐름을 도입, 중반, 하단으로 나눠 스케치하는 장면",
+        },
+    ],
+    "운영리포트개선": [
+        {
+            "search_phrase": "애드포스트 블로그 운영 리포트 보는 법",
+            "reader_problem": "애드포스트 수익과 방문자 통계를 보지만 어떤 글을 고치고 어떤 주제를 늘려야 할지 판단이 어려운 상황",
+            "reader_promise": "글별 유입, 체류 흐름, 발행 주제, 계절성, 수정 우선순위를 운영 리포트처럼 보는 방법 정리",
+            "practical_points": ["글별 방문자보다 주제 묶음별 성과를 먼저 비교하기", "수정할 글은 노출, 클릭, 체류 중 어느 문제가 큰지 나눠 보기", "새 글은 잘 되는 주제의 세부 질문을 확장하는 방식으로 정하기", "수익 수치는 변동성이 있으므로 기간을 나눠 판단하기"],
+            "mistakes_to_avoid": ["하루 수익만 보고 전체 방향을 바꾸기", "성과가 낮은 글을 삭제부터 고민하기"],
+            "faq_questions": ["애드포스트 통계는 며칠 단위로 보면 좋을까?", "수정할 글과 새로 쓸 글은 어떻게 나눌까?"],
+            "related_keywords": ["애드포스트", "운영 리포트", "블로그 통계", "글 수정", "수익형 운영"],
+            "image_scene": "블로그 통계와 주제별 메모를 보며 수정 우선순위를 정리하는 장면",
         },
     ],
 }
@@ -669,20 +799,37 @@ def save_coupang_used_products(items):
         json.dump(items, f, ensure_ascii=False, indent=2)
 
 
-def get_next_daily_category(now):
-    today_key = now.strftime("%Y-%m-%d")
+def get_daily_category_bank(post_type):
+    if post_type == POST_TYPE_MATE:
+        return MATE_CATEGORY_BANK
+    if post_type == POST_TYPE_ADPOST:
+        return ADPOST_CATEGORY_BANK
+    return DAILY_CATEGORY_BANK
+
+
+def get_daily_search_intent_bank(post_type):
+    if post_type == POST_TYPE_MATE:
+        return MATE_SEARCH_INTENT_BANK
+    if post_type == POST_TYPE_ADPOST:
+        return ADPOST_SEARCH_INTENT_BANK
+    return DAILY_SEARCH_INTENT_BANK
+
+
+def get_next_daily_category(now, post_type=POST_TYPE_DAILY):
+    category_bank = get_daily_category_bank(post_type)
+    today_key = f"{now.strftime('%Y-%m-%d')}:{post_type}"
     payload = load_daily_category_rotation()
     queue = payload.get(today_key)
 
     if isinstance(queue, list):
-        queue = [item for item in queue if item in DAILY_CATEGORY_BANK]
+        queue = [item for item in queue if item in category_bank]
 
     if not isinstance(queue, list) or not queue:
-        queue = DAILY_CATEGORY_BANK[:]
+        queue = category_bank[:]
         random.shuffle(queue)
 
     next_category = queue.pop(0)
-    payload = {today_key: queue}
+    payload[today_key] = queue
     save_daily_category_rotation(payload)
     return next_category
 
@@ -854,14 +1001,287 @@ def format_daily_prompt_items(items):
     return "\n".join([f"- {item}" for item in items if str(item).strip()])
 
 
-def build_daily_topic_context():
+def build_mate_post_prompt(daily_context):
+    practical_points = format_daily_prompt_items(daily_context.get("practical_points", []))
+    mistakes_to_avoid = format_daily_prompt_items(daily_context.get("mistakes_to_avoid", []))
+    faq_questions = format_daily_prompt_items(daily_context.get("faq_questions", []))
+    related_keywords = ", ".join(daily_context.get("related_keywords", []))
+    neighbor_cta = random.choice([
+        "AI 검색과 네이버 블로그 글 구조를 계속 점검하고 있으니 비슷한 글을 이어서 볼 분들은 이웃으로 남겨두셔도 좋습니다.",
+        "네이버 메이트와 AI 브리핑 흐름은 계속 바뀔 수 있어 공개 기준 중심으로 정리해둘 예정이니 이웃으로 저장해두면 다시 보기 편합니다.",
+        "블로그 글을 AI 검색 시대에 맞게 고치는 기준을 계속 다룰 예정이라 필요할 때 찾아보기 좋게 이웃 추가해두셔도 괜찮습니다.",
+    ])
+
+    return f"""
+너는 네이버 블로그와 AI 검색 흐름을 분석해 창작자에게 실행 가능한 글 구조를 알려주는 블로그 전문가다.
+이번 글은 네이버 메이트와 AI 브리핑 인용 가능성을 높이는 글쓰기 기준을 다룬다.
+단, 네이버 내부 알고리즘의 세부 가중치는 공개되지 않았으므로 절대 확정처럼 말하지 않는다.
+
+[공개 기준으로 확인된 배경]
+- AI 브리핑은 검색어의 의도와 맥락을 이해해 요약 답변, 출처 정보, 관련 질문을 함께 보여주는 검색 경험이다.
+- AI 브리핑은 모든 검색 결과에 항상 노출되는 기능이 아니다.
+- 네이버 메이트는 블로그, 카페, 지식iN, 프리미엄콘텐츠 창작자를 대상으로 시작된 AI 창작자 펠로우십이다.
+- 네이버는 2026년 6월 공개 기준으로 AI 브리핑 인용 수를 기준으로 주제별 우수 창작자를 매달 공개한다고 밝혔다.
+- 네이버는 실제 경험과 인사이트가 담긴 UGC를 AI 시대의 중요한 콘텐츠 자산으로 설명했다.
+
+[이번 글 컨텍스트]
+- 날짜 감각: {daily_context['now_label']}
+- 콘텐츠 카테고리: {daily_context['content_category']}
+- 확정 핵심 검색어: {daily_context['search_phrase']}
+- 독자 고민: {daily_context['reader_problem']}
+- 글에서 해결할 약속: {daily_context['reader_promise']}
+- 관련 키워드: {related_keywords}
+- 실제 장면: {daily_context['daily_scene']}
+- 글 전개 방식: {daily_context['writing_angle']}
+
+[반드시 담을 실천 포인트]
+{practical_points}
+
+[피해야 할 실수]
+{mistakes_to_avoid}
+
+[본문 안에서 자연스럽게 답할 질문]
+{faq_questions}
+
+[작성 방향]
+- 이 글은 네이버 메이트에 반드시 선정되는 방법이 아니라, 공개된 네이버 흐름을 기준으로 인용 가능성을 높이는 글 구조를 설명한다.
+- 추상적인 조언으로 끝내지 말고 제목, 첫 문단, 소제목, 근거, 경험, 체크리스트, FAQ까지 구체적으로 나눈다.
+- 검색자가 바로 복사해 적용할 수 있을 만큼 세부적이어야 한다.
+- "AI가 좋아한다" 같은 표현보다 "검색자가 질문했을 때 답으로 쓰기 좋은 문장"이라는 관점으로 풀어라.
+- 공식 발표에서 확인되는 내용과 작성자의 해석을 분리해서 쓴다.
+- 내부 알고리즘, 선정 보장, 인용 보장, 지원금 보장처럼 보이는 문장은 쓰지 않는다.
+
+[본문 구조]
+1. 첫 문단
+- 첫 문장에 확정 핵심 검색어를 자연스럽게 넣는다.
+- 네이버 메이트가 왜 지금 블로그 작성자에게 중요한지 바로 말한다.
+- 단, 선정 보장이나 알고리즘 확정처럼 말하지 않는다.
+
+2. 네이버 메이트와 AI 브리핑을 먼저 구분
+- 네이버 메이트, AI 브리핑, 인용수, 출처 표시를 각각 쉽게 설명한다.
+- 공개된 사실과 추정 가능한 운영 방향을 구분한다.
+- 이 구간 끝에 핵심 답변형 문장 1개를 넣는다.
+
+[구분선]
+
+3. 인용되기 쉬운 글의 기본 구조
+아래 마커를 정확히 사용한다.
+
+[목록주제]AI 검색에서 출처로 쓰기 좋은 글 구조
+- 첫 문단에서 질문의 답과 범위를 먼저 밝히기
+- 경험담과 확인 가능한 사실을 문단으로 나누기
+- 비교 기준과 확인 순서를 목록으로 남기기
+- 마지막에 FAQ로 후속 질문까지 정리하기
+[목록끝]
+
+4. 기존 블로그 글을 고치는 순서
+- 제목, 첫 문단, 중간 소제목, 체크리스트, FAQ 순서로 설명한다.
+- 각 항목마다 나쁜 예와 좋은 예를 짧게 넣는다.
+- 키워드 반복보다 답변성, 경험성, 구체성을 우선한다고 설명한다.
+
+[인용구]인용되기 쉬운 글은 긴 글보다 질문에 바로 답하는 구조가 먼저입니다[/인용구]
+
+[구분선]
+
+5. 주제 전문성을 쌓는 운영법
+- 하나의 큰 주제 안에서 세부 질문을 4개 이상으로 쪼개는 예를 든다.
+- 예시는 네이버 메이트, AI 브리핑, 애드포스트, 블로그 운영 중 문맥에 맞게 고른다.
+- 단일 글보다 같은 주제의 연속 글이 왜 중요한지 설명한다.
+
+6. 오늘 바로 점검할 체크리스트
+아래 마커를 정확히 사용한다.
+
+[목록주제]오늘 바로 고칠 5가지
+- 제목에 검색자가 묻는 질문이 보이는지 확인하기
+- 첫 문단에 결론과 적용 범위가 있는지 확인하기
+- 경험과 사실이 한 문단에 뒤섞이지 않았는지 보기
+- 중간 이후에 비교 기준과 확인 순서가 남아 있는지 보기
+- 마지막 FAQ가 실제 검색 질문처럼 되어 있는지 보기
+[목록끝]
+
+7. 짧은 FAQ
+- 주제와 맞는 질문 3개를 넣고 바로 답한다.
+- 답변은 각각 2~4줄로 구체적으로 쓴다.
+- 네이버 내부 알고리즘은 공개되지 않았다는 안전 문장을 자연스럽게 포함한다.
+
+8. 마지막 정리
+- 네이버 메이트를 단기 이벤트가 아니라 AI 검색 시대의 글 품질 신호로 해석한다.
+- {neighbor_cta}
+- 마지막 문단은 3~5줄로 끝낸다.
+
+[SEO 키워드 규칙]
+- 핵심 검색어는 본문에 4~6회만 자연스럽게 넣는다.
+- 관련 키워드는 네이버 메이트, AI 브리핑, 인용수, 창작자, 블로그 글쓰기, 검색 의도, FAQ, 주제 전문성 중 문맥에 맞게 쓴다.
+- 키워드를 반복해서 도배하지 않는다.
+
+[해시태그 생성 규칙]
+본문 맨 마지막에는 반드시 아래 형식으로 해시태그를 붙인다.
+
+[해시태그대기]
+#태그 #태그 #태그 #태그 #태그 #태그 #태그 #태그 #태그 #태그
+
+해시태그 조건:
+- 정확히 10개
+- 모두 '#태그' 형식
+- 한 줄에 공백으로 구분
+- 영어 태그 금지
+- 네이버메이트, AI브리핑, 블로그운영, 글쓰기, 검색의도, 콘텐츠전략, 창작자, 블로그수익, 정보글, FAQ 중 문맥에 맞게 고른다.
+
+[출력 규칙]
+- 제목 없이 본문만 출력
+- 3000자 이상 3800자 이하
+- 일반 본문 문장은 한 줄 40자 안팎으로 쓴다
+- 문단 사이에는 빈 줄을 충분히 넣는다
+- [구분선]은 정확히 2회
+- [인용구]문장[/인용구] 형식 1회
+- [목록주제]와 [목록끝] 마커는 철자 그대로 유지
+- 마크다운, 표 HTML, 코드블록, 작업 메모 출력 금지
+- 선정 보장, 인용 보장, 수익 보장, 내부 알고리즘 단정 금지
+"""
+
+
+def build_adpost_post_prompt(daily_context):
+    practical_points = format_daily_prompt_items(daily_context.get("practical_points", []))
+    mistakes_to_avoid = format_daily_prompt_items(daily_context.get("mistakes_to_avoid", []))
+    faq_questions = format_daily_prompt_items(daily_context.get("faq_questions", []))
+    related_keywords = ", ".join(daily_context.get("related_keywords", []))
+    neighbor_cta = random.choice([
+        "애드포스트와 블로그 운영 기준을 계속 실제 점검표처럼 정리하고 있으니 필요할 때 다시 볼 분들은 이웃으로 남겨두셔도 좋습니다.",
+        "수익형 블로그는 한 번에 바뀌기보다 글 구조를 계속 고치는 쪽이 중요해서 관련 점검 글을 이어서 정리해두겠습니다.",
+        "방문자보다 본문 흐름과 주제 선택을 같이 보는 글을 계속 올릴 예정이라 이웃으로 저장해두면 나중에 찾기 쉽습니다.",
+    ])
+
+    return f"""
+너는 네이버 블로그 애드포스트를 오래 운영한 실전형 블로그 수익 분석가다.
+이번 글은 애드포스트를 막 시작했거나 최근 수익이 줄어든 블로거가 바로 점검할 수 있는 전문가형 정보글이다.
+수익을 보장하거나 광고 클릭을 유도하지 말고, 원인 분석과 본문 구조 개선 중심으로 작성한다.
+
+[이번 글 컨텍스트]
+- 날짜 감각: {daily_context['now_label']}
+- 콘텐츠 카테고리: {daily_context['content_category']}
+- 확정 핵심 검색어: {daily_context['search_phrase']}
+- 독자 고민: {daily_context['reader_problem']}
+- 글에서 해결할 약속: {daily_context['reader_promise']}
+- 관련 키워드: {related_keywords}
+- 실제 장면: {daily_context['daily_scene']}
+- 글 전개 방식: {daily_context['writing_angle']}
+
+[반드시 담을 실천 포인트]
+{practical_points}
+
+[피해야 할 실수]
+{mistakes_to_avoid}
+
+[본문 안에서 자연스럽게 답할 질문]
+{faq_questions}
+
+[작성 방향]
+- 애드포스트 수익은 방문자 수, 주제, 체류, 광고 노출 환경, 계절성, 글 품질에 따라 달라질 수 있다고 설명한다.
+- 정확한 단가, CTR, RPM, 예상 금액은 만들지 않는다.
+- "광고를 클릭해달라"는 식의 문장이나 우회 표현은 절대 쓰지 않는다.
+- 독자가 자기 블로그에서 확인할 수 있는 순서와 체크리스트를 제공한다.
+- 애드포스트라는 단어는 주제상 자연스럽게 사용하되 과장된 수익형 홍보글처럼 보이지 않게 쓴다.
+
+[본문 구조]
+1. 첫 문단
+- 첫 문장에 확정 핵심 검색어를 자연스럽게 넣는다.
+- 독자가 지금 겪는 수익 하락 또는 운영 고민을 바로 짚는다.
+- 결론은 "방문자 수만 보지 말고 글별 주제와 본문 체류 흐름을 같이 봐야 한다"는 방향으로 잡는다.
+
+2. 수익이 흔들리는 이유를 4가지로 나누기
+- 방문자 수 변화
+- 모바일 본문 체류
+- 주제와 광고 친화성
+- 글 하단까지 읽히는 구조
+- 각 항목은 3~5줄로 구체적으로 설명한다.
+
+[구분선]
+
+3. 먼저 확인할 데이터
+아래 마커를 정확히 사용한다.
+
+[목록주제]애드포스트 수익 점검 순서
+- 최근 7일과 30일 방문자 흐름을 나눠 보기
+- 글별 유입 주제와 검색어가 바뀌었는지 확인하기
+- 본문 중간 이후에 새 정보가 남아 있는지 점검하기
+- 하단 FAQ와 체크리스트가 실제 질문을 해결하는지 보기
+[목록끝]
+
+4. 글 구조를 고치는 방법
+- 도입부, 중반, 하단을 나눠 설명한다.
+- 도입부에는 문제와 기준 1개만 먼저 보여준다.
+- 중반에는 독자가 실제 확인할 화면, 서류, 비교 기준을 넣는다.
+- 하단에는 단순 인사 대신 상황별 정리표와 FAQ를 둔다.
+
+[인용구]애드포스트 글은 방문자를 오래 붙잡는 구조가 먼저이고 클릭 유도는 답이 아닙니다[/인용구]
+
+[구분선]
+
+5. 주제 선정 기준
+- 조회수만 높은 주제와 오래 읽히는 주제를 비교한다.
+- 애드포스트에 맞는 글은 독자가 확인하고 비교할 정보가 많은 주제라고 설명한다.
+- 생활비, 계약, 통신, 공과금, 블로그 운영처럼 반복 검색되는 세부 질문 예시를 넣는다.
+
+6. 오늘 바로 고칠 체크리스트
+아래 마커를 정확히 사용한다.
+
+[목록주제]오늘 바로 고칠 5가지
+- 제목이 실제 검색 질문처럼 보이는지 확인하기
+- 첫 문단에서 모든 결론을 소진하지 않았는지 보기
+- 중간 이후에 체크 기준과 비교 항목이 남아 있는지 보기
+- 하단에 상황별 정리와 FAQ가 있는지 확인하기
+- 클릭 유도처럼 보이는 위험 문장을 제거하기
+[목록끝]
+
+7. 짧은 FAQ
+- 주제와 맞는 질문 3개를 넣고 바로 답한다.
+- 답변은 각각 2~4줄로 쓴다.
+- 단가나 수익 보장 대신 점검 순서와 운영 기준으로 답한다.
+
+8. 마지막 정리
+- 애드포스트는 하루 수익만 보고 판단하기보다 주제와 구조를 같이 봐야 한다고 정리한다.
+- {neighbor_cta}
+- 마지막 문단은 3~5줄로 끝낸다.
+
+[SEO 키워드 규칙]
+- 핵심 검색어는 본문에 4~6회만 자연스럽게 넣는다.
+- 관련 키워드는 애드포스트, 블로그 수익, 수익 하락, 체류시간, 모바일 본문, 정보글, 블로그 운영, 주제 선정, FAQ 중 문맥에 맞게 쓴다.
+- 광고 클릭을 직접 유도하는 문장은 금지한다.
+
+[해시태그 생성 규칙]
+본문 맨 마지막에는 반드시 아래 형식으로 해시태그를 붙인다.
+
+[해시태그대기]
+#태그 #태그 #태그 #태그 #태그 #태그 #태그 #태그 #태그 #태그
+
+해시태그 조건:
+- 정확히 10개
+- 모두 '#태그' 형식
+- 한 줄에 공백으로 구분
+- 영어 태그 금지
+- 애드포스트, 블로그수익, 수익형블로그, 블로그운영, 체류시간, 정보글, 글쓰기, 방문자분석, 주제선정, 블로그통계 중 문맥에 맞게 고른다.
+
+[출력 규칙]
+- 제목 없이 본문만 출력
+- 3000자 이상 3800자 이하
+- 일반 본문 문장은 한 줄 40자 안팎으로 쓴다
+- 문단 사이에는 빈 줄을 충분히 넣는다
+- [구분선]은 정확히 2회
+- [인용구]문장[/인용구] 형식 1회
+- [목록주제]와 [목록끝] 마커는 철자 그대로 유지
+- 마크다운, 표 HTML, 코드블록, 작업 메모 출력 금지
+- 수익 보장, 클릭 유도, 단가 조작, 정책 우회 표현 금지
+"""
+
+
+def build_daily_topic_context(post_type=POST_TYPE_DAILY):
     now = datetime.now()
     season = get_season(now)
     weekday_name = KOREAN_WEEKDAY_NAMES[now.weekday()]
     is_weekend = now.weekday() >= 5
     day_type = "주말" if is_weekend else "평일"
     weather_key, weather_mood = choose_weather_hint(season)
-    content_category = get_next_daily_category(now)
+    content_category = get_next_daily_category(now, post_type)
     seasonal_topic = random.choice(SEASONAL_TOPIC_BANK[season])
     trend_keyword = random.choice(LIFESTYLE_TREND_BANK)
     daily_scene = random.choice(DAILY_SCENE_BANK)
@@ -877,9 +1297,13 @@ def build_daily_topic_context():
         "검색자가 바로 따라 할 수 있는 서류와 공식 확인 순서형 글",
         "월 지출과 계약 조건을 나눠 판단하는 기준 중심 글",
     ])
-    intent_candidates = DAILY_SEARCH_INTENT_BANK.get(content_category) or DAILY_SEARCH_INTENT_BANK["월세계약"]
+    search_intent_bank = get_daily_search_intent_bank(post_type)
+    fallback_category = get_daily_category_bank(post_type)[0]
+    intent_candidates = search_intent_bank.get(content_category) or search_intent_bank[fallback_category]
     daily_intent = random.choice(intent_candidates)
     return {
+        "post_type": post_type,
+        "content_mode": post_type,
         "now_label": f"{now.month}월 {now.day}일 {weekday_name}요일",
         "season": season,
         "day_type": day_type,
@@ -909,6 +1333,12 @@ def build_daily_topic_context():
 
 
 def build_daily_post_prompt(daily_context):
+    content_mode = daily_context.get("content_mode", POST_TYPE_DAILY)
+    if content_mode == POST_TYPE_MATE:
+        return build_mate_post_prompt(daily_context)
+    if content_mode == POST_TYPE_ADPOST:
+        return build_adpost_post_prompt(daily_context)
+
     practical_points = format_daily_prompt_items(daily_context.get("practical_points", []))
     mistakes_to_avoid = format_daily_prompt_items(daily_context.get("mistakes_to_avoid", []))
     faq_questions = format_daily_prompt_items(daily_context.get("faq_questions", []))
@@ -1331,6 +1761,21 @@ A급 주제는 아래 8가지 조건 중 최소 6개 이상을 만족해야 한�
 
 
 def build_daily_image_prompt(daily_context):
+    content_mode = daily_context.get("content_mode", POST_TYPE_DAILY)
+    if content_mode == POST_TYPE_MATE:
+        return (
+            f"{daily_context['photo_style']}, {daily_context['season']} 분위기, "
+            f"{daily_context['image_scene']}, 네이버 메이트와 AI 브리핑 글 구조를 분석하는 블로그 운영 장면, "
+            "20대 성인 한국인 여성이 노트북과 메모장을 보며 검색 의도와 FAQ 구조를 정리하는 모습, "
+            "회사 로고, 개인정보, 읽을 수 있는 글자가 보이지 않는 현실적인 실내 사진"
+        )
+    if content_mode == POST_TYPE_ADPOST:
+        return (
+            f"{daily_context['photo_style']}, {daily_context['season']} 분위기, "
+            f"{daily_context['image_scene']}, 애드포스트 블로그 통계와 본문 구조를 점검하는 운영 장면, "
+            "20대 성인 한국인 여성이 노트북과 체크리스트를 보며 블로그 수익 흐름을 분석하는 모습, "
+            "회사 로고, 개인정보, 읽을 수 있는 글자가 보이지 않는 현실적인 실내 사진"
+        )
     return (
         f"{daily_context['photo_style']}, {daily_context['season']} 분위기, "
         f"{daily_context['weather_key']} 느낌, {daily_context['image_scene']}, "
@@ -2257,7 +2702,7 @@ class GeminiWebBot:
 # =============================================================
 def generate_content(post_type):
     """
-    post_type: '일상' 또는 '쿠팡'
+    post_type: '일상', '네이버메이트', '애드포스트' 또는 '쿠팡'
     Gemini 웹사이트 하나의 세션에서 텍스트+이미지 모두 생성
     """
     img_path = os.path.join(BASE_DIR, f'temp_blog_img_{int(time.time())}.png')
@@ -2267,11 +2712,12 @@ def generate_content(post_type):
     
     try:
         product_state = None
-        if post_type == "\uc77c\uc0c1":
-            daily_context = build_daily_topic_context()
+        if post_type in INFO_POST_TYPES:
+            daily_context = build_daily_topic_context(post_type)
             prompt = build_daily_post_prompt(daily_context)
+            content_mode = daily_context.get("content_mode", post_type)
 
-            print("   >> 일상 주제 컨텍스트 선정 완료...")
+            print(f"   >> {post_type} 주제 컨텍스트 선정 완료...")
             print(f"   >> 검색 주제: {daily_context['search_phrase']} | 카테고리: {daily_context['content_category']} | 날씨: {daily_context['weather_key']}")
 
             print("   >> 블로그 본문 생성 중 (사고 모델, 최대 5분 대기)...")
@@ -2280,6 +2726,34 @@ def generate_content(post_type):
                 return None, None, None, "", None
 
             print("   >> 제목 생성 중 (사고 모델)...")
+            if content_mode == POST_TYPE_MATE:
+                title_direction = """
+- 제목 앞쪽에 네이버 메이트, AI 브리핑, 인용수, 블로그 글쓰기 중 핵심 키워드를 자연스럽게 넣는다
+- 선정 보장, 인용 보장, 알고리즘 확정처럼 보이는 제목은 금지
+- 공개 기준을 바탕으로 실행 가능한 글 구조가 보이게 쓴다
+- 예: 네이버 메이트 뜻 AI 브리핑 인용 글 구조
+- 예: AI 브리핑 인용수 높이는 블로그 글 점검법
+"""
+                fallback_title = f"{daily_context['search_phrase']} 글쓰기 기준"
+            elif content_mode == POST_TYPE_ADPOST:
+                title_direction = """
+- 제목 앞쪽에 애드포스트, 블로그 수익, 수익 하락, 본문 체류 중 핵심 키워드를 자연스럽게 넣는다
+- 수익 보장, 클릭 유도, 단가 확정처럼 보이는 제목은 금지
+- 원인 점검과 글 구조 개선이 제목에서 보이게 쓴다
+- 예: 애드포스트 수익 줄었을 때 먼저 볼 점검 순서
+- 예: 애드포스트 본문 체류시간 늘리는 글 구조
+"""
+                fallback_title = f"{daily_context['search_phrase']} 점검 기준"
+            else:
+                title_direction = """
+- 제목은 단순 일상 제목이 아니라 사람들이 실제로 검색할 만한 생활 문제형 제목이어야 한다
+- 확정 핵심 검색어 또는 자연스러운 변형을 제목 앞쪽에 넣는다
+- 문제 상황 + 확인 기준 + 해결 기대가 제목만 봐도 보여야 한다
+- 상품을 직접 사용한 것처럼 보이는 제목은 쓰지 않는다
+- 오늘의 일상, 소소한 기록, 하루 기록 같은 일기형 제목 금지
+"""
+                fallback_title = f"{daily_context['search_phrase']} 체크 기준"
+
             title_prompt = f"""
 너는 네이버 검색 유입과 클릭률을 함께 고려하는 블로그 제목 편집자입니다.
 아래 검색 의도와 본문을 보고 제목 1개만 작성하세요.
@@ -2290,12 +2764,10 @@ def generate_content(post_type):
 - 글에서 해결할 약속: {daily_context['reader_promise']}
 
 [제목 규칙]
-- 제목은 단순 일상 제목이 아니라 사람들이 실제로 검색할 만한 생활 문제형 제목이어야 한다
-- 확정 핵심 검색어 또는 자연스러운 변형을 제목 앞쪽에 넣는다
-- 문제 상황 + 확인 기준 + 해결 기대가 제목만 봐도 보여야 한다
+- 글 종류: {content_mode}
+{title_direction}
 - 상품을 직접 사용한 것처럼 보이는 제목은 쓰지 않는다
 - 내돈내산, 직접 써보니, 인생템, 역대급, 최저가, 무조건, 완벽정리, 꿀팁 같은 표현은 금지
-- 오늘의 일상, 소소한 기록, 하루 기록 같은 일기형 제목 금지
 - 22자 이상 48자 이하의 한국어 제목 1줄만 출력
 - 영어, 따옴표, 해시태그, 이모티콘, 설명 문장 금지
 
@@ -2310,11 +2782,10 @@ def generate_content(post_type):
             else:
                 blog_title = ""
             if not blog_title:
-                blog_title = f"{daily_context['search_phrase']} 체크 기준"
+                blog_title = fallback_title
 
             img_description = build_daily_image_prompt(daily_context)
             p_name = ""
-            post_type = "__daily_done__"
 
         if post_type == '쿠팡':
             product_state = select_unused_coupang_product(csv_file_path)
@@ -2778,6 +3249,9 @@ Show a believable problem-solving moment while using {p_name}.
         result_path = bot.generate_image(img_description, img_path)
         if not result_path:
             img_path = None
+            if post_type in INFO_POST_TYPES:
+                print(f"   >> [에러] {post_type} 글 이미지를 생성하지 못해 이번 발행은 중단합니다.")
+                return None, None, None, "", None
             if post_type == "쿠팡":
                 print("   >> [에러] 쿠팡 글 이미지를 생성하지 못해 이번 발행은 중단합니다.")
                 return None, None, None, "", None
@@ -3079,23 +3553,57 @@ class NaverBlogBot:
                     return False
                 return True
 
+            def find_editor_images():
+                selectors = [
+                    'img.se-image-resource',
+                    '.se-component-image img',
+                    '.se-module-image img',
+                ]
+                images = []
+                seen = set()
+                for selector in selectors:
+                    try:
+                        for image in driver.find_elements(By.CSS_SELECTOR, selector):
+                            if image.id in seen:
+                                continue
+                            seen.add(image.id)
+                            images.append(image)
+                    except Exception:
+                        pass
+                return images
+
+            def wait_for_uploaded_editor_image(before_count, timeout_sec=45):
+                deadline = time.time() + timeout_sec
+                last_count = before_count
+                while time.time() < deadline:
+                    uploaded_imgs = find_editor_images()
+                    last_count = len(uploaded_imgs)
+                    if last_count > before_count:
+                        print(f"   >> 📸 이미지 업로드 확인 완료! ({before_count} -> {last_count})")
+                        return uploaded_imgs[-1]
+                    time.sleep(1)
+                print(f"   >> [주의] 이미지 업로드 확인 실패 ({before_count} -> {last_count})")
+                return None
+
             # 사진 업로드 (일상글만 본문 앞에 배치, 쿠팡글은 [사진삽입] 위치에서 삽입)
             if post_type != '쿠팡' and img_path and os.path.exists(img_path):
                 print("   >> 사진 클립보드 업로드 시도...")
                 if set_image_clipboard(img_path):
                     time.sleep(2)
 
+                    before_image_count = len(find_editor_images())
                     actions.key_down(Keys.CONTROL).send_keys('v').key_up(Keys.CONTROL).perform()
-                    print("   >> 🎨 사진 업로드 대기 중 (15초)...")
-                    time.sleep(15)
+                    print("   >> 🎨 사진 업로드 확인 대기 중...")
+                    uploaded_image = wait_for_uploaded_editor_image(before_image_count)
+                    if not uploaded_image:
+                        print("   >> [에러] 이미지 업로드 확인 실패. 사진 없는 발행을 막기 위해 중단합니다.")
+                        return False
 
                     # 업로드된 사진 클릭
                     try:
-                        uploaded_imgs = driver.find_elements(By.CSS_SELECTOR, 'img.se-image-resource')
-                        if uploaded_imgs:
-                            uploaded_imgs[-1].click()
-                            print("   >> 📸 업로드된 사진 클릭 완료!")
-                            time.sleep(1)
+                        uploaded_image.click()
+                        print("   >> 📸 업로드된 사진 클릭 완료!")
+                        time.sleep(1)
                     except Exception as e:
                         print(f"   >> [주의] 사진 클릭 실패: {e}")
 
@@ -3543,7 +4051,7 @@ class NaverBlogBot:
 # 5. 하나의 글 발행 통합 함수
 # =============================================================
 def publish_one_post(post_type):
-    """post_type: '일상' 또는 '쿠팡' — 전역 naver_bot 사용 (클립보드 충돌 방지 락 포함)"""
+    """post_type: '일상', '네이버메이트', '애드포스트' 또는 '쿠팡' — 전역 naver_bot 사용 (클립보드 충돌 방지 락 포함)"""
     global naver_bot
     # 클립보드 충돌 방지: 다른 자동화 스크립트 완료까지 대기 (최대 30분)
     _lock = FileLock(AUTOMATION_LOCK_PATH, timeout=1800)
@@ -3587,7 +4095,7 @@ def _publish_one_post_inner(post_type):
             daily_stats[post_type] += 1
             if post_type == "쿠팡" and product_state:
                 mark_coupang_product_as_used(csv_file_path, product_state, blog_title)
-            msg = f"✅ [{post_type}] 발행 성공! 제목: {blog_title[:30]}...\n(오늘: 일상 {daily_stats['일상']}건, 쿠팡 {daily_stats['쿠팡']}건)"
+            msg = f"✅ [{post_type}] 발행 성공! 제목: {blog_title[:30]}...\n(오늘: {format_daily_stats_summary()})"
             print(f"   >> {msg}")
             send_telegram(msg)
         else:
@@ -3604,34 +4112,33 @@ def _publish_one_post_inner(post_type):
 
 
 # =============================================================
-# 6. 랜덤 스케줄 생성 (하루 10건: 일상 5 + 쿠팡 5)
+# 6. 랜덤 스케줄 생성 (하루 8건: 네이버메이트 4 + 애드포스트 4)
 # =============================================================
 def generate_daily_schedule():
     """
-    하루 24시간을 10개의 랜덤 시간으로 나누고,
-    일상 5건 + 쿠팡 5건을 랜덤으로 섞어 배치
+    하루 24시간을 8개의 랜덤 시간으로 나누고,
+    네이버메이트 4건 + 애드포스트 4건을 랜덤으로 섞어 배치
     """
     # 기존 스케줄 전부 제거
     schedule.clear()
     
     # 오늘 통계 초기화
-    daily_stats["일상"] = 0
-    daily_stats["쿠팡"] = 0
-    daily_stats["에러"] = 0
+    for key in daily_stats:
+        daily_stats[key] = 0
     
     # 00:30 ~ 23:30 사이에서 1분 단위 후보를 쓰되, 자체 작업끼리는 최소 15분 간격 유지
     candidate_minutes = list(range(30, 1410, 1))
     random_minutes = []
     for _ in range(2000):
-        temp = sorted(random.sample(candidate_minutes, 10))
-        if all(temp[i + 1] - temp[i] >= 15 for i in range(9)):
+        temp = sorted(random.sample(candidate_minutes, 8))
+        if all(temp[i + 1] - temp[i] >= 15 for i in range(7)):
             random_minutes = temp
             break
     if not random_minutes:
-        random_minutes = sorted(random.sample(candidate_minutes, 10))
+        random_minutes = sorted(random.sample(candidate_minutes, 8))
     
-    # 글 종류 배정: 일상 5 + 쿠팡 5 → 섞기
-    post_types = ['일상'] * 5 + ['쿠팡'] * 5
+    # 글 종류 배정: 네이버메이트 4 + 애드포스트 4 → 섞기
+    post_types = [POST_TYPE_MATE] * 4 + [POST_TYPE_ADPOST] * 4
     random.shuffle(post_types)
     
     print(f"\n{'='*60}")
@@ -3646,7 +4153,7 @@ def generate_daily_schedule():
         # 스케줄 등록
         schedule.every().day.at(time_str).do(publish_one_post, post_type=p_type)
         
-        emoji = "🌸" if p_type == "일상" else "🛒"
+        emoji = "🤖" if p_type == POST_TYPE_MATE else "📊"
         print(f"   {i:2d}. {time_str}  →  {emoji} {p_type}")
     
     # 매일 자정에 다시 스케줄 재생성 (다음날 새 랜덤 시간)
@@ -3681,16 +4188,16 @@ if __name__ == "__main__":
     try:
         selected_post_type = args.post_type
         if not selected_post_type:
-            selected_post_type = input("📝 발행할 글 종류를 입력하세요 (일상/쿠팡, 엔터 시 쿠팡): ").strip() or "쿠팡"
-        if selected_post_type not in ("일상", "쿠팡"):
-            raise RuntimeError("글 종류는 '일상' 또는 '쿠팡'만 사용할 수 있습니다.")
+            selected_post_type = input("📝 발행할 글 종류를 입력하세요 (일상/네이버메이트/애드포스트/쿠팡, 엔터 시 애드포스트): ").strip() or POST_TYPE_ADPOST
+        if selected_post_type not in POST_TYPE_CHOICES:
+            raise RuntimeError(f"글 종류는 {', '.join(POST_TYPE_CHOICES)} 중 하나만 사용할 수 있습니다.")
 
         print(f"\n🚀 [1회 실행] '{selected_post_type}' 글 1건 발행을 시작합니다.\n")
         publish_one_post(selected_post_type)
     
     except KeyboardInterrupt:
         print(f"\n\n🛑 프로그램을 수동 종료합니다.")
-        send_telegram(f"🛑 프로그램 수동 종료\n오늘 결과: 일상 {daily_stats['일상']}건, 쿠팡 {daily_stats['쿠팡']}건, 에러 {daily_stats['에러']}건")
+        send_telegram(f"🛑 프로그램 수동 종료\n오늘 결과: {format_daily_stats_summary()}")
     
     except Exception as e:
         print(f"\n\n🚨 치명적 에러: {e}")
@@ -3699,7 +4206,7 @@ if __name__ == "__main__":
     finally:
         if naver_bot:
             naver_bot.close()
-        print(f"   오늘 결과: 일상 {daily_stats['일상']}건, 쿠팡 {daily_stats['쿠팡']}건, 에러 {daily_stats['에러']}건")
+        print(f"   오늘 결과: {format_daily_stats_summary()}")
         if scheduled_log_file:
             sys.stdout = original_stdout
             sys.stderr = original_stderr

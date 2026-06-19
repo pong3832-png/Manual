@@ -64,7 +64,7 @@ def delete_task_if_exists(task_name):
 
 
 def candidate_minutes_for_date(target_date):
-    minutes = list(range(30, 1410, 15))
+    minutes = list(range(30, 1410, 1))
     now = datetime.now()
     if target_date == now.date():
         minimum_dt = now + timedelta(minutes=5)
@@ -134,7 +134,15 @@ def build_schedule_items(target_date):
     elif peer_minutes:
         print("[주의] 상대 계정 스케줄과 30분 이상 떨어진 슬롯이 부족해 기본 후보로 생성합니다.")
 
-    random_minutes = sorted(random.sample(candidate_minutes, 10))
+    random_minutes = []
+    for _ in range(2000):
+        temp = sorted(random.sample(candidate_minutes, 10))
+        if all(temp[i + 1] - temp[i] >= 15 for i in range(9)):
+            random_minutes = temp
+            break
+    if not random_minutes:
+        random_minutes = sorted(random.sample(candidate_minutes, 10))
+
     post_types = POST_TYPES[:]
     random.shuffle(post_types)
 

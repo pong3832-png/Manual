@@ -28,7 +28,7 @@ import argparse
 from datetime import datetime
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-PROJECT_ROOT = BASE_DIR
+PROJECT_ROOT = os.path.dirname(BASE_DIR)
 AUTOMATION_LOCK_PATH = os.path.join(PROJECT_ROOT, "자동발행상태기록파일", "automation.lock")
 DEFAULT_NAVER_CONNECT_ID = "skssj2629"
 BLOG_PERSONA_CONCEPT = (
@@ -36,7 +36,8 @@ BLOG_PERSONA_CONCEPT = (
     "성분, 면 소재, 마감, 사용 연령, 관리 편의성, 아이 생활 동선까지 세세하게 따지고, "
     "좋아 보이는 이유보다 내 아이와 우리 집 기준에 맞는지를 먼저 보는 사람."
 )
-SHORT_BODY_LINE_LIMIT = 25
+SHORT_BODY_LINE_LIMIT = 40
+_chrome_major_version_cache = None
 os.makedirs(os.path.dirname(AUTOMATION_LOCK_PATH), exist_ok=True)
 
 
@@ -138,6 +139,99 @@ def resolve_default_csv_path():
     return candidates[1]
 
 
+def get_installed_chrome_major_version():
+    global _chrome_major_version_cache
+    if _chrome_major_version_cache is not None:
+        return _chrome_major_version_cache
+
+    chrome_paths = [
+        r"C:\Program Files\Google\Chrome\Application\chrome.exe",
+        r"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe",
+    ]
+    for chrome_path in chrome_paths:
+        if not os.path.exists(chrome_path):
+            continue
+        try:
+            safe_path = chrome_path.replace("'", "''")
+            completed = subprocess.run(
+                ["powershell", "-NoProfile", "-Command", f"(Get-Item -LiteralPath '{safe_path}').VersionInfo.ProductVersion"],
+                capture_output=True,
+                text=True,
+                timeout=5,
+            )
+            match = re.search(r"(\d+)\.", completed.stdout or "")
+            if match:
+                _chrome_major_version_cache = match.group(1)
+                return _chrome_major_version_cache
+        except Exception:
+            continue
+    return None
+
+
+def get_chromedriver_major_version(chromedriver_path):
+    try:
+        completed = subprocess.run(
+            [chromedriver_path, "--version"],
+            capture_output=True,
+            text=True,
+            timeout=5,
+        )
+        match = re.search(r"ChromeDriver\s+(\d+)\.", completed.stdout or "")
+        if match:
+            return match.group(1)
+    except Exception:
+        return None
+    return None
+
+
+def is_chromedriver_compatible(chromedriver_path):
+    chrome_major = get_installed_chrome_major_version()
+    driver_major = get_chromedriver_major_version(chromedriver_path)
+    if not chrome_major or not driver_major:
+        return True
+    if chrome_major != driver_major:
+        print(
+            "   >> [주의] ChromeDriver 버전 불일치로 건너뜁니다: "
+            f"Chrome {chrome_major}, Driver {driver_major}, {chromedriver_path}"
+        )
+        return False
+    return True
+
+
+def parse_version_tuple(version_text):
+    parts = re.findall(r"\d+", version_text or "")
+    return tuple(int(part) for part in parts[:4])
+
+
+def iter_local_chromedriver_paths():
+    home_dir = os.path.expanduser("~")
+    search_roots = [
+        (
+            os.path.join(home_dir, ".wdm", "drivers", "chromedriver", "win64"),
+            os.path.join("chromedriver-win32", "chromedriver.exe"),
+        ),
+        (
+            os.path.join(home_dir, ".cache", "selenium", "chromedriver", "win64"),
+            "chromedriver.exe",
+        ),
+    ]
+    candidates = []
+    for root_dir, driver_relpath in search_roots:
+        if not os.path.isdir(root_dir):
+            continue
+        try:
+            version_dirs = os.listdir(root_dir)
+        except OSError:
+            continue
+        for version_dir in version_dirs:
+            driver_path = os.path.join(root_dir, version_dir, driver_relpath)
+            if os.path.exists(driver_path):
+                candidates.append((parse_version_tuple(version_dir), driver_path))
+
+    for _, driver_path in sorted(candidates, key=lambda item: item[0], reverse=True):
+        yield driver_path
+
+
 def create_chrome_driver(options):
     """
     ChromeDriver 경로가 지정돼 있으면 우선 사용하고,
@@ -150,9 +244,11 @@ def create_chrome_driver(options):
             raise FileNotFoundError(
                 f"CHROMEDRIVER_PATH 경로를 찾을 수 없습니다: {chromedriver_path}"
             )
-        return webdriver.Chrome(service=Service(chromedriver_path), options=options)
+        if is_chromedriver_compatible(chromedriver_path):
+            return webdriver.Chrome(service=Service(chromedriver_path), options=options)
 
-    candidate_paths = [
+    candidate_paths = list(iter_local_chromedriver_paths()) + [
+        os.path.join(os.path.expanduser("~"), ".wdm", "drivers", "chromedriver", "win64", "148.0.7778.167", "chromedriver-win32", "chromedriver.exe"),
         os.path.join(os.path.expanduser("~"), ".cache", "selenium", "chromedriver", "win64", "147.0.7727.117", "chromedriver.exe"),
         os.path.join(os.path.expanduser("~"), ".cache", "selenium", "chromedriver", "win64", "147.0.7727.56", "chromedriver.exe"),
         r"C:\py_temp\chromedriver.exe",
@@ -161,8 +257,12 @@ def create_chrome_driver(options):
         os.path.join(os.path.expanduser("~"), ".wdm", "drivers", "chromedriver", "win64", "146.0.7680.165", "chromedriver-win32", "chromedriver.exe"),
         os.path.join(os.path.expanduser("~"), "workspace", "chromedriver", "chromedriver-win64", "chromedriver.exe"),
     ]
+    seen_candidate_paths = set()
     for candidate_path in candidate_paths:
-        if os.path.exists(candidate_path):
+        if candidate_path in seen_candidate_paths:
+            continue
+        seen_candidate_paths.add(candidate_path)
+        if os.path.exists(candidate_path) and is_chromedriver_compatible(candidate_path):
             print(f"   >> [안내] 로컬 ChromeDriver 사용: {candidate_path}")
             return webdriver.Chrome(service=Service(candidate_path), options=options)
 
@@ -1514,10 +1614,10 @@ A급 주제는 아래 8가지 조건 중 최소 6개 이상을 만족해야 한�
 - [목록주제]와 [목록끝] 마커는 철자 그대로 유지
 - 본문 마지막에 [해시태그대기]와 해시태그 10개를 반드시 출력한다
 - 문단 사이에는 빈 줄을 충분히 넣는다
-- 일반 본문 문장은 한 줄 25자 이하로 짧게 끊는다
+- 일반 본문 문장은 한 줄 40자 안팎으로 자연스럽게 끊는다
 - 긴 문단으로 쭉 나열하지 말고 의미 단위로 줄바꿈한다
 - 2~4줄이 하나의 흐름이 되게 이어 쓰고, 갑자기 끊긴 메모처럼 쓰지 않는다
-- 목록 항목도 가능한 한 짧게 쓰며, 마커와 해시태그 형식은 그대로 유지한다
+- 목록 항목도 너무 짧게 쪼개지 말고 40자 안팎의 자연스러운 호흡으로 쓰며, 마커와 해시태그 형식은 그대로 유지한다
 
 [절대 금지]
 - 광고 고지문 출력 금지
@@ -1812,7 +1912,7 @@ def normalize_coupang_cta_text(text):
 
 def wrap_short_body_text(text, limit=SHORT_BODY_LINE_LIMIT):
     """
-    네이버 모바일에서 읽기 쉽게 일반 본문 줄만 짧게 나눈다.
+    네이버 모바일에서 읽기 쉽게 일반 본문 줄만 적당한 길이로 나눈다.
     마커, 링크, 해시태그는 입력 로직과 링크 인식을 위해 원형을 유지한다.
     """
     if not text:
@@ -2513,6 +2613,12 @@ def generate_content(post_type):
             selling_point_3 = get_product_field(target, "장점3", default="후기와 정보량이 비교적 많은 점")
             product_rating = get_product_field(target, "평점", default="")
             product_review_count = get_product_field(target, "리뷰개수", "리뷰수", default="")
+            promotion_signal = get_product_field(target, "가격대", "수집경로", default="")
+            promotion_context = (
+                "프로모션 상품으로 제공된 쇼핑커넥트 후보"
+                if "프로모션" in promotion_signal
+                else "쇼핑커넥트 후보"
+            )
             caution_note = get_product_field(target, "주의점", default="사용 환경과 예산에 따라 만족도가 달라질 수 있음")
             post_angle = get_product_field(target, "글관점", default=angle_direction)
             title_seed = get_product_field(target, "제목시드", default=coupang_angle.get("title_seed", f"{p_keyword} 고를 때 구매 전 보기 쉬운 체크포인트"))
@@ -2564,6 +2670,7 @@ def generate_content(post_type):
 - 사용 장소: {usage_place}
 - 시즌/시기: {season_tag}
 - 독자가 겪는 불편: {pain_point}
+- 프로모션 맥락: {promotion_context}
 - 평점 참고값: {product_rating or "미제공"}
 - 리뷰 개수 참고값: {product_review_count or "미제공"}
 - 강조 포인트 1: {selling_point_1}
@@ -2622,9 +2729,13 @@ def generate_content(post_type):
 - 내돈내산, 직접 써봤다, 제가 샀다, 며칠 써보니, 집에서 계속 써보니, 협찬 아님 같은 표현은 절대 쓰지 마라.
 - "후기들을 보면", "상세페이지 기준으로 보면", "구매 전 확인할 부분은", "사용 환경에 따라" 같은 표현을 자연스럽게 활용하라.
 - 확인되지 않은 가격, 할인율, 판매량, 순위, 최저가, 재고, 배송 보장, 성분 비율, 소재 혼용률, 사용 연령, 성능 수치는 절대 지어내지 마라.
+- 프로모션 상품인 경우에는 "프로모션으로 살펴볼 만한 후보", "프로모션이라 구성과 조건을 같이 보게 되는 제품"처럼 자연스럽게 살리되, 실제 할인율이나 가격 혜택은 제공값이 없으면 절대 쓰지 마라.
+- 프로모션 맥락은 구매를 밀어붙이는 문장이 아니라 구성, 조건, 상세페이지 정보, 후기 흐름을 확인하게 만드는 신뢰 신호로만 사용하라.
+- 실제 아기나 아이가 쓰는 용품은 신뢰도가 핵심이므로 평점/리뷰 수를 근거 신호로 살리되, 월령, 소재, 마감, 세척, 보관, 사용 장소, 보호자 확인 필요성을 함께 설명하라.
 - 전문용어가 들어가더라도 의학적 진단, 치료, 성장, 면역, 피부 개선, 질병 예방처럼 고위험 효능을 단정하지 마라.
-- 평점과 리뷰 개수가 제공된 경우에는 실제 제공값을 본문에 1~2회 자연스럽게 넣어라. 예: "상세페이지 기준 평점과 리뷰가 꽤 쌓여 있어 후기 흐름을 같이 볼 수 있습니다."
+- 평점과 리뷰 개수가 제공된 경우에는 실제 제공값을 본문에 1~2회 자연스럽게 넣어라. 예: "상세페이지 기준 평점 4.9점대와 리뷰 수가 꽤 쌓여 있어 후기 흐름을 같이 볼 수 있습니다."
 - 단, 평점과 리뷰 개수는 상세페이지 기준 참고 정보로만 다루고, 만족 보장이나 품질 보장처럼 단정하지 마라.
+- 리뷰 개수는 신뢰감을 보태는 참고 정보로 쓰되, "많이 팔린", "검증된", "만족도 보장"처럼 단정하지 마라.
 - 평점과 리뷰 개수가 미제공이면 본문에서 숫자를 절대 지어내지 마라.
 - 상품을 무조건 좋다고 하지 말고, 먼저 확인해야 할 환경과 신중히 볼 환경을 분명히 나눠라.
 - 과장된 구매 유도보다 구매 전 판단 기준을 우선한다.
@@ -2778,10 +2889,10 @@ A. 답변 내용
 - 인용구 내부 문장은 반드시 20자 이상이어야 하며, 빈 인용구 출력 금지
 - [목록주제]와 [목록끝] 마커는 철자 그대로 유지
 - 문단 사이에는 빈 줄을 충분히 넣어라
-- 일반 본문 문장은 한 줄 25자 이하로 짧게 끊어라
+- 일반 본문 문장은 한 줄 40자 안팎으로 자연스럽게 끊어라
 - 긴 문단으로 쭉 나열하지 말고, 의미 단위로 줄바꿈해서 흐름 있게 작성하라
 - 2~4줄이 하나의 자연스러운 호흡이 되도록 이어 쓰고, 메모처럼 툭툭 끊지 마라
-- 목록 항목도 가능한 한 짧게 쓰며, URL, 마커, 해시태그 형식은 그대로 유지하고 상품명은 임의 변경하지 마라
+- 목록 항목도 너무 짧게 쪼개지 말고 40자 안팎의 자연스러운 호흡으로 쓰며, URL, 마커, 해시태그 형식은 그대로 유지하고 상품명은 임의 변경하지 마라
 
 [절대 금지]
 - 광고 고지문 출력 금지
@@ -3852,8 +3963,16 @@ def generate_daily_schedule():
     daily_stats["쿠팡"] = 0
     daily_stats["에러"] = 0
 
-    # 00:30 ~ 23:30 사이에서 랜덤 10개 시각 생성 (최소 30분 간격)
-    random_minutes = sorted(random.sample(range(30, 1410, 15), 10))  # 15분 단위 중 10개 선택
+    # 00:30 ~ 23:30 사이에서 1분 단위 후보를 쓰되, 자체 작업끼리는 최소 15분 간격 유지
+    candidate_minutes = list(range(30, 1410, 1))
+    random_minutes = []
+    for _ in range(2000):
+        temp = sorted(random.sample(candidate_minutes, 10))
+        if all(temp[i + 1] - temp[i] >= 15 for i in range(9)):
+            random_minutes = temp
+            break
+    if not random_minutes:
+        random_minutes = sorted(random.sample(candidate_minutes, 10))
 
     # 글 종류 배정: 일상 5 + 네이버 쇼핑커넥트 5 → 섞기
     post_types = ['일상'] * 5 + ['네이버'] * 5

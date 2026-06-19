@@ -1,0 +1,1722 @@
+포포몬
+
+로그인 없이 구경 가능
+무한 스크롤.
+
+전체 url
+https://popomon.com/
+
+캠페인 누르면 바로 지역 캠페인 카테고리가 처음으로 나옴. 
+<div class="flex flex-row justify-start items-center w-fit gap-[82px]"><div class="w-fit flex justify-center items-center"><a class="mx-1" aria-label="logo" href="/next"><img class="pc:w-[134px] pc:h-[40px] object-contain" src="/next/assets/images/popomon_logo.svg" alt="logo"></a></div><div class="flex gap-8 items-center text-base font-semibold leading-5"><a rel="nosublink" class="whitespace-pre   cursor-pointer hover:text-purple-600" href="/next">홈</a><a class="relative whitespace-pre text-purple-700  cursor-pointer hover:text-purple-600" href="https://popomon.com/campaign?bigRecruitType=Lvisiting&amp;recruitType=visiting">캠페인</a><div class="fixed top-[84px] w-screen h-[56px] left-0 bg-white shadow-md py-2 pl-[279px] 6xl:pl-[579px] border-t border-gray-250"><div class="flex w-full py-2 gap-x-[18px] justify-start items-center text-t-2 font-normal"><a class=" text-purple-700 font-semibold text-gray-550 flex py-1 " href="https://popomon.com/campaign?bigRecruitType=Lvisiting&amp;recruitType=visiting">지역 캠페인</a><a class=" text-gray-550 text-gray-550 flex py-1 " href="https://popomon.com/campaign?bigRecruitType=Pshipping&amp;recruitType=shipping">제품 캠페인</a><a class=" text-gray-550 text-gray-550 flex py-1 " href="https://popomon.com/campaign?bigRecruitType=Lvisiting&amp;recruitType=reporting">기자단 캠페인</a></div></div><div class="relative whitespace-pre   cursor-pointer hover:text-purple-600">인플루언서 찾기</div><a rel="nosublink" class="relative whitespace-pre  " href="https://popomon.com/next/chatList">채팅</a><a class="relative whitespace-pre   cursor-pointer hover:text-purple-600" href="/next/additional/blog">부가서비스</a><div class="relative flex flex-col items-center"><a class="whitespace-pre   " href="https://popomon.com/next/client/matching">커넥트</a><div class="absolute top-5 flex flex-col items-center z-40 animate-float"><div class="w-0 h-0 border-x-4 border-x-transparent border-b-4 border-b-[#FF5894]"></div><div class="bg-[#FF5894] text-white text-xs px-2 py-1 rounded shadow-md whitespace-nowrap text-center">AI자동매칭</div></div></div><a class="whitespace-pre   " href="https://popomon.com/next/biz/connectRequest">헤드헌팅</a></div></div>
+여기서 캠페인 누르면
+<div class="flex w-full py-2 gap-x-[18px] justify-start items-center text-t-2 font-normal"><a class=" text-purple-700 font-semibold text-gray-550 flex py-1 " href="https://popomon.com/campaign?bigRecruitType=Lvisiting&amp;recruitType=visiting">지역 캠페인</a><a class=" text-gray-550 text-gray-550 flex py-1 " href="https://popomon.com/campaign?bigRecruitType=Pshipping&amp;recruitType=shipping">제품 캠페인</a><a class=" text-gray-550 text-gray-550 flex py-1 " href="https://popomon.com/campaign?bigRecruitType=Lvisiting&amp;recruitType=reporting">기자단 캠페인</a></div>
+여기로 넘어가서 지역 캠페인 바로 나옴
+
+캠페인 카테고리 중 지역 캠페인 카테고리
+https://popomon.com/next/campaign?searchAlign=latest&bigRecruitType=Lvisiting&recruitType=visiting&interestsFilter=ALL&&pageNum=12&snsSubFilter=
+
+헤더스
+Request URL
+https://popomon.com/api_p/campaign/fetch_getcampaignlist?searchAlign=latest&bigRecruitType=Lvisiting&recruitType=visiting&interestsFilter=ALL&&pageNum=60&snsSubFilter=
+Request Method
+POST
+Status Code
+200 OK
+Remote Address
+54.116.90.237:443
+Referrer Policy
+strict-origin-when-cross-origin
+access-control-allow-credentials
+true
+access-control-allow-headers
+Content-Type, nuxtcookie
+access-control-allow-methods
+POST, GET, OPTIONS
+access-control-allow-origin
+*
+content-security-policy
+upgrade-insecure-requests
+content-type
+application/json
+date
+Fri, 03 Apr 2026 03:04:13 GMT
+server
+Apache
+set-cookie
+AWSALBTG=65aKZNEPBQRaz0IjVMyldnaJGhp6dHOke2OPaLldRbcBsp6qlMsvLUsx9//j+ShooIbpNqULUAiwNDChHDbyFTXgLOcUiSJZPFZppMdKohtUUejE4QpRfV8aypW0Y0j5D8zpDzDwwfNYMVkIqwsIxgJxRY44wM+3n7xJ4PC8LRyYYIuueuE=; Expires=Fri, 10 Apr 2026 03:04:13 GMT; Path=/
+set-cookie
+AWSALBTGCORS=65aKZNEPBQRaz0IjVMyldnaJGhp6dHOke2OPaLldRbcBsp6qlMsvLUsx9//j+ShooIbpNqULUAiwNDChHDbyFTXgLOcUiSJZPFZppMdKohtUUejE4QpRfV8aypW0Y0j5D8zpDzDwwfNYMVkIqwsIxgJxRY44wM+3n7xJ4PC8LRyYYIuueuE=; Expires=Fri, 10 Apr 2026 03:04:13 GMT; Path=/; SameSite=None; Secure
+set-cookie
+AWSALB=iaCNEnZPax+LL9MVKc1L4cURwHcM2yLMOzbQ3slUObM8sVG5uX8GGNQ2548uaS5pn7uHUe7SNjTciC2yidWtXmDfdoXVDCViijKzh2pOLgLfHFucFIqh9iszH0Tj; Expires=Fri, 10 Apr 2026 03:04:13 GMT; Path=/
+set-cookie
+AWSALBCORS=iaCNEnZPax+LL9MVKc1L4cURwHcM2yLMOzbQ3slUObM8sVG5uX8GGNQ2548uaS5pn7uHUe7SNjTciC2yidWtXmDfdoXVDCViijKzh2pOLgLfHFucFIqh9iszH0Tj; Expires=Fri, 10 Apr 2026 03:04:13 GMT; Path=/; SameSite=None; Secure
+x-powered-by
+PHP/8.0.30
+:authority
+popomon.com
+:method
+POST
+:path
+/api_p/campaign/fetch_getcampaignlist?searchAlign=latest&bigRecruitType=Lvisiting&recruitType=visiting&interestsFilter=ALL&&pageNum=60&snsSubFilter=
+:scheme
+https
+accept
+application/json, text/plain, */*
+accept-encoding
+gzip, deflate, br, zstd
+accept-language
+ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7
+content-length
+0
+cookie
+_fwb=69dYGYK05xZj1BgFkPLqOs.1775184864660; __Host-next-auth.csrf-token=291baa9b1d9012a26ed5932928f14014c2096bc371df3311e9fc2bb4af1469ab%7C59ddbd742aab90194cd10a2abf50f58803505571f07f24ec4e2519f33b26c57e; __Secure-next-auth.callback-url=https%3A%2F%2Fpopomon.com; _pouvisittag=MTQvsUyusWnKKgVU.BHHFBIEIGEIAE; _pouvisitpage=LyYmLw==; _pouvisit=sxrPemnjPmBskIRG.BHHFBIEIGEIAG; ci_session=tl67nuiohrub3is3fhfhf9f2j1s6i6f2; _fbp=fb.1.1775184865904.769693113201958063; _ga=GA1.1.611229388.1775184866; closeEventPopup=closed; _pouvisittime=2026-04-03%2012:02:38; wcs_bt=dca0d2afb11030:1775185359; _ga_HLJ7EDWVJT=GS2.1.s1775184866$o1$g1$t1775185359$j8$l0$h0; AWSALBTG=AQ8MgrbfoPSBMl3m8m6UtpoCClaXCiBd4jYP9Dt5ofiRnO4eQ+e1rZAmqXcWWLlty//Y4Q4q34WJSfmiEQZKc22Qb5Z+wRCIYz9Kc+ffn1JA9cFH16TapPbo8naIRIyGTuH9xHj8gWkPEzkkthtQHtpkzO/YRts47TUsJRIO3vEO7NXm5rE=; AWSALBTGCORS=AQ8MgrbfoPSBMl3m8m6UtpoCClaXCiBd4jYP9Dt5ofiRnO4eQ+e1rZAmqXcWWLlty//Y4Q4q34WJSfmiEQZKc22Qb5Z+wRCIYz9Kc+ffn1JA9cFH16TapPbo8naIRIyGTuH9xHj8gWkPEzkkthtQHtpkzO/YRts47TUsJRIO3vEO7NXm5rE=; AWSALB=I9w6NeWnilIwEquLSDmfQYDtE3n7wwz4M9VkV2YIGp1o0tIm5A//kggS9LaVaR+4nSi/GPNIAnNQbiIRgsNYIhZekJ1TFX9rpK7MFuU2MKq4aQB1/buMf7t4ViVR; AWSALBCORS=I9w6NeWnilIwEquLSDmfQYDtE3n7wwz4M9VkV2YIGp1o0tIm5A//kggS9LaVaR+4nSi/GPNIAnNQbiIRgsNYIhZekJ1TFX9rpK7MFuU2MKq4aQB1/buMf7t4ViVR
+origin
+https://popomon.com
+priority
+u=1, i
+referer
+https://popomon.com/next/campaign?searchAlign=latest&bigRecruitType=Lvisiting&recruitType=visiting&interestsFilter=ALL&&pageNum=48&snsSubFilter=
+sec-ch-ua
+"Chromium";v="146", "Not-A.Brand";v="24", "Google Chrome";v="146"
+sec-ch-ua-mobile
+?0
+sec-ch-ua-platform
+"Windows"
+sec-fetch-dest
+empty
+sec-fetch-mode
+cors
+sec-fetch-site
+same-origin
+user-agent
+Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36
+
+페이로드
+searchAlign
+latest
+bigRecruitType
+Lvisiting
+recruitType
+visiting
+interestsFilter
+ALL
+(empty)
+pageNum
+60
+snsSubFilter
+
+프리뷰
+{,…}
+act
+: 
+"method"
+code
+: 
+200
+data
+: 
+{contentsData: [{C_uct_idx: "18283", C_idx: "233211", C_title: "[제주/제주시]휴메이크 휘트니스 노형프리미엄점",…},…],…}
+message
+: 
+""
+msg
+: 
+""
+result
+: 
+"Y"
+success
+: 
+true
+
+리스폰스
+{
+    "data": {
+        "contentsData": [
+            {
+                "C_uct_idx": "18283",
+                "C_idx": "233211",
+                "C_title": "[\uc81c\uc8fc\/\uc81c\uc8fc\uc2dc]\ud734\uba54\uc774\ud06c \ud718\ud2b8\ub2c8\uc2a4 \ub178\ud615\ud504\ub9ac\ubbf8\uc5c4\uc810",
+                "C_provision": "\uac1c\uc778\ud53c\ud2f0 3~5\ud68c \/ \ud68c\uc6d0\uad8c 1\uac1c\uc6d4 \/ \uace8\ud504 \uc774\uc6a9\uad8c 1\uc8fc\uc77c (\ud611\uc758\uac00\ub2a5)",
+                "C_provision_price": "800000",
+                "C_order": "0",
+                "C_emergency_recruit": "N",
+                "C_state": "ONGOING",
+                "C_choice_count": "10",
+                "C_volunteer_count": "0",
+                "C_regi_start_date": "2026-04-03",
+                "C_regi_end_date": "2026-04-10",
+                "C_registered_by_admin": "Y",
+                "C_regi_date": "2026-04-03 00:01:22",
+                "C_recruit_type": "visiting",
+                "C_provide_reward": "0",
+                "C_isPremium": "N",
+                "C_thumb_img_path": "",
+                "CS_type": "BLOG",
+                "thumb_img": "https:\/\/d17jwiodubhsh2.cloudfront.net\/UPLOAD\/CAMPAIGN_THUMB\/20260310_114840_I2GfYuJ_743290597.jpg",
+                "CT_type": "LIFE",
+                "C_background_color": "",
+                "C_font_color": "",
+                "C_last_jump_time": null,
+                "jump_order": "2026-04-03 00:01:22",
+                "C_max_discount_price": "0",
+                "C_isDiscount_Campaign": "N",
+                "C_discount_rate_level1": "50",
+                "C_discount_rate_level2": "100",
+                "C_discount_rate_level3": "100",
+                "C_discount_rate_level4": "100",
+                "C_regi_end_date_count": 7,
+                "C_regi_date_icon": false,
+                "subText": "\uc9c0\uc6d0\ud558\uae30",
+                "filter": "",
+                "C_recruit_type__text": "\ubc29\ubb38\ud615",
+                "CS_type__text": "\ube14\ub85c\uadf8",
+                "transformedPrice": "80\ub9cc\uc6d0 \uc0c1\ub2f9",
+                "isAd": "N"
+            },
+            {
+                "C_uct_idx": "18254",
+                "C_idx": "233210",
+                "C_title": "[\uacbd\uae30\/\uc218\uc6d0\uc2dc]\uc601\ud1b5\uc140\ud504\uc0ac\uc9c4\uad00 \uc140\ud504\uc2a4\ud29c\ub514\uc624",
+                "C_provision": "\uc140\ud504\uc0ac\uc9c4\uad00 \uc774\uc6a9\uad8c ",
+                "C_provision_price": "35000",
+                "C_order": "0",
+                "C_emergency_recruit": "Y",
+                "C_state": "ONGOING",
+                "C_choice_count": "10",
+                "C_volunteer_count": "0",
+                "C_regi_start_date": "2026-04-03",
+                "C_regi_end_date": "2026-04-10",
+                "C_registered_by_admin": "Y",
+                "C_regi_date": "2026-04-03 00:01:22",
+                "C_recruit_type": "visiting",
+                "C_provide_reward": "0",
+                "C_isPremium": "N",
+                "C_thumb_img_path": "",
+                "CS_type": "BLOG_RECEIPT",
+                "thumb_img": "https:\/\/d17jwiodubhsh2.cloudfront.net\/UPLOAD\/CAMPAIGN_THUMB\/20260310_100630_bUlTiIR_439898959.jpg",
+                "CT_type": "LEISURE",
+                "C_background_color": "",
+                "C_font_color": "",
+                "C_last_jump_time": null,
+                "jump_order": "2026-04-03 00:01:22",
+                "C_max_discount_price": "0",
+                "C_isDiscount_Campaign": "N",
+                "C_discount_rate_level1": null,
+                "C_discount_rate_level2": null,
+                "C_discount_rate_level3": null,
+                "C_discount_rate_level4": null,
+                "C_regi_end_date_count": 7,
+                "C_regi_date_icon": false,
+                "subText": "\uc9c0\uc6d0\ud558\uae30",
+                "filter": "",
+                "C_recruit_type__text": "\ubc29\ubb38\ud615",
+                "CS_type__text": "\ube14\ub85c\uadf8 + \uc601\uc218\uc99d\ub9ac\ubdf0",
+                "transformedPrice": "3\ub9cc\uc6d0 \uc0c1\ub2f9",
+                "isAd": "N"
+            },
+            {
+                "C_uct_idx": "17940",
+                "C_idx": "233209",
+                "C_title": "[\uc6b8\uc0b0\/\ub0a8\uad6c]\ud14c\ub514\uc2a4",
+                "C_provision": "\ud4e8\uc5b4\ubc00\ud06c\ube59\uc218",
+                "C_provision_price": "10000",
+                "C_order": "0",
+                "C_emergency_recruit": "N",
+                "C_state": "ONGOING",
+                "C_choice_count": "6",
+                "C_volunteer_count": "0",
+                "C_regi_start_date": "2026-04-03",
+                "C_regi_end_date": "2026-04-07",
+                "C_registered_by_admin": "Y",
+                "C_regi_date": "2026-04-03 00:01:22",
+                "C_recruit_type": "visiting",
+                "C_provide_reward": "0",
+                "C_isPremium": "N",
+                "C_thumb_img_path": "",
+                "CS_type": "BLOG_RECEIPT",
+                "thumb_img": "https:\/\/d17jwiodubhsh2.cloudfront.net\/UPLOAD\/CAMPAIGN_THUMB\/20260309_184422_ZIBFclL_hyojoo18.jpg",
+                "CT_type": "RESTAURANT",
+                "C_background_color": "",
+                "C_font_color": "",
+                "C_last_jump_time": null,
+                "jump_order": "2026-04-03 00:01:22",
+                "C_max_discount_price": "0",
+                "C_isDiscount_Campaign": "N",
+                "C_discount_rate_level1": "50",
+                "C_discount_rate_level2": "100",
+                "C_discount_rate_level3": "100",
+                "C_discount_rate_level4": "100",
+                "C_regi_end_date_count": 4,
+                "C_regi_date_icon": false,
+                "subText": "\uc9c0\uc6d0\ud558\uae30",
+                "filter": "",
+                "C_recruit_type__text": "\ubc29\ubb38\ud615",
+                "CS_type__text": "\ube14\ub85c\uadf8 + \uc601\uc218\uc99d\ub9ac\ubdf0",
+                "transformedPrice": "1\ub9cc\uc6d0 \uc0c1\ub2f9",
+                "isAd": "N"
+            },
+            {
+                "C_uct_idx": "17984",
+                "C_idx": "233208",
+                "C_title": "[\ucda9\ubd81\/\uccad\uc8fc\uc2dc]043\uc2dc\uadf8\ub110",
+                "C_provision": "\ub85c\ud14c\uc774\uc158 \uc18c\uac1c\ud305 \ucc38\uac00\uad8c+\uc74c\ub8cc,\ub2e4\uacfc, \uc120\ud0dd\uc720\ubb34 \ud655\uc778 \uc81c\uacf5",
+                "C_provision_price": "45000",
+                "C_order": "0",
+                "C_emergency_recruit": "N",
+                "C_state": "ONGOING",
+                "C_choice_count": "5",
+                "C_volunteer_count": "0",
+                "C_regi_start_date": "2026-04-03",
+                "C_regi_end_date": "2026-04-08",
+                "C_registered_by_admin": "Y",
+                "C_regi_date": "2026-04-03 00:01:22",
+                "C_recruit_type": "visiting",
+                "C_provide_reward": "0",
+                "C_isPremium": "N",
+                "C_thumb_img_path": "",
+                "CS_type": "BLOG",
+                "thumb_img": "https:\/\/d17jwiodubhsh2.cloudfront.net\/UPLOAD\/CAMPAIGN_THUMB\/20260225_111212_u0Hkby8_rldldyd.jpg",
+                "CT_type": "ETC",
+                "C_background_color": "",
+                "C_font_color": "",
+                "C_last_jump_time": null,
+                "jump_order": "2026-04-03 00:01:22",
+                "C_max_discount_price": "0",
+                "C_isDiscount_Campaign": "N",
+                "C_discount_rate_level1": "0",
+                "C_discount_rate_level2": "0",
+                "C_discount_rate_level3": "0",
+                "C_discount_rate_level4": "0",
+                "C_regi_end_date_count": 5,
+                "C_regi_date_icon": false,
+                "subText": "\uc9c0\uc6d0\ud558\uae30",
+                "filter": "",
+                "C_recruit_type__text": "\ubc29\ubb38\ud615",
+                "CS_type__text": "\ube14\ub85c\uadf8",
+                "transformedPrice": "4\ub9cc\uc6d0 \uc0c1\ub2f9",
+                "isAd": "N"
+            },
+            {
+                "C_uct_idx": "10934",
+                "C_idx": "233204",
+                "C_title": "[\uac15\uc6d0\ud2b9\ubcc4\uc790\uce58\ub3c4\/\uc778\uc81c\uad70] \ud50c\ub85c\ud305\uc6e8\uc77c \uc124\uc545\ub3c4\uc801\ud3ed\ud3ec\uc2a4\ud14c\uc774(\uc2a4\ud30c\ub8f8)",
+                "C_provision": "\ud3c9\uc77c(\uc6d4~\ubaa9) \uc2a4\ud30c\ub8f8(\ub178\ucc9c\uc2a4\ud30c&\uac1d\uc2e4) 1\ubc15 + \uc870\uc2dd + \uce74\ud398 \uc74c\ub8cc(\uc131\uc778 2\uc778 \ubb34\ub8cc)",
+                "C_provision_price": "200000",
+                "C_order": "0",
+                "C_emergency_recruit": "N",
+                "C_state": "ONGOING",
+                "C_choice_count": "3",
+                "C_volunteer_count": "1",
+                "C_regi_start_date": "2026-04-03",
+                "C_regi_end_date": "2026-05-03",
+                "C_registered_by_admin": "Y",
+                "C_regi_date": "2026-04-03 00:01:22",
+                "C_recruit_type": "visiting",
+                "C_provide_reward": "0",
+                "C_isPremium": "N",
+                "C_thumb_img_path": "",
+                "CS_type": "INSTAGRAM_RECEIPT",
+                "thumb_img": "https:\/\/d17jwiodubhsh2.cloudfront.net\/UPLOAD\/CAMPAIGN_THUMB\/20260303_110743_A2LhcvW__55282220",
+                "CT_type": "ROOMS",
+                "C_background_color": "",
+                "C_font_color": "",
+                "C_last_jump_time": null,
+                "jump_order": "2026-04-03 00:01:22",
+                "C_max_discount_price": "0",
+                "C_isDiscount_Campaign": "N",
+                "C_discount_rate_level1": "50",
+                "C_discount_rate_level2": "100",
+                "C_discount_rate_level3": "100",
+                "C_discount_rate_level4": "100",
+                "C_regi_end_date_count": 30,
+                "C_regi_date_icon": false,
+                "subText": "\uc9c0\uc6d0\ud558\uae30",
+                "filter": "",
+                "C_recruit_type__text": "\ubc29\ubb38\ud615",
+                "CS_type__text": "\uc778\uc2a4\ud0c0\uadf8\ub7a8 + \uc601\uc218\uc99d\ub9ac\ubdf0",
+                "transformedPrice": "20\ub9cc\uc6d0 \uc0c1\ub2f9",
+                "isAd": "N"
+            },
+            {
+                "C_uct_idx": "10934",
+                "C_idx": "233203",
+                "C_title": "[\uac15\uc6d0\ud2b9\ubcc4\uc790\uce58\ub3c4\/\uc778\uc81c\uad70] \ud50c\ub85c\ud305\uc6e8\uc77c \uc124\uc545\ub3c4\uc801\ud3ed\ud3ec\uc2a4\ud14c\uc774(\uc2a4\ud30c\ub8f8)",
+                "C_provision": "\ud3c9\uc77c(\uc6d4~\ubaa9) \uc2a4\ud30c\ub8f8(\ub178\ucc9c\uc2a4\ud30c&\uac1d\uc2e4) 1\ubc15 + \uc870\uc2dd + \uce74\ud398 \uc74c\ub8cc(\uc131\uc778 2\uc778 \ubb34\ub8cc)",
+                "C_provision_price": "200000",
+                "C_order": "0",
+                "C_emergency_recruit": "N",
+                "C_state": "ONGOING",
+                "C_choice_count": "3",
+                "C_volunteer_count": "1",
+                "C_regi_start_date": "2026-04-03",
+                "C_regi_end_date": "2026-05-03",
+                "C_registered_by_admin": "Y",
+                "C_regi_date": "2026-04-03 00:01:22",
+                "C_recruit_type": "visiting",
+                "C_provide_reward": "0",
+                "C_isPremium": "N",
+                "C_thumb_img_path": "",
+                "CS_type": "BLOG_RECEIPT",
+                "thumb_img": "https:\/\/d17jwiodubhsh2.cloudfront.net\/UPLOAD\/CAMPAIGN_THUMB\/20260303_110743_A2LhcvW__55282220",
+                "CT_type": "ROOMS",
+                "C_background_color": "",
+                "C_font_color": "",
+                "C_last_jump_time": null,
+                "jump_order": "2026-04-03 00:01:22",
+                "C_max_discount_price": "0",
+                "C_isDiscount_Campaign": "N",
+                "C_discount_rate_level1": "50",
+                "C_discount_rate_level2": "100",
+                "C_discount_rate_level3": "100",
+                "C_discount_rate_level4": "100",
+                "C_regi_end_date_count": 30,
+                "C_regi_date_icon": false,
+                "subText": "\uc9c0\uc6d0\ud558\uae30",
+                "filter": "",
+                "C_recruit_type__text": "\ubc29\ubb38\ud615",
+                "CS_type__text": "\ube14\ub85c\uadf8 + \uc601\uc218\uc99d\ub9ac\ubdf0",
+                "transformedPrice": "20\ub9cc\uc6d0 \uc0c1\ub2f9",
+                "isAd": "N"
+            },
+            {
+                "C_uct_idx": "14545",
+                "C_idx": "233202",
+                "C_title": "[\ub300\uad6c\/\ubd81\uad6c]\ub208\uaf43\uc744\ub098\ub204\ub2e4",
+                "C_provision": "\ubd88\uc0bc\uacb9\uc0b4",
+                "C_provision_price": "25000",
+                "C_order": "0",
+                "C_emergency_recruit": "Y",
+                "C_state": "ONGOING",
+                "C_choice_count": "15",
+                "C_volunteer_count": "0",
+                "C_regi_start_date": "2026-04-03",
+                "C_regi_end_date": "2026-04-10",
+                "C_registered_by_admin": "Y",
+                "C_regi_date": "2026-04-03 00:01:22",
+                "C_recruit_type": "visiting",
+                "C_provide_reward": "0",
+                "C_isPremium": "N",
+                "C_thumb_img_path": "",
+                "CS_type": "BLOG_RECEIPT",
+                "thumb_img": "https:\/\/d17jwiodubhsh2.cloudfront.net\/UPLOAD\/CAMPAIGN_THUMB\/20250817_051011_m7AU1Si_swoo1112.jpg",
+                "CT_type": "RESTAURANT",
+                "C_background_color": "",
+                "C_font_color": "",
+                "C_last_jump_time": null,
+                "jump_order": "2026-04-03 00:01:22",
+                "C_max_discount_price": "0",
+                "C_isDiscount_Campaign": "N",
+                "C_discount_rate_level1": "50",
+                "C_discount_rate_level2": "100",
+                "C_discount_rate_level3": "100",
+                "C_discount_rate_level4": "100",
+                "C_regi_end_date_count": 7,
+                "C_regi_date_icon": false,
+                "subText": "\uc9c0\uc6d0\ud558\uae30",
+                "filter": "",
+                "C_recruit_type__text": "\ubc29\ubb38\ud615",
+                "CS_type__text": "\ube14\ub85c\uadf8 + \uc601\uc218\uc99d\ub9ac\ubdf0",
+                "transformedPrice": "2\ub9cc\uc6d0 \uc0c1\ub2f9",
+                "isAd": "N"
+            },
+            {
+                "C_uct_idx": "14545",
+                "C_idx": "233201",
+                "C_title": "[\ub300\uad6c\/\ubd81\uad6c]\ub208\uaf43\uc744\ub098\ub204\ub2e4",
+                "C_provision": "\ubd88\uc0bc\uacb9\uc0b4",
+                "C_provision_price": "25000",
+                "C_order": "0",
+                "C_emergency_recruit": "Y",
+                "C_state": "ONGOING",
+                "C_choice_count": "15",
+                "C_volunteer_count": "0",
+                "C_regi_start_date": "2026-04-03",
+                "C_regi_end_date": "2026-04-10",
+                "C_registered_by_admin": "Y",
+                "C_regi_date": "2026-04-03 00:01:22",
+                "C_recruit_type": "visiting",
+                "C_provide_reward": "0",
+                "C_isPremium": "N",
+                "C_thumb_img_path": "",
+                "CS_type": "BLOG_RECEIPT",
+                "thumb_img": "https:\/\/d17jwiodubhsh2.cloudfront.net\/UPLOAD\/CAMPAIGN_THUMB\/20250817_051011_m7AU1Si_swoo1112.jpg",
+                "CT_type": "RESTAURANT",
+                "C_background_color": "",
+                "C_font_color": "",
+                "C_last_jump_time": null,
+                "jump_order": "2026-04-03 00:01:22",
+                "C_max_discount_price": "0",
+                "C_isDiscount_Campaign": "N",
+                "C_discount_rate_level1": "50",
+                "C_discount_rate_level2": "100",
+                "C_discount_rate_level3": "100",
+                "C_discount_rate_level4": "100",
+                "C_regi_end_date_count": 7,
+                "C_regi_date_icon": false,
+                "subText": "\uc9c0\uc6d0\ud558\uae30",
+                "filter": "",
+                "C_recruit_type__text": "\ubc29\ubb38\ud615",
+                "CS_type__text": "\ube14\ub85c\uadf8 + \uc601\uc218\uc99d\ub9ac\ubdf0",
+                "transformedPrice": "2\ub9cc\uc6d0 \uc0c1\ub2f9",
+                "isAd": "N"
+            },
+            {
+                "C_uct_idx": "13548",
+                "C_idx": "233200",
+                "C_title": "[\ubd80\uc0b0\/\ubd80\uc0b0\uc9c4\uad6c]\uae30\uc5b5\ub3fc",
+                "C_provision": "\uc2dd\uc0ac\uad8c\uc81c\uacf5",
+                "C_provision_price": "40000",
+                "C_order": "0",
+                "C_emergency_recruit": "N",
+                "C_state": "ONGOING",
+                "C_choice_count": "10",
+                "C_volunteer_count": "7",
+                "C_regi_start_date": "2026-04-03",
+                "C_regi_end_date": "2026-04-10",
+                "C_registered_by_admin": "Y",
+                "C_regi_date": "2026-04-03 00:01:22",
+                "C_recruit_type": "visiting",
+                "C_provide_reward": "0",
+                "C_isPremium": "N",
+                "C_thumb_img_path": "",
+                "CS_type": "BLOG_RECEIPT",
+                "thumb_img": "https:\/\/d17jwiodubhsh2.cloudfront.net\/UPLOAD\/CAMPAIGN_THUMB\/20260116_202534_hE42C1f_816674922.jpg",
+                "CT_type": "RESTAURANT",
+                "C_background_color": "",
+                "C_font_color": "",
+                "C_last_jump_time": null,
+                "jump_order": "2026-04-03 00:01:22",
+                "C_max_discount_price": "0",
+                "C_isDiscount_Campaign": "N",
+                "C_discount_rate_level1": "50",
+                "C_discount_rate_level2": "100",
+                "C_discount_rate_level3": "100",
+                "C_discount_rate_level4": "100",
+                "C_regi_end_date_count": 7,
+                "C_regi_date_icon": false,
+                "subText": "\uc9c0\uc6d0\ud558\uae30",
+                "filter": "",
+                "C_recruit_type__text": "\ubc29\ubb38\ud615",
+                "CS_type__text": "\ube14\ub85c\uadf8 + \uc601\uc218\uc99d\ub9ac\ubdf0",
+                "transformedPrice": "4\ub9cc\uc6d0 \uc0c1\ub2f9",
+                "isAd": "N"
+            },
+            {
+                "C_uct_idx": "14492",
+                "C_idx": "233199",
+                "C_title": "[\uc11c\uc6b8\/\uac15\ub0a8\uad6c]\uc2dd\uc2a4\ub098\uc787",
+                "C_provision": "A.\uc62c\ub4dc\uc26c\ub77c\uc988 \uc640\uc778 1\ubcd1(\ud310\ub9e4\uac009\ub9cc\uc6d0\uc0c1\ub2f9) \ub610\ub294 B.1\uc778\ub2f9 \uce75\ud14c\uc77c1\uc794 + \ud14c\uc774\ube14\ub2f9 \uc74c\uc2dd1 \ub450\uac1c\uc911 \uc120\ud0dd",
+                "C_provision_price": "90000",
+                "C_order": "0",
+                "C_emergency_recruit": "Y",
+                "C_state": "ONGOING",
+                "C_choice_count": "5",
+                "C_volunteer_count": "0",
+                "C_regi_start_date": "2026-04-03",
+                "C_regi_end_date": "2026-04-10",
+                "C_registered_by_admin": "Y",
+                "C_regi_date": "2026-04-03 00:01:22",
+                "C_recruit_type": "visiting",
+                "C_provide_reward": "0",
+                "C_isPremium": "N",
+                "C_thumb_img_path": "",
+                "CS_type": "BLOG",
+                "thumb_img": "https:\/\/d17jwiodubhsh2.cloudfront.net\/UPLOAD\/CAMPAIGN_THUMB\/20260303_010453_rWEKUjF_360253504.jpg",
+                "CT_type": "RESTAURANT",
+                "C_background_color": "",
+                "C_font_color": "",
+                "C_last_jump_time": null,
+                "jump_order": "2026-04-03 00:01:22",
+                "C_max_discount_price": "0",
+                "C_isDiscount_Campaign": "N",
+                "C_discount_rate_level1": "50",
+                "C_discount_rate_level2": "100",
+                "C_discount_rate_level3": "100",
+                "C_discount_rate_level4": "100",
+                "C_regi_end_date_count": 7,
+                "C_regi_date_icon": false,
+                "subText": "\uc9c0\uc6d0\ud558\uae30",
+                "filter": "",
+                "C_recruit_type__text": "\ubc29\ubb38\ud615",
+                "CS_type__text": "\ube14\ub85c\uadf8",
+                "transformedPrice": "9\ub9cc\uc6d0 \uc0c1\ub2f9",
+                "isAd": "N"
+            },
+            {
+                "C_uct_idx": "1319",
+                "C_idx": "233198",
+                "C_title": "[\uc11c\uc6b8\/\uc911\uad6c]\uc787\uce20\ubbf8 \ubaa8\ub798\ub180\uc774 \uc2ec\ub9ac\uc0c1\ub2f4 ",
+                "C_provision": "\ucee4\ud50c\uc0c1\ub2f4",
+                "C_provision_price": "120000",
+                "C_order": "0",
+                "C_emergency_recruit": "N",
+                "C_state": "ONGOING",
+                "C_choice_count": "6",
+                "C_volunteer_count": "1",
+                "C_regi_start_date": "2026-04-03",
+                "C_regi_end_date": "2026-04-10",
+                "C_registered_by_admin": "Y",
+                "C_regi_date": "2026-04-03 00:01:22",
+                "C_recruit_type": "visiting",
+                "C_provide_reward": "0",
+                "C_isPremium": "N",
+                "C_thumb_img_path": "",
+                "CS_type": "BLOG",
+                "thumb_img": "https:\/\/d17jwiodubhsh2.cloudfront.net\/UPLOAD\/CAMPAIGN_THUMB\/20260302_221734_QeRMjwq_xy70SXtz4.jpg",
+                "CT_type": "ETC",
+                "C_background_color": "",
+                "C_font_color": "",
+                "C_last_jump_time": null,
+                "jump_order": "2026-04-03 00:01:22",
+                "C_max_discount_price": "0",
+                "C_isDiscount_Campaign": "N",
+                "C_discount_rate_level1": "50",
+                "C_discount_rate_level2": "100",
+                "C_discount_rate_level3": "100",
+                "C_discount_rate_level4": "100",
+                "C_regi_end_date_count": 7,
+                "C_regi_date_icon": false,
+                "subText": "\uc9c0\uc6d0\ud558\uae30",
+                "filter": "",
+                "C_recruit_type__text": "\ubc29\ubb38\ud615",
+                "CS_type__text": "\ube14\ub85c\uadf8",
+                "transformedPrice": "12\ub9cc\uc6d0 \uc0c1\ub2f9",
+                "isAd": "N"
+            },
+            {
+                "C_uct_idx": "13685",
+                "C_idx": "233197",
+                "C_title": "[\ubd80\uc0b0\/\ubd80\uc0b0\uc9c4\uad6c]\uc5b4\ub978\ubc29\ud559",
+                "C_provision": "\ud574\uc678\uc5ec\ud589 \ud328\ud0a4\uc9c0\uc0c1\ud488 \ud611\ucc2c",
+                "C_provision_price": "790000",
+                "C_order": "0",
+                "C_emergency_recruit": "N",
+                "C_state": "ONGOING",
+                "C_choice_count": "2",
+                "C_volunteer_count": "0",
+                "C_regi_start_date": "2026-04-03",
+                "C_regi_end_date": "2026-05-03",
+                "C_registered_by_admin": "Y",
+                "C_regi_date": "2026-04-03 00:01:22",
+                "C_recruit_type": "visiting",
+                "C_provide_reward": "0",
+                "C_isPremium": "N",
+                "C_thumb_img_path": "",
+                "CS_type": "BLOG",
+                "thumb_img": "https:\/\/d17jwiodubhsh2.cloudfront.net\/UPLOAD\/CAMPAIGN_THUMB\/20260302_140458_93JmVGE_ogcads.jpg",
+                "CT_type": "LEISURE",
+                "C_background_color": "",
+                "C_font_color": "",
+                "C_last_jump_time": null,
+                "jump_order": "2026-04-03 00:01:22",
+                "C_max_discount_price": "0",
+                "C_isDiscount_Campaign": "N",
+                "C_discount_rate_level1": "0",
+                "C_discount_rate_level2": "0",
+                "C_discount_rate_level3": "0",
+                "C_discount_rate_level4": "0",
+                "C_regi_end_date_count": 30,
+                "C_regi_date_icon": false,
+                "subText": "\uc9c0\uc6d0\ud558\uae30",
+                "filter": "",
+                "C_recruit_type__text": "\ubc29\ubb38\ud615",
+                "CS_type__text": "\ube14\ub85c\uadf8",
+                "transformedPrice": "79\ub9cc\uc6d0 \uc0c1\ub2f9",
+                "isAd": "N"
+            }
+        ],
+        "recommendedContentsData": [],
+        "contentsData2": [],
+        "UAL_data": false,
+        "campCount": "3264",
+        "time": 0.25572896003723145,
+        "pageNum": "60"
+    },
+    "msg": "",
+    "code": 200,
+    "success": true,
+    "result": "Y",
+    "message": "",
+    "act": "method"
+}
+
+
+캠페인 세부정보 HTML
+
+SNS정보 및 리뷰 종류
+<div class="-flex-center h-[17px] rounded-sm px-1 mr-1 pc:px-2 Promotional-text__BLOG_RECEIPT"><span class="pc:text-xs text-[10px] font-extrabold min-w-max">블로그 + 영수증리뷰</span></div>
+
+캠페인 참여 방법
+<div class="-flex-center h-[17px] rounded-sm px-1 mr-1 bg-gray-250"><span class="pc:text-xs text-[10px] font-extrabold min-w-max">방문형</span></div>
+
+캠페인 지역 및 이름
+<h3 class="line-1skip my-2 text-t-3 pc:text-base">[경기/양평군]우창갈비</h3>
+
+남은 기간 및 제공 내역
+<p class="line-2skip mb-2 text-c-2 pc:text-sm leading-4 text-gray-450"><span class="text-purple-600 font-semibold mr-1">7일 남음</span>5.5만원 상당의 2인기준 돼지갈비or삼겹살 2인분+한우육회물회 1 +된장찌개+공기밥1</p>
+
+신청 수
+<span class="text-c-2 text-gray-450 flex items-center">신청 1/30</span>
+
+
+
+캠페인 카테고리 중 제품 캠페인 카테고리
+https://popomon.com/next/campaign?searchAlign=latest&bigRecruitType=Pshipping&recruitType=shipping&interestsFilter=ALL&&pageNum=96&snsSubFilter=
+
+헤더스
+Request URL
+https://popomon.com/api_p/campaign/fetch_getcampaignlist?searchAlign=latest&bigRecruitType=Pshipping&recruitType=shipping&interestsFilter=ALL&&pageNum=96&snsSubFilter=
+Request Method
+POST
+Status Code
+200 OK
+Remote Address
+54.116.90.237:443
+Referrer Policy
+strict-origin-when-cross-origin
+access-control-allow-credentials
+true
+access-control-allow-headers
+Content-Type, nuxtcookie
+access-control-allow-methods
+POST, GET, OPTIONS
+access-control-allow-origin
+*
+content-security-policy
+upgrade-insecure-requests
+content-type
+application/json
+date
+Fri, 03 Apr 2026 03:06:42 GMT
+server
+Apache
+set-cookie
+AWSALBTG=IKo/xsp8WYNYgbSbMZdik6C31uYVpkbbkForAnWsNTQ7esDQ4dtwORsbhUiMV1TOw9r6N3lpN+rAA+duVWJFRzKZW8aHT0hMtr6megb0nDAIbFjoowNZDBwcmeUFgUWr7MK4a/863Va4iuSSv1LikrnMnNLA/fcdR0tTZLpsC4cgEA5WHak=; Expires=Fri, 10 Apr 2026 03:06:42 GMT; Path=/
+set-cookie
+AWSALBTGCORS=IKo/xsp8WYNYgbSbMZdik6C31uYVpkbbkForAnWsNTQ7esDQ4dtwORsbhUiMV1TOw9r6N3lpN+rAA+duVWJFRzKZW8aHT0hMtr6megb0nDAIbFjoowNZDBwcmeUFgUWr7MK4a/863Va4iuSSv1LikrnMnNLA/fcdR0tTZLpsC4cgEA5WHak=; Expires=Fri, 10 Apr 2026 03:06:42 GMT; Path=/; SameSite=None; Secure
+set-cookie
+AWSALB=X4CoBrozPD0vfPeIIctc5KZVdVV3AAGBchZY/yid4ARyO1oTWjYbct4JOqB44Jk6g9Fo0A/0H6A3umHM76jm/oB5Eg1fSB1+3cUVd77m9sovVbzK6JzPOsIBQg0R; Expires=Fri, 10 Apr 2026 03:06:42 GMT; Path=/
+set-cookie
+AWSALBCORS=X4CoBrozPD0vfPeIIctc5KZVdVV3AAGBchZY/yid4ARyO1oTWjYbct4JOqB44Jk6g9Fo0A/0H6A3umHM76jm/oB5Eg1fSB1+3cUVd77m9sovVbzK6JzPOsIBQg0R; Expires=Fri, 10 Apr 2026 03:06:42 GMT; Path=/; SameSite=None; Secure
+x-powered-by
+PHP/8.0.30
+:authority
+popomon.com
+:method
+POST
+:path
+/api_p/campaign/fetch_getcampaignlist?searchAlign=latest&bigRecruitType=Pshipping&recruitType=shipping&interestsFilter=ALL&&pageNum=96&snsSubFilter=
+:scheme
+https
+accept
+application/json, text/plain, */*
+accept-encoding
+gzip, deflate, br, zstd
+accept-language
+ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7
+content-length
+0
+cookie
+_fwb=69dYGYK05xZj1BgFkPLqOs.1775184864660; __Host-next-auth.csrf-token=291baa9b1d9012a26ed5932928f14014c2096bc371df3311e9fc2bb4af1469ab%7C59ddbd742aab90194cd10a2abf50f58803505571f07f24ec4e2519f33b26c57e; __Secure-next-auth.callback-url=https%3A%2F%2Fpopomon.com; _pouvisittag=MTQvsUyusWnKKgVU.BHHFBIEIGEIAE; _pouvisit=sxrPemnjPmBskIRG.BHHFBIEIGEIAG; ci_session=tl67nuiohrub3is3fhfhf9f2j1s6i6f2; _fbp=fb.1.1775184865904.769693113201958063; _ga=GA1.1.611229388.1775184866; closeEventPopup=closed; _ga_HLJ7EDWVJT=GS2.1.s1775184866$o1$g1$t1775185600$j59$l0$h0; _pouvisittime=2026-04-03%2012:06:40; _pouvisitpage=L25leHQvY2FtcGFpZ24mJi8mJi8=; wcs_bt=dca0d2afb11030:1775185600; AWSALBTG=TDm+OftjreqIpeJDI8GNuvQmCmji4ieGRk58iCA7Vm+2ImMWVy6Q/dpI+sLZUciKEp9M7xyZkC44XCksxjJwk3OWRRqGs4OOjsmsJMYxX1lTsWZqRApT7V+5CctBvgKiqqDFiwImmotTSyZH7oKJUvESSn2+DNpwro2/OvHEMOECAsdYmTY=; AWSALBTGCORS=TDm+OftjreqIpeJDI8GNuvQmCmji4ieGRk58iCA7Vm+2ImMWVy6Q/dpI+sLZUciKEp9M7xyZkC44XCksxjJwk3OWRRqGs4OOjsmsJMYxX1lTsWZqRApT7V+5CctBvgKiqqDFiwImmotTSyZH7oKJUvESSn2+DNpwro2/OvHEMOECAsdYmTY=; AWSALB=6XnEMfI12svWvccQvAZzTdF7xm/aryXhi/tfknvoqPF6lYkc6wmTDTOGKk0kvhvhKo+iOiBhnxBg1z1X6xXySHowxiITh2c4QgNOuYOPXfPNroLRwULfGprVO74Y; AWSALBCORS=6XnEMfI12svWvccQvAZzTdF7xm/aryXhi/tfknvoqPF6lYkc6wmTDTOGKk0kvhvhKo+iOiBhnxBg1z1X6xXySHowxiITh2c4QgNOuYOPXfPNroLRwULfGprVO74Y
+origin
+https://popomon.com
+priority
+u=1, i
+referer
+https://popomon.com/next/campaign?searchAlign=latest&bigRecruitType=Pshipping&recruitType=shipping&interestsFilter=ALL&&pageNum=84&snsSubFilter=
+sec-ch-ua
+"Chromium";v="146", "Not-A.Brand";v="24", "Google Chrome";v="146"
+sec-ch-ua-mobile
+?0
+sec-ch-ua-platform
+"Windows"
+sec-fetch-dest
+empty
+sec-fetch-mode
+cors
+sec-fetch-site
+same-origin
+user-agent
+Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36
+
+페이로드
+searchAlign
+latest
+bigRecruitType
+Pshipping
+recruitType
+shipping
+interestsFilter
+ALL
+(empty)
+pageNum
+96
+snsSubFilter
+
+
+프리뷰
+{data: {,…}, msg: "", code: 200, success: true, result: "Y", message: "", act: "method"}
+act
+: 
+"method"
+code
+: 
+200
+data
+: 
+{,…}
+message
+: 
+""
+msg
+: 
+""
+result
+: 
+"Y"
+success
+: 
+true
+
+리스폰스
+{
+    "data": {
+        "contentsData": [
+            {
+                "C_uct_idx": "14844",
+                "C_idx": "231511",
+                "C_title": "[\ubdf0\ud2f0\/\ubc30\uc1a1\ud615]\uc774\ub108\ud0c0\uc774\ub4dc",
+                "C_provision": "\ubc84\ube14\uc5d0\uc13c\uc2a4",
+                "C_provision_price": "35000",
+                "C_order": "0",
+                "C_emergency_recruit": "N",
+                "C_state": "ONGOING",
+                "C_choice_count": "10",
+                "C_volunteer_count": "12",
+                "C_regi_start_date": "2026-03-31",
+                "C_regi_end_date": "2026-04-07",
+                "C_registered_by_admin": "Y",
+                "C_regi_date": "2026-03-31 00:01:22",
+                "C_recruit_type": "shipping",
+                "C_provide_reward": "0",
+                "C_isPremium": "N",
+                "C_thumb_img_path": "",
+                "CS_type": "INSTAGRAM_CONTENT",
+                "thumb_img": "https:\/\/d17jwiodubhsh2.cloudfront.net\/UPLOAD\/CAMPAIGN_THUMB\/20250904_193229_smSZluF_958892888.jpg",
+                "CT_type": "BEAUTY",
+                "C_background_color": "",
+                "C_font_color": "",
+                "C_last_jump_time": null,
+                "jump_order": "2026-03-31 00:01:22",
+                "C_max_discount_price": "0",
+                "C_isDiscount_Campaign": "N",
+                "C_discount_rate_level1": null,
+                "C_discount_rate_level2": null,
+                "C_discount_rate_level3": null,
+                "C_discount_rate_level4": null,
+                "C_regi_end_date_count": 4,
+                "C_regi_date_icon": false,
+                "subText": "\uc9c0\uc6d0\ud558\uae30",
+                "filter": "",
+                "C_recruit_type__text": "\ubc30\uc1a1\ud615",
+                "CS_type__text": "\uc778\uc2a4\ud0c0\uadf8\ub7a8 + \ucf58\ud150\uce20\ud65c\uc6a9",
+                "transformedPrice": "3\ub9cc\uc6d0 \uc0c1\ub2f9",
+                "isAd": "N"
+            },
+            {
+                "C_uct_idx": "12148",
+                "C_idx": "231507",
+                "C_title": "[\ubdf0\ud2f0\/\ubc30\uc1a1\ud615]\uc720\uc5b4\ucd08\uc774\uc2a4\ubc14\uc774\uc528\ub7a9",
+                "C_provision": "\uc138\ub77c\ubc14\uc778 \ubc14\ub514\ud06c\ub9bc 200ml, 1\uac1c",
+                "C_provision_price": "79000",
+                "C_order": "0",
+                "C_emergency_recruit": "N",
+                "C_state": "ONGOING",
+                "C_choice_count": "8",
+                "C_volunteer_count": "3",
+                "C_regi_start_date": "2026-03-31",
+                "C_regi_end_date": "2026-04-05",
+                "C_registered_by_admin": "Y",
+                "C_regi_date": "2026-03-31 00:01:22",
+                "C_recruit_type": "shipping",
+                "C_provide_reward": "0",
+                "C_isPremium": "N",
+                "C_thumb_img_path": "",
+                "CS_type": "REELS_CONTENT",
+                "thumb_img": "https:\/\/d17jwiodubhsh2.cloudfront.net\/UPLOAD\/CAMPAIGN_THUMB\/20250814_141228_hlp5DqH_ourchoice.png",
+                "CT_type": "BEAUTY",
+                "C_background_color": "",
+                "C_font_color": "",
+                "C_last_jump_time": null,
+                "jump_order": "2026-03-31 00:01:22",
+                "C_max_discount_price": "0",
+                "C_isDiscount_Campaign": "N",
+                "C_discount_rate_level1": null,
+                "C_discount_rate_level2": null,
+                "C_discount_rate_level3": null,
+                "C_discount_rate_level4": null,
+                "C_regi_end_date_count": 2,
+                "C_regi_date_icon": false,
+                "subText": "\uc9c0\uc6d0\ud558\uae30",
+                "filter": "",
+                "C_recruit_type__text": "\ubc30\uc1a1\ud615",
+                "CS_type__text": "\ub9b4\uc2a4 + \ucf58\ud150\uce20\ud65c\uc6a9",
+                "transformedPrice": "7\ub9cc\uc6d0 \uc0c1\ub2f9",
+                "isAd": "N"
+            },
+            {
+                "C_uct_idx": "14718",
+                "C_idx": "231506",
+                "C_title": "[\uc2dd\ud488\/\ubc30\uc1a1\ud615]\ud64d\uac8c",
+                "C_provision": "\ud64d\uac8c ",
+                "C_provision_price": "17900",
+                "C_order": "0",
+                "C_emergency_recruit": "N",
+                "C_state": "ONGOING",
+                "C_choice_count": "3",
+                "C_volunteer_count": "7",
+                "C_regi_start_date": "2026-03-31",
+                "C_regi_end_date": "2026-04-07",
+                "C_registered_by_admin": "Y",
+                "C_regi_date": "2026-03-31 00:01:22",
+                "C_recruit_type": "shipping",
+                "C_provide_reward": "0",
+                "C_isPremium": "N",
+                "C_thumb_img_path": "",
+                "CS_type": "REELS_CONTENT",
+                "thumb_img": "https:\/\/d17jwiodubhsh2.cloudfront.net\/UPLOAD\/CAMPAIGN_THUMB\/20250827_214405_1kPC4NG_t4w3bd82I.jpg",
+                "CT_type": "FOOD",
+                "C_background_color": "",
+                "C_font_color": "",
+                "C_last_jump_time": null,
+                "jump_order": "2026-03-31 00:01:22",
+                "C_max_discount_price": "0",
+                "C_isDiscount_Campaign": "N",
+                "C_discount_rate_level1": null,
+                "C_discount_rate_level2": null,
+                "C_discount_rate_level3": null,
+                "C_discount_rate_level4": null,
+                "C_regi_end_date_count": 4,
+                "C_regi_date_icon": false,
+                "subText": "\uc9c0\uc6d0\ud558\uae30",
+                "filter": "",
+                "C_recruit_type__text": "\ubc30\uc1a1\ud615",
+                "CS_type__text": "\ub9b4\uc2a4 + \ucf58\ud150\uce20\ud65c\uc6a9",
+                "transformedPrice": "1\ub9cc\uc6d0 \uc0c1\ub2f9",
+                "isAd": "N"
+            },
+            {
+                "C_uct_idx": "14127",
+                "C_idx": "231497",
+                "C_title": "[\uc0dd\ud65c][\uc2dc\ub098\ubaac\uc774\uc624] \ud53c\ud1a4\uce58\ub4dc\uc2a4\ud504\ub808\uc774",
+                "C_provision": " \ud53c\ud1a4\uce58\ub4dc \uc2dc\ub098\ubaac \uc2a4\ud504\ub808\uc774 150ml",
+                "C_provision_price": "9900",
+                "C_order": "0",
+                "C_emergency_recruit": "N",
+                "C_state": "ONGOING",
+                "C_choice_count": "20",
+                "C_volunteer_count": "0",
+                "C_regi_start_date": "2026-03-31",
+                "C_regi_end_date": "2026-04-07",
+                "C_registered_by_admin": "Y",
+                "C_regi_date": "2026-03-31 00:01:22",
+                "C_recruit_type": "shipping",
+                "C_provide_reward": "0",
+                "C_isPremium": "N",
+                "C_thumb_img_path": "",
+                "CS_type": "REELS_CONTENT",
+                "thumb_img": "https:\/\/d17jwiodubhsh2.cloudfront.net\/UPLOAD\/CAMPAIGN_THUMB\/20250811_172345_0QEcBul_owcompany.png",
+                "CT_type": "LIFE",
+                "C_background_color": "",
+                "C_font_color": "",
+                "C_last_jump_time": null,
+                "jump_order": "2026-03-31 00:01:22",
+                "C_max_discount_price": "0",
+                "C_isDiscount_Campaign": "N",
+                "C_discount_rate_level1": "0",
+                "C_discount_rate_level2": "0",
+                "C_discount_rate_level3": "0",
+                "C_discount_rate_level4": "0",
+                "C_regi_end_date_count": 4,
+                "C_regi_date_icon": false,
+                "subText": "\uc9c0\uc6d0\ud558\uae30",
+                "filter": "",
+                "C_recruit_type__text": "\ubc30\uc1a1\ud615",
+                "CS_type__text": "\ub9b4\uc2a4 + \ucf58\ud150\uce20\ud65c\uc6a9",
+                "transformedPrice": "",
+                "isAd": "N"
+            },
+            {
+                "C_uct_idx": "14127",
+                "C_idx": "231496",
+                "C_title": "[\uc0dd\ud65c][\uc2dc\ub098\ubaac\uc774\uc624] \ud53c\ud1a4\uce58\ub4dc\uc2a4\ud504\ub808\uc774",
+                "C_provision": " \ud53c\ud1a4\uce58\ub4dc \uc2dc\ub098\ubaac \uc2a4\ud504\ub808\uc774 150ml",
+                "C_provision_price": "9900",
+                "C_order": "0",
+                "C_emergency_recruit": "N",
+                "C_state": "ONGOING",
+                "C_choice_count": "20",
+                "C_volunteer_count": "0",
+                "C_regi_start_date": "2026-03-31",
+                "C_regi_end_date": "2026-04-07",
+                "C_registered_by_admin": "Y",
+                "C_regi_date": "2026-03-31 00:01:22",
+                "C_recruit_type": "shipping",
+                "C_provide_reward": "0",
+                "C_isPremium": "N",
+                "C_thumb_img_path": "",
+                "CS_type": "SHORTS_CONTENT",
+                "thumb_img": "https:\/\/d17jwiodubhsh2.cloudfront.net\/UPLOAD\/CAMPAIGN_THUMB\/20250811_172345_0QEcBul_owcompany.png",
+                "CT_type": "LIFE",
+                "C_background_color": "",
+                "C_font_color": "",
+                "C_last_jump_time": null,
+                "jump_order": "2026-03-31 00:01:22",
+                "C_max_discount_price": "0",
+                "C_isDiscount_Campaign": "N",
+                "C_discount_rate_level1": "0",
+                "C_discount_rate_level2": "0",
+                "C_discount_rate_level3": "0",
+                "C_discount_rate_level4": "0",
+                "C_regi_end_date_count": 4,
+                "C_regi_date_icon": false,
+                "subText": "\uc9c0\uc6d0\ud558\uae30",
+                "filter": "",
+                "C_recruit_type__text": "\ubc30\uc1a1\ud615",
+                "CS_type__text": "\uc20f\uce20 + \ucf58\ud150\uce20\ud65c\uc6a9",
+                "transformedPrice": "",
+                "isAd": "N"
+            },
+            {
+                "C_uct_idx": "14056",
+                "C_idx": "231474",
+                "C_title": "[\uae30\ud0c0]\ub9bf\ucf00\uc5b4",
+                "C_provision": "\ub85c\uc584\uce90\ub2cc \uc778\ub3c4\uc5b4+\uace0\uc591\uc774 \ud654\uc7a5\uc2e4 \ubaa8\ub798 \uc218\uac70\uc11c\ube44\uc2a4",
+                "C_provision_price": "36600",
+                "C_order": "0",
+                "C_emergency_recruit": "N",
+                "C_state": "ONGOING",
+                "C_choice_count": "3",
+                "C_volunteer_count": "9",
+                "C_regi_start_date": "2026-03-31",
+                "C_regi_end_date": "2026-04-07",
+                "C_registered_by_admin": "Y",
+                "C_regi_date": "2026-03-31 00:01:22",
+                "C_recruit_type": "shipping",
+                "C_provide_reward": "0",
+                "C_isPremium": "N",
+                "C_thumb_img_path": "",
+                "CS_type": "BLOG_CONTENT",
+                "thumb_img": "https:\/\/d17jwiodubhsh2.cloudfront.net\/UPLOAD\/CAMPAIGN_THUMB\/20250710_205730_RgjH4PM_bbuziness.jpg",
+                "CT_type": "ETC",
+                "C_background_color": "",
+                "C_font_color": "",
+                "C_last_jump_time": null,
+                "jump_order": "2026-03-31 00:01:22",
+                "C_max_discount_price": "0",
+                "C_isDiscount_Campaign": "N",
+                "C_discount_rate_level1": "50",
+                "C_discount_rate_level2": "100",
+                "C_discount_rate_level3": "100",
+                "C_discount_rate_level4": "100",
+                "C_regi_end_date_count": 4,
+                "C_regi_date_icon": false,
+                "subText": "\uc9c0\uc6d0\ud558\uae30",
+                "filter": "",
+                "C_recruit_type__text": "\ubc30\uc1a1\ud615",
+                "CS_type__text": "\ube14\ub85c\uadf8 + \ucf58\ud150\uce20\ud65c\uc6a9",
+                "transformedPrice": "3\ub9cc\uc6d0 \uc0c1\ub2f9",
+                "isAd": "N"
+            },
+            {
+                "C_uct_idx": "10877",
+                "C_idx": "231414",
+                "C_title": "[\uc0dd\ud65c]\ud50c\ub808\uc5b4\ubca4\ud2b8",
+                "C_provision": "400,000 \uc774\uc0c1\uc758 \ud3ec\ud1a0\uc874 \ubc29\ubb38\uc124\uce58",
+                "C_provision_price": "0",
+                "C_order": "0",
+                "C_emergency_recruit": "N",
+                "C_state": "ONGOING",
+                "C_choice_count": "3",
+                "C_volunteer_count": "5",
+                "C_regi_start_date": "2026-03-31",
+                "C_regi_end_date": "2026-04-07",
+                "C_registered_by_admin": "Y",
+                "C_regi_date": "2026-03-31 00:01:22",
+                "C_recruit_type": "shipping",
+                "C_provide_reward": "0",
+                "C_isPremium": "N",
+                "C_thumb_img_path": "",
+                "CS_type": "BLOG_RECEIPT",
+                "thumb_img": "https:\/\/d17jwiodubhsh2.cloudfront.net\/UPLOAD\/CAMPAIGN_THUMB\/20250224_171016_P03j4i5_flarevent.jpg",
+                "CT_type": "LIFE",
+                "C_background_color": "",
+                "C_font_color": "",
+                "C_last_jump_time": null,
+                "jump_order": "2026-03-31 00:01:22",
+                "C_max_discount_price": "0",
+                "C_isDiscount_Campaign": "N",
+                "C_discount_rate_level1": "0",
+                "C_discount_rate_level2": "0",
+                "C_discount_rate_level3": "0",
+                "C_discount_rate_level4": "0",
+                "C_regi_end_date_count": 4,
+                "C_regi_date_icon": false,
+                "subText": "\uc9c0\uc6d0\ud558\uae30",
+                "filter": "",
+                "C_recruit_type__text": "\ubc30\uc1a1\ud615",
+                "CS_type__text": "\ube14\ub85c\uadf8 + \uc601\uc218\uc99d\ub9ac\ubdf0",
+                "transformedPrice": "",
+                "isAd": "N"
+            },
+            {
+                "C_uct_idx": "5826",
+                "C_idx": "231408",
+                "C_title": "[\uc0dd\ud65c\/\ubc30\uc1a1\ud615]\ube44\uce58\uc6c0\ud544\uc2b9\uc2a4\ub9c8\ud2b8\ud648\ucf00\uc5b4",
+                "C_provision": "16\ub9cc\uc6d0 \uc0c1\ub2f9\uc758 \uba54\ud2b8\ub9ac\uc2a4\ucf00\uc5b4(\uc218\uc6d0,\uc6a9\uc778,\ubd84\ub2f9,\ub3d9\ud0c4)",
+                "C_provision_price": "0",
+                "C_order": "0",
+                "C_emergency_recruit": "N",
+                "C_state": "ONGOING",
+                "C_choice_count": "9999",
+                "C_volunteer_count": "1",
+                "C_regi_start_date": "2026-03-31",
+                "C_regi_end_date": "2026-04-03",
+                "C_registered_by_admin": "Y",
+                "C_regi_date": "2026-03-31 00:01:22",
+                "C_recruit_type": "shipping",
+                "C_provide_reward": "0",
+                "C_isPremium": "N",
+                "C_thumb_img_path": "",
+                "CS_type": "BLOG",
+                "thumb_img": "https:\/\/d17jwiodubhsh2.cloudfront.net\/UPLOAD\/CAMPAIGN_THUMB\/20250212_143256_OotnLdq_ZFcUYnd2o.jpg",
+                "CT_type": "LIFE",
+                "C_background_color": "",
+                "C_font_color": "",
+                "C_last_jump_time": null,
+                "jump_order": "2026-03-31 00:01:22",
+                "C_max_discount_price": "0",
+                "C_isDiscount_Campaign": "N",
+                "C_discount_rate_level1": "0",
+                "C_discount_rate_level2": "0",
+                "C_discount_rate_level3": "0",
+                "C_discount_rate_level4": "0",
+                "C_regi_end_date_count": 0,
+                "C_regi_date_icon": false,
+                "subText": "\uc9c0\uc6d0\ud558\uae30",
+                "filter": "",
+                "C_recruit_type__text": "\ubc30\uc1a1\ud615",
+                "CS_type__text": "\ube14\ub85c\uadf8",
+                "transformedPrice": "",
+                "isAd": "N"
+            },
+            {
+                "C_uct_idx": "8673",
+                "C_idx": "231381",
+                "C_title": "[\uae30\ud0c0]\ud638\uc758",
+                "C_provision": "\ubaa8\ub780 \uc561\uc790 A2~A4 ",
+                "C_provision_price": "0",
+                "C_order": "0",
+                "C_emergency_recruit": "N",
+                "C_state": "ONGOING",
+                "C_choice_count": "3",
+                "C_volunteer_count": "7",
+                "C_regi_start_date": "2026-03-31",
+                "C_regi_end_date": "2026-04-03",
+                "C_registered_by_admin": "Y",
+                "C_regi_date": "2026-03-31 00:01:22",
+                "C_recruit_type": "shipping",
+                "C_provide_reward": "0",
+                "C_isPremium": "N",
+                "C_thumb_img_path": "",
+                "CS_type": "BLOG",
+                "thumb_img": "https:\/\/d17jwiodubhsh2.cloudfront.net\/UPLOAD\/CAMPAIGN_THUMB\/20241222_161123_XArdxVv_mj1028.jpg",
+                "CT_type": "ETC",
+                "C_background_color": "",
+                "C_font_color": "",
+                "C_last_jump_time": null,
+                "jump_order": "2026-03-31 00:01:22",
+                "C_max_discount_price": "0",
+                "C_isDiscount_Campaign": "N",
+                "C_discount_rate_level1": "0",
+                "C_discount_rate_level2": "0",
+                "C_discount_rate_level3": "0",
+                "C_discount_rate_level4": "0",
+                "C_regi_end_date_count": 0,
+                "C_regi_date_icon": false,
+                "subText": "\uc9c0\uc6d0\ud558\uae30",
+                "filter": "",
+                "C_recruit_type__text": "\ubc30\uc1a1\ud615",
+                "CS_type__text": "\ube14\ub85c\uadf8",
+                "transformedPrice": "",
+                "isAd": "N"
+            },
+            {
+                "C_uct_idx": "9451",
+                "C_idx": "231375",
+                "C_title": "[\ud328\uc158\/\ubc30\uc1a1\ud615]\uc7bc#",
+                "C_provision": "100,000\uc6d0 \uc2f1\ub2f9\uc758 \uce90\uc2dc\ubbf8\uc5b4 \uba38\ud50c\ub7ec",
+                "C_provision_price": "0",
+                "C_order": "0",
+                "C_emergency_recruit": "N",
+                "C_state": "ONGOING",
+                "C_choice_count": "2",
+                "C_volunteer_count": "0",
+                "C_regi_start_date": "2026-03-31",
+                "C_regi_end_date": "2026-04-07",
+                "C_registered_by_admin": "Y",
+                "C_regi_date": "2026-03-31 00:01:22",
+                "C_recruit_type": "shipping",
+                "C_provide_reward": "0",
+                "C_isPremium": "N",
+                "C_thumb_img_path": "",
+                "CS_type": "YOUTUBE",
+                "thumb_img": "https:\/\/d17jwiodubhsh2.cloudfront.net\/UPLOAD\/CAMPAIGN_THUMB\/20241214_212057_8IqprQw_uBkBUM_h4.png",
+                "CT_type": "FASHION",
+                "C_background_color": "",
+                "C_font_color": "",
+                "C_last_jump_time": null,
+                "jump_order": "2026-03-31 00:01:22",
+                "C_max_discount_price": "0",
+                "C_isDiscount_Campaign": "N",
+                "C_discount_rate_level1": "0",
+                "C_discount_rate_level2": "0",
+                "C_discount_rate_level3": "0",
+                "C_discount_rate_level4": "0",
+                "C_regi_end_date_count": 4,
+                "C_regi_date_icon": false,
+                "subText": "\uc9c0\uc6d0\ud558\uae30",
+                "filter": "",
+                "C_recruit_type__text": "\ubc30\uc1a1\ud615",
+                "CS_type__text": "\uc720\ud29c\ube0c",
+                "transformedPrice": "",
+                "isAd": "N"
+            },
+            {
+                "C_uct_idx": "8297",
+                "C_idx": "231352",
+                "C_title": "[\ubdf0\ud2f0\/\ubc30\uc1a1\ud615]\ubca0\ud0a4\ubca0\ud0a4(VEKI VEKI)",
+                "C_provision": "26\ub9cc\uc6d0 \uc0c1\ub2f9\uc758 \uc904\uae30\uc138\ud3ec \ud654\uc7a5\ud488",
+                "C_provision_price": "0",
+                "C_order": "0",
+                "C_emergency_recruit": "N",
+                "C_state": "ONGOING",
+                "C_choice_count": "10",
+                "C_volunteer_count": "54",
+                "C_regi_start_date": "2026-03-31",
+                "C_regi_end_date": "2026-04-07",
+                "C_registered_by_admin": "Y",
+                "C_regi_date": "2026-03-31 00:01:22",
+                "C_recruit_type": "shipping",
+                "C_provide_reward": "0",
+                "C_isPremium": "N",
+                "C_thumb_img_path": "",
+                "CS_type": "BLOG",
+                "thumb_img": "https:\/\/d17jwiodubhsh2.cloudfront.net\/UPLOAD\/CAMPAIGN_THUMB\/20241106_220738_M6HXPlz_ppain4.jpg",
+                "CT_type": "BEAUTY",
+                "C_background_color": "",
+                "C_font_color": "",
+                "C_last_jump_time": null,
+                "jump_order": "2026-03-31 00:01:22",
+                "C_max_discount_price": "0",
+                "C_isDiscount_Campaign": "N",
+                "C_discount_rate_level1": "0",
+                "C_discount_rate_level2": "0",
+                "C_discount_rate_level3": "0",
+                "C_discount_rate_level4": "0",
+                "C_regi_end_date_count": 4,
+                "C_regi_date_icon": false,
+                "subText": "\uc9c0\uc6d0\ud558\uae30",
+                "filter": "",
+                "C_recruit_type__text": "\ubc30\uc1a1\ud615",
+                "CS_type__text": "\ube14\ub85c\uadf8",
+                "transformedPrice": "",
+                "isAd": "N"
+            },
+            {
+                "C_uct_idx": "7394",
+                "C_idx": "231345",
+                "C_title": "[\uc2dd\ud488\/\ubc30\uc1a1\ud615]\ubd80\uc0b0 \ubbf8\uc8fc\uc2a4",
+                "C_provision": "30,000\uc6d0 \uc0c1\ub2f9\uc758 \uc81c\ud488(\uc0d0\ub7ec\ub4dc+\uc0cc\ub4dc\uc704\uce58+\uc8fc\uc2a4+\ub3c4\uc2dc\ub77d)",
+                "C_provision_price": "0",
+                "C_order": "0",
+                "C_emergency_recruit": "N",
+                "C_state": "ONGOING",
+                "C_choice_count": "4",
+                "C_volunteer_count": "48",
+                "C_regi_start_date": "2026-03-31",
+                "C_regi_end_date": "2026-04-07",
+                "C_registered_by_admin": "Y",
+                "C_regi_date": "2026-03-31 00:01:22",
+                "C_recruit_type": "shipping",
+                "C_provide_reward": "0",
+                "C_isPremium": "N",
+                "C_thumb_img_path": "",
+                "CS_type": "BLOG",
+                "thumb_img": "https:\/\/d17jwiodubhsh2.cloudfront.net\/UPLOAD\/CAMPAIGN_THUMB\/20241019_214708_wbUgsx9_aning1996.jpg",
+                "CT_type": "FOOD",
+                "C_background_color": "",
+                "C_font_color": "",
+                "C_last_jump_time": null,
+                "jump_order": "2026-03-31 00:01:22",
+                "C_max_discount_price": "0",
+                "C_isDiscount_Campaign": "N",
+                "C_discount_rate_level1": "0",
+                "C_discount_rate_level2": "0",
+                "C_discount_rate_level3": "0",
+                "C_discount_rate_level4": "0",
+                "C_regi_end_date_count": 4,
+                "C_regi_date_icon": false,
+                "subText": "\uc9c0\uc6d0\ud558\uae30",
+                "filter": "",
+                "C_recruit_type__text": "\ubc30\uc1a1\ud615",
+                "CS_type__text": "\ube14\ub85c\uadf8",
+                "transformedPrice": "",
+                "isAd": "N"
+            }
+        ],
+        "recommendedContentsData": [],
+        "contentsData2": [],
+        "UAL_data": false,
+        "campCount": "217",
+        "time": 0.06163287162780762,
+        "pageNum": "96"
+    },
+    "msg": "",
+    "code": 200,
+    "success": true,
+    "result": "Y",
+    "message": "",
+    "act": "method"
+}
+
+
+캠페인 카테고리 중 기자단 캠페인 카테고리
+https://popomon.com/next/campaign?searchAlign=latest&bigRecruitType=Lvisiting&recruitType=reporting&interestsFilter=ALL&&pageNum=12&snsSubFilter=
+
+헤더스
+Request URL
+https://popomon.com/api_p/campaign/fetch_getcampaignlist?searchAlign=latest&bigRecruitType=Lvisiting&recruitType=reporting&interestsFilter=ALL&&pageNum=48&snsSubFilter=
+Request Method
+POST
+Status Code
+200 OK
+Remote Address
+54.116.90.237:443
+Referrer Policy
+strict-origin-when-cross-origin
+access-control-allow-credentials
+true
+access-control-allow-headers
+Content-Type, nuxtcookie
+access-control-allow-methods
+POST, GET, OPTIONS
+access-control-allow-origin
+*
+content-security-policy
+upgrade-insecure-requests
+content-type
+application/json
+date
+Fri, 03 Apr 2026 03:08:05 GMT
+server
+Apache
+set-cookie
+AWSALBTG=REKIpwA4LjmT5sKZndulw8jwED/S5sT5goJrTGxIlBrYx+NrWOaxtt99SzgoOP2F+orfon7M2KWZkD1p2FruicyFFBvtu8s71huw9Rhjgp1sSSifTxf0V+e7KLiLcdhNJonoC/nUyF8UK0oWyBtI1zaz+t4BygZpfEg/vKYvAjyWbfRtu9g=; Expires=Fri, 10 Apr 2026 03:08:04 GMT; Path=/
+set-cookie
+AWSALBTGCORS=REKIpwA4LjmT5sKZndulw8jwED/S5sT5goJrTGxIlBrYx+NrWOaxtt99SzgoOP2F+orfon7M2KWZkD1p2FruicyFFBvtu8s71huw9Rhjgp1sSSifTxf0V+e7KLiLcdhNJonoC/nUyF8UK0oWyBtI1zaz+t4BygZpfEg/vKYvAjyWbfRtu9g=; Expires=Fri, 10 Apr 2026 03:08:04 GMT; Path=/; SameSite=None; Secure
+set-cookie
+AWSALB=P/lslT8iiZWd3aKpowYEC4rHieAEg/RtLN0KeHP+jKhTjQpMLCNZ7hmqK0LS9FJHXcelvwbIorZYhg78ocHv2VJGJ8U99rMNG70ztI8SZGhP7TguZzMIMoy6suor; Expires=Fri, 10 Apr 2026 03:08:04 GMT; Path=/
+set-cookie
+AWSALBCORS=P/lslT8iiZWd3aKpowYEC4rHieAEg/RtLN0KeHP+jKhTjQpMLCNZ7hmqK0LS9FJHXcelvwbIorZYhg78ocHv2VJGJ8U99rMNG70ztI8SZGhP7TguZzMIMoy6suor; Expires=Fri, 10 Apr 2026 03:08:04 GMT; Path=/; SameSite=None; Secure
+x-powered-by
+PHP/8.0.30
+:authority
+popomon.com
+:method
+POST
+:path
+/api_p/campaign/fetch_getcampaignlist?searchAlign=latest&bigRecruitType=Lvisiting&recruitType=reporting&interestsFilter=ALL&&pageNum=48&snsSubFilter=
+:scheme
+https
+accept
+application/json, text/plain, */*
+accept-encoding
+gzip, deflate, br, zstd
+accept-language
+ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7
+content-length
+0
+cookie
+_fwb=69dYGYK05xZj1BgFkPLqOs.1775184864660; __Host-next-auth.csrf-token=291baa9b1d9012a26ed5932928f14014c2096bc371df3311e9fc2bb4af1469ab%7C59ddbd742aab90194cd10a2abf50f58803505571f07f24ec4e2519f33b26c57e; __Secure-next-auth.callback-url=https%3A%2F%2Fpopomon.com; _pouvisittag=MTQvsUyusWnKKgVU.BHHFBIEIGEIAE; _pouvisit=sxrPemnjPmBskIRG.BHHFBIEIGEIAG; ci_session=tl67nuiohrub3is3fhfhf9f2j1s6i6f2; _fbp=fb.1.1775184865904.769693113201958063; _ga=GA1.1.611229388.1775184866; closeEventPopup=closed; _pouvisitpage=L25leHQvY2FtcGFpZ24mJi8mJi8=; _ga_HLJ7EDWVJT=GS2.1.s1775184866$o1$g1$t1775185683$j59$l0$h0; _pouvisittime=2026-04-03%2012:08:03; wcs_bt=dca0d2afb11030:1775185684; AWSALBTG=2Ar39pFL3KYxBDhCUYis8EjUvclAuWVWtzn9en+NrwZwUGmLNCWEr2ydzqi4dGgJnWIvlX7qbQupqgpnyv5y8kbXHatom9ku7CYhsgSDOuRLpEmzyMZ2xTO3iHvx7DBwhzA9qeojTnER96oX6+3jVRO4YZZIbkLNghH8lD6lVRCLUdnPIlw=; AWSALBTGCORS=2Ar39pFL3KYxBDhCUYis8EjUvclAuWVWtzn9en+NrwZwUGmLNCWEr2ydzqi4dGgJnWIvlX7qbQupqgpnyv5y8kbXHatom9ku7CYhsgSDOuRLpEmzyMZ2xTO3iHvx7DBwhzA9qeojTnER96oX6+3jVRO4YZZIbkLNghH8lD6lVRCLUdnPIlw=; AWSALB=XRCeFHnUm7ezZE1ata6SOIKXRuaRkP4oRYIN+Dgfc5/IpEIx91A1/pTFHUosq2AmrFbfVbVT0ooROuX/LWYKLE/W91yES2JNjciYHT3iZkBZ5XXrfuwB5OZJfD0o; AWSALBCORS=XRCeFHnUm7ezZE1ata6SOIKXRuaRkP4oRYIN+Dgfc5/IpEIx91A1/pTFHUosq2AmrFbfVbVT0ooROuX/LWYKLE/W91yES2JNjciYHT3iZkBZ5XXrfuwB5OZJfD0o
+origin
+https://popomon.com
+priority
+u=1, i
+referer
+https://popomon.com/next/campaign?searchAlign=latest&bigRecruitType=Lvisiting&recruitType=reporting&interestsFilter=ALL&&pageNum=36&snsSubFilter=
+sec-ch-ua
+"Chromium";v="146", "Not-A.Brand";v="24", "Google Chrome";v="146"
+sec-ch-ua-mobile
+?0
+sec-ch-ua-platform
+"Windows"
+sec-fetch-dest
+empty
+sec-fetch-mode
+cors
+sec-fetch-site
+same-origin
+user-agent
+Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36
+
+페이로드
+searchAlign
+latest
+bigRecruitType
+Lvisiting
+recruitType
+reporting
+interestsFilter
+ALL
+(empty)
+pageNum
+48
+snsSubFilter
+
+프리뷰
+{data: {,…}, msg: "", code: 200, success: true, result: "Y", message: "", act: "method"}
+act
+: 
+"method"
+code
+: 
+200
+data
+: 
+{,…}
+message
+: 
+""
+msg
+: 
+""
+result
+: 
+"Y"
+success
+: 
+true
+
+리스폰스
+{
+    "data": {
+        "contentsData": [
+            {
+                "C_uct_idx": "18630",
+                "C_idx": "230350",
+                "C_title": "[\uc2dd\ud488]\uae40\ud3ec\ub9c8\uace1\ud669\uae08\ub4e4\ub158\ub18d\uc5c5\ud68c\uc0ac\ubc95\uc778\uc8fc\uc2dd\ud68c\uc0ac ",
+                "C_provision": "",
+                "C_provision_price": "0",
+                "C_order": "0",
+                "C_emergency_recruit": "Y",
+                "C_state": "ONGOING",
+                "C_choice_count": "5",
+                "C_volunteer_count": "35",
+                "C_regi_start_date": "2026-03-28",
+                "C_regi_end_date": "2026-04-04",
+                "C_registered_by_admin": "Y",
+                "C_regi_date": "2026-03-28 12:55:45",
+                "C_recruit_type": "reporting",
+                "C_provide_reward": "3000",
+                "C_isPremium": "N",
+                "C_thumb_img_path": "https:\/\/d17jwiodubhsh2.cloudfront.net\/UPLOAD\/CAMPAIGN_THUMB\/thumbImg_C_230350.jpg",
+                "CS_type": "BLOG",
+                "thumb_img": "https:\/\/d17jwiodubhsh2.cloudfront.net\/UPLOAD\/CAMPAIGN_THUMB\/20260328_125546_GNTi1uR_CWLz-uFu8.jpg",
+                "CT_type": "FOOD",
+                "C_background_color": "",
+                "C_font_color": "",
+                "C_last_jump_time": null,
+                "jump_order": "2026-03-28 12:55:45",
+                "C_max_discount_price": "0",
+                "C_isDiscount_Campaign": "N",
+                "C_discount_rate_level1": "50",
+                "C_discount_rate_level2": "100",
+                "C_discount_rate_level3": "100",
+                "C_discount_rate_level4": "100",
+                "C_regi_end_date_count": 1,
+                "C_regi_date_icon": false,
+                "subText": "\uc9c0\uc6d0\ud558\uae30",
+                "filter": "",
+                "C_recruit_type__text": "\uae30\uc790\ub2e8",
+                "CS_type__text": "\ube14\ub85c\uadf8",
+                "transformedPrice": "",
+                "isAd": "N"
+            },
+            {
+                "C_uct_idx": "13840",
+                "C_idx": "230193",
+                "C_title": "[\uae30\ud0c0]\uc601\ud574\uc554",
+                "C_provision": "",
+                "C_provision_price": "0",
+                "C_order": "0",
+                "C_emergency_recruit": "N",
+                "C_state": "ONGOING",
+                "C_choice_count": "6",
+                "C_volunteer_count": "17",
+                "C_regi_start_date": "2026-03-28",
+                "C_regi_end_date": "2026-04-04",
+                "C_registered_by_admin": "Y",
+                "C_regi_date": "2026-03-28 00:01:22",
+                "C_recruit_type": "reporting",
+                "C_provide_reward": "3000",
+                "C_isPremium": "N",
+                "C_thumb_img_path": "",
+                "CS_type": "BLOG",
+                "thumb_img": "https:\/\/d17jwiodubhsh2.cloudfront.net\/UPLOAD\/CAMPAIGN_THUMB\/20251028_150503_HZJsij8_adoor13.jpg",
+                "CT_type": "ETC",
+                "C_background_color": "",
+                "C_font_color": "",
+                "C_last_jump_time": null,
+                "jump_order": "2026-03-28 00:01:22",
+                "C_max_discount_price": "0",
+                "C_isDiscount_Campaign": "N",
+                "C_discount_rate_level1": "50",
+                "C_discount_rate_level2": "100",
+                "C_discount_rate_level3": "100",
+                "C_discount_rate_level4": "100",
+                "C_regi_end_date_count": 1,
+                "C_regi_date_icon": false,
+                "subText": "\uc9c0\uc6d0\ud558\uae30",
+                "filter": "",
+                "C_recruit_type__text": "\uae30\uc790\ub2e8",
+                "CS_type__text": "\ube14\ub85c\uadf8",
+                "transformedPrice": "",
+                "isAd": "N"
+            },
+            {
+                "C_uct_idx": "13523",
+                "C_idx": "229742",
+                "C_title": "[\uae30\ud0c0]\ud0c0\ub85c\uc2e0\ub2f9",
+                "C_provision": "\uc804\ud654or\uce74\ud1a1 \ud0c0\ub85c\uc0c1\ub2f4",
+                "C_provision_price": "16500",
+                "C_order": "0",
+                "C_emergency_recruit": "Y",
+                "C_state": "ONGOING",
+                "C_choice_count": "10",
+                "C_volunteer_count": "4",
+                "C_regi_start_date": "2026-03-27",
+                "C_regi_end_date": "2026-04-03",
+                "C_registered_by_admin": "Y",
+                "C_regi_date": "2026-03-27 00:01:22",
+                "C_recruit_type": "reporting",
+                "C_provide_reward": "0",
+                "C_isPremium": "N",
+                "C_thumb_img_path": "",
+                "CS_type": "BLOG_RECEIPT",
+                "thumb_img": "https:\/\/d17jwiodubhsh2.cloudfront.net\/UPLOAD\/CAMPAIGN_THUMB\/20251205_163630_hvd2bp8_dgusdlek1.png",
+                "CT_type": "ETC",
+                "C_background_color": "",
+                "C_font_color": "",
+                "C_last_jump_time": null,
+                "jump_order": "2026-03-27 00:01:22",
+                "C_max_discount_price": "0",
+                "C_isDiscount_Campaign": "N",
+                "C_discount_rate_level1": null,
+                "C_discount_rate_level2": null,
+                "C_discount_rate_level3": null,
+                "C_discount_rate_level4": null,
+                "C_regi_end_date_count": 0,
+                "C_regi_date_icon": false,
+                "subText": "\uc9c0\uc6d0\ud558\uae30",
+                "filter": "",
+                "C_recruit_type__text": "\uae30\uc790\ub2e8",
+                "CS_type__text": "\ube14\ub85c\uadf8 + \uc601\uc218\uc99d\ub9ac\ubdf0",
+                "transformedPrice": "1\ub9cc\uc6d0 \uc0c1\ub2f9",
+                "isAd": "N"
+            },
+            {
+                "C_uct_idx": "10894",
+                "C_idx": "229667",
+                "C_title": "[\ubdf0\ud2f0]\uc5d0\uc77c\ud5e4\uc5b4 \ucc9c\uc548 \uc131\uc131\uc810",
+                "C_provision": "",
+                "C_provision_price": "0",
+                "C_order": "0",
+                "C_emergency_recruit": "N",
+                "C_state": "ONGOING",
+                "C_choice_count": "5",
+                "C_volunteer_count": "33",
+                "C_regi_start_date": "2026-03-27",
+                "C_regi_end_date": "2026-04-03",
+                "C_registered_by_admin": "Y",
+                "C_regi_date": "2026-03-27 00:01:22",
+                "C_recruit_type": "reporting",
+                "C_provide_reward": "5000",
+                "C_isPremium": "N",
+                "C_thumb_img_path": "",
+                "CS_type": "BLOG_RECEIPT",
+                "thumb_img": "https:\/\/d17jwiodubhsh2.cloudfront.net\/UPLOAD\/CAMPAIGN_THUMB\/20250823_124121_PoD8Nmx_NwNHHS_no.jpg",
+                "CT_type": "BEAUTY",
+                "C_background_color": "",
+                "C_font_color": "",
+                "C_last_jump_time": null,
+                "jump_order": "2026-03-27 00:01:22",
+                "C_max_discount_price": "0",
+                "C_isDiscount_Campaign": "N",
+                "C_discount_rate_level1": null,
+                "C_discount_rate_level2": null,
+                "C_discount_rate_level3": null,
+                "C_discount_rate_level4": null,
+                "C_regi_end_date_count": 0,
+                "C_regi_date_icon": false,
+                "subText": "\uc9c0\uc6d0\ud558\uae30",
+                "filter": "",
+                "C_recruit_type__text": "\uae30\uc790\ub2e8",
+                "CS_type__text": "\ube14\ub85c\uadf8 + \uc601\uc218\uc99d\ub9ac\ubdf0",
+                "transformedPrice": "",
+                "isAd": "N"
+            },
+            {
+                "C_uct_idx": "13720",
+                "C_idx": "229666",
+                "C_title": "[\ub9db\uc9d1]\ubbf8\uc2dd\ucef4\ud37c\ub2c8\uc8fc\uc2dd\ud68c\uc0ac(99\uc721\ud68c\ubcf8\uac00 \ubcf8\uc0ac)",
+                "C_provision": "",
+                "C_provision_price": "0",
+                "C_order": "0",
+                "C_emergency_recruit": "N",
+                "C_state": "ONGOING",
+                "C_choice_count": "20",
+                "C_volunteer_count": "35",
+                "C_regi_start_date": "2026-03-27",
+                "C_regi_end_date": "2026-04-03",
+                "C_registered_by_admin": "Y",
+                "C_regi_date": "2026-03-27 00:01:22",
+                "C_recruit_type": "reporting",
+                "C_provide_reward": "5000",
+                "C_isPremium": "N",
+                "C_thumb_img_path": "",
+                "CS_type": "BLOG_CONTENT",
+                "thumb_img": "https:\/\/d17jwiodubhsh2.cloudfront.net\/UPLOAD\/CAMPAIGN_THUMB\/20250625_175219_bGWSD3v_-8FMNMeoI.jpg",
+                "CT_type": "RESTAURANT",
+                "C_background_color": "",
+                "C_font_color": "",
+                "C_last_jump_time": null,
+                "jump_order": "2026-03-27 00:01:22",
+                "C_max_discount_price": "0",
+                "C_isDiscount_Campaign": "N",
+                "C_discount_rate_level1": "0",
+                "C_discount_rate_level2": "0",
+                "C_discount_rate_level3": "0",
+                "C_discount_rate_level4": "0",
+                "C_regi_end_date_count": 0,
+                "C_regi_date_icon": false,
+                "subText": "\uc9c0\uc6d0\ud558\uae30",
+                "filter": "",
+                "C_recruit_type__text": "\uae30\uc790\ub2e8",
+                "CS_type__text": "\ube14\ub85c\uadf8 + \ucf58\ud150\uce20\ud65c\uc6a9",
+                "transformedPrice": "",
+                "isAd": "N"
+            },
+            {
+                "C_uct_idx": "10694",
+                "C_idx": "229143",
+                "C_title": "[\uae30\ud0c0]\ubc95\ubb34\uc0ac\uc774\uc7a5\ud5cc\uc0ac\ubb34\uc18c",
+                "C_provision": "",
+                "C_provision_price": "0",
+                "C_order": "0",
+                "C_emergency_recruit": "N",
+                "C_state": "ONGOING",
+                "C_choice_count": "10",
+                "C_volunteer_count": "22",
+                "C_regi_start_date": "2026-03-26",
+                "C_regi_end_date": "2026-04-11",
+                "C_registered_by_admin": "Y",
+                "C_regi_date": "2026-03-26 00:01:22",
+                "C_recruit_type": "reporting",
+                "C_provide_reward": "5000",
+                "C_isPremium": "N",
+                "C_thumb_img_path": "",
+                "CS_type": "BLOG_RECEIPT",
+                "thumb_img": "https:\/\/d17jwiodubhsh2.cloudfront.net\/UPLOAD\/CAMPAIGN_THUMB\/20250520_183729_kzDlVQ3BECTxeR8_nghan0110.jpg",
+                "CT_type": "ETC",
+                "C_background_color": "",
+                "C_font_color": "",
+                "C_last_jump_time": null,
+                "jump_order": "2026-03-26 00:01:22",
+                "C_max_discount_price": "0",
+                "C_isDiscount_Campaign": "N",
+                "C_discount_rate_level1": null,
+                "C_discount_rate_level2": null,
+                "C_discount_rate_level3": null,
+                "C_discount_rate_level4": null,
+                "C_regi_end_date_count": 8,
+                "C_regi_date_icon": false,
+                "subText": "\uc9c0\uc6d0\ud558\uae30",
+                "filter": "",
+                "C_recruit_type__text": "\uae30\uc790\ub2e8",
+                "CS_type__text": "\ube14\ub85c\uadf8 + \uc601\uc218\uc99d\ub9ac\ubdf0",
+                "transformedPrice": "",
+                "isAd": "N"
+            },
+            {
+                "C_uct_idx": "18560",
+                "C_idx": "228899",
+                "C_title": "[\uc219\uc18c]\ud14c\ub77c\uc2a4 \ud39c\uc158",
+                "C_provision": "",
+                "C_provision_price": "0",
+                "C_order": "0",
+                "C_emergency_recruit": "N",
+                "C_state": "ONGOING",
+                "C_choice_count": "12",
+                "C_volunteer_count": "79",
+                "C_regi_start_date": "2026-03-25",
+                "C_regi_end_date": "2026-04-03",
+                "C_registered_by_admin": "Y",
+                "C_regi_date": "2026-03-25 14:35:12",
+                "C_recruit_type": "reporting",
+                "C_provide_reward": "5000",
+                "C_isPremium": "N",
+                "C_thumb_img_path": "https:\/\/d17jwiodubhsh2.cloudfront.net\/UPLOAD\/CAMPAIGN_THUMB\/2",
+                "CS_type": "BLOG",
+                "thumb_img": "https:\/\/d17jwiodubhsh2.cloudfront.net\/UPLOAD\/CAMPAIGN_THUMB\/20260325_143512_PYM7Hte_picnision.jpg",
+                "CT_type": "ROOMS",
+                "C_background_color": "",
+                "C_font_color": "",
+                "C_last_jump_time": null,
+                "jump_order": "2026-03-25 14:35:12",
+                "C_max_discount_price": "0",
+                "C_isDiscount_Campaign": "N",
+                "C_discount_rate_level1": null,
+                "C_discount_rate_level2": null,
+                "C_discount_rate_level3": null,
+                "C_discount_rate_level4": null,
+                "C_regi_end_date_count": 0,
+                "C_regi_date_icon": false,
+                "subText": "\uc9c0\uc6d0\ud558\uae30",
+                "filter": "",
+                "C_recruit_type__text": "\uae30\uc790\ub2e8",
+                "CS_type__text": "\ube14\ub85c\uadf8",
+                "transformedPrice": "",
+                "isAd": "N"
+            }
+        ],
+        "recommendedContentsData": [],
+        "contentsData2": [],
+        "UAL_data": false,
+        "campCount": "55",
+        "time": 0.034049034118652344,
+        "pageNum": "48"
+    },
+    "msg": "",
+    "code": 200,
+    "success": true,
+    "result": "Y",
+    "message": "",
+    "act": "method"
+}
+
+
+
+
+

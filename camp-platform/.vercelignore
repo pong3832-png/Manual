@@ -1,0 +1,12 @@
+node_modules
+.git
+.env
+.env.*
+dist
+.deploy-preview
+.deploy-temp
+.vercel-preview-stage
+logs
+*.log
+docs/research
+AI identity prompt.md

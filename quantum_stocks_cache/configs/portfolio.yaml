@@ -1,0 +1,46 @@
+data:
+  prices_csv: ../data/prices.csv
+
+reports:
+  output_dir: ../reports
+
+market_data:
+  provider: yfinance
+  start: '2024-01-01'
+  end:
+  auto_adjust: true
+  progress: false
+
+strategy:
+  trend_window: 20
+  cost_bps: 5.0
+  periods_per_year: 252
+
+risk:
+  max_portfolio_mdd: -0.12
+  max_daily_turnover: 0.50
+  max_cash_exposure: 0.80
+
+sizing:
+  enabled: true
+  target_volatility: 0.15
+  realized_vol_window: 20
+  volatility_floor: 0.05
+  max_position_weight: 0.60
+  max_leverage: 1.00
+
+data_quality:
+  max_stale_days: 5
+  max_abs_daily_return: 0.35
+
+pretrade:
+  max_order_delta: 0.25
+  max_gross_exposure: 1.00
+
+portfolio:
+  000660.KS: 0.60
+  005380.KS: 0.40
+
+current_weights:
+  000660.KS: 0.60
+  005380.KS: 0.40

@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://camp-platform-liart.vercel.app/sitemap.xml
+Sitemap: https://camp-platform-liart.vercel.app/sitemap-pages.xml
+

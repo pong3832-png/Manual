@@ -1,0 +1,30 @@
+{
+  "id": "/",
+  "name": "CheheomMoa - 체험단 플랫폼",
+  "short_name": "CheheomMoa",
+  "description": "전국 체험단 캠페인을 한 곳에서 찾고 비교하는 웹앱",
+  "lang": "ko-KR",
+  "dir": "ltr",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui", "browser"],
+  "orientation": "portrait-primary",
+  "categories": ["lifestyle", "food", "shopping", "productivity"],
+  "background_color": "#FFF8F2",
+  "theme_color": "#C1440E",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

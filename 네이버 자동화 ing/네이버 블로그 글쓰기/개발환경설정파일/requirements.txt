@@ -1,0 +1,6 @@
+selenium>=4.18.0
+Pillow>=10.0.0
+requests>=2.31.0
+pyperclip>=1.8.2
+schedule>=1.2.0
+filelock>=3.13.0

@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+자동발행실행보조파일/__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.venv/
+venv/
+
+# Local browser profiles
+ChromeGeminiBot/
+ChromeGeminiBot*/
+ChromeNaverBot/
+ChromeNaverBot_*/
+
+# Runtime artifacts
+자동발행상태기록파일/*
+!자동발행상태기록파일/
+!자동발행상태기록파일/*.json
+자동발행상태기록파일/logs/
+temp_blog_img_*.png
+
+# Local environment / secrets
+.env
+.env.*

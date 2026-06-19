@@ -1,0 +1,13 @@
+[ seouloba 장소 위치 HTML ] 
+
+상세페이지 들어온 후
+
+1) 
+<div class="map_adress">
+										<span class="txt_short" onclick="javascript:funcKakaoMapGo();">서울 강서구 마곡동 743-4 </span>
+									</div>
+
+2) 
+<div class="map_adress">
+										<span class="txt_short" onclick="javascript:funcKakaoMapGo();">서울 광진구 동일로20길 117 1층</span>
+									</div>

@@ -1,0 +1,2466 @@
+리뷰노트
+
+
+
+사이트명: 리뷰노트   
+https://www.reviewnote.co.kr/                                                                                                                          
+  로그인 필요 여부:    안해도 됨 (신청하려면 로그인해야함)
+
+<span style="box-sizing: border-box; display: inline-block; overflow: hidden; width: initial; height: initial; background: none; opacity: 1; border: 0px; margin: 0px; padding: 0px; position: relative; max-width: 100%;"><span style="box-sizing: border-box; display: block; width: initial; height: initial; background: none; opacity: 1; border: 0px; margin: 0px; padding: 0px; max-width: 100%;"><img alt="" aria-hidden="true" src="data:image/svg+xml,%3csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20version=%271.1%27%20width=%2780%27%20height=%2780%27/%3e" style="display: block; max-width: 100%; width: initial; height: initial; background: none; opacity: 1; border: 0px; margin: 0px; padding: 0px;"></span><img alt="" src="/icon/home/campaign.webp" decoding="async" data-nimg="intrinsic" class="h-16 w-16 sm:h-20 sm:w-20" style="position: absolute; inset: 0px; box-sizing: border-box; padding: 0px; border: none; margin: auto; display: block; width: 0px; height: 0px; min-width: 100%; max-width: 100%; min-height: 100%; max-height: 100%;"></span>
+
+이거 누르고 체험단 검색 들어갈 수 있음
+                                                                                                                               
+                                                                                                                                                      
+  목록 페이지 URL:  https://www.reviewnote.co.kr/campaigns                                                                                                                                  
+여기서 첫 화면의,,
+
+헤더스                                                                                                                          
+Request URL
+https://www.reviewnote.co.kr/api/v2/campaigns?city=%EC%9E%AC%ED%83%9D&gugunSelected=&s=default&limit=16&page=11
+Request Method
+GET
+Status Code
+200 OK
+Remote Address
+216.150.1.65:443
+Referrer Policy
+strict-origin-when-cross-origin
+age
+0
+cache-control
+public, max-age=0, must-revalidate
+content-encoding
+br
+content-type
+application/json; charset=utf-8
+date
+Fri, 03 Apr 2026 02:21:04 GMT
+etag
+W/"egreew7sw7sx"
+server
+Vercel
+strict-transport-security
+max-age=63072000
+x-matched-path
+/api/v2/campaigns
+x-vercel-cache
+MISS
+x-vercel-id
+icn1::icn1::7gwxc-1775182864675-dfec9179c9f8
+:authority
+www.reviewnote.co.kr
+:method
+GET
+:path
+/api/v2/campaigns?city=%EC%9E%AC%ED%83%9D&gugunSelected=&s=default&limit=16&page=11
+:scheme
+https
+accept
+application/json, text/plain, */*
+accept-encoding
+gzip, deflate, br, zstd
+accept-language
+ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7
+cookie
+_fbp=fb.2.1774582612661.116926491488284649; _ga=GA1.1.1822335972.1774582613; __Host-next-auth.csrf-token=c74282c25903329dfe646a869765920f9d77d0509cac70c301d1c73b9817c945%7C0940bacf0febc6208f02ec47fb52b49b2c39adf714a93f0d9c184e0f551575b3; __Secure-next-auth.callback-url=https%3A%2F%2Fwww.reviewnote.co.kr; isLogin=false; reviewnoteLoginToken=false; _ga_XZVSWF43K1=GS2.1.s1775182683$o4$g1$t1775182810$j60$l0$h0; token=
+priority
+u=1, i
+referer
+https://www.reviewnote.co.kr/campaigns?city=%EC%9E%AC%ED%83%9D
+sec-ch-ua
+"Chromium";v="146", "Not-A.Brand";v="24", "Google Chrome";v="146"
+sec-ch-ua-mobile
+?0
+sec-ch-ua-platform
+"Windows"
+sec-fetch-dest
+empty
+sec-fetch-mode
+cors
+sec-fetch-site
+same-origin
+user-agent
+Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36
+
+
+페이로드
+city
+재택
+gugunSelected
+s
+default
+limit
+16
+page
+11
+
+
+프리뷰
+{page: 11, objects: [,…], total_pages: 50, total_count: 800}
+objects
+: 
+[,…]
+page
+: 
+11
+total_count
+: 
+800
+total_pages
+: 
+50
+
+
+리스폰스
+{
+    "page": 11,
+    "objects": [
+        {
+            "id": 1159079,
+            "title": "스마트덕",
+            "status": "SELECT",
+            "sort": "TAKEOUT",
+            "channel": "BLOG",
+            "paybackPlatform": null,
+            "infNum": 10,
+            "infPoint": 9800,
+            "offer": "쿨토시 10개입",
+            "imageKey": "campaigns/cadf9735-2989-4f69-967c-86835ae70214",
+            "city": "재택",
+            "currentTurn": 1,
+            "applyEndAt": "2026-04-11T14:59:59.999Z",
+            "reviewEndAt": "2026-04-25T14:59:59.999Z",
+            "extendedReviewEndAt": null,
+            "beforeReviewEndAt": null,
+            "reviewlottoPosition": null,
+            "hotDealPosition": null,
+            "productPurchasePoint": 9800,
+            "additionalRewardPoint": 0,
+            "applicantCount": 34,
+            "isPremium": false,
+            "premiumPosition": null,
+            "inspectionFee": null,
+            "category": {
+                "title": "기타"
+            },
+            "sido": {
+                "name": "재택"
+            }
+        },
+        {
+            "id": 1159119,
+            "title": "스마트덕",
+            "status": "SELECT",
+            "sort": "TAKEOUT",
+            "channel": "INSTAGRAM",
+            "paybackPlatform": null,
+            "infNum": 10,
+            "infPoint": 9800,
+            "offer": "쿨토시 10개입",
+            "imageKey": "campaigns/fa6ad901-3412-444f-a5ad-7eb580d52dcb",
+            "city": "재택",
+            "currentTurn": 1,
+            "applyEndAt": "2026-04-11T14:59:59.999Z",
+            "reviewEndAt": "2026-04-25T14:59:59.999Z",
+            "extendedReviewEndAt": null,
+            "beforeReviewEndAt": null,
+            "reviewlottoPosition": null,
+            "hotDealPosition": null,
+            "productPurchasePoint": 9800,
+            "additionalRewardPoint": 0,
+            "applicantCount": 21,
+            "isPremium": false,
+            "premiumPosition": null,
+            "inspectionFee": null,
+            "category": {
+                "title": "기타"
+            },
+            "sido": {
+                "name": "재택"
+            }
+        },
+        {
+            "id": 1158881,
+            "title": "바디트리플",
+            "status": "SELECT",
+            "sort": "TAKEOUT",
+            "channel": "BLOG",
+            "paybackPlatform": null,
+            "infNum": 10,
+            "infPoint": 9500,
+            "offer": "루미덴트 잇몸치약 1개 9000원",
+            "imageKey": "campaigns/cbbfd9de-a185-4083-ae19-9ad8caa3a890",
+            "city": "재택",
+            "currentTurn": 1,
+            "applyEndAt": "2026-04-11T14:59:59.999Z",
+            "reviewEndAt": "2026-04-25T14:59:59.999Z",
+            "extendedReviewEndAt": null,
+            "beforeReviewEndAt": null,
+            "reviewlottoPosition": null,
+            "hotDealPosition": null,
+            "productPurchasePoint": 9000,
+            "additionalRewardPoint": 500,
+            "applicantCount": 23,
+            "isPremium": false,
+            "premiumPosition": null,
+            "inspectionFee": null,
+            "category": {
+                "title": "기타"
+            },
+            "sido": {
+                "name": "재택"
+            }
+        },
+        {
+            "id": 1157836,
+            "title": "리잇",
+            "status": "SELECT",
+            "sort": "TAKEOUT",
+            "channel": "BLOG",
+            "paybackPlatform": null,
+            "infNum": 30,
+            "infPoint": 7900,
+            "offer": "리잇 고기가득 순대국 (냉동), 1kg, 1개",
+            "imageKey": "campaigns/481acebe-1996-4085-bce8-e2e6206c800b",
+            "city": "재택",
+            "currentTurn": 1,
+            "applyEndAt": "2026-04-11T14:59:59.999Z",
+            "reviewEndAt": "2026-04-25T14:59:59.999Z",
+            "extendedReviewEndAt": null,
+            "beforeReviewEndAt": null,
+            "reviewlottoPosition": null,
+            "hotDealPosition": null,
+            "productPurchasePoint": 7900,
+            "additionalRewardPoint": 0,
+            "applicantCount": 70,
+            "isPremium": false,
+            "premiumPosition": null,
+            "inspectionFee": null,
+            "category": {
+                "title": "식품"
+            },
+            "sido": {
+                "name": "재택"
+            }
+        },
+        {
+            "id": 1158123,
+            "title": "DrCleanKo",
+            "status": "SELECT",
+            "sort": "DELIVERY",
+            "channel": "BLOG_CLIP",
+            "paybackPlatform": null,
+            "infNum": 7,
+            "infPoint": 5000,
+            "offer": "닥터클린코 천궁숨숨팩 1개 98000원",
+            "imageKey": "campaigns/d8fc291f-c238-4387-978e-0be89f92c329",
+            "city": "재택",
+            "currentTurn": 1,
+            "applyEndAt": "2026-04-11T14:59:59.999Z",
+            "reviewEndAt": "2026-04-25T14:59:59.999Z",
+            "extendedReviewEndAt": null,
+            "beforeReviewEndAt": null,
+            "reviewlottoPosition": null,
+            "hotDealPosition": null,
+            "productPurchasePoint": null,
+            "additionalRewardPoint": null,
+            "applicantCount": 49,
+            "isPremium": true,
+            "premiumPosition": null,
+            "inspectionFee": null,
+            "category": {
+                "title": "기타"
+            },
+            "sido": {
+                "name": "재택"
+            }
+        },
+        {
+            "id": 1158611,
+            "title": "홈일렉",
+            "status": "SELECT",
+            "sort": "DELIVERY",
+            "channel": "BLOG_CLIP",
+            "paybackPlatform": null,
+            "infNum": 1,
+            "infPoint": 5000,
+            "offer": "홈일렉 베스트셀러 무선 핸드안마기 CM-05",
+            "imageKey": "campaigns/988dd0c9-15e5-4c0a-8e8e-28892c13727e",
+            "city": "재택",
+            "currentTurn": 1,
+            "applyEndAt": "2026-04-11T14:59:59.999Z",
+            "reviewEndAt": "2026-04-25T14:59:59.999Z",
+            "extendedReviewEndAt": null,
+            "beforeReviewEndAt": null,
+            "reviewlottoPosition": null,
+            "hotDealPosition": null,
+            "productPurchasePoint": null,
+            "additionalRewardPoint": null,
+            "applicantCount": 120,
+            "isPremium": true,
+            "premiumPosition": null,
+            "inspectionFee": null,
+            "category": {
+                "title": "디지털"
+            },
+            "sido": {
+                "name": "재택"
+            }
+        },
+        {
+            "id": 1159922,
+            "title": "즈다르",
+            "status": "SELECT",
+            "sort": "DELIVERY",
+            "channel": "BLOG_CLIP",
+            "paybackPlatform": null,
+            "infNum": 10,
+            "infPoint": 5000,
+            "offer": "리포솔린 1개월분 49000원상당",
+            "imageKey": "campaigns/441e5f57-3ecf-491b-934f-2dec731e3553",
+            "city": "재택",
+            "currentTurn": 1,
+            "applyEndAt": "2026-04-11T14:59:59.999Z",
+            "reviewEndAt": "2026-04-25T14:59:59.999Z",
+            "extendedReviewEndAt": null,
+            "beforeReviewEndAt": null,
+            "reviewlottoPosition": null,
+            "hotDealPosition": null,
+            "productPurchasePoint": null,
+            "additionalRewardPoint": null,
+            "applicantCount": 30,
+            "isPremium": true,
+            "premiumPosition": null,
+            "inspectionFee": null,
+            "category": {
+                "title": "뷰티"
+            },
+            "sido": {
+                "name": "재택"
+            }
+        },
+        {
+            "id": 1152262,
+            "title": "푸릉바당어묵",
+            "status": "SELECT",
+            "sort": "DELIVERY",
+            "channel": "BLOG",
+            "paybackPlatform": null,
+            "infNum": 5,
+            "infPoint": 0,
+            "offer": "푸릉바당어묵 4종(푸릉바당어묵, 톳, 소라, 전복) 랜덤 구성으로 총 4팩 제공 (32,500원 상당)",
+            "imageKey": "campaigns/a2374543-33c3-4b2e-99d2-8cac649afb11",
+            "city": "재택",
+            "currentTurn": 1,
+            "applyEndAt": "2026-04-11T14:59:59.999Z",
+            "reviewEndAt": "2026-04-25T14:59:59.999Z",
+            "extendedReviewEndAt": null,
+            "beforeReviewEndAt": null,
+            "reviewlottoPosition": null,
+            "hotDealPosition": null,
+            "productPurchasePoint": null,
+            "additionalRewardPoint": null,
+            "applicantCount": 400,
+            "isPremium": false,
+            "premiumPosition": null,
+            "inspectionFee": null,
+            "category": {
+                "title": "식품"
+            },
+            "sido": {
+                "name": "재택"
+            }
+        },
+        {
+            "id": 1152265,
+            "title": "푸릉바당어묵",
+            "status": "SELECT",
+            "sort": "DELIVERY",
+            "channel": "INSTAGRAM",
+            "paybackPlatform": null,
+            "infNum": 5,
+            "infPoint": 0,
+            "offer": "푸릉바당어묵 4종(푸릉바당어묵, 톳, 소라, 전복) 랜덤 구성으로 총 4팩 제공 (32,500원 상당)",
+            "imageKey": "campaigns/5e4bf477-675a-4a5d-92bb-90be50bab60c",
+            "city": "재택",
+            "currentTurn": 1,
+            "applyEndAt": "2026-04-11T14:59:59.999Z",
+            "reviewEndAt": "2026-04-25T14:59:59.999Z",
+            "extendedReviewEndAt": null,
+            "beforeReviewEndAt": null,
+            "reviewlottoPosition": null,
+            "hotDealPosition": null,
+            "productPurchasePoint": null,
+            "additionalRewardPoint": null,
+            "applicantCount": 174,
+            "isPremium": false,
+            "premiumPosition": null,
+            "inspectionFee": null,
+            "category": {
+                "title": "식품"
+            },
+            "sido": {
+                "name": "재택"
+            }
+        },
+        {
+            "id": 1158167,
+            "title": "주식회사 프제나",
+            "status": "SELECT",
+            "sort": "DELIVERY",
+            "channel": "INSTAGRAM",
+            "paybackPlatform": null,
+            "infNum": 5,
+            "infPoint": 0,
+            "offer": "15000원 상당의 스프레이",
+            "imageKey": "campaigns/845e13a7-d045-4793-988f-b1b56152233b",
+            "city": "재택",
+            "currentTurn": 1,
+            "applyEndAt": "2026-04-11T14:59:59.999Z",
+            "reviewEndAt": "2026-04-25T14:59:59.999Z",
+            "extendedReviewEndAt": null,
+            "beforeReviewEndAt": null,
+            "reviewlottoPosition": null,
+            "hotDealPosition": null,
+            "productPurchasePoint": null,
+            "additionalRewardPoint": null,
+            "applicantCount": 10,
+            "isPremium": false,
+            "premiumPosition": null,
+            "inspectionFee": null,
+            "category": {
+                "title": "뷰티"
+            },
+            "sido": {
+                "name": "재택"
+            }
+        },
+        {
+            "id": 1158591,
+            "title": "굿이너프 심리검사센터",
+            "status": "SELECT",
+            "sort": "DELIVERY",
+            "channel": "BLOG",
+            "paybackPlatform": null,
+            "infNum": 20,
+            "infPoint": 0,
+            "offer": "아동용 TCI 기질 및 성격검사 (5만원 상당)",
+            "imageKey": "campaigns/110b8d07-3805-4b2d-a271-c493accea2a5",
+            "city": "재택",
+            "currentTurn": 1,
+            "applyEndAt": "2026-04-11T14:59:59.999Z",
+            "reviewEndAt": "2026-04-25T14:59:59.999Z",
+            "extendedReviewEndAt": null,
+            "beforeReviewEndAt": null,
+            "reviewlottoPosition": null,
+            "hotDealPosition": null,
+            "productPurchasePoint": null,
+            "additionalRewardPoint": null,
+            "applicantCount": 17,
+            "isPremium": false,
+            "premiumPosition": null,
+            "inspectionFee": null,
+            "category": {
+                "title": "기타"
+            },
+            "sido": {
+                "name": "재택"
+            }
+        },
+        {
+            "id": 1158616,
+            "title": "건강예찬",
+            "status": "SELECT",
+            "sort": "DELIVERY",
+            "channel": "BLOG",
+            "paybackPlatform": null,
+            "infNum": 5,
+            "infPoint": 0,
+            "offer": "반찬정기배송 [기본형1회(39,000원) 또는 국제외1회(33,000원)]",
+            "imageKey": "reGenerateImage/f35cbbed-d1cb-4433-b213-3615a3d55e0f",
+            "city": "재택",
+            "currentTurn": 1,
+            "applyEndAt": "2026-04-11T14:59:59.999Z",
+            "reviewEndAt": "2026-04-25T14:59:59.999Z",
+            "extendedReviewEndAt": null,
+            "beforeReviewEndAt": null,
+            "reviewlottoPosition": null,
+            "hotDealPosition": null,
+            "productPurchasePoint": null,
+            "additionalRewardPoint": null,
+            "applicantCount": 318,
+            "isPremium": false,
+            "premiumPosition": null,
+            "inspectionFee": null,
+            "category": {
+                "title": "식품"
+            },
+            "sido": {
+                "name": "재택"
+            }
+        },
+        {
+            "id": 1158628,
+            "title": "BNRE",
+            "status": "SELECT",
+            "sort": "DELIVERY",
+            "channel": "INSTAGRAM",
+            "paybackPlatform": null,
+            "infNum": 5,
+            "infPoint": 0,
+            "offer": "바디워시 1종 (향 선택 가능) + 삼베 스크럽 1개 제공",
+            "imageKey": "campaigns/4db61509-ccd6-4f2e-9517-f2285ff102c3",
+            "city": "재택",
+            "currentTurn": 1,
+            "applyEndAt": "2026-04-11T14:59:59.999Z",
+            "reviewEndAt": "2026-04-25T14:59:59.999Z",
+            "extendedReviewEndAt": null,
+            "beforeReviewEndAt": null,
+            "reviewlottoPosition": null,
+            "hotDealPosition": null,
+            "productPurchasePoint": null,
+            "additionalRewardPoint": null,
+            "applicantCount": 130,
+            "isPremium": false,
+            "premiumPosition": null,
+            "inspectionFee": null,
+            "category": {
+                "title": "뷰티"
+            },
+            "sido": {
+                "name": "재택"
+            }
+        },
+        {
+            "id": 1158638,
+            "title": "라리베라",
+            "status": "SELECT",
+            "sort": "DELIVERY",
+            "channel": "BLOG",
+            "paybackPlatform": null,
+            "infNum": 10,
+            "infPoint": 0,
+            "offer": "1만5천원 상당의 라그랑 세안해면",
+            "imageKey": "campaigns/f581198a-df98-4876-bc05-5abfcffe048d",
+            "city": "재택",
+            "currentTurn": 1,
+            "applyEndAt": "2026-04-11T14:59:59.999Z",
+            "reviewEndAt": "2026-04-25T14:59:59.999Z",
+            "extendedReviewEndAt": null,
+            "beforeReviewEndAt": null,
+            "reviewlottoPosition": null,
+            "hotDealPosition": null,
+            "productPurchasePoint": null,
+            "additionalRewardPoint": null,
+            "applicantCount": 59,
+            "isPremium": false,
+            "premiumPosition": null,
+            "inspectionFee": null,
+            "category": {
+                "title": "뷰티"
+            },
+            "sido": {
+                "name": "재택"
+            }
+        },
+        {
+            "id": 1158647,
+            "title": "더퍼 문콕방지 도어가드",
+            "status": "SELECT",
+            "sort": "DELIVERY",
+            "channel": "BLOG",
+            "paybackPlatform": null,
+            "infNum": 20,
+            "infPoint": 0,
+            "offer": "19만3천원 상당 제품 제공",
+            "imageKey": "campaigns/a1c01050-7c35-43c8-a209-03ef9db475a9",
+            "city": "재택",
+            "currentTurn": 1,
+            "applyEndAt": "2026-04-11T14:59:59.999Z",
+            "reviewEndAt": "2026-04-25T14:59:59.999Z",
+            "extendedReviewEndAt": null,
+            "beforeReviewEndAt": null,
+            "reviewlottoPosition": null,
+            "hotDealPosition": null,
+            "productPurchasePoint": null,
+            "additionalRewardPoint": null,
+            "applicantCount": 69,
+            "isPremium": false,
+            "premiumPosition": null,
+            "inspectionFee": null,
+            "category": {
+                "title": "기타"
+            },
+            "sido": {
+                "name": "재택"
+            }
+        },
+        {
+            "id": 1158697,
+            "title": "은화담",
+            "status": "SELECT",
+            "sort": "DELIVERY",
+            "channel": "BLOG",
+            "paybackPlatform": null,
+            "infNum": 2,
+            "infPoint": 0,
+            "offer": "화과자 9구+보자기포장/48,000원",
+            "imageKey": "campaigns/7a2b53d8-5bf1-4ffc-b338-c479f1b09c06",
+            "city": "재택",
+            "currentTurn": 1,
+            "applyEndAt": "2026-04-11T14:59:59.999Z",
+            "reviewEndAt": "2026-04-25T14:59:59.999Z",
+            "extendedReviewEndAt": null,
+            "beforeReviewEndAt": null,
+            "reviewlottoPosition": null,
+            "hotDealPosition": null,
+            "productPurchasePoint": null,
+            "additionalRewardPoint": null,
+            "applicantCount": 478,
+            "isPremium": false,
+            "premiumPosition": null,
+            "inspectionFee": null,
+            "category": {
+                "title": "맛집"
+            },
+            "sido": {
+                "name": "재택"
+            }
+        }
+    ],
+    "total_pages": 50,
+    "total_count": 800
+}
+
+
+
+카테고리 선택 HTML
+<div class="w-full  divide-y border p-2"><div class="flex w-full flex-col items-center justify-between md:flex-row"><div class="w-full"><div class="my-2 grid grid-cols-6 gap-2 sm:grid-cols-10"><div class="flex cursor-pointer items-center justify-center rounded-lg bg-gray-100 py-2 text-sm bg-rn-blue-dark text-white">재택</div><div class="flex cursor-pointer items-center justify-center rounded-lg bg-gray-100 py-2 text-xs sm:text-sm false">기자단</div><div class="flex cursor-pointer items-center justify-center rounded-lg bg-gray-100 py-2 text-xs sm:text-sm false">당일지급</div><div class="flex cursor-pointer items-center justify-center rounded-lg bg-gray-100 py-2 text-sm false">서울</div><div class="flex cursor-pointer items-center justify-center rounded-lg bg-gray-100 py-2 text-sm false">경기</div><div class="flex cursor-pointer items-center justify-center rounded-lg bg-gray-100 py-2 text-sm false">인천</div><div class="flex cursor-pointer items-center justify-center rounded-lg bg-gray-100 py-2 text-sm false">강원</div><div class="flex cursor-pointer items-center justify-center rounded-lg bg-gray-100 py-2 text-sm false">대전</div><div class="flex cursor-pointer items-center justify-center rounded-lg bg-gray-100 py-2 text-sm false">세종</div><div class="flex cursor-pointer items-center justify-center rounded-lg bg-gray-100 py-2 text-sm false">충남</div><div class="flex cursor-pointer items-center justify-center rounded-lg bg-gray-100 py-2 text-sm false">충북</div><div class="flex cursor-pointer items-center justify-center rounded-lg bg-gray-100 py-2 text-sm false">부산</div><div class="flex cursor-pointer items-center justify-center rounded-lg bg-gray-100 py-2 text-sm false">울산</div><div class="flex cursor-pointer items-center justify-center rounded-lg bg-gray-100 py-2 text-sm false">경남</div><div class="flex cursor-pointer items-center justify-center rounded-lg bg-gray-100 py-2 text-sm false">경북</div><div class="flex cursor-pointer items-center justify-center rounded-lg bg-gray-100 py-2 text-sm false">대구</div><div class="flex cursor-pointer items-center justify-center rounded-lg bg-gray-100 py-2 text-sm false">광주</div><div class="flex cursor-pointer items-center justify-center rounded-lg bg-gray-100 py-2 text-sm false">전남</div><div class="flex cursor-pointer items-center justify-center rounded-lg bg-gray-100 py-2 text-sm false">전북</div><div class="flex cursor-pointer items-center justify-center rounded-lg bg-gray-100 py-2 text-sm false">제주</div></div></div></div><div class="flex w-full flex-col items-start justify-between pt-2 md:flex-row"><div class="w-full"><div class="flex flex-wrap gap-2"></div></div></div></div>
+                                                                                                                                                      
+재택 카테고리
+https://www.reviewnote.co.kr/campaigns?city=%EC%9E%AC%ED%83%9D
+
+헤더스
+Request URL
+https://www.reviewnote.co.kr/api/v2/campaigns?city=%EC%9E%AC%ED%83%9D&gugunSelected=&s=default&limit=16&page=20
+Request Method
+GET
+Status Code
+200 OK
+Remote Address
+216.150.1.65:443
+Referrer Policy
+strict-origin-when-cross-origin
+age
+0
+cache-control
+public, max-age=0, must-revalidate
+content-encoding
+br
+content-type
+application/json; charset=utf-8
+date
+Fri, 03 Apr 2026 02:22:31 GMT
+etag
+W/"d7dpm4up2c7un"
+server
+Vercel
+strict-transport-security
+max-age=63072000
+x-matched-path
+/api/v2/campaigns
+x-vercel-cache
+MISS
+x-vercel-id
+icn1::icn1::rgg8c-1775182951441-2a9e0c602a33
+:authority
+www.reviewnote.co.kr
+:method
+GET
+:path
+/api/v2/campaigns?city=%EC%9E%AC%ED%83%9D&gugunSelected=&s=default&limit=16&page=20
+:scheme
+https
+accept
+application/json, text/plain, */*
+accept-encoding
+gzip, deflate, br, zstd
+accept-language
+ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7
+cookie
+_fbp=fb.2.1774582612661.116926491488284649; _ga=GA1.1.1822335972.1774582613; __Host-next-auth.csrf-token=c74282c25903329dfe646a869765920f9d77d0509cac70c301d1c73b9817c945%7C0940bacf0febc6208f02ec47fb52b49b2c39adf714a93f0d9c184e0f551575b3; __Secure-next-auth.callback-url=https%3A%2F%2Fwww.reviewnote.co.kr; isLogin=false; reviewnoteLoginToken=false; _ga_XZVSWF43K1=GS2.1.s1775182683$o4$g1$t1775182810$j60$l0$h0; token=
+priority
+u=1, i
+referer
+https://www.reviewnote.co.kr/campaigns?city=%EC%9E%AC%ED%83%9D
+sec-ch-ua
+"Chromium";v="146", "Not-A.Brand";v="24", "Google Chrome";v="146"
+sec-ch-ua-mobile
+?0
+sec-ch-ua-platform
+"Windows"
+sec-fetch-dest
+empty
+sec-fetch-mode
+cors
+sec-fetch-site
+same-origin
+user-agent
+Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36
+
+페이로드
+city
+재택
+gugunSelected
+s
+default
+limit
+16
+page
+20
+
+프리뷰
+{page: 20,…}
+objects
+: 
+[{id: 1157591, title: "마이니슈", status: "SELECT", sort: "DELIVERY", channel: "INSTAGRAM",…},…]
+page
+: 
+20
+total_count
+: 
+800
+total_pages
+: 
+50
+
+리스폰스
+{
+    "page": 20,
+    "objects": [
+        {
+            "id": 1157591,
+            "title": "마이니슈",
+            "status": "SELECT",
+            "sort": "DELIVERY",
+            "channel": "INSTAGRAM",
+            "paybackPlatform": null,
+            "infNum": 10,
+            "infPoint": 0,
+            "offer": "랜덤색상2개,택배발송",
+            "imageKey": "campaigns/b73fc9cb-43ce-47c7-87cf-8666301cbd54",
+            "city": "재택",
+            "currentTurn": 1,
+            "applyEndAt": "2026-04-10T14:59:59.999Z",
+            "reviewEndAt": "2026-04-24T14:59:59.999Z",
+            "extendedReviewEndAt": null,
+            "beforeReviewEndAt": null,
+            "reviewlottoPosition": null,
+            "hotDealPosition": null,
+            "productPurchasePoint": null,
+            "additionalRewardPoint": null,
+            "applicantCount": 29,
+            "isPremium": false,
+            "premiumPosition": null,
+            "inspectionFee": null,
+            "category": {
+                "title": "기타"
+            },
+            "sido": {
+                "name": "재택"
+            }
+        },
+        {
+            "id": 1157871,
+            "title": "(주)거제주조 농업회사법인",
+            "status": "SELECT",
+            "sort": "DELIVERY",
+            "channel": "BLOG",
+            "paybackPlatform": null,
+            "infNum": 10,
+            "infPoint": 0,
+            "offer": "거제도가 생막걸리 숨 여섯 4병 & 숨 아홉 2병 세트 구성",
+            "imageKey": "campaigns/7ca47d58-b38e-4848-a653-d1363876c43d",
+            "city": "재택",
+            "currentTurn": 1,
+            "applyEndAt": "2026-04-10T14:59:59.999Z",
+            "reviewEndAt": "2026-04-24T14:59:59.999Z",
+            "extendedReviewEndAt": null,
+            "beforeReviewEndAt": null,
+            "reviewlottoPosition": null,
+            "hotDealPosition": null,
+            "productPurchasePoint": null,
+            "additionalRewardPoint": null,
+            "applicantCount": 397,
+            "isPremium": false,
+            "premiumPosition": null,
+            "inspectionFee": null,
+            "category": {
+                "title": "식품"
+            },
+            "sido": {
+                "name": "재택"
+            }
+        },
+        {
+            "id": 1157897,
+            "title": "오직너란다",
+            "status": "SELECT",
+            "sort": "DELIVERY",
+            "channel": "INSTAGRAM",
+            "paybackPlatform": null,
+            "infNum": 5,
+            "infPoint": 0,
+            "offer": "수제 오란다 선물세트 45개입 (41000원 상당 체험권)",
+            "imageKey": "campaigns/b01c3095-d4a6-4282-ac63-7a5d318dbd08",
+            "city": "재택",
+            "currentTurn": 1,
+            "applyEndAt": "2026-04-10T14:59:59.999Z",
+            "reviewEndAt": "2026-04-24T14:59:59.999Z",
+            "extendedReviewEndAt": null,
+            "beforeReviewEndAt": null,
+            "reviewlottoPosition": null,
+            "hotDealPosition": null,
+            "productPurchasePoint": null,
+            "additionalRewardPoint": null,
+            "applicantCount": 245,
+            "isPremium": false,
+            "premiumPosition": null,
+            "inspectionFee": null,
+            "category": {
+                "title": "식품"
+            },
+            "sido": {
+                "name": "재택"
+            }
+        },
+        {
+            "id": 1157911,
+            "title": "캣디피 프레시워터 UV살균 고양이 정수기",
+            "status": "SELECT",
+            "sort": "DELIVERY",
+            "channel": "BLOG",
+            "paybackPlatform": null,
+            "infNum": 5,
+            "infPoint": 0,
+            "offer": "캣디피 프레시워터 UV살균 고양이 정수기 1대 (필터, 모터 기본 1개씩 담아져있습니다.)",
+            "imageKey": "campaigns/cb081b50-eb7c-4353-a619-4b080cdc6e1d",
+            "city": "재택",
+            "currentTurn": 1,
+            "applyEndAt": "2026-04-10T14:59:59.999Z",
+            "reviewEndAt": "2026-04-24T14:59:59.999Z",
+            "extendedReviewEndAt": null,
+            "beforeReviewEndAt": null,
+            "reviewlottoPosition": null,
+            "hotDealPosition": null,
+            "productPurchasePoint": null,
+            "additionalRewardPoint": null,
+            "applicantCount": 109,
+            "isPremium": false,
+            "premiumPosition": null,
+            "inspectionFee": null,
+            "category": {
+                "title": "반려동물"
+            },
+            "sido": {
+                "name": "재택"
+            }
+        },
+        {
+            "id": 1157969,
+            "title": "눕지",
+            "status": "SELECT",
+            "sort": "DELIVERY",
+            "channel": "BLOG",
+            "paybackPlatform": null,
+            "infNum": 3,
+            "infPoint": 0,
+            "offer": "눕지 커브스틱 1개 / 39,000원",
+            "imageKey": "campaigns/fff93386-d9d1-41d9-96b4-be0bf940f2b2",
+            "city": "재택",
+            "currentTurn": 1,
+            "applyEndAt": "2026-04-10T14:59:59.999Z",
+            "reviewEndAt": "2026-04-24T14:59:59.999Z",
+            "extendedReviewEndAt": null,
+            "beforeReviewEndAt": null,
+            "reviewlottoPosition": null,
+            "hotDealPosition": null,
+            "productPurchasePoint": null,
+            "additionalRewardPoint": null,
+            "applicantCount": 258,
+            "isPremium": false,
+            "premiumPosition": null,
+            "inspectionFee": null,
+            "category": {
+                "title": "뷰티"
+            },
+            "sido": {
+                "name": "재택"
+            }
+        },
+        {
+            "id": 1158047,
+            "title": "구술사탕",
+            "status": "SELECT",
+            "sort": "DELIVERY",
+            "channel": "INSTAGRAM",
+            "paybackPlatform": null,
+            "infNum": 10,
+            "infPoint": 0,
+            "offer": "구술사탕(와인) 1세트 15,000원",
+            "imageKey": "campaigns/00c6f354-9b59-4056-b919-a4a384316bba",
+            "city": "재택",
+            "currentTurn": 1,
+            "applyEndAt": "2026-04-10T14:59:59.999Z",
+            "reviewEndAt": "2026-04-24T14:59:59.999Z",
+            "extendedReviewEndAt": null,
+            "beforeReviewEndAt": null,
+            "reviewlottoPosition": null,
+            "hotDealPosition": null,
+            "productPurchasePoint": null,
+            "additionalRewardPoint": null,
+            "applicantCount": 62,
+            "isPremium": false,
+            "premiumPosition": null,
+            "inspectionFee": null,
+            "category": {
+                "title": "식품"
+            },
+            "sido": {
+                "name": "재택"
+            }
+        },
+        {
+            "id": 1158164,
+            "title": "주식회사 프제나",
+            "status": "SELECT",
+            "sort": "DELIVERY",
+            "channel": "BLOG",
+            "paybackPlatform": null,
+            "infNum": 5,
+            "infPoint": 0,
+            "offer": "15000원 상당의 스프레이 무료제공",
+            "imageKey": "campaigns/af995e27-0def-486a-885e-44850dcdba36",
+            "city": "재택",
+            "currentTurn": 1,
+            "applyEndAt": "2026-04-10T14:59:59.999Z",
+            "reviewEndAt": "2026-04-24T14:59:59.999Z",
+            "extendedReviewEndAt": null,
+            "beforeReviewEndAt": null,
+            "reviewlottoPosition": null,
+            "hotDealPosition": null,
+            "productPurchasePoint": null,
+            "additionalRewardPoint": null,
+            "applicantCount": 11,
+            "isPremium": false,
+            "premiumPosition": null,
+            "inspectionFee": null,
+            "category": {
+                "title": "뷰티"
+            },
+            "sido": {
+                "name": "재택"
+            }
+        },
+        {
+            "id": 1158427,
+            "title": "르오즈",
+            "status": "SELECT",
+            "sort": "DELIVERY",
+            "channel": "BLOG",
+            "paybackPlatform": null,
+            "infNum": 10,
+            "infPoint": 0,
+            "offer": "[르오즈 시그니처 퍼퓸] L'OZ SIGNATURE PERFUME + [르오즈 하이라이트 퍼퓸] L'OZ HIGHLIGHT PERFUME",
+            "imageKey": "campaigns/cd81c6d0-7061-447c-a944-b36a25383a8c",
+            "city": "재택",
+            "currentTurn": 1,
+            "applyEndAt": "2026-04-10T14:59:59.999Z",
+            "reviewEndAt": "2026-04-24T14:59:59.999Z",
+            "extendedReviewEndAt": null,
+            "beforeReviewEndAt": null,
+            "reviewlottoPosition": null,
+            "hotDealPosition": null,
+            "productPurchasePoint": null,
+            "additionalRewardPoint": null,
+            "applicantCount": 92,
+            "isPremium": false,
+            "premiumPosition": null,
+            "inspectionFee": null,
+            "category": {
+                "title": "뷰티"
+            },
+            "sido": {
+                "name": "재택"
+            }
+        },
+        {
+            "id": 1158457,
+            "title": "스킨구하리",
+            "status": "SELECT",
+            "sort": "DELIVERY",
+            "channel": "BLOG",
+            "paybackPlatform": null,
+            "infNum": 10,
+            "infPoint": 0,
+            "offer": "센텔라 레스큐 스팟 앰플 15mL *1EA",
+            "imageKey": "campaigns/df7aa676-f2f5-49f3-beee-755bc50ef613",
+            "city": "재택",
+            "currentTurn": 1,
+            "applyEndAt": "2026-04-10T14:59:59.999Z",
+            "reviewEndAt": "2026-04-24T14:59:59.999Z",
+            "extendedReviewEndAt": null,
+            "beforeReviewEndAt": null,
+            "reviewlottoPosition": null,
+            "hotDealPosition": null,
+            "productPurchasePoint": null,
+            "additionalRewardPoint": null,
+            "applicantCount": 115,
+            "isPremium": false,
+            "premiumPosition": null,
+            "inspectionFee": null,
+            "category": {
+                "title": "뷰티"
+            },
+            "sido": {
+                "name": "재택"
+            }
+        },
+        {
+            "id": 1160818,
+            "title": "라크네",
+            "status": "SELECT",
+            "sort": "DELIVERY",
+            "channel": "BLOG",
+            "paybackPlatform": null,
+            "infNum": 5,
+            "infPoint": 0,
+            "offer": "32,900원 상당 라크네 데일리 시그니처 브라 1개 (사이즈 M,L,XL 택 1/색상 총 3가지 색상 택 1)",
+            "imageKey": "campaigns/8ee739de-38b4-4c6f-a13d-39bf21549a1f",
+            "city": "재택",
+            "currentTurn": 1,
+            "applyEndAt": "2026-04-10T14:59:59.999Z",
+            "reviewEndAt": "2026-04-24T14:59:59.999Z",
+            "extendedReviewEndAt": null,
+            "beforeReviewEndAt": null,
+            "reviewlottoPosition": null,
+            "hotDealPosition": null,
+            "productPurchasePoint": null,
+            "additionalRewardPoint": null,
+            "applicantCount": 58,
+            "isPremium": false,
+            "premiumPosition": null,
+            "inspectionFee": null,
+            "category": {
+                "title": "기타"
+            },
+            "sido": {
+                "name": "재택"
+            }
+        },
+        {
+            "id": 1161247,
+            "title": "뚜기당",
+            "status": "SELECT",
+            "sort": "DELIVERY",
+            "channel": "BLOG",
+            "paybackPlatform": null,
+            "infNum": 10,
+            "infPoint": 0,
+            "offer": "사우어캔디 1단계 + 2단계 묶음",
+            "imageKey": "campaigns/e5ec7ade-65aa-4e44-9c2d-d3c9b5b0d399",
+            "city": "재택",
+            "currentTurn": 1,
+            "applyEndAt": "2026-04-10T14:59:59.999Z",
+            "reviewEndAt": "2026-04-24T14:59:59.999Z",
+            "extendedReviewEndAt": null,
+            "beforeReviewEndAt": null,
+            "reviewlottoPosition": null,
+            "hotDealPosition": null,
+            "productPurchasePoint": null,
+            "additionalRewardPoint": null,
+            "applicantCount": 182,
+            "isPremium": false,
+            "premiumPosition": null,
+            "inspectionFee": null,
+            "category": {
+                "title": "식품"
+            },
+            "sido": {
+                "name": "재택"
+            }
+        },
+        {
+            "id": 1161375,
+            "title": "에이스몰",
+            "status": "SELECT",
+            "sort": "DELIVERY",
+            "channel": "BLOG",
+            "paybackPlatform": null,
+            "infNum": 15,
+            "infPoint": 0,
+            "offer": "킥세이프 프로 킥보드 오닉스블랙 (18만9천원)",
+            "imageKey": "campaigns/b09ac693-3e1d-4509-81a1-873739919205",
+            "city": "재택",
+            "currentTurn": 1,
+            "applyEndAt": "2026-04-10T14:59:59.999Z",
+            "reviewEndAt": "2026-04-24T14:59:59.999Z",
+            "extendedReviewEndAt": null,
+            "beforeReviewEndAt": null,
+            "reviewlottoPosition": null,
+            "hotDealPosition": null,
+            "productPurchasePoint": null,
+            "additionalRewardPoint": null,
+            "applicantCount": 327,
+            "isPremium": false,
+            "premiumPosition": null,
+            "inspectionFee": null,
+            "category": {
+                "title": "기타"
+            },
+            "sido": {
+                "name": "재택"
+            }
+        },
+        {
+            "id": 1161376,
+            "title": "정대포소갈비",
+            "status": "SELECT",
+            "sort": "DELIVERY",
+            "channel": "BLOG",
+            "paybackPlatform": null,
+            "infNum": 10,
+            "infPoint": 0,
+            "offer": "소고기폭탄된장술밥 밀키트 1세트",
+            "imageKey": "campaigns/c16f4bf5-51b1-4c44-9cc4-66cf0170098b",
+            "city": "재택",
+            "currentTurn": 1,
+            "applyEndAt": "2026-04-10T14:59:59.999Z",
+            "reviewEndAt": "2026-04-24T14:59:59.999Z",
+            "extendedReviewEndAt": null,
+            "beforeReviewEndAt": null,
+            "reviewlottoPosition": null,
+            "hotDealPosition": null,
+            "productPurchasePoint": null,
+            "additionalRewardPoint": null,
+            "applicantCount": 349,
+            "isPremium": false,
+            "premiumPosition": null,
+            "inspectionFee": null,
+            "category": {
+                "title": "식품"
+            },
+            "sido": {
+                "name": "재택"
+            }
+        },
+        {
+            "id": 1161377,
+            "title": "에이스몰",
+            "status": "SELECT",
+            "sort": "DELIVERY",
+            "channel": "BLOG",
+            "paybackPlatform": null,
+            "infNum": 15,
+            "infPoint": 0,
+            "offer": "킥세이프 프로 킥보드 모카베이지 (18만9천원)",
+            "imageKey": "campaigns/a5121ba6-be0e-4377-a031-8c5410d6773e",
+            "city": "재택",
+            "currentTurn": 1,
+            "applyEndAt": "2026-04-10T14:59:59.999Z",
+            "reviewEndAt": "2026-04-24T14:59:59.999Z",
+            "extendedReviewEndAt": null,
+            "beforeReviewEndAt": null,
+            "reviewlottoPosition": null,
+            "hotDealPosition": null,
+            "productPurchasePoint": null,
+            "additionalRewardPoint": null,
+            "applicantCount": 356,
+            "isPremium": false,
+            "premiumPosition": null,
+            "inspectionFee": null,
+            "category": {
+                "title": "기타"
+            },
+            "sido": {
+                "name": "재택"
+            }
+        },
+        {
+            "id": 1161644,
+            "title": "헬킹콩",
+            "status": "SELECT",
+            "sort": "DELIVERY",
+            "channel": "BLOG",
+            "paybackPlatform": null,
+            "infNum": 2,
+            "infPoint": 0,
+            "offer": "마그네틱보틀파우치 1개 (로고버전 / 색상 랜덤)",
+            "imageKey": "campaigns/418b493f-64ae-47a6-96af-8da2ef6ea7e7",
+            "city": "재택",
+            "currentTurn": 1,
+            "applyEndAt": "2026-04-10T14:59:59.999Z",
+            "reviewEndAt": "2026-04-24T14:59:59.999Z",
+            "extendedReviewEndAt": null,
+            "beforeReviewEndAt": null,
+            "reviewlottoPosition": null,
+            "hotDealPosition": null,
+            "productPurchasePoint": null,
+            "additionalRewardPoint": null,
+            "applicantCount": 59,
+            "isPremium": false,
+            "premiumPosition": null,
+            "inspectionFee": null,
+            "category": {
+                "title": "기타"
+            },
+            "sido": {
+                "name": "재택"
+            }
+        },
+        {
+            "id": 1161707,
+            "title": "소웨이브 구름깔창",
+            "status": "SELECT",
+            "sort": "DELIVERY",
+            "channel": "BLOG",
+            "paybackPlatform": null,
+            "infNum": 50,
+            "infPoint": 0,
+            "offer": "약 1만원내외 인체공학 구름깔창",
+            "imageKey": "campaigns/da83d40f-067d-4e55-9486-02289cd10bf0",
+            "city": "재택",
+            "currentTurn": 1,
+            "applyEndAt": "2026-04-10T14:59:59.999Z",
+            "reviewEndAt": "2026-04-24T14:59:59.999Z",
+            "extendedReviewEndAt": null,
+            "beforeReviewEndAt": null,
+            "reviewlottoPosition": null,
+            "hotDealPosition": null,
+            "productPurchasePoint": null,
+            "additionalRewardPoint": null,
+            "applicantCount": 12,
+            "isPremium": false,
+            "premiumPosition": null,
+            "inspectionFee": null,
+            "category": {
+                "title": "뷰티"
+            },
+            "sido": {
+                "name": "재택"
+            }
+        }
+    ],
+    "total_pages": 50,
+    "total_count": 800
+}
+
+
+
+기자단 카테고리
+https://www.reviewnote.co.kr/campaigns?sort=REPORTER
+
+헤더스
+Request URL
+https://www.reviewnote.co.kr/api/v2/campaigns?sort=REPORTER&gugunSelected=&s=default&limit=16&page=6
+Request Method
+GET
+Status Code
+200 OK
+Remote Address
+216.150.1.65:443
+Referrer Policy
+strict-origin-when-cross-origin
+age
+0
+cache-control
+public, max-age=0, must-revalidate
+content-encoding
+br
+content-type
+application/json; charset=utf-8
+date
+Fri, 03 Apr 2026 02:25:45 GMT
+etag
+W/"syu6hr6v3i77e"
+server
+Vercel
+strict-transport-security
+max-age=63072000
+x-matched-path
+/api/v2/campaigns
+x-vercel-cache
+MISS
+x-vercel-id
+icn1::icn1::pf2mn-1775183145091-e85f096c667a
+:authority
+www.reviewnote.co.kr
+:method
+GET
+:path
+/api/v2/campaigns?sort=REPORTER&gugunSelected=&s=default&limit=16&page=6
+:scheme
+https
+accept
+application/json, text/plain, */*
+accept-encoding
+gzip, deflate, br, zstd
+accept-language
+ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7
+cookie
+_fbp=fb.2.1774582612661.116926491488284649; _ga=GA1.1.1822335972.1774582613; __Host-next-auth.csrf-token=c74282c25903329dfe646a869765920f9d77d0509cac70c301d1c73b9817c945%7C0940bacf0febc6208f02ec47fb52b49b2c39adf714a93f0d9c184e0f551575b3; __Secure-next-auth.callback-url=https%3A%2F%2Fwww.reviewnote.co.kr; isLogin=false; reviewnoteLoginToken=false; _ga_XZVSWF43K1=GS2.1.s1775182683$o4$g1$t1775183141$j59$l0$h0; token=
+priority
+u=1, i
+referer
+https://www.reviewnote.co.kr/campaigns?sort=REPORTER
+sec-ch-ua
+"Chromium";v="146", "Not-A.Brand";v="24", "Google Chrome";v="146"
+sec-ch-ua-mobile
+?0
+sec-ch-ua-platform
+"Windows"
+sec-fetch-dest
+empty
+sec-fetch-mode
+cors
+sec-fetch-site
+same-origin
+user-agent
+Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36
+
+페이로드
+sort
+REPORTER
+gugunSelected
+s
+default
+limit
+16
+page
+6
+
+프리뷰
+{page: 6,…}
+objects
+: 
+[{id: 1122272, title: "단양브루어리", status: "PROGRESS", sort: "REPORTER", channel: "BLOG",…},…]
+page
+: 
+6
+total_count
+: 
+111
+total_pages
+: 
+7
+
+리스폰스
+{
+    "page": 6,
+    "objects": [
+        {
+            "id": 1122272,
+            "title": "단양브루어리",
+            "status": "PROGRESS",
+            "sort": "REPORTER",
+            "channel": "BLOG",
+            "paybackPlatform": null,
+            "infNum": 5,
+            "infPoint": 10000,
+            "offer": "원고료 10,000P",
+            "imageKey": "campaigns/8a71fe19-0651-4ca8-b3da-2bfa8f5c681f",
+            "city": "재택",
+            "currentTurn": 1,
+            "applyEndAt": "2026-03-20T14:59:59.999Z",
+            "reviewEndAt": "2026-04-03T14:59:59.999Z",
+            "extendedReviewEndAt": null,
+            "beforeReviewEndAt": null,
+            "reviewlottoPosition": null,
+            "hotDealPosition": null,
+            "productPurchasePoint": null,
+            "additionalRewardPoint": null,
+            "applicantCount": 336,
+            "isPremium": true,
+            "premiumPosition": null,
+            "inspectionFee": null,
+            "category": {
+                "title": "맛집"
+            },
+            "sido": {
+                "name": "재택"
+            }
+        },
+        {
+            "id": 1122307,
+            "title": "반티시즌",
+            "status": "PROGRESS",
+            "sort": "REPORTER",
+            "channel": "BLOG",
+            "paybackPlatform": null,
+            "infNum": 5,
+            "infPoint": 10000,
+            "offer": "10000포인트",
+            "imageKey": "campaigns/4a779f13-484a-4afe-83d6-1855da708b80",
+            "city": "재택",
+            "currentTurn": 1,
+            "applyEndAt": "2026-03-20T14:59:59.999Z",
+            "reviewEndAt": "2026-04-03T14:59:59.999Z",
+            "extendedReviewEndAt": null,
+            "beforeReviewEndAt": null,
+            "reviewlottoPosition": null,
+            "hotDealPosition": null,
+            "productPurchasePoint": null,
+            "additionalRewardPoint": null,
+            "applicantCount": 218,
+            "isPremium": true,
+            "premiumPosition": null,
+            "inspectionFee": null,
+            "category": {
+                "title": "기타"
+            },
+            "sido": {
+                "name": "재택"
+            }
+        },
+        {
+            "id": 1122975,
+            "title": "변기막힘",
+            "status": "PROGRESS",
+            "sort": "REPORTER",
+            "channel": "BLOG",
+            "paybackPlatform": null,
+            "infNum": 3,
+            "infPoint": 10000,
+            "offer": "원고료 10,000P",
+            "imageKey": "campaigns/17ab055c-371e-4f85-8f11-195520b42981",
+            "city": "재택",
+            "currentTurn": 1,
+            "applyEndAt": "2026-03-20T14:59:59.999Z",
+            "reviewEndAt": "2026-04-03T14:59:59.999Z",
+            "extendedReviewEndAt": null,
+            "beforeReviewEndAt": null,
+            "reviewlottoPosition": null,
+            "hotDealPosition": null,
+            "productPurchasePoint": null,
+            "additionalRewardPoint": null,
+            "applicantCount": 196,
+            "isPremium": true,
+            "premiumPosition": null,
+            "inspectionFee": null,
+            "category": {
+                "title": "기타"
+            },
+            "sido": {
+                "name": "재택"
+            }
+        },
+        {
+            "id": 1122308,
+            "title": "밑주락",
+            "status": "PROGRESS",
+            "sort": "REPORTER",
+            "channel": "INSTAGRAM",
+            "paybackPlatform": null,
+            "infNum": 10,
+            "infPoint": 5000,
+            "offer": "사진과 영상, 원고전달",
+            "imageKey": "campaigns/abcc0ce8-7b73-42d9-ade5-a9ab85a957c6",
+            "city": "재택",
+            "currentTurn": 1,
+            "applyEndAt": "2026-03-20T14:59:59.999Z",
+            "reviewEndAt": "2026-04-03T14:59:59.999Z",
+            "extendedReviewEndAt": "2026-04-17T14:59:59.999Z",
+            "beforeReviewEndAt": null,
+            "reviewlottoPosition": null,
+            "hotDealPosition": null,
+            "productPurchasePoint": null,
+            "additionalRewardPoint": null,
+            "applicantCount": 100,
+            "isPremium": true,
+            "premiumPosition": null,
+            "inspectionFee": null,
+            "category": {
+                "title": "맛집"
+            },
+            "sido": {
+                "name": "재택"
+            }
+        },
+        {
+            "id": 1127023,
+            "title": "글룩스",
+            "status": "PROGRESS",
+            "sort": "REPORTER",
+            "channel": "BLOG",
+            "paybackPlatform": null,
+            "infNum": 10,
+            "infPoint": 10000,
+            "offer": "원고료 1만 포인트",
+            "imageKey": "campaigns/3c31715b-6a05-4cf4-9588-318742a75818",
+            "city": "재택",
+            "currentTurn": 1,
+            "applyEndAt": "2026-03-20T12:55:29.209Z",
+            "reviewEndAt": "2026-04-04T14:59:59.999Z",
+            "extendedReviewEndAt": null,
+            "beforeReviewEndAt": null,
+            "reviewlottoPosition": null,
+            "hotDealPosition": null,
+            "productPurchasePoint": null,
+            "additionalRewardPoint": null,
+            "applicantCount": 138,
+            "isPremium": true,
+            "premiumPosition": null,
+            "inspectionFee": null,
+            "category": {
+                "title": "기타"
+            },
+            "sido": {
+                "name": "재택"
+            }
+        },
+        {
+            "id": 1128615,
+            "title": "한림칼국수 표선점",
+            "status": "PROGRESS",
+            "sort": "REPORTER",
+            "channel": "BLOG",
+            "paybackPlatform": null,
+            "infNum": 7,
+            "infPoint": 10000,
+            "offer": "1만 포인트",
+            "imageKey": "campaigns/a80a3221-0a96-4d7a-ad79-d0082cea212e",
+            "city": "재택",
+            "currentTurn": 1,
+            "applyEndAt": "2026-03-20T05:19:08.709Z",
+            "reviewEndAt": "2026-04-05T14:59:59.999Z",
+            "extendedReviewEndAt": null,
+            "beforeReviewEndAt": null,
+            "reviewlottoPosition": null,
+            "hotDealPosition": null,
+            "productPurchasePoint": null,
+            "additionalRewardPoint": null,
+            "applicantCount": 338,
+            "isPremium": true,
+            "premiumPosition": null,
+            "inspectionFee": null,
+            "category": {
+                "title": "맛집"
+            },
+            "sido": {
+                "name": "재택"
+            }
+        },
+        {
+            "id": 1123093,
+            "title": "글룩스 가맹점",
+            "status": "PROGRESS",
+            "sort": "REPORTER",
+            "channel": "BLOG",
+            "paybackPlatform": null,
+            "infNum": 4,
+            "infPoint": 10000,
+            "offer": "원고료 10,000원",
+            "imageKey": "campaigns/b8fb9bbe-e176-49f5-9b10-558911d4622c",
+            "city": "재택",
+            "currentTurn": 1,
+            "applyEndAt": "2026-03-19T23:09:41.375Z",
+            "reviewEndAt": "2026-04-03T14:59:59.999Z",
+            "extendedReviewEndAt": null,
+            "beforeReviewEndAt": null,
+            "reviewlottoPosition": null,
+            "hotDealPosition": null,
+            "productPurchasePoint": null,
+            "additionalRewardPoint": null,
+            "applicantCount": 177,
+            "isPremium": true,
+            "premiumPosition": null,
+            "inspectionFee": null,
+            "category": {
+                "title": "기타"
+            },
+            "sido": {
+                "name": "재택"
+            }
+        },
+        {
+            "id": 1125546,
+            "title": "성수역 곱창 맛집",
+            "status": "PROGRESS",
+            "sort": "REPORTER",
+            "channel": "BLOG",
+            "paybackPlatform": null,
+            "infNum": 10,
+            "infPoint": 10000,
+            "offer": "1만 포인트",
+            "imageKey": "campaigns/99437c4b-e2f2-4431-8b21-f3ca1ad693e3",
+            "city": "재택",
+            "currentTurn": 1,
+            "applyEndAt": "2026-03-19T00:48:46.309Z",
+            "reviewEndAt": "2026-04-04T14:59:59.999Z",
+            "extendedReviewEndAt": null,
+            "beforeReviewEndAt": null,
+            "reviewlottoPosition": null,
+            "hotDealPosition": null,
+            "productPurchasePoint": null,
+            "additionalRewardPoint": null,
+            "applicantCount": 370,
+            "isPremium": true,
+            "premiumPosition": null,
+            "inspectionFee": null,
+            "category": {
+                "title": "맛집"
+            },
+            "sido": {
+                "name": "재택"
+            }
+        },
+        {
+            "id": 1129500,
+            "title": "화성요양원",
+            "status": "PROGRESS",
+            "sort": "REPORTER",
+            "channel": "BLOG",
+            "paybackPlatform": null,
+            "infNum": 1,
+            "infPoint": 25000,
+            "offer": "원고료 25,000원",
+            "imageKey": "campaigns/f1da7456-b423-4dff-bfcd-a0bfad25a129",
+            "city": "재택",
+            "currentTurn": 1,
+            "applyEndAt": "2026-03-18T08:37:50.087Z",
+            "reviewEndAt": "2026-04-05T14:59:59.999Z",
+            "extendedReviewEndAt": null,
+            "beforeReviewEndAt": null,
+            "reviewlottoPosition": null,
+            "hotDealPosition": null,
+            "productPurchasePoint": null,
+            "additionalRewardPoint": null,
+            "applicantCount": 187,
+            "isPremium": true,
+            "premiumPosition": null,
+            "inspectionFee": null,
+            "category": {
+                "title": "기타"
+            },
+            "sido": {
+                "name": "재택"
+            }
+        },
+        {
+            "id": 1128510,
+            "title": "로아트법률행정사사무소",
+            "status": "PROGRESS",
+            "sort": "REPORTER",
+            "channel": "BLOG",
+            "paybackPlatform": null,
+            "infNum": 10,
+            "infPoint": 10000,
+            "offer": "원고료 10,000원",
+            "imageKey": "campaigns/6796241d-fea6-4389-8f4a-5cbc1bf01de2",
+            "city": "재택",
+            "currentTurn": 1,
+            "applyEndAt": "2026-03-18T06:51:01.144Z",
+            "reviewEndAt": "2026-04-05T14:59:59.999Z",
+            "extendedReviewEndAt": null,
+            "beforeReviewEndAt": null,
+            "reviewlottoPosition": null,
+            "hotDealPosition": null,
+            "productPurchasePoint": null,
+            "additionalRewardPoint": null,
+            "applicantCount": 119,
+            "isPremium": true,
+            "premiumPosition": null,
+            "inspectionFee": null,
+            "category": {
+                "title": "기타"
+            },
+            "sido": {
+                "name": "재택"
+            }
+        },
+        {
+            "id": 1132542,
+            "title": "온독애견카페",
+            "status": "PROGRESS",
+            "sort": "REPORTER",
+            "channel": "BLOG",
+            "paybackPlatform": null,
+            "infNum": 3,
+            "infPoint": 10000,
+            "offer": "10000포인트",
+            "imageKey": "campaigns/4e70abda-5b1e-400d-b864-8a4b4a53c7b0",
+            "city": "재택",
+            "currentTurn": 1,
+            "applyEndAt": "2026-03-18T00:07:49.553Z",
+            "reviewEndAt": "2026-04-05T14:59:59.999Z",
+            "extendedReviewEndAt": null,
+            "beforeReviewEndAt": null,
+            "reviewlottoPosition": null,
+            "hotDealPosition": null,
+            "productPurchasePoint": null,
+            "additionalRewardPoint": null,
+            "applicantCount": 178,
+            "isPremium": true,
+            "premiumPosition": null,
+            "inspectionFee": null,
+            "category": {
+                "title": "기타"
+            },
+            "sido": {
+                "name": "재택"
+            }
+        },
+        {
+            "id": 1124641,
+            "title": "퍼펙트방충망",
+            "status": "PROGRESS",
+            "sort": "REPORTER",
+            "channel": "BLOG",
+            "paybackPlatform": null,
+            "infNum": 5,
+            "infPoint": 10000,
+            "offer": "10000포인트",
+            "imageKey": "campaigns/9b682706-3d7c-4d9c-9d4e-871e09344f6f",
+            "city": "재택",
+            "currentTurn": 1,
+            "applyEndAt": "2026-03-17T08:15:01.689Z",
+            "reviewEndAt": "2026-04-04T14:59:59.999Z",
+            "extendedReviewEndAt": null,
+            "beforeReviewEndAt": null,
+            "reviewlottoPosition": null,
+            "hotDealPosition": null,
+            "productPurchasePoint": null,
+            "additionalRewardPoint": null,
+            "applicantCount": 166,
+            "isPremium": true,
+            "premiumPosition": null,
+            "inspectionFee": null,
+            "category": {
+                "title": "기타"
+            },
+            "sido": {
+                "name": "재택"
+            }
+        },
+        {
+            "id": 1124651,
+            "title": "퍼펙트방충망 송파점",
+            "status": "PROGRESS",
+            "sort": "REPORTER",
+            "channel": "BLOG",
+            "paybackPlatform": null,
+            "infNum": 5,
+            "infPoint": 10000,
+            "offer": "10000포인트",
+            "imageKey": "campaigns/a1148f39-8cf5-4ef8-bb9b-9b97365366de",
+            "city": "재택",
+            "currentTurn": 1,
+            "applyEndAt": "2026-03-17T07:46:15.618Z",
+            "reviewEndAt": "2026-04-03T14:59:59.999Z",
+            "extendedReviewEndAt": null,
+            "beforeReviewEndAt": null,
+            "reviewlottoPosition": null,
+            "hotDealPosition": null,
+            "productPurchasePoint": null,
+            "additionalRewardPoint": null,
+            "applicantCount": 128,
+            "isPremium": true,
+            "premiumPosition": null,
+            "inspectionFee": null,
+            "category": {
+                "title": "기타"
+            },
+            "sido": {
+                "name": "재택"
+            }
+        },
+        {
+            "id": 1127513,
+            "title": "온독애견카페",
+            "status": "PROGRESS",
+            "sort": "REPORTER",
+            "channel": "BLOG",
+            "paybackPlatform": null,
+            "infNum": 3,
+            "infPoint": 10000,
+            "offer": "10000포인트",
+            "imageKey": "campaigns/4e70abda-5b1e-400d-b864-8a4b4a53c7b0",
+            "city": "재택",
+            "currentTurn": 1,
+            "applyEndAt": "2026-03-16T00:47:16.741Z",
+            "reviewEndAt": "2026-04-03T14:59:59.999Z",
+            "extendedReviewEndAt": null,
+            "beforeReviewEndAt": null,
+            "reviewlottoPosition": null,
+            "hotDealPosition": null,
+            "productPurchasePoint": null,
+            "additionalRewardPoint": null,
+            "applicantCount": 185,
+            "isPremium": true,
+            "premiumPosition": null,
+            "inspectionFee": null,
+            "category": {
+                "title": "기타"
+            },
+            "sido": {
+                "name": "재택"
+            }
+        },
+        {
+            "id": 1105959,
+            "title": "블라블라",
+            "status": "PROGRESS",
+            "sort": "REPORTER",
+            "channel": "BLOG",
+            "paybackPlatform": null,
+            "infNum": 5,
+            "infPoint": 10000,
+            "offer": "10000포인트",
+            "imageKey": "campaigns/9cc0b1b6-d105-4a7d-88e7-2c452a555bb8",
+            "city": "재택",
+            "currentTurn": 1,
+            "applyEndAt": "2026-03-05T09:40:06.356Z",
+            "reviewEndAt": "2026-03-21T14:59:59.999Z",
+            "extendedReviewEndAt": "2026-04-04T14:59:59.999Z",
+            "beforeReviewEndAt": null,
+            "reviewlottoPosition": null,
+            "hotDealPosition": null,
+            "productPurchasePoint": null,
+            "additionalRewardPoint": null,
+            "applicantCount": 243,
+            "isPremium": true,
+            "premiumPosition": null,
+            "inspectionFee": null,
+            "category": {
+                "title": "기타"
+            },
+            "sido": {
+                "name": "재택"
+            }
+        }
+    ],
+    "total_pages": 7,
+    "total_count": 111
+}
+
+
+서울 카테고리
+https://www.reviewnote.co.kr/campaigns?city=%EC%84%9C%EC%9A%B8
+
+헤더스
+Request URL
+https://www.reviewnote.co.kr/api/v2/campaigns?city=%EC%84%9C%EC%9A%B8&gugunSelected=&s=default&limit=16&page=9
+Request Method
+GET
+Status Code
+200 OK
+Remote Address
+216.150.1.65:443
+Referrer Policy
+strict-origin-when-cross-origin
+age
+0
+cache-control
+public, max-age=0, must-revalidate
+content-encoding
+br
+content-type
+application/json; charset=utf-8
+date
+Fri, 03 Apr 2026 02:26:52 GMT
+etag
+W/"rilal6kami7tn"
+server
+Vercel
+strict-transport-security
+max-age=63072000
+x-matched-path
+/api/v2/campaigns
+x-vercel-cache
+MISS
+x-vercel-id
+icn1::icn1::jntnh-1775183212363-72c8d697d539
+:authority
+www.reviewnote.co.kr
+:method
+GET
+:path
+/api/v2/campaigns?city=%EC%84%9C%EC%9A%B8&gugunSelected=&s=default&limit=16&page=9
+:scheme
+https
+accept
+application/json, text/plain, */*
+accept-encoding
+gzip, deflate, br, zstd
+accept-language
+ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7
+cookie
+_fbp=fb.2.1774582612661.116926491488284649; _ga=GA1.1.1822335972.1774582613; __Host-next-auth.csrf-token=c74282c25903329dfe646a869765920f9d77d0509cac70c301d1c73b9817c945%7C0940bacf0febc6208f02ec47fb52b49b2c39adf714a93f0d9c184e0f551575b3; __Secure-next-auth.callback-url=https%3A%2F%2Fwww.reviewnote.co.kr; isLogin=false; reviewnoteLoginToken=false; _ga_XZVSWF43K1=GS2.1.s1775182683$o4$g1$t1775183205$j60$l0$h0; token=
+priority
+u=1, i
+referer
+https://www.reviewnote.co.kr/campaigns?city=%EC%84%9C%EC%9A%B8
+sec-ch-ua
+"Chromium";v="146", "Not-A.Brand";v="24", "Google Chrome";v="146"
+sec-ch-ua-mobile
+?0
+sec-ch-ua-platform
+"Windows"
+sec-fetch-dest
+empty
+sec-fetch-mode
+cors
+sec-fetch-site
+same-origin
+user-agent
+Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36
+
+페이로드
+city
+서울
+gugunSelected
+s
+default
+limit
+16
+page
+9
+
+프리뷰
+{page: 9,…}
+objects
+: 
+[{id: 1160249, title: "시원한산책", status: "SELECT", sort: "VISIT", channel: "INSTAGRAM",…},…]
+page
+: 
+9
+total_count
+: 
+800
+total_pages
+: 
+50
+
+리스폰스
+{
+    "page": 9,
+    "objects": [
+        {
+            "id": 1160249,
+            "title": "시원한산책",
+            "status": "SELECT",
+            "sort": "VISIT",
+            "channel": "INSTAGRAM",
+            "paybackPlatform": null,
+            "infNum": 10,
+            "infPoint": 0,
+            "offer": "요거트 아이스크림 2개 (총 16,000원), 음료 2잔",
+            "imageKey": "campaigns/c71891d5-e560-4bde-b2bc-3684f5c293cd",
+            "city": "서울",
+            "currentTurn": 1,
+            "applyEndAt": "2026-04-12T14:59:59.999Z",
+            "reviewEndAt": "2026-04-26T14:59:59.999Z",
+            "extendedReviewEndAt": null,
+            "beforeReviewEndAt": null,
+            "reviewlottoPosition": null,
+            "hotDealPosition": null,
+            "productPurchasePoint": null,
+            "additionalRewardPoint": null,
+            "applicantCount": 10,
+            "isPremium": false,
+            "premiumPosition": null,
+            "inspectionFee": null,
+            "category": {
+                "title": "맛집"
+            },
+            "sido": {
+                "name": "종로구"
+            }
+        },
+        {
+            "id": 1160250,
+            "title": "멘야리 성신여대직영점",
+            "status": "SELECT",
+            "sort": "VISIT",
+            "channel": "BLOG",
+            "paybackPlatform": null,
+            "infNum": 10,
+            "infPoint": 0,
+            "offer": "1인당 2만원",
+            "imageKey": "campaigns/f87b97e7-5679-4a0d-9ed8-117a65146e25",
+            "city": "서울",
+            "currentTurn": 1,
+            "applyEndAt": "2026-04-12T14:59:59.999Z",
+            "reviewEndAt": "2026-04-26T14:59:59.999Z",
+            "extendedReviewEndAt": null,
+            "beforeReviewEndAt": null,
+            "reviewlottoPosition": null,
+            "hotDealPosition": null,
+            "productPurchasePoint": null,
+            "additionalRewardPoint": null,
+            "applicantCount": 20,
+            "isPremium": false,
+            "premiumPosition": null,
+            "inspectionFee": null,
+            "category": {
+                "title": "맛집"
+            },
+            "sido": {
+                "name": "성북구"
+            }
+        },
+        {
+            "id": 1160251,
+            "title": "나디뷰티",
+            "status": "SELECT",
+            "sort": "VISIT",
+            "channel": "BLOG",
+            "paybackPlatform": null,
+            "infNum": 20,
+            "infPoint": 0,
+            "offer": "속눈썹펌",
+            "imageKey": "reGenerateImage/ffdae455-c128-480d-b753-3b61bcf1a394",
+            "city": "서울",
+            "currentTurn": 1,
+            "applyEndAt": "2026-04-12T14:59:59.999Z",
+            "reviewEndAt": "2026-04-26T14:59:59.999Z",
+            "extendedReviewEndAt": null,
+            "beforeReviewEndAt": null,
+            "reviewlottoPosition": null,
+            "hotDealPosition": null,
+            "productPurchasePoint": null,
+            "additionalRewardPoint": null,
+            "applicantCount": 0,
+            "isPremium": false,
+            "premiumPosition": null,
+            "inspectionFee": null,
+            "category": {
+                "title": "뷰티"
+            },
+            "sido": {
+                "name": "동작구"
+            }
+        },
+        {
+            "id": 1160352,
+            "title": "아이브로우바메이킹 신림점",
+            "status": "SELECT",
+            "sort": "VISIT",
+            "channel": "BLOG",
+            "paybackPlatform": null,
+            "infNum": 5,
+            "infPoint": 0,
+            "offer": "눈썹왁싱 2만7천원 /헤어라인 왁싱 2만5천원 / 겨드랑이 2만원 택1",
+            "imageKey": "campaigns/e85c5957-606d-4265-b67f-e5d503909e05",
+            "city": "서울",
+            "currentTurn": 1,
+            "applyEndAt": "2026-04-12T14:59:59.999Z",
+            "reviewEndAt": "2026-04-26T14:59:59.999Z",
+            "extendedReviewEndAt": null,
+            "beforeReviewEndAt": null,
+            "reviewlottoPosition": null,
+            "hotDealPosition": null,
+            "productPurchasePoint": null,
+            "additionalRewardPoint": null,
+            "applicantCount": 6,
+            "isPremium": false,
+            "premiumPosition": null,
+            "inspectionFee": null,
+            "category": {
+                "title": "뷰티"
+            },
+            "sido": {
+                "name": "관악구"
+            }
+        },
+        {
+            "id": 1160528,
+            "title": "역전포차",
+            "status": "SELECT",
+            "sort": "VISIT",
+            "channel": "BLOG",
+            "paybackPlatform": null,
+            "infNum": 10,
+            "infPoint": 0,
+            "offer": "소고기샤브전골 제공+3천원 이용권",
+            "imageKey": "campaigns/61b3ef3f-8934-488f-acc7-687f066f51c9",
+            "city": "서울",
+            "currentTurn": 1,
+            "applyEndAt": "2026-04-12T14:59:59.999Z",
+            "reviewEndAt": "2026-04-26T14:59:59.999Z",
+            "extendedReviewEndAt": null,
+            "beforeReviewEndAt": null,
+            "reviewlottoPosition": null,
+            "hotDealPosition": null,
+            "productPurchasePoint": null,
+            "additionalRewardPoint": null,
+            "applicantCount": 6,
+            "isPremium": false,
+            "premiumPosition": null,
+            "inspectionFee": null,
+            "category": {
+                "title": "맛집"
+            },
+            "sido": {
+                "name": "노원구"
+            }
+        },
+        {
+            "id": 1160538,
+            "title": "시타 스튜디오",
+            "status": "SELECT",
+            "sort": "VISIT",
+            "channel": "INSTAGRAM",
+            "paybackPlatform": null,
+            "infNum": 10,
+            "infPoint": 0,
+            "offer": "한복 무료 제공 한옥세트에서 촬영한 원본과 포토샵6장 4x6인치 사진 6장 인화해드립니다(1인당 12만원) 3시간 정도 소요",
+            "imageKey": "campaigns/dd5c190b-2079-4aa3-9c22-51455efee530",
+            "city": "서울",
+            "currentTurn": 1,
+            "applyEndAt": "2026-04-12T14:59:59.999Z",
+            "reviewEndAt": "2026-04-26T14:59:59.999Z",
+            "extendedReviewEndAt": null,
+            "beforeReviewEndAt": null,
+            "reviewlottoPosition": null,
+            "hotDealPosition": null,
+            "productPurchasePoint": null,
+            "additionalRewardPoint": null,
+            "applicantCount": 10,
+            "isPremium": false,
+            "premiumPosition": null,
+            "inspectionFee": null,
+            "category": {
+                "title": "기타"
+            },
+            "sido": {
+                "name": "종로구"
+            }
+        },
+        {
+            "id": 1160607,
+            "title": "브라운몬스터",
+            "status": "SELECT",
+            "sort": "VISIT",
+            "channel": "BLOG",
+            "paybackPlatform": null,
+            "infNum": 5,
+            "infPoint": 0,
+            "offer": "에르고라인1회 + 스마트썬1회 + 상급자로션+ 보습로션지원",
+            "imageKey": "campaigns/af36fe83-df36-4b8e-90a7-223b01fe59fa",
+            "city": "서울",
+            "currentTurn": 1,
+            "applyEndAt": "2026-04-12T14:59:59.999Z",
+            "reviewEndAt": "2026-04-26T14:59:59.999Z",
+            "extendedReviewEndAt": null,
+            "beforeReviewEndAt": null,
+            "reviewlottoPosition": null,
+            "hotDealPosition": null,
+            "productPurchasePoint": null,
+            "additionalRewardPoint": null,
+            "applicantCount": 0,
+            "isPremium": false,
+            "premiumPosition": null,
+            "inspectionFee": null,
+            "category": {
+                "title": "뷰티"
+            },
+            "sido": {
+                "name": "강동구"
+            }
+        },
+        {
+            "id": 1160746,
+            "title": "아야나원스파",
+            "status": "SELECT",
+            "sort": "VISIT",
+            "channel": "BLOG",
+            "paybackPlatform": null,
+            "infNum": 5,
+            "infPoint": 0,
+            "offer": "골반밸런스케어 60분 20만원",
+            "imageKey": "campaigns/706dee2d-3cef-4c54-b49b-1d706b47990a",
+            "city": "서울",
+            "currentTurn": 1,
+            "applyEndAt": "2026-04-12T14:59:59.999Z",
+            "reviewEndAt": "2026-04-26T14:59:59.999Z",
+            "extendedReviewEndAt": null,
+            "beforeReviewEndAt": null,
+            "reviewlottoPosition": null,
+            "hotDealPosition": null,
+            "productPurchasePoint": null,
+            "additionalRewardPoint": null,
+            "applicantCount": 58,
+            "isPremium": false,
+            "premiumPosition": null,
+            "inspectionFee": null,
+            "category": {
+                "title": "뷰티"
+            },
+            "sido": {
+                "name": "용산구"
+            }
+        },
+        {
+            "id": 1160854,
+            "title": "비노폴리오",
+            "status": "SELECT",
+            "sort": "VISIT",
+            "channel": "BLOG",
+            "paybackPlatform": null,
+            "infNum": 2,
+            "infPoint": 0,
+            "offer": "라 리스 스와 디보어 슈냉 블랑 1병 : 27,000 이상",
+            "imageKey": "campaigns/0efc7af8-a215-43b8-96f3-7454d04e0688",
+            "city": "서울",
+            "currentTurn": 1,
+            "applyEndAt": "2026-04-12T14:59:59.999Z",
+            "reviewEndAt": "2026-04-26T14:59:59.999Z",
+            "extendedReviewEndAt": null,
+            "beforeReviewEndAt": null,
+            "reviewlottoPosition": null,
+            "hotDealPosition": null,
+            "productPurchasePoint": null,
+            "additionalRewardPoint": null,
+            "applicantCount": 7,
+            "isPremium": false,
+            "premiumPosition": null,
+            "inspectionFee": null,
+            "category": {
+                "title": "식품"
+            },
+            "sido": {
+                "name": "서초구"
+            }
+        },
+        {
+            "id": 1161036,
+            "title": "미앤미스킨앤바디이지다양재점",
+            "status": "SELECT",
+            "sort": "VISIT",
+            "channel": "BLOG",
+            "paybackPlatform": null,
+            "infNum": 3,
+            "infPoint": 0,
+            "offer": "이지샷윤곽테라피 or 이지샷 테라피 25만원",
+            "imageKey": "campaigns/29a6b376-dc7e-4e61-a758-0a3cb0c5e861",
+            "city": "서울",
+            "currentTurn": 1,
+            "applyEndAt": "2026-04-12T14:59:59.999Z",
+            "reviewEndAt": "2026-04-26T14:59:59.999Z",
+            "extendedReviewEndAt": null,
+            "beforeReviewEndAt": null,
+            "reviewlottoPosition": null,
+            "hotDealPosition": null,
+            "productPurchasePoint": null,
+            "additionalRewardPoint": null,
+            "applicantCount": 35,
+            "isPremium": false,
+            "premiumPosition": null,
+            "inspectionFee": null,
+            "category": {
+                "title": "뷰티"
+            },
+            "sido": {
+                "name": "서초구"
+            }
+        },
+        {
+            "id": 1161113,
+            "title": "여의도미나리삼겹 본점",
+            "status": "SELECT",
+            "sort": "VISIT",
+            "channel": "BLOG",
+            "paybackPlatform": null,
+            "infNum": 20,
+            "infPoint": 0,
+            "offer": "3만원 식사이용권 점심 메뉴 체험단 입니다 :)",
+            "imageKey": "reGenerateImage/bfd05b65-3eba-4cb6-9998-08507efd6ce5",
+            "city": "서울",
+            "currentTurn": 1,
+            "applyEndAt": "2026-04-12T14:59:59.999Z",
+            "reviewEndAt": "2026-04-26T14:59:59.999Z",
+            "extendedReviewEndAt": null,
+            "beforeReviewEndAt": null,
+            "reviewlottoPosition": null,
+            "hotDealPosition": null,
+            "productPurchasePoint": null,
+            "additionalRewardPoint": null,
+            "applicantCount": 15,
+            "isPremium": false,
+            "premiumPosition": null,
+            "inspectionFee": null,
+            "category": {
+                "title": "맛집"
+            },
+            "sido": {
+                "name": "영등포구"
+            }
+        },
+        {
+            "id": 1161121,
+            "title": "이담피부왁싱",
+            "status": "SELECT",
+            "sort": "VISIT",
+            "channel": "BLOG",
+            "paybackPlatform": null,
+            "infNum": 3,
+            "infPoint": 0,
+            "offer": "📢택1 기재 (대리체험 불가): 브라질리언ㅣ임산부 브라질리언ㅣ페이스 1곳ㅣ바디 1곳(팔, 다리 전체 불가)",
+            "imageKey": "campaigns/825e05df-00f9-4cf6-95f2-d1de650cf090",
+            "city": "서울",
+            "currentTurn": 1,
+            "applyEndAt": "2026-04-12T14:59:59.999Z",
+            "reviewEndAt": "2026-04-26T14:59:59.999Z",
+            "extendedReviewEndAt": null,
+            "beforeReviewEndAt": null,
+            "reviewlottoPosition": null,
+            "hotDealPosition": null,
+            "productPurchasePoint": null,
+            "additionalRewardPoint": null,
+            "applicantCount": 1,
+            "isPremium": false,
+            "premiumPosition": null,
+            "inspectionFee": null,
+            "category": {
+                "title": "뷰티"
+            },
+            "sido": {
+                "name": "관악구"
+            }
+        },
+        {
+            "id": 1161134,
+            "title": "릿에스테틱",
+            "status": "SELECT",
+            "sort": "VISIT",
+            "channel": "BLOG",
+            "paybackPlatform": null,
+            "infNum": 5,
+            "infPoint": 0,
+            "offer": "13만원 상당의 릿 베이직 페이스 라인관리(약 60분) OR 11만원 상당의 릿 베이직 수분/진정 케어(약 60분)",
+            "imageKey": "campaigns/b055c53f-b657-4e0c-bfaa-13c8ce2e018b",
+            "city": "서울",
+            "currentTurn": 1,
+            "applyEndAt": "2026-04-12T14:59:59.999Z",
+            "reviewEndAt": "2026-04-26T14:59:59.999Z",
+            "extendedReviewEndAt": null,
+            "beforeReviewEndAt": null,
+            "reviewlottoPosition": null,
+            "hotDealPosition": null,
+            "productPurchasePoint": null,
+            "additionalRewardPoint": null,
+            "applicantCount": 74,
+            "isPremium": false,
+            "premiumPosition": null,
+            "inspectionFee": null,
+            "category": {
+                "title": "뷰티"
+            },
+            "sido": {
+                "name": "중구"
+            }
+        },
+        {
+            "id": 1161139,
+            "title": "에이바헤어 외대점",
+            "status": "SELECT",
+            "sort": "VISIT",
+            "channel": "BLOG",
+            "paybackPlatform": null,
+            "infNum": 10,
+            "infPoint": 0,
+            "offer": "염색,클리닉",
+            "imageKey": "campaigns/3a062008-3ffe-405d-b444-9a1a1dc5a518",
+            "city": "서울",
+            "currentTurn": 1,
+            "applyEndAt": "2026-04-12T14:59:59.999Z",
+            "reviewEndAt": "2026-04-26T14:59:59.999Z",
+            "extendedReviewEndAt": null,
+            "beforeReviewEndAt": null,
+            "reviewlottoPosition": null,
+            "hotDealPosition": null,
+            "productPurchasePoint": null,
+            "additionalRewardPoint": null,
+            "applicantCount": 13,
+            "isPremium": false,
+            "premiumPosition": null,
+            "inspectionFee": null,
+            "category": {
+                "title": "뷰티"
+            },
+            "sido": {
+                "name": "동대문구"
+            }
+        },
+        {
+            "id": 1161140,
+            "title": "유어다이닝",
+            "status": "SELECT",
+            "sort": "VISIT",
+            "channel": "BLOG",
+            "paybackPlatform": null,
+            "infNum": 10,
+            "infPoint": 0,
+            "offer": "식사권 4만원권",
+            "imageKey": "reGenerateImage/325c7926-707f-4306-ba89-0a496096b5bc",
+            "city": "서울",
+            "currentTurn": 1,
+            "applyEndAt": "2026-04-12T14:59:59.999Z",
+            "reviewEndAt": "2026-04-26T14:59:59.999Z",
+            "extendedReviewEndAt": null,
+            "beforeReviewEndAt": null,
+            "reviewlottoPosition": null,
+            "hotDealPosition": null,
+            "productPurchasePoint": null,
+            "additionalRewardPoint": null,
+            "applicantCount": 23,
+            "isPremium": false,
+            "premiumPosition": null,
+            "inspectionFee": null,
+            "category": {
+                "title": "맛집"
+            },
+            "sido": {
+                "name": "마포구"
+            }
+        },
+        {
+            "id": 1161148,
+            "title": "팀하드피트니스 한남점",
+            "status": "SELECT",
+            "sort": "VISIT",
+            "channel": "BLOG",
+            "paybackPlatform": null,
+            "infNum": 3,
+            "infPoint": 0,
+            "offer": "PT1회 + 헬스권3개월 + 운동복3개월",
+            "imageKey": "campaigns/09e98346-481f-4bb5-8459-8bb4cb209cf5",
+            "city": "서울",
+            "currentTurn": 1,
+            "applyEndAt": "2026-04-12T14:59:59.999Z",
+            "reviewEndAt": "2026-04-26T14:59:59.999Z",
+            "extendedReviewEndAt": null,
+            "beforeReviewEndAt": null,
+            "reviewlottoPosition": null,
+            "hotDealPosition": null,
+            "productPurchasePoint": null,
+            "additionalRewardPoint": null,
+            "applicantCount": 2,
+            "isPremium": false,
+            "premiumPosition": null,
+            "inspectionFee": null,
+            "category": {
+                "title": "기타"
+            },
+            "sido": {
+                "name": "용산구"
+            }
+        }
+    ],
+    "total_pages": 50,
+    "total_count": 800
+}
+
+
+여기서 지역들이 쭉 나열되어 있는데 혹시 모든 지역을 이렇게 내가 복사해서 전달해줘야하나? 아니면 너가 혼자 할 수 있나? 이것도 대답해줘

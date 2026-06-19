@@ -1,0 +1,195 @@
+export const PLATFORMS = [
+  {
+    id: "reviewnote",
+    name: "리뷰노트",
+    url: "https://www.reviewnote.co.kr/campaigns",
+    color: "#E53935",
+    emoji: "RN",
+    desc: "국내에서 공고 수가 많은 체험단 사이트입니다.",
+  },
+  {
+    id: "mrblog",
+    name: "미블",
+    url: "https://www.mrblog.net",
+    color: "#FB8C00",
+    emoji: "MB",
+    desc: "방문형과 배송형 캠페인이 고르게 올라오는 플랫폼입니다.",
+  },
+  {
+    id: "reviewplace",
+    name: "리뷰플레이스",
+    url: "https://www.reviewplace.co.kr",
+    color: "#5E35B1",
+    emoji: "RP",
+    desc: "지역형 체험과 구매형 캠페인을 함께 볼 수 있습니다.",
+  },
+  {
+    id: "revu",
+    name: "레뷰",
+    url: "https://www.revu.net",
+    color: "#1E88E5",
+    emoji: "RV",
+    desc: "블로그, 인스타그램, 숏폼 캠페인이 많은 플랫폼입니다.",
+  },
+  {
+    id: "reviewpick",
+    name: "리뷰픽",
+    url: "https://www.reviewpick.co.kr",
+    color: "#039BE5",
+    emoji: "PK",
+    desc: "리뷰형 공고를 빠르게 탐색하기 좋은 플랫폼입니다.",
+  },
+  {
+    id: "seouloba",
+    name: "서울오빠",
+    url: "https://www.seoulouba.co.kr",
+    color: "#F57C00",
+    emoji: "SO",
+    desc: "맛집과 체험형 로컬 캠페인이 자주 보이는 플랫폼입니다.",
+  },
+  {
+    id: "dinner",
+    name: "디너의여왕",
+    url: "https://dinnerqueen.net",
+    color: "#D81B60",
+    emoji: "DQ",
+    desc: "맛집과 카페 공고 비중이 높은 플랫폼입니다.",
+  },
+  {
+    id: "gangnam",
+    name: "강남맛집",
+    url: "https://xn--939au0g4vj8sq.net",
+    color: "#8E24AA",
+    emoji: "GN",
+    desc: "강남권 방문형 공고를 모아보기 좋은 플랫폼입니다.",
+  },
+  {
+    id: "pavlo",
+    name: "파블로",
+    url: "https://pavlovu.com",
+    color: "#00897B",
+    emoji: "PV",
+    desc: "보상과 조건이 비교적 명확한 캠페인이 올라옵니다.",
+  },
+  {
+    id: "popomon",
+    name: "포포몬",
+    url: "https://popomon.com",
+    color: "#7C4DFF",
+    emoji: "PM",
+    desc: "방문형과 기자단 공고를 함께 제공하는 플랫폼입니다.",
+  },
+  {
+    id: "comeplay",
+    name: "놀러와체험단",
+    url: "https://www.cometoplay.kr",
+    color: "#3949AB",
+    emoji: "CP",
+    desc: "생활형 체험을 카테고리별로 보기 편한 플랫폼입니다.",
+  },
+  {
+    id: "tble",
+    name: "티블",
+    url: "https://tble.kr",
+    color: "#5C6BC0",
+    emoji: "TB",
+    desc: "방문, 배송, 구매형 캠페인을 두루 제공하는 플랫폼입니다.",
+  },
+  {
+    id: "tqueens",
+    name: "택배의여왕",
+    url: "https://tqueens.net",
+    color: "#7E57C2",
+    emoji: "TQ",
+    desc: "배송형 제품 캠페인을 중심으로 제공하는 플랫폼입니다.",
+  },
+  {
+    id: "chvu",
+    name: "체험뷰",
+    url: "https://chvu.co.kr",
+    color: "#00A8A8",
+    emoji: "CV",
+    desc: "방문형, 구매형, 기자단 캠페인을 모아 제공하는 체험단 사이트입니다.",
+  },
+  {
+    id: "stylec",
+    name: "스타일씨",
+    url: "https://www.stylec.co.kr",
+    color: "#7B1FA2",
+    emoji: "SC",
+    desc: "뷰티와 패션 비중이 높은 플랫폼입니다.",
+  },
+  {
+    id: "ringview",
+    name: "링뷰",
+    url: "https://ringview.co.kr",
+    color: "#F4511E",
+    emoji: "RG",
+    desc: "무료 체험과 방문형 공고가 자주 보이는 플랫폼입니다.",
+  },
+  {
+    id: "modan",
+    name: "모두의체험단",
+    url: "https://www.modan.kr",
+    color: "#43A047",
+    emoji: "MD",
+    desc: "여러 공고를 한 번에 비교하기 좋은 플랫폼입니다.",
+  },
+  {
+    id: "chehumdan",
+    name: "체험단닷컴",
+    url: "https://chehumdan.com",
+    color: "#6D4C41",
+    emoji: "CH",
+    desc: "네이버 블로그 체험단 공고가 꾸준히 올라오는 플랫폼입니다.",
+  },
+];
+
+export const SUPPORTED_PLATFORM_IDS = [
+  "reviewnote",
+  "mrblog",
+  "reviewplace",
+  "dinner",
+  "pavlo",
+  "seouloba",
+  "revu",
+  "gangnam",
+  "popomon",
+  "comeplay",
+  "tble",
+  "tqueens",
+  "chvu",
+];
+
+const SUPPORTED_PLATFORM_ID_SET = new Set(SUPPORTED_PLATFORM_IDS);
+
+export const SUPPORTED_PLATFORMS = PLATFORMS.filter((platform) => (
+  SUPPORTED_PLATFORM_ID_SET.has(platform.id)
+));
+
+export const EMOJI_MAP = {
+  맛집: "F",
+  카페: "C",
+  뷰티: "B",
+  숙박: "H",
+  생활용품: "L",
+  패션: "P",
+  서비스: "S",
+  체험: "E",
+  기타: "G",
+};
+
+export const BG_MAP = {
+  맛집: "#FFF3F0",
+  카페: "#FFF8E8",
+  뷰티: "#F8F1FF",
+  숙박: "#F0F4FF",
+  생활용품: "#F2F8FF",
+  패션: "#FFF0F5",
+  서비스: "#EEFDF7",
+  체험: "#F0FFF8",
+  기타: "#F4F4F5",
+};
+
+export const CATEGORIES = ["전체", "맛집", "카페", "뷰티", "숙박", "생활용품", "패션", "서비스", "체험", "기타"];
+export const CAMPAIGN_TYPE_FILTERS = ["전체", "방문형", "배송형"];

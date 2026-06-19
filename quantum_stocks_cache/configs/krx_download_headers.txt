@@ -1,0 +1,12 @@
+HTTP/1.1 200 OK
+mod_time: 1780039213000
+Content-Disposition: attachment; filename=data_2013_20260529.csv
+Content-Transfer-Encoding: binary
+Content-Length: 0
+Content-Type: application/octet-stream;charset=UTF-8
+Expires: Fri, 29 May 2026 07:20:13 GMT
+Cache-Control: max-age=0, no-cache, no-store
+Pragma: no-cache
+Date: Fri, 29 May 2026 07:20:13 GMT
+Connection: keep-alive
+

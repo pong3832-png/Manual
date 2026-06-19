@@ -1,89 +1,84 @@
-*
-!.gitignore
-!AGENTS.md
-!docs/
-!docs/work-log.md
-!quantum_stocks_cache/
-quantum_stocks_cache/*
-!quantum_stocks_cache/.gitignore
-!quantum_stocks_cache/AGENTS.md
-!quantum_stocks_cache/README.md
-!quantum_stocks_cache/requirements.txt
-!quantum_stocks_cache/docs/
-quantum_stocks_cache/docs/*
-!quantum_stocks_cache/docs/work-log.md
-!quantum_stocks_cache/src/
-!quantum_stocks_cache/src/**
-!quantum_stocks_cache/scripts/
-!quantum_stocks_cache/scripts/**
-!quantum_stocks_cache/tests/
-!quantum_stocks_cache/tests/**
-!quantum_stocks_cache/configs/
-quantum_stocks_cache/configs/*
-!quantum_stocks_cache/configs/*.example.csv
-!quantum_stocks_cache/configs/research_universe_seed*.csv
-!quantum_stocks_cache/configs/research_universe.actual.csv
-!quantum_stocks_cache/web/
-quantum_stocks_cache/web/*
-!quantum_stocks_cache/web/package.json
-!quantum_stocks_cache/web/package-lock.json
-!quantum_stocks_cache/web/index.html
-!quantum_stocks_cache/web/vite.config.js
-!quantum_stocks_cache/web/src/
-!quantum_stocks_cache/web/src/**
-quantum_stocks_cache/.env
-quantum_stocks_cache/.env.*
-quantum_stocks_cache/.venv/
-quantum_stocks_cache/data/
-quantum_stocks_cache/reports/
-quantum_stocks_cache/ledger/
-quantum_stocks_cache/models/
-quantum_stocks_cache/web/node_modules/
-quantum_stocks_cache/web/dist/
-quantum_stocks_cache/**/__pycache__/
-quantum_stocks_cache/.pytest_cache/
-!.사용설명서/
-!.사용설명서/**
-!네이버 자동화 ing/
-네이버 자동화 ing/*
-!네이버 자동화 ing/네이버 블로그 글쓰기/
-네이버 자동화 ing/네이버 블로그 글쓰기/*
-!네이버 자동화 ing/네이버 블로그 글쓰기/제미나이웹.py
-!네이버 자동화 ing/네이버 블로그 글쓰기/skssj2628/
-네이버 자동화 ing/네이버 블로그 글쓰기/skssj2628/*
-!네이버 자동화 ing/네이버 블로그 글쓰기/skssj2628/skssj2628.py
-네이버 자동화 ing/네이버 블로그 글쓰기/자동발행상태기록파일/
-!티스토리 자동화 ing/
-티스토리 자동화 ing/*
-!티스토리 자동화 ing/AGENTS.md
-!티스토리 자동화 ing/README.md
-!티스토리 자동화 ing/requirements.txt
-!티스토리 자동화 ing/pyproject.toml
-!티스토리 자동화 ing/category_crawler.py
-!티스토리 자동화 ing/config/
-티스토리 자동화 ing/config/*
-!티스토리 자동화 ing/config/prompts/
-!티스토리 자동화 ing/config/prompts/*.json
-!티스토리 자동화 ing/config/prompts/*.md
-!티스토리 자동화 ing/docs/
-티스토리 자동화 ing/docs/*
-!티스토리 자동화 ing/docs/*.md
-!티스토리 자동화 ing/docs/legacy/
-!티스토리 자동화 ing/docs/legacy/*.md
-!티스토리 자동화 ing/scripts/
-티스토리 자동화 ing/scripts/*
-!티스토리 자동화 ing/scripts/*.ps1
-!티스토리 자동화 ing/scripts/*.bat
-!티스토리 자동화 ing/scripts/scheduled/
-티스토리 자동화 ing/scripts/scheduled/*
-!티스토리 자동화 ing/scripts/scheduled/run_scheduled_post.ps1
-!티스토리 자동화 ing/scripts/scheduled/run_refresh_schedule.ps1
-!티스토리 자동화 ing/src/
-!티스토리 자동화 ing/src/**
-티스토리 자동화 ing/src/**/__pycache__/
-티스토리 자동화 ing/src/tistory_automation/main copy.py
-!티스토리 자동화 ing/tests/
-!티스토리 자동화 ing/tests/*.py
-!티스토리 자동화 ing/golf/
-티스토리 자동화 ing/golf/*
-!티스토리 자동화 ing/golf/main_golf.py
+# =============================================
+# 자동화 공부 루트 .gitignore
+# 블랙리스트 방식: 기본 전부 포함, 위험한 것만 제외
+# =============================================
+
+# ----- 환경변수 / 비밀 -----
+.env
+.env.*
+**/.env
+**/.env.*
+!**/.env.example
+**/secrets*.json
+**/*token*
+
+# ----- Python 캐시 -----
+__pycache__/
+**/__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+**/.pytest_cache/
+
+# ----- Python 가상환경 -----
+.venv/
+venv/
+tf311/
+
+# ----- Node.js -----
+node_modules/
+**/node_modules/
+
+# ----- 빌드 / 캐시 산출물 -----
+.next/
+**/.next/
+.cache/
+**/.cache/
+.vercel/
+**/.vercel/
+**/dist/
+**/build/
+
+# ----- Chrome 브라우저 프로필 (세션/쿠키 민감) -----
+**/Chrome*/
+**/chrome-debug-profile/
+toss_naver_profile/
+toss_chatgpt_profile/
+토스/
+
+# ----- 로그 / 임시 파일 -----
+*.log
+**/logs/
+**/temp_*
+*.tmp
+**/*.html.html
+
+# ----- Jupyter 캐시 -----
+.ipynb_checkpoints/
+**/.ipynb_checkpoints/
+
+# ----- Windows 잡동사니 -----
+Thumbs.db
+Desktop.ini
+
+# ----- 런타임 상태 (루트) -----
+runtime/
+
+# ----- Gemini IDE -----
+.gemini/
+
+# ----- camp-platform 대용량/데이터 -----
+camp-platform/public/campaigns.json
+camp-platform/public/crawl-status.json
+camp-platform/public/data-quality.json
+camp-platform/public/ads.json
+camp-platform/public/crawl-check.json
+camp-platform/dev-server*.log
+camp-platform/dev-server*.err
+camp-platform/dev-server*.err.log
+camp-platform/debug.log
+camp-platform/*.png
+
+# ----- 기타 제외 -----
+-p/

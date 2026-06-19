@@ -1,5 +1,37 @@
 # Work Log
 
+## 2026-06-05
+
+### Changed
+
+- Updated `네이버 블로그 글쓰기/skssj2628/skssj2628.py` so Coupang API rate-limit/cooldown responses stop deeplink candidate iteration immediately instead of retrying every CSV candidate.
+- Updated parent `네이버 블로그 글쓰기/자동발행실행보조파일/run_scheduled_post.ps1` and `run_refresh_schedule.ps1` to prefer the explicit Python 3.13 executable at `C:\Users\itwill\AppData\Local\Programs\Python\Python313\python.exe`, falling back to PATH `python` only if needed.
+- Updated parent `네이버 블로그 글쓰기/스케줄러.py` to generate 8 parent-account posts per day: `네이버메이트` 4 posts + `애드포스트` 4 posts.
+- Updated `네이버 블로그 글쓰기/제미나이웹.py` to support `--post-type 네이버메이트` and `--post-type 애드포스트`, with separate topic banks, prompts, image prompts, title rules, and daily counters.
+- Updated `네이버 블로그 글쓰기/제미나이웹.py` image handling so `네이버메이트`/`애드포스트` posts abort if Gemini image generation fails or if the Naver editor does not confirm an uploaded image element after paste.
+- User-approved parent scheduler re-registration completed for `2026-06-05`: 4 `네이버메이트` posts and 4 `애드포스트` posts.
+- User-approved manual `네이버메이트` publish run succeeded. Published title: `네이버 메이트 주제 전문성 블로그 운영법 인용 가능성 높이는 글 구조`.
+
+### Verified
+
+- Latest `skssj2628` Coupang logs showed repeated Coupang API hourly-limit responses with retry-after text for `2026-06-06T04:48:10...`; no live Coupang API call was run because the current PC time was `2026-06-05 09:49 +09:00` and the account was already at the second over-limit warning.
+- Import-only focused check confirmed `select_unused_coupang_product()` stops after the first cooldown response.
+- `py_compile` passed for `skssj2628.py`.
+- PowerShell static check confirmed both parent scheduler wrappers include the explicit Python fallback.
+- PowerShell parser checks passed for both parent scheduler wrappers.
+- Read-only `schtasks /Query` confirmed `NaverBlogAutoPost_01`, `_02`, `_03`, and `NaverBlogAutoPost_RefreshDaily` are registered; `_01` had failed with `Last Result: 1`, and no new parent log was created after its run.
+- Static scheduler/post-type check confirmed parent `POST_TYPES` is `["네이버메이트"] * 4 + ["애드포스트"] * 4` and `제미나이웹.py` has shared post-type wiring for both new types.
+- `py_compile` passed for `네이버 블로그 글쓰기/제미나이웹.py` and parent `네이버 블로그 글쓰기/스케줄러.py`.
+- Read-only `schtasks /Query` after registration confirmed `NaverBlogAutoPost_01` through `_08` use `run_scheduled_post.ps1` with `애드포스트` or `네이버메이트`, and `NaverBlogAutoPost_RefreshDaily` runs daily at `00:05`.
+- Manual `네이버메이트` publish log `20260605_105243_네이버메이트.log` showed Gemini body generation, title generation, AI image download, Naver image upload, final publish click, and `발행 성공`.
+- User-approved process stops were used before publishing to avoid clipboard/browser conflicts with an active Naver neighbor-add automation and a Tistory golf draft automation.
+- Focused static check confirmed image upload verification is wired, and `py_compile` passed for `네이버 블로그 글쓰기/제미나이웹.py` after the no-image publish guard.
+
+### Next
+
+- Check the next parent scheduled log after the first `애드포스트` and `네이버메이트` runs for Gemini startup, generated topic depth, and Naver posting success.
+- Future parent schedule re-registration or manual posting command still requires explicit user approval.
+
 ## 2026-05-29
 
 ### Changed

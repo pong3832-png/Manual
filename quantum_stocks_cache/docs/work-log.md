@@ -2212,3 +2212,23 @@
   - `GET /api/stock-detail?stock=066570.KS` returned LG전자 detail with `detail_status=READY`, `external_api_requested=NO`, `order_status=NO_ORDER`; investor flow returned `DATA_REQUIRED` because no local flow cache exists.
 - Safety:
   - No broker/order execution, no external pykrx/OpenDART/price-refresh call, no scheduler action, no deletion, and no manual review config write.
+
+## 2026-06-10 - Compliance Pretrade Gate
+
+- Added local-only final safety gate:
+  - `src/quantum_trainer/compliance_pretrade_gate.py`
+  - `scripts/run_compliance_pretrade_gate.py`
+  - `tests/test_compliance_pretrade_gate.py`
+- Gate combines market, pre-buy, manual review, filing, valuation, rebound, tactical, and order-status checks into `reports/compliance_pretrade_gate/`.
+- Local generation result:
+  - `reports/compliance_pretrade_gate/compliance_pretrade_gate.csv`
+  - `reports/compliance_pretrade_gate/compliance_pretrade_gate.md`
+  - `reports/compliance_pretrade_gate/compliance_pretrade_gate_summary.csv`
+  - `row_count=2657`, `BLOCK=2657`, `WAIT_EVIDENCE=0`, `READY_FOR_HUMAN_REVIEW=0`
+  - `external_api_requested=NO`, `order_status=NO_ORDER`, `broker_order_requested=NO`
+- Verification:
+  - `.\.venv\Scripts\python.exe -m pytest .\tests\test_compliance_pretrade_gate.py -q` -> `5 passed`.
+  - `.\.venv\Scripts\python.exe -m py_compile .\src\quantum_trainer\compliance_pretrade_gate.py .\scripts\run_compliance_pretrade_gate.py` -> passed.
+  - `.\.venv\Scripts\python.exe .\scripts\run_compliance_pretrade_gate.py` -> passed.
+- Safety:
+  - No external API, OpenDART, price refresh, broker/order action, scheduler action, deletion, or `configs/manual_review.actual.csv` write.

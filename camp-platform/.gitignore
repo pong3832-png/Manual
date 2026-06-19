@@ -1,0 +1,12 @@
+.env
+.env.*
+!.env.example
+node_modules
+dist
+.next
+.cache
+logs
+*.log
+CLI_NEXT_SESSION_PROMPT.md
+
+.vercel

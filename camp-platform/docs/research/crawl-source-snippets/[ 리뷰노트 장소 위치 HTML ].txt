@@ -1,0 +1,10 @@
+[ 리뷰노트 장소 위치 HTML ] 
+
+상세페이지 들어온 후
+
+
+1) 
+<div class="w-full text-gray-black text-16r md:w-3/4">전남 함평군 함평읍 서부길 42 (내교리) 함평축협</div>
+
+2) 
+<div class="w-full text-gray-black text-16r md:w-3/4">서울 서초구 서초대로77길 43 (서초동, 경원빌딩) 1층</div>

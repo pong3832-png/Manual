@@ -19,7 +19,7 @@ PEER_SCHEDULE_FILES = [
     os.path.join(PROJECT_ROOT, "자동발행상태기록파일", "daily_schedule.json"),
 ]
 MIN_CROSS_ACCOUNT_GAP_MINUTES = 30
-POST_TYPES = ["일상"] * 7 + ["쿠팡"] * 3
+POST_TYPES = ["일상"] * 5 + ["쿠팡"] * 5
 REPO_ROOT = os.path.dirname(PROJECT_ROOT)
 PREFERRED_PYTHON = os.path.join(REPO_ROOT, "티스토리 자동화 ing", ".venv", "Scripts", "python.exe")
 

@@ -1,0 +1,9 @@
+symbol,company_name,catalyst_title,catalyst_type,impact_level,event_status,source,summary
+035420.KS,NAVER,젠슨 황 네이버 1784 방문 가능성,DIRECT_MEETING,HIGH,REPORTED,manual 2026-06-01,"네이버클라우드, 소버린 AI, GPU 협력 기대가 직접 이벤트 수혜로 확산."
+003550.KS,LG,젠슨 황 방한에 따른 LG 피지컬 AI 협력 기대,AI_PARTNERSHIP,HIGH,REPORTED,manual 2026-06-01,"LG전자, LG CNS, LG이노텍, LG AI연구원을 묶어 받는 그룹 이벤트 수혜."
+064400.KS,LG씨엔에스,엔비디아 협력 기대와 AI 데이터센터 수요,GPU_INFRA,HIGH,REPORTED,manual 2026-06-01,"AI 데이터센터, 클라우드, AX 인프라 수요 확대 기대."
+066570.KS,LG전자,피지컬 AI와 로봇 협력 기대,AI_PARTNERSHIP,HIGH,REPORTED,manual 2026-06-01,"AI 가전, 로봇, 피지컬 AI 테마의 직접 반응 후보."
+005380.KS,현대자동차,"피지컬 AI, 자율주행, 로보틱스 협력 기대",AI_PARTNERSHIP,MEDIUM,REPORTED,manual 2026-06-01,엔비디아 로보틱스와 모빌리티 협력 기대가 장기 수혜로 연결.
+000660.KS,SK하이닉스,HBM과 AI 메모리 공급망 수혜,SUPPLY_CHAIN,HIGH,REPORTED,manual 2026-06-01,엔비디아 AI GPU 확산의 핵심 메모리 공급망 후보.
+005930.KS,삼성전자,"HBM, 파운드리, 온디바이스 AI 수혜",SUPPLY_CHAIN,HIGH,REPORTED,manual 2026-06-01,AI 반도체 공급망과 대형 안정 수혜 후보.
+183300.KQ,코미코,AI 반도체 생산 증가의 세정·코팅 후방 수혜,THEME_SPILLOVER,MEDIUM,REPORTED,manual 2026-06-01,방한 직접 이벤트보다 AI 반도체 가동률과 장비 유지보수 확대에 연동.

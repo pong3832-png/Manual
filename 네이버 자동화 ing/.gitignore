@@ -1,0 +1,53 @@
+# =============================================
+# 보안 - 절대 깃허브에 올라가면 안 되는 파일들
+# =============================================
+
+# 환경변수 / API 키 / 비밀번호
+.env
+.env.*
+!.env.example
+**/.env
+**/.env.*
+**/secrets*.json
+**/*token*
+
+# Python 캐시
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.venv/
+venv/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Windows / 에디터 임시 파일
+Thumbs.db
+Desktop.ini
+*.tmp
+*.log
+
+# 크롬 봇 프로필 / 쿠키 (로그인 정보 포함)
+**/ChromeNaverBot*/
+**/ChromeChatGPTBot*/
+**/ChromeTistoryBot*/
+**/chrome-debug-profile/
+**/*profile*/
+
+# 실행 중 생성되는 임시 데이터 파일
+**/logs/
+**/temp_blog_img_*
+**/*.html.html
+
+# 운영 데이터 (쿠팡 파트너스 DB, 스케줄 등)
+**/products_db.csv
+**/products_candidates.csv
+**/products_candidates.xlsx
+**/daily_schedule.json
+**/products_db_tistory.csv
+!네이버 블로그 글쓰기/자동발행상태기록파일/
+!네이버 블로그 글쓰기/자동발행상태기록파일/*.json
+
+# Node
+node_modules/

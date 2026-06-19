@@ -1,0 +1,66 @@
+놀러와체험단
+
+전체 url
+https://www.cometoplay.kr/
+
+로그인없이 구경 가능
+무한 스크롤 아니고 번호 누르고 넘어가야 함
+
+
+전체 카테고리 선택
+<div class="gnb_menu">
+
+					<ul>
+						<li><a href="notice_list.php">공지사항</a></li>
+												<li><a href="item_list.php?category_id=001" class="on">지역</a></li>
+												<li><a href="item_list.php?category_id=002">제품</a></li>
+												<li><a href="item_list.php?category_id=004">기자단</a></li>
+											</ul>
+
+				</div>
+
+지역 카테고리
+https://www.cometoplay.kr/item_list.php?category_id=001
+
+페이지로 넘어가야 함
+<div class="paging"> <strong>1</strong>  <a href="?category_id=001&amp;sst=&amp;sod=&amp;page=2" class="num_box">2</a> <a href="?category_id=001&amp;sst=&amp;sod=&amp;page=3" class="num_box">3</a> <a href="?category_id=001&amp;sst=&amp;sod=&amp;page=4" class="num_box">4</a> <a href="?category_id=001&amp;sst=&amp;sod=&amp;page=5" class="num_box">5</a> <a href="?category_id=001&amp;sst=&amp;sod=&amp;page=6" class="num_box">6</a> <a href="?category_id=001&amp;sst=&amp;sod=&amp;page=7" class="num_box">7</a> <a href="?category_id=001&amp;sst=&amp;sod=&amp;page=8" class="num_box">8</a> <a href="?category_id=001&amp;sst=&amp;sod=&amp;page=9" class="num_box">9</a> &nbsp;<a href="?category_id=001&amp;sst=&amp;sod=&amp;page=10" class="num_box next">&gt;</a> <a href="?category_id=001&amp;sst=&amp;sod=&amp;page=21" class="num_box next" style="color:#aaaaaa;">다음 <b>&gt;</b></a></div>
+
+1,2,3 ~ 번호 HTML
+<a href="?category_id=001&amp;sst=&amp;sod=&amp;page=2" class="num_box">2</a>
+<a href="?category_id=001&amp;sst=&amp;sod=&amp;page=3" class="num_box">3</a>
+<a href="?category_id=001&amp;sst=&amp;sod=&amp;page=4" class="num_box">4</a> 
+이런식
+
+10페이지 뒤로감
+<a href="?category_id=001&amp;sst=&amp;sod=&amp;page=10" class="num_box next">&gt;</a>
+
+다음 버튼(누르면 맨 끝으로 가짐)
+<a href="?category_id=001&amp;sst=&amp;sod=&amp;page=21" class="num_box next" style="color:#aaaaaa;">다음 <b>&gt;</b></a>
+
+얘는 fetch/XHR 안나옴...어떻게 해야할지 알려줘
+
+
+캠페인 상세정보
+
+캠페인 지역, 이름, 해쉬태그
+<div class="it_info">
+		<span class="it_name">[경기 안양] 범계역에 위치한 직접 로스팅한 원두를 사용한 커피와 디저트가 맛있는 분위기 좋은 카페! [카페굿웨더 범계]</span>
+		<span class="it_description">#범계카페 #범계데이트 #디저트 #케이크</span>
+					</div>
+
+남은 기간, SNS 정보, 신청, 모집
+<div class="option_re">
+			<span class="txt_num">D-day 7</span>
+			
+						<i class="blog"></i>
+			<span class="peo_cnt"><img src="./skin/demo/img/txt_ico.png"> 신청 <b class="txt_num point_color4">0</b> 명  / 모집 <b class="txt_num" style="color:#666;">10</b> 명</span>
+		
+		</div>
+
+
+제품 카테고리
+https://www.cometoplay.kr/item_list.php?category_id=002&sst=&sod=&page=2
+
+기자단 카테고리
+https://www.cometoplay.kr/item_list.php?category_id=004
+

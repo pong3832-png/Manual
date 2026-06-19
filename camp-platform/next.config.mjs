@@ -1,0 +1,45 @@
+const publicEnv = {
+  NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.VITE_SUPABASE_URL || "",
+  NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY || "",
+  NEXT_PUBLIC_CAMPAIGN_DB_REFRESH_ENABLED:
+    process.env.NEXT_PUBLIC_CAMPAIGN_DB_REFRESH_ENABLED || process.env.VITE_CAMPAIGN_DB_REFRESH_ENABLED || "0",
+  NEXT_PUBLIC_KAKAO_MAP_APP_KEY: process.env.NEXT_PUBLIC_KAKAO_MAP_APP_KEY || process.env.VITE_KAKAO_MAP_APP_KEY || "",
+  NEXT_PUBLIC_PUBLIC_SITE_NAME: process.env.NEXT_PUBLIC_PUBLIC_SITE_NAME || process.env.VITE_PUBLIC_SITE_NAME || "CheheomMoa",
+  NEXT_PUBLIC_PUBLIC_SITE_URL:
+    process.env.NEXT_PUBLIC_PUBLIC_SITE_URL || process.env.VITE_PUBLIC_SITE_URL || "https://cheheommoa.com",
+  NEXT_PUBLIC_PUBLIC_CONTACT_EMAIL:
+    process.env.NEXT_PUBLIC_PUBLIC_CONTACT_EMAIL || process.env.VITE_PUBLIC_CONTACT_EMAIL || "",
+  NEXT_PUBLIC_PUBLIC_OPERATOR_NAME:
+    process.env.NEXT_PUBLIC_PUBLIC_OPERATOR_NAME || process.env.VITE_PUBLIC_OPERATOR_NAME || "",
+  NEXT_PUBLIC_ADSENSE_CLIENT: process.env.NEXT_PUBLIC_ADSENSE_CLIENT || process.env.VITE_ADSENSE_CLIENT || "",
+  NEXT_PUBLIC_ADSENSE_ENABLE_LOCAL:
+    process.env.NEXT_PUBLIC_ADSENSE_ENABLE_LOCAL || process.env.VITE_ADSENSE_ENABLE_LOCAL || "0",
+  NEXT_PUBLIC_ADSENSE_HOME_TOP_SLOT:
+    process.env.NEXT_PUBLIC_ADSENSE_HOME_TOP_SLOT || process.env.VITE_ADSENSE_HOME_TOP_SLOT || "",
+  NEXT_PUBLIC_ADSENSE_EXPLORE_INLINE_SLOT:
+    process.env.NEXT_PUBLIC_ADSENSE_EXPLORE_INLINE_SLOT || process.env.VITE_ADSENSE_EXPLORE_INLINE_SLOT || "",
+  NEXT_PUBLIC_ADSENSE_MAP_BOTTOM_SLOT:
+    process.env.NEXT_PUBLIC_ADSENSE_MAP_BOTTOM_SLOT || process.env.VITE_ADSENSE_MAP_BOTTOM_SLOT || "",
+  NEXT_PUBLIC_ADSENSE_HOME_TOP_CHANNEL:
+    process.env.NEXT_PUBLIC_ADSENSE_HOME_TOP_CHANNEL || process.env.VITE_ADSENSE_HOME_TOP_CHANNEL || "",
+  NEXT_PUBLIC_ADSENSE_EXPLORE_INLINE_CHANNEL:
+    process.env.NEXT_PUBLIC_ADSENSE_EXPLORE_INLINE_CHANNEL || process.env.VITE_ADSENSE_EXPLORE_INLINE_CHANNEL || "",
+  NEXT_PUBLIC_ADSENSE_MAP_BOTTOM_CHANNEL:
+    process.env.NEXT_PUBLIC_ADSENSE_MAP_BOTTOM_CHANNEL || process.env.VITE_ADSENSE_MAP_BOTTOM_CHANNEL || "",
+};
+
+const nextConfig = {
+  env: publicEnv,
+  async redirects() {
+    return [
+      {
+        source: "/:path*",
+        has: [{ type: "host", value: "www.cheheommoa.com" }],
+        destination: "https://cheheommoa.com/:path*",
+        permanent: true,
+      },
+    ];
+  },
+};
+
+export default nextConfig;

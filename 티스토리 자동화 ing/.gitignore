@@ -1,0 +1,57 @@
+# Secrets
+.env
+.env.*
+!.env.example
+**/.env
+**/.env.*
+**/secrets*.json
+**/*token*
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.venv/
+venv/
+env/
+.venv*/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Windows / editor temp files
+Thumbs.db
+Desktop.ini
+*.tmp
+*.log
+.vscode/
+
+# Browser profiles / session data
+**/ChromeNaverBot*/
+**/ChromeChatGPTBot*/
+**/ChromeTistoryBot*/
+**/chrome-debug-profile/
+**/*profile*/
+**/runtime/sessions/
+**/runtime/.tmp/
+**/runtime/scheduled_state/
+
+# Generated runtime outputs
+**/logs/
+**/outputs/
+**/runtime/archive/
+**/*.html.html
+**/temp_*
+
+# Local one-off patch/backup files
+**/*_backup_*.py
+**/main_backup_*.py
+**/patch_*.py
+**/check_result_dirs.pyㄴ
+**/fix_broken_tistory_url_line.py
+
+# Project data
+**/*.csv
+**/*.xlsx
+!**/products_db_category.csv

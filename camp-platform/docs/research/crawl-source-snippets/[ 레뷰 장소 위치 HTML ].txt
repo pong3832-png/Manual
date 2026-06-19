@@ -1,0 +1,14 @@
+[ 레뷰 장소 위치 HTML ] 
+
+상세페이지 들어온 후
+
+
+1) 
+<span class="desc address ng-binding">
+                            부산 연제구 여고로 74 (대현빌딩)
+                        </span>
+
+2) 
+<span class="desc address ng-binding">
+                            서울 강북구 노해로8길 29 (현대크리스탈)
+                        </span>
